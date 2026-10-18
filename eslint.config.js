@@ -16,7 +16,7 @@ export default [
   },
   {
     // O service worker roda em um contexto próprio do navegador
-    files: ['public/sw.js'],
+    files: ['src/sw.js'],
     languageOptions: { globals: { ...globals.serviceworker } },
   },
 ];
