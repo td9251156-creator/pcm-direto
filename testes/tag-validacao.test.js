@@ -99,8 +99,31 @@ describe('entrada de dados', () => {
 
 describe('arquivo CSV salvo pelo Excel', () => {
   it('ignora a marca BOM do início do arquivo', () => {
-    const lista = lerTabela('﻿setor;tipo;descricao\nUTL;MOT;Motor 1', tipos);
+    const lista = lerTabela('\uFEFFsetor;tipo;descricao\nUTL;MOT;Motor 1', tipos);
     expect(lista).toHaveLength(1);
     expect(lista[0].setor).toBe('UTL');
+  });
+});
+
+describe('importação com cabeçalho em outra ordem', () => {
+  it('acha as colunas pelo nome e ignora linhas acima do cabeçalho', async () => {
+    const { lerMatriz } = await import('../src/logica/entrada.js');
+    const matriz = [
+      ['AVISO: texto qualquer'],
+      ['TAG', 'Setor', 'Tipo', 'Descrição', 'Fabricante', 'Modelo'],
+      ['UTL-CMP-001', 'UTL', 'Compressor de ar', 'Compressor 1', 'Fab A', 'M1'],
+    ];
+    expect(lerMatriz(matriz, tipos)).toMatchObject([{ setor: 'UTL', tipo: 'compressor_ar', descricao: 'Compressor 1', fabricante: 'Fab A', modelo: 'M1' }]);
+  });
+
+  it('lê a aba Equipamentos de uma planilha .xlsx', async () => {
+    const ExcelJS = (await import('exceljs')).default;
+    const { lerXlsx } = await import('../src/logica/entrada.js');
+    const wb = new ExcelJS.Workbook();
+    const aba = wb.addWorksheet('Equipamentos');
+    aba.addRow(['Setor', 'Tipo', 'Descrição']);
+    aba.addRow(['prd', 'MOT', 'Motor da esteira']);
+    const lista = await lerXlsx(await wb.xlsx.writeBuffer(), tipos, ExcelJS);
+    expect(lista).toMatchObject([{ setor: 'PRD', tipo: 'motor_eletrico', descricao: 'Motor da esteira' }]);
   });
 });

@@ -40,34 +40,74 @@ export function novoId() {
 }
 
 /**
- * Converte o texto (colado ou CSV) em uma lista de equipamentos.
- * Pula linhas vazias e a linha de cabeçalho, se houver.
+ * Converte uma tabela (linhas e colunas) em lista de equipamentos.
+ * Se houver uma linha de cabeçalho com "setor" e "tipo" (nas 5 primeiras linhas), as colunas são
+ * achadas pelo nome, em qualquer ordem; as linhas acima dela são ignoradas. Sem cabeçalho, vale a
+ * ordem padrão: setor, tipo, descrição, fabricante, modelo.
  * O tipo é reconhecido pelo nome ou sigla; se não for reconhecido, fica como veio
  * para a validação apontar o erro e sugerir a correção.
  */
-export function lerTabela(texto, tipos) {
-  const linhas = String(texto ?? '').replace(/^\uFEFF/, '').split(/\r?\n/).filter((l) => l.trim());
+export function lerMatriz(matriz, tipos) {
+  const linhas = matriz.map((l) => l.map((c) => String(c ?? '').trim())).filter((l) => l.some((c) => c));
   if (!linhas.length) return [];
-  const sep = detectarSeparador(linhas[0]);
 
-  const primeira = quebrarLinha(linhas[0], sep).map(chave);
-  const temCabecalho = primeira.includes('setor') && primeira.includes('tipo');
+  let posicao = Object.fromEntries(COLUNAS.map((c, i) => [c, i]));
+  let inicio = 0;
+  const iCab = linhas.slice(0, 5).findIndex((l) => {
+    const k = l.map(chave);
+    return k.includes('setor') && k.includes('tipo');
+  });
+  if (iCab >= 0) {
+    const k = linhas[iCab].map(chave);
+    posicao = Object.fromEntries(COLUNAS.map((c) => [c, k.indexOf(c)]));
+    inicio = iCab + 1;
+  }
+  const valor = (l, campo) => (posicao[campo] >= 0 ? l[posicao[campo]] ?? '' : '');
 
-  return linhas.slice(temCabecalho ? 1 : 0).map((linha) => {
-    const c = quebrarLinha(linha, sep);
-    const setorBruto = c[0] ?? '';
+  return linhas.slice(inicio).map((l) => {
+    const setorBruto = valor(l, 'setor');
     const setor = normalizarSetor(setorBruto);
+    const tipo = valor(l, 'tipo');
     return {
       id: novoId(),
       // Se a correção do setor for só de forma (minúsculas/acentos), aplica direto
       setor: setor.length >= 2 ? setor : setorBruto,
-      tipo: resolverTipo(c[1], tipos) ?? (c[1] ?? ''),
+      tipo: resolverTipo(tipo, tipos) ?? tipo,
       numero: null,
-      descricao: c[2] ?? '',
-      fabricante: c[3] ?? '',
-      modelo: c[4] ?? '',
+      descricao: valor(l, 'descricao'),
+      fabricante: valor(l, 'fabricante'),
+      modelo: valor(l, 'modelo'),
     };
   });
+}
+
+/** Converte o texto colado do Excel ou de um arquivo CSV em lista de equipamentos. */
+export function lerTabela(texto, tipos) {
+  const linhas = String(texto ?? '').replace(/^\uFEFF/, '').split(/\r?\n/).filter((l) => l.trim());
+  if (!linhas.length) return [];
+  const sep = detectarSeparador(linhas[0]);
+  return lerMatriz(linhas.map((l) => quebrarLinha(l, sep)), tipos);
+}
+
+/**
+ * Lê a primeira aba com equipamentos de um arquivo .xlsx (inclusive a planilha gerada pelo
+ * próprio PCM Direto, aba Equipamentos). ExcelJS é passado de fora para carregar só quando preciso.
+ */
+export async function lerXlsx(buffer, tipos, ExcelJS) {
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.load(buffer);
+  const abas = [wb.getWorksheet('Equipamentos'), ...wb.worksheets].filter(Boolean);
+  for (const aba of abas) {
+    const matriz = [];
+    aba.eachRow({ includeEmpty: false }, (row) => {
+      const l = [];
+      row.eachCell({ includeEmpty: true }, (cell, col) => { l[col - 1] = cell.text; });
+      matriz.push(Array.from(l, (c) => c ?? ''));
+    });
+    const lista = lerMatriz(matriz, tipos);
+    if (lista.length) return lista;
+  }
+  return [];
 }
 
 /** Gera CSV (separado por ponto e vírgula, padrão do Excel em português) a partir da lista. */

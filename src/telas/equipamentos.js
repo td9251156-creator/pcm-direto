@@ -1,7 +1,7 @@
-// Tela 2: Equipamentos — cadastro manual, colar do Excel, importar CSV e lista com validação ao vivo.
+// Tela 2: Equipamentos — cadastro manual, colar do Excel, importar CSV ou .xlsx e lista com validação ao vivo.
 import { estado, salvar, adicionar, remover, limpar, atualizarTag } from '../estado.js';
 import { validarEquipamento, validarLista } from '../logica/validacao.js';
-import { lerTabela, novoId, paraCsv } from '../logica/entrada.js';
+import { lerTabela, lerXlsx, novoId, paraCsv } from '../logica/entrada.js';
 import { normalizarSetor, proximoNumero, gerarTag } from '../logica/tag.js';
 import { esc, baixar, avisar } from '../ui.js';
 
@@ -90,7 +90,7 @@ export function telaEquipamentos(main, ir) {
     </details>
 
     <details class="cartao" ${vazia ? 'open' : ''}>
-      <summary><h3>Colar do Excel ou importar CSV</h3></summary>
+      <summary><h3>Colar do Excel ou importar arquivo</h3></summary>
       <p>Colunas nesta ordem: <strong>setor, tipo, descrição, fabricante, modelo</strong>. A linha de cabeçalho é opcional.
       O tipo pode ser o nome (Motor elétrico) ou a sigla (MOT).</p>
       <label for="colar">Cole aqui as linhas copiadas do Excel</label>
@@ -99,8 +99,8 @@ export function telaEquipamentos(main, ir) {
         <button type="button" id="adicionar-colado">Adicionar linhas coladas</button>
       </div>
       <div class="grade duas" style="margin-top:1rem">
-        <div><label for="csv">Importar arquivo CSV</label>
-          <input id="csv" type="file" accept=".csv,.txt,text/csv"></div>
+        <div><label for="csv">Importar planilha Excel (.xlsx) ou CSV</label>
+          <input id="csv" type="file" accept=".xlsx,.csv,.txt,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></div>
       </div>
       <div class="acoes">
         <button type="button" class="secundario" id="modelo-csv">Baixar modelo CSV</button>
@@ -123,7 +123,7 @@ export function telaEquipamentos(main, ir) {
     const problemas = validarLista(estado.equipamentos, tipos());
     // Abre os que têm pendência e os que o usuário já tinha aberto
     lista.innerHTML = estado.equipamentos.map((e) => htmlEquipamento(e, problemas[e.id] || abertos.has(e.id))).join('') ||
-      '<p>Nenhum equipamento ainda. Cadastre acima, cole do Excel ou importe um CSV.</p>';
+      '<p>Nenhum equipamento ainda. Cadastre acima, cole do Excel ou importe uma planilha.</p>';
     atualizarValidacao();
   }
 
@@ -254,16 +254,28 @@ export function telaEquipamentos(main, ir) {
     avisar(`${novos.length} equipamento(s) adicionados. Confira as pendências na lista.`);
   });
 
-  // ----- Importar CSV -----
+  // ----- Importar planilha .xlsx ou CSV -----
   main.querySelector('#csv').addEventListener('change', async (e) => {
     const arquivo = e.target.files[0];
     if (!arquivo) return;
     const bytes = await arquivo.arrayBuffer();
-    let texto = new TextDecoder('utf-8').decode(bytes);
-    // CSV salvo pelo Excel em português costuma vir em Windows-1252 (acentos quebram em UTF-8)
-    if (texto.includes('\uFFFD')) texto = new TextDecoder('windows-1252').decode(bytes);
-    const novos = lerTabela(texto, tipos());
     e.target.value = '';
+    let novos;
+    if (/\.xlsx$/i.test(arquivo.name)) {
+      avisar('Lendo a planilha…');
+      try {
+        const ExcelJS = (await import('exceljs')).default; // carrega só quando precisa
+        novos = await lerXlsx(bytes, tipos(), ExcelJS);
+      } catch {
+        avisar('Não foi possível ler a planilha. Confira se é um arquivo .xlsx (Excel 2007 ou mais novo).');
+        return;
+      }
+    } else {
+      let texto = new TextDecoder('utf-8').decode(bytes);
+      // CSV salvo pelo Excel em português costuma vir em Windows-1252 (acentos quebram em UTF-8)
+      if (texto.includes('\uFFFD')) texto = new TextDecoder('windows-1252').decode(bytes);
+      novos = lerTabela(texto, tipos());
+    }
     if (!novos.length) { avisar('O arquivo não tem linhas de equipamento.'); return; }
     adicionar(novos);
     desenharLista();
