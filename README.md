@@ -1,0 +1,81 @@
+# PCM Direto
+
+Gerador de PCM (Planejamento e Controle de Manutenção) aberto e em português.
+Você informa a lista de equipamentos e recebe o plano de manutenção preventiva pronto,
+com cronograma anual, em planilha (.xlsx) e documento (.docx).
+
+- Roda 100% no navegador: sem servidor, sem login e sem banco de dados.
+- Seus dados ficam só no seu computador ou celular (rascunho salvo no próprio navegador).
+- Funciona como aplicativo no PC e no celular (PWA instalável).
+- Gratuito e de código aberto (licença MIT).
+
+> **Aviso:** O material apoia a organização do PCM e não substitui a avaliação de profissional
+> habilitado nem o texto oficial das normas. As periodicidades são base genérica e devem ser
+> confirmadas com o manual do fabricante.
+
+## Como usar
+
+1. **Início:** abra o app. Um exemplo com dados fictícios já vem carregado para você ver o resultado.
+2. **Equipamentos:** cadastre um a um, cole direto do Excel ou importe um arquivo CSV.
+   O app gera a TAG padronizada (setor + tipo + número) e aponta erros com sugestão de correção.
+3. **Revisão:** confira as tarefas de cada equipamento e ajuste periodicidades.
+   Tarefas de segurança só aceitam periodicidade igual ou menor (mais frequente) que a da biblioteca.
+4. **Entrega:** baixe a planilha (.xlsx) e o resumo (.docx).
+
+A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
+Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
+
+### Formato para colar do Excel ou importar CSV
+
+Colunas, nesta ordem, com ou sem linha de cabeçalho:
+
+```
+setor;tipo;descricao;fabricante;modelo
+UTL;compressor_ar;Compressor da linha de ar;Fabricante Exemplo;CX-100
+```
+
+Tipos aceitos na biblioteca inicial: `motor_eletrico`, `compressor_ar`, `bomba_centrifuga`, `ponte_rolante`.
+O separador pode ser ponto e vírgula, vírgula ou tabulação (o padrão ao copiar do Excel).
+
+## Como rodar no seu computador
+
+Pré-requisito: [Node.js LTS](https://nodejs.org/) instalado.
+
+```bash
+npm install
+npm run dev
+```
+
+Abra o endereço que aparecer no terminal (normalmente http://localhost:5173).
+
+Outros comandos:
+
+| Comando           | O que faz                                          |
+|-------------------|----------------------------------------------------|
+| `npm test`        | Roda os testes automáticos                         |
+| `npm run lint`    | Verifica o código                                  |
+| `npm run build`   | Gera a versão final na pasta `dist/`               |
+| `npm run preview` | Abre a versão final localmente                     |
+| `npm run icones`  | Gera de novo os ícones do app                      |
+
+## Biblioteca técnica
+
+As tarefas de manutenção ficam em um único arquivo: [`src/dados/biblioteca.json`](src/dados/biblioteca.json).
+Veja [BIBLIOTECA.md](BIBLIOTECA.md) para entender o formato e o checklist de revisão.
+
+## Documentos do projeto
+
+[ROADMAP.md](ROADMAP.md) · [DECISOES.md](DECISOES.md) · [CONTRIBUTING.md](CONTRIBUTING.md) ·
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [LICENSE](LICENSE)
+
+## Sobre o autor
+
+**Thiago Oliveira Lima** — Engenheiro de Produção com mais de 10 anos em manutenção industrial no setor automotivo,
+com experiência em PCM, análise de falhas (8D, MASP, FMEA), auditorias ISO e indicadores de manutenção.
+[linkedin.com/in/thiagooliveiralima94](https://linkedin.com/in/thiagooliveiralima94)
+
+Parte do código deste projeto foi escrita com ajuda de IA e revisada pelo autor.
+
+## Licença
+
+[MIT](LICENSE) — Copyright (c) 2026 Thiago Oliveira Lima.

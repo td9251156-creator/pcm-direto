@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PCM Direto</title>
+    <meta name="description" content="Gerador de PCM aberto: lista de equipamentos entra, plano de manutenção sai em planilha e documento." />
+    <meta name="theme-color" content="#0b3d63" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icones/icone.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icones/icone-192.png" />
+    <link rel="stylesheet" href="./src/estilo.css" />
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="topo">
+      <h1>PCM Direto</h1>
+      <nav aria-label="Etapas">
+        <ol class="etapas">
+          <li><a href="#inicio" data-tela="inicio">1. Início</a></li>
+          <li><a href="#equipamentos" data-tela="equipamentos">2. Equipamentos</a></li>
+          <li><a href="#revisao" data-tela="revisao">3. Revisão</a></li>
+          <li><a href="#entrega" data-tela="entrega">4. Entrega</a></li>
+        </ol>
+      </nav>
+    </header>
+
+    <!-- Aviso permanente: aparece em todas as telas (regra 4 do produto) -->
+    <p class="aviso" role="note" id="aviso-permanente">
+      <strong>Aviso:</strong> O material apoia a organização do PCM e não substitui a avaliação de
+      profissional habilitado nem o texto oficial das normas. As periodicidades são base genérica e
+      devem ser confirmadas com o manual do fabricante.
+    </p>
+
+    <main id="conteudo" tabindex="-1"></main>
+
+    <footer class="rodape">
+      <p>PCM Direto · código aberto (MIT) · dados ficam só neste navegador.</p>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

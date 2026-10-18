@@ -1,0 +1,29 @@
+# Roteiro (Roadmap)
+
+## Etapa 1 — MVP (atual)
+
+- Entrada de equipamentos: cadastro manual, colar do Excel e importar CSV.
+- TAGs padronizadas (setor + tipo + número) e validação ao vivo com sugestão de correção.
+- Biblioteca técnica inicial em um único JSON: motor elétrico, compressor de ar, bomba centrífuga e ponte rolante.
+- Plano preventivo e cronograma anual com carga balanceada por semana.
+- Bloqueio de afrouxamento de tarefas de segurança.
+- Ficha de falha mínima para iniciar o histórico.
+- Pacote final: planilha .xlsx (6 abas) e resumo .docx.
+- PWA instalável, rascunho salvo no navegador.
+
+## Próximas etapas
+
+### Etapa 2 — Checklists com evidência
+Checklists de execução por tarefa, com campo para registro de evidência (foto, medição, assinatura).
+
+### Etapa 3 — Normas com fonte oficial
+Vincular tarefas a requisitos normativos somente com fonte oficial, versão e data registradas,
+e revisão por profissional habilitado.
+
+### Etapa 4 — Indicadores
+MTBF, MTTR e disponibilidade a partir do histórico de falhas.
+
+### Etapa 5 — Planejamento avançado
+Capacidade de mão de obra por especialidade, paradas programadas e agrupamento de tarefas por janela.
+
+Sugestões são bem-vindas por *issue*.
