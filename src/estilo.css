@@ -124,3 +124,23 @@ td input[type="checkbox"] { width: 24px; height: 24px; min-height: 0; }
 td select { min-width: 9rem; }
 a { color: var(--primaria); }
 .erro a { color: var(--erro); font-weight: 700; }
+
+/* Menu de etapas: no celular, 4 abas lado a lado */
+@media (max-width: 599px) {
+  .etapas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .etapas a { padding: .45rem .15rem; font-size: .78rem; text-align: center; line-height: 1.2; }
+  .topo h1 { font-size: 1.2rem; }
+}
+
+/* Cartões que abrem e fecham */
+details.cartao > summary { cursor: pointer; list-style-position: outside; margin-left: 1rem; }
+details.cartao > summary h3 { display: inline; margin: 0; }
+details.cartao[open] > summary { margin-bottom: .75rem; }
+
+/* Linha resumida de cada equipamento */
+.equip > summary { display: flex; flex-wrap: wrap; gap: .25rem .75rem; align-items: baseline; margin-left: 0; }
+.equip .desc-eq { flex: 1; min-width: 10rem; }
+.equip { padding: .6rem 1rem; margin-bottom: .5rem; }
+.linha-erro { border-color: var(--erro); }
+.equip > summary::before { content: '▸'; color: var(--primaria); }
+.equip[open] > summary::before { content: '▾'; }

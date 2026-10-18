@@ -47,8 +47,9 @@ export function telaEntrega(main) {
           <li><strong>${num(r.horasAno)} h</strong> previstas no ano</li>
         </ul>`}
       <div class="acoes">
-        <button type="button" id="baixar-xlsx" ${bloqueado ? 'disabled' : ''}>Baixar planilha (.xlsx)</button>
-        <button type="button" id="baixar-docx" ${bloqueado ? 'disabled' : ''}>Baixar resumo (.docx)</button>
+        <button type="button" id="baixar-tudo" ${bloqueado ? 'disabled' : ''}>Baixar planilha e resumo</button>
+        <button type="button" class="secundario" id="baixar-xlsx" ${bloqueado ? 'disabled' : ''}>Só a planilha (.xlsx)</button>
+        <button type="button" class="secundario" id="baixar-docx" ${bloqueado ? 'disabled' : ''}>Só o resumo (.docx)</button>
         <button type="button" class="secundario" id="baixar-csv" ${vazio ? 'disabled' : ''}>Baixar equipamentos (.csv)</button>
       </div>
     </section>
@@ -65,22 +66,32 @@ export function telaEntrega(main) {
       </ol>
       <p>Só funções clássicas (PROCV, ÍNDICE, CORRESP, SOMASE, CONT.SE), sem macros: abre em versões antigas do Excel.</p>
       <p class="origem">${esc(biblioteca.nome)}, versão ${esc(biblioteca.versao)}. Ao terminar, guarde os arquivos:
-      o rascunho fica só neste navegador.</p>
+      a lista fica salva só neste aparelho.</p>
     </section>
   `;
 
-  main.querySelector('#baixar-xlsx').addEventListener('click', (e) => gerando(e.target, async () => {
-    // A biblioteca de planilha só é carregada quando você pede o arquivo
+  // As bibliotecas de planilha e documento só são carregadas quando você pede o arquivo
+  async function planilha() {
     const ExcelJS = (await import('exceljs')).default;
     const buffer = await gerarXlsx(dadosAtuais(), ExcelJS);
     baixar(new Blob([buffer], { type: XLSX_MIME }), nomeArquivo('xlsx'));
+  }
+  async function resumo() {
+    const docx = await import('docx');
+    baixar(await docx.Packer.toBlob(montarDocx(dadosAtuais(), docx)), nomeArquivo('docx'));
+  }
+
+  main.querySelector('#baixar-tudo').addEventListener('click', (e) => gerando(e.target, async () => {
+    await planilha();
+    await resumo();
+    avisar('Planilha e resumo gerados. Confira a pasta de downloads.');
+  }));
+  main.querySelector('#baixar-xlsx').addEventListener('click', (e) => gerando(e.target, async () => {
+    await planilha();
     avisar('Planilha gerada.');
   }));
-
   main.querySelector('#baixar-docx').addEventListener('click', (e) => gerando(e.target, async () => {
-    const docx = await import('docx');
-    const blob = await docx.Packer.toBlob(montarDocx(dadosAtuais(), docx));
-    baixar(blob, nomeArquivo('docx'));
+    await resumo();
     avisar('Resumo gerado.');
   }));
 

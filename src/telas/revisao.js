@@ -107,11 +107,12 @@ export function telaRevisao(main, ir) {
       <div id="carga">${htmlCarga(dados)}</div>
     </section>
 
+    <div class="acoes"><button type="button" class="secundario" id="abrir-todos">Abrir todos os equipamentos</button></div>
     <div id="tarefas">${blocos || '<p>Nenhum equipamento sem pendência para revisar.</p>'}</div>
 
     <div class="acoes">
+      <button type="button" id="ir-entrega">Próximo: baixar os arquivos</button>
       <button type="button" class="secundario" id="desfazer">Desfazer meus ajustes</button>
-      <button type="button" id="ir-entrega">Ir para a entrega</button>
     </div>
   `;
 
@@ -149,4 +150,10 @@ export function telaRevisao(main, ir) {
     avisar('Ajustes desfeitos.');
   });
   main.querySelector('#ir-entrega').addEventListener('click', () => ir('entrega'));
+  main.querySelector('#abrir-todos').addEventListener('click', (e) => {
+    const todos = [...main.querySelectorAll('#tarefas details')];
+    const abrir = todos.some((d) => !d.open);
+    todos.forEach((d) => { d.open = abrir; });
+    e.target.textContent = abrir ? 'Fechar todos os equipamentos' : 'Abrir todos os equipamentos';
+  });
 }

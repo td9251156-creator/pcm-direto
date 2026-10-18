@@ -33,11 +33,15 @@ function htmlProblemas(problemas) {
   }).join('') + '</ul>';
 }
 
-function htmlEquipamento(eq) {
+function htmlEquipamento(eq, aberto) {
   const id = eq.id;
   return `
-    <fieldset class="cartao equip" data-id="${id}">
-      <legend><strong class="tag-eq">${esc(eq.tag)}</strong></legend>
+    <details class="cartao equip" data-id="${id}" ${aberto ? 'open' : ''}>
+      <summary>
+        <strong class="tag-eq">${esc(eq.tag)}</strong>
+        <span class="desc-eq">${esc(eq.descricao) || '(sem descrição)'}</span>
+        <span class="situacao-eq"></span>
+      </summary>
       <div class="grade tres">
         <div><label for="${id}-setor">Setor</label>
           <input id="${id}-setor" data-campo="setor" value="${esc(eq.setor)}" maxlength="6" autocomplete="off"></div>
@@ -51,23 +55,25 @@ function htmlEquipamento(eq) {
       </div>
       <div class="problemas" aria-live="polite"></div>
       <div class="acoes"><button type="button" class="secundario remover">Remover ${esc(eq.tag)}</button></div>
-    </fieldset>`;
+    </details>`;
 }
 
 export function telaEquipamentos(main, ir) {
+  const vazia = !estado.equipamentos.length;
+  const abertos = new Set(); // equipamentos que o usuário abriu
   main.innerHTML = `
     <section class="cartao">
       <h2>Equipamentos</h2>
       <p id="contagem"></p>
       ${estado.exemplo ? '<p><strong>Esta é a lista de exemplo, com dados fictícios.</strong> Edite à vontade ou comece em branco.</p>' : ''}
       <div class="acoes">
+        <button type="button" id="ir-revisao">Próximo: revisar o plano</button>
         <button type="button" class="secundario" id="limpar">Começar lista em branco</button>
-        <button type="button" id="ir-revisao">Ir para a revisão</button>
       </div>
     </section>
 
-    <section class="cartao">
-      <h3>Cadastrar um equipamento</h3>
+    <details class="cartao" ${vazia ? 'open' : ''}>
+      <summary><h3>Cadastrar um equipamento</h3></summary>
       <form id="form-novo" novalidate>
         <div class="grade tres">
           <div><label for="novo-setor">Setor (2 a 4 letras)</label>
@@ -82,10 +88,10 @@ export function telaEquipamentos(main, ir) {
         <div id="novo-problemas" aria-live="polite"></div>
         <div class="acoes"><button type="submit">Adicionar equipamento</button></div>
       </form>
-    </section>
+    </details>
 
-    <section class="cartao">
-      <h3>Colar do Excel ou importar CSV</h3>
+    <details class="cartao" ${vazia ? 'open' : ''}>
+      <summary><h3>Colar do Excel ou importar CSV</h3></summary>
       <p>Colunas nesta ordem: <strong>setor, tipo, descrição, fabricante, modelo</strong>. A linha de cabeçalho é opcional.
       O tipo pode ser o nome (Motor elétrico) ou a sigla (MOT).</p>
       <label for="colar">Cole aqui as linhas copiadas do Excel</label>
@@ -101,10 +107,11 @@ export function telaEquipamentos(main, ir) {
         <button type="button" class="secundario" id="modelo-csv">Baixar modelo CSV</button>
         <button type="button" class="secundario" id="exportar-csv">Baixar lista atual em CSV</button>
       </div>
-    </section>
+    </details>
 
-    <section class="cartao">
+    <section>
       <h3>Lista de equipamentos</h3>
+      <p class="origem">Toque em um equipamento para ver e corrigir os dados.</p>
       <div id="resumo-validacao" aria-live="polite"></div>
       <div id="lista"></div>
     </section>
@@ -114,7 +121,9 @@ export function telaEquipamentos(main, ir) {
 
   // Desenha a lista inteira (usado ao adicionar, remover ou aplicar sugestão)
   function desenharLista() {
-    lista.innerHTML = estado.equipamentos.map(htmlEquipamento).join('') ||
+    const problemas = validarLista(estado.equipamentos, tipos);
+    // Abre os que têm pendência e os que o usuário já tinha aberto
+    lista.innerHTML = estado.equipamentos.map((e) => htmlEquipamento(e, problemas[e.id] || abertos.has(e.id))).join('') ||
       '<p>Nenhum equipamento ainda. Cadastre acima, cole do Excel ou importe um CSV.</p>';
     atualizarValidacao();
   }
@@ -122,9 +131,13 @@ export function telaEquipamentos(main, ir) {
   // Atualiza só mensagens, TAGs e contagem, sem redesenhar os campos (não perde o cursor)
   function atualizarValidacao() {
     const problemas = validarLista(estado.equipamentos, tipos);
-    for (const fs of lista.querySelectorAll('fieldset.equip')) {
+    for (const fs of lista.querySelectorAll('.equip')) {
       const eq = estado.equipamentos.find((e) => e.id === fs.dataset.id);
       fs.querySelector('.tag-eq').textContent = eq.tag;
+      fs.querySelector('.desc-eq').textContent = eq.descricao || '(sem descrição)';
+      fs.querySelector('.situacao-eq').innerHTML = problemas[eq.id]
+        ? `<span class="erro">⚠ ${problemas[eq.id].length} pendência${problemas[eq.id].length === 1 ? '' : 's'}</span>`
+        : '<span class="ok">✔</span>';
       fs.querySelector('.problemas').innerHTML = htmlProblemas(problemas[eq.id] ?? []);
       fs.classList.toggle('linha-erro', !!problemas[eq.id]);
     }
@@ -151,8 +164,15 @@ export function telaEquipamentos(main, ir) {
     salvar();
   }
 
+  // Guarda quais equipamentos estão abertos, para continuarem abertos ao redesenhar
+  lista.addEventListener('toggle', (e) => {
+    if (!e.target.classList?.contains('equip')) return;
+    if (e.target.open) abertos.add(e.target.dataset.id);
+    else abertos.delete(e.target.dataset.id);
+  }, true);
+
   lista.addEventListener('input', (e) => {
-    const fs = e.target.closest('fieldset.equip');
+    const fs = e.target.closest('.equip');
     if (!fs || !e.target.dataset.campo) return;
     const eq = estado.equipamentos.find((x) => x.id === fs.dataset.id);
     alterarCampo(eq, e.target.dataset.campo, e.target.value);
@@ -160,11 +180,12 @@ export function telaEquipamentos(main, ir) {
   });
 
   lista.addEventListener('click', (e) => {
-    const fs = e.target.closest('fieldset.equip');
+    const fs = e.target.closest('.equip');
     if (!fs) return;
     const eq = estado.equipamentos.find((x) => x.id === fs.dataset.id);
     if (e.target.classList.contains('sugestao')) {
       alterarCampo(eq, e.target.dataset.campo, e.target.dataset.valor);
+      abertos.add(eq.id);
       desenharLista();
       lista.querySelector(`#${CSS.escape(eq.id)}-${e.target.dataset.campo}`)?.focus();
       avisar('Correção aplicada.');
