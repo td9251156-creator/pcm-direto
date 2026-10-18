@@ -6,9 +6,10 @@
 import { AVISO } from '../logica/pacote.js';
 import { PERIODICIDADES } from '../logica/plano.js';
 import { SEMANAS } from '../logica/cronograma.js';
+import { MARCA, clarear } from '../marca.js';
 
-const AZUL = 'FF0B3D63';
-const AMARELO = 'FFFFF4C2';
+const AZUL = 'FF' + MARCA.primaria;
+const AMARELO = 'FF' + MARCA.avisoFundo;
 const LINHAS_FICHA = 50; // linhas em branco na ficha de falha
 const PRIMEIRA = 3; // linha 1 = aviso, linha 2 = cabeçalho, dados a partir da 3
 
@@ -24,7 +25,7 @@ function escreverAviso(aba, ultimaColuna) {
   aba.mergeCells(1, 1, 1, ultimaColuna);
   const c = aba.getCell(1, 1);
   c.value = `AVISO: ${AVISO}`;
-  c.font = { bold: true, color: { argb: 'FF5C4600' } };
+  c.font = { bold: true, color: { argb: 'FF' + MARCA.avisoTexto } };
   c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: AMARELO } };
   c.alignment = { wrapText: true, vertical: 'middle' };
   aba.getRow(1).height = 48;
@@ -109,7 +110,7 @@ export async function gerarXlsx(dados, ExcelJS) {
     ];
     abaPlano.getCell(r, 5).alignment = { wrapText: true, vertical: 'top' };
     abaPlano.getCell(r, 11).numFmt = '0.0';
-    if (l.seguranca) abaPlano.getCell(r, 13).font = { bold: true, color: { argb: 'FF7A0019' } };
+    if (l.seguranca) abaPlano.getCell(r, 13).font = { bold: true, color: { argb: 'FF' + MARCA.seguranca } };
   });
 
   // ---------- Cronograma ----------
@@ -132,7 +133,7 @@ export async function gerarXlsx(dados, ExcelJS) {
       const c = linha.getCell(COL_S1 + s - 1);
       c.value = 'X';
       c.alignment = { horizontal: 'center' };
-      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: it.seguranca ? 'FFF4C7CF' : 'FFD6E4F0' } };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + clarear(it.seguranca ? MARCA.seguranca : MARCA.primaria, 0.78) } };
     }
   });
   // Totais por semana

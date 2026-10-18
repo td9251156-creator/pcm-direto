@@ -3,7 +3,7 @@
   --fundo: #ffffff;
   --texto: #111111;
   --suave: #3a3a3a;
-  --primaria: #0b3d63;
+  --primaria: #0b3d63; /* mesma cor de src/marca.js */
   --primaria-texto: #ffffff;
   --borda: #555555;
   --aviso-fundo: #fff4c2;
@@ -12,7 +12,8 @@
   --erro-fundo: #ffe5e5;
   --ok: #0a5c1a;
   --seguranca: #7a0019;
-  --foco: #ff9900;
+  --destaque: #b85c00; /* contorno de foco e detalhes; mesma cor de src/marca.js */
+  --foco: var(--destaque);
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +29,8 @@ body {
 
 /* Foco sempre visível para navegação por teclado */
 :focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+/* Na barra escura do topo, o foco fica branco para aparecer bem */
+.topo :focus-visible { outline-color: var(--primaria-texto); }
 
 .pular { position: absolute; left: -9999px; }
 .pular:focus { left: 1rem; top: 1rem; background: var(--fundo); padding: .5rem; z-index: 10; }

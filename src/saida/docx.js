@@ -1,5 +1,6 @@
 // Gera o resumo do plano em .docx (Word).
 import { AVISO } from '../logica/pacote.js';
+import { MARCA } from '../marca.js';
 
 const fmt = (n, casas = 1) => Number(n).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
 
@@ -21,15 +22,15 @@ export function montarDocx(dados, docx) {
       tableHeader: i === 0,
       children: cols.map((texto) => new TableCell({
         children: [new Paragraph({ children: [new TextRun({ text: String(texto), bold: i === 0, color: i === 0 ? 'FFFFFF' : undefined })] })],
-        shading: i === 0 ? { type: ShadingType.CLEAR, color: 'auto', fill: '0B3D63' } : undefined,
+        shading: i === 0 ? { type: ShadingType.CLEAR, color: 'auto', fill: MARCA.primaria } : undefined,
       })),
     })),
   });
 
   const aviso = new Paragraph({
     children: [new TextRun({ text: 'Aviso: ', bold: true }), new TextRun(AVISO)],
-    shading: { type: ShadingType.CLEAR, color: 'auto', fill: 'FFF4C2' },
-    border: { left: { style: BorderStyle.SINGLE, size: 18, color: '8A6D00', space: 6 } },
+    shading: { type: ShadingType.CLEAR, color: 'auto', fill: MARCA.avisoFundo },
+    border: { left: { style: BorderStyle.SINGLE, size: 18, color: MARCA.avisoBorda, space: 6 } },
     spacing: { after: 200 },
   });
 

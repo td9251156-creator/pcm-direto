@@ -2,10 +2,11 @@
 // Uso: npm run icones
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
+import { MARCA, rgb } from '../src/marca.js';
 
-const AZUL = [11, 61, 99];
+const AZUL = rgb(MARCA.primaria);
 const BRANCO = [255, 255, 255];
-const LARANJA = [255, 153, 0];
+const LARANJA = rgb(MARCA.destaqueClaro);
 const PASTA = 'public/icones';
 
 // Desenho em coordenadas de 0 a 1 (mesmo desenho no SVG e no PNG)
