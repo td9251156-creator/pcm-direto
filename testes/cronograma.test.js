@@ -68,3 +68,21 @@ describe('tarefa diária', () => {
     expect(resumoCarga(carga).total).toBeCloseTo(260 * 0.25);
   });
 });
+
+describe('datas do cronograma', () => {
+  it('cada semana começa 7 dias depois da anterior', async () => {
+    const { dataDaSemana, lerData, diaMes } = await import('../src/logica/cronograma.js');
+    const inicio = lerData('2027-01-04');
+    expect(diaMes(dataDaSemana(inicio, 1))).toBe('04/01');
+    expect(diaMes(dataDaSemana(inicio, 2))).toBe('11/01');
+    expect(diaMes(dataDaSemana(inicio, 52))).toBe('27/12');
+  });
+
+  it('o padrão é a próxima segunda-feira', async () => {
+    const { proximaSegunda } = await import('../src/logica/cronograma.js');
+    const d = proximaSegunda(new Date(2026, 9, 18)); // domingo, 18/10/2026
+    expect(d.getDay()).toBe(1);
+    expect(d.getDate()).toBe(19);
+    expect(proximaSegunda(new Date(2026, 9, 19)).getDate()).toBe(26); // segunda vai para a próxima
+  });
+});

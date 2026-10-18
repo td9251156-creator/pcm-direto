@@ -4,6 +4,8 @@ import { EXEMPLO } from './dados/exemplo.js';
 import { atribuirTags, gerarTag, proximoNumero } from './logica/tag.js';
 import { siglasDaBiblioteca } from './logica/plano.js';
 import { novoId } from './logica/entrada.js';
+import { montarDados } from './logica/pacote.js';
+import { proximaSegunda, textoData } from './logica/cronograma.js';
 
 const CHAVE = 'pcm-direto:rascunho:v1';
 export const siglas = siglasDaBiblioteca(biblioteca);
@@ -12,7 +14,13 @@ export const estado = {
   equipamentos: [],
   ajustes: {}, // ajustes da revisão: { "idEquipamento|idTarefa": { periodicidade, ativa } }
   exemplo: false, // true enquanto a lista for o exemplo da abertura
+  inicio: textoData(proximaSegunda()), // data da semana 1 do cronograma
 };
+
+/** Plano, cronograma e resumo da lista atual. */
+export function dadosAtuais() {
+  return montarDados(estado.equipamentos, biblioteca, estado.ajustes, estado.inicio);
+}
 
 /** Recalcula a TAG de um equipamento a partir de setor, tipo e número. */
 export function atualizarTag(eq) {
@@ -32,6 +40,7 @@ export function carregar() {
     estado.equipamentos = salvo.equipamentos;
     estado.ajustes = salvo.ajustes ?? {};
     estado.exemplo = !!salvo.exemplo;
+    if (salvo.inicio) estado.inicio = salvo.inicio;
   } else {
     estado.equipamentos = listaExemplo();
     estado.ajustes = {};
@@ -43,7 +52,7 @@ export function carregar() {
 export function salvar() {
   try {
     localStorage.setItem(CHAVE, JSON.stringify({
-      equipamentos: estado.equipamentos, ajustes: estado.ajustes, exemplo: estado.exemplo, salvoEm: new Date().toISOString(),
+      equipamentos: estado.equipamentos, ajustes: estado.ajustes, exemplo: estado.exemplo, inicio: estado.inicio, salvoEm: new Date().toISOString(),
     }));
     return true;
   } catch {

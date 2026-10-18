@@ -5,7 +5,7 @@
 // PROCV, ÍNDICE, CORRESP etc. Cada fórmula leva também o resultado já calculado.
 import { AVISO } from '../logica/pacote.js';
 import { PERIODICIDADES } from '../logica/plano.js';
-import { SEMANAS, horasPorSemana } from '../logica/cronograma.js';
+import { SEMANAS, horasPorSemana, dataDaSemana, diaMes } from '../logica/cronograma.js';
 import { MARCA, clarear } from '../marca.js';
 
 const AZUL = 'FF' + MARCA.primaria;
@@ -120,7 +120,8 @@ export async function gerarXlsx(dados, ExcelJS) {
   const ultCron = PRIMEIRA + itens.length - 1;
   escreverAviso(abaCron, colUlt);
   escreverCabecalho(abaCron,
-    ['TAG', 'ID tarefa', 'Tarefa', 'Especialidade', 'Horas na semana', ...Array.from({ length: SEMANAS }, (_, i) => `S${i + 1}`)],
+    ['TAG', 'ID tarefa', 'Tarefa', 'Especialidade', 'Horas na semana', ...Array.from({ length: SEMANAS }, (_, i) => `S${i + 1}
+${diaMes(dataDaSemana(dados.inicio, i + 1))}`)],
     [14, 9, 40, 13, 7, ...new Array(SEMANAS).fill(4.5)], 5);
   // Ordena por TAG e tarefa para ficar fácil de ler
   const ordenados = itens.slice().sort((a, b) => a.tag.localeCompare(b.tag) || a.tarefaId.localeCompare(b.tarefaId));
@@ -171,11 +172,12 @@ export async function gerarXlsx(dados, ExcelJS) {
     ['Horas previstas no ano', f(`SUM(${faixaPlano('K')})`, r.horasAno), 'Vezes por ano × horas por execução', DEC],
     ['Média de horas por semana', f(`AVERAGE(${faixaHoras})`, r.mediaSemana), 'Linha "Horas na semana" do Cronograma', DEC],
     ['Semana mais carregada (horas)', f(`MAX(${faixaHoras})`, r.picoSemana), 'Pico após o balanceamento', DEC],
-    ['Número da semana mais carregada', f(`MATCH(MAX(${faixaHoras}),${faixaHoras},0)`, r.semanaPico), 'Primeira semana com o pico', INT],
+    ['Número da semana mais carregada', f(`MATCH(MAX(${faixaHoras}),${faixaHoras},0)`, r.semanaPico), `Primeira semana com o pico (começa em ${r.dataSemanaPico.toLocaleDateString('pt-BR')})`, INT],
+    ['Início do plano (semana 1)', dados.inicio.toLocaleDateString('pt-BR'), 'Cada semana do cronograma começa 7 dias depois da anterior'],
     [],
-    ['Horas por especialidade no ano'],
+    ['Horas por especialidade no ano', '', 'Coluna C: média por semana; pico: veja o Resumo no Word ou a tela Revisão'],
     // A fórmula usa o rótulo da própria linha (coluna A) como critério
-    ...Object.entries(r.horasPorEspecialidade).map(([esp, h]) => [esp, (rr) => f(`SUMIF(${faixaPlano('H')},A${rr},${faixaPlano('K')})`, h), '', DEC]),
+    ...Object.entries(r.horasPorEspecialidade).map(([esp, h]) => [esp, (rr) => f(`SUMIF(${faixaPlano('H')},A${rr},${faixaPlano('K')})`, h), (rr) => f(`B${rr}/${SEMANAS}`, h / SEMANAS), DEC]),
     [],
     ['Equipamentos por tipo'],
     ...Object.entries(r.equipamentosPorTipo).map(([tipo, n]) => [tipo, (rr) => f(`COUNTIF(${faixaEq('C')},A${rr})`, n), '', INT]),
@@ -186,8 +188,9 @@ export async function gerarXlsx(dados, ExcelJS) {
   linhasResumo.forEach(([a, b, c, formato], i) => {
     const rr = 2 + i;
     const linha = resumo.getRow(rr);
-    linha.values = [a, typeof b === 'function' ? b(rr) : b, c];
+    linha.values = [a, typeof b === 'function' ? b(rr) : b, typeof c === 'function' ? c(rr) : c];
     if (formato) linha.getCell(2).numFmt = formato;
+    if (typeof c === 'function') linha.getCell(3).numFmt = '0.0 "h/semana"';
     if (b === undefined && a) linha.font = { bold: true }; // títulos de grupo
   });
   resumo.getRow(2).eachCell((c) => {
@@ -228,6 +231,7 @@ export async function gerarXlsx(dados, ExcelJS) {
   const textos = [
     ['PCM Direto', 'Plano de manutenção preventiva gerado a partir da lista de equipamentos.'],
     ['Gerado em', dados.geradoEm.toLocaleString('pt-BR')],
+    ['Início do plano', `Semana 1 começa em ${dados.inicio.toLocaleDateString('pt-BR')}. No Cronograma, cada coluna S mostra o dia em que a semana começa.`],
     ['Biblioteca técnica', `${dados.biblioteca.nome}, versão ${dados.biblioteca.versao} (${dados.biblioteca.data}). Origem das tarefas: base genérica a validar com manual do fabricante.`],
     [],
     ['Aba', 'Conteúdo'],

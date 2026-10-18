@@ -1,7 +1,7 @@
 // Junta plano, cronograma e números do resumo em um só objeto,
 // usado pelas telas e pelos geradores de planilha e documento.
 import { gerarPlano } from './plano.js';
-import { montarCronograma, resumoCarga } from './cronograma.js';
+import { montarCronograma, resumoCarga, lerData, proximaSegunda, dataDaSemana, horasPorSemana, SEMANAS } from './cronograma.js';
 
 export const AVISO =
   'O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. ' +
@@ -14,14 +14,25 @@ function somarPor(lista, campo, valor) {
   return mapa;
 }
 
-export function montarDados(equipamentos, biblioteca, ajustes = {}) {
+/** inicio: data da semana 1 no formato "2027-01-04". Sem data, usa a próxima segunda-feira. */
+export function montarDados(equipamentos, biblioteca, ajustes = {}, inicio = null) {
+  const dataInicio = inicio ? lerData(inicio) : proximaSegunda();
   const plano = gerarPlano(equipamentos, biblioteca, ajustes);
   const ativas = plano.filter((l) => l.ativa);
   const { itens, carga } = montarCronograma(plano);
   const carga2 = resumoCarga(carga);
 
+  // Carga semanal de cada especialidade: média e semana mais carregada
+  const porEsp = {};
+  for (const it of itens) {
+    porEsp[it.especialidade] ??= new Array(SEMANAS).fill(0);
+    for (const s of it.semanas) porEsp[it.especialidade][s - 1] += horasPorSemana(it);
+  }
+  const cargaPorEspecialidade = Object.fromEntries(Object.entries(porEsp).map(([esp, c]) => [esp, resumoCarga(c)]));
+
   return {
     geradoEm: new Date(),
+    inicio: dataInicio,
     biblioteca: { nome: biblioteca.nome, versao: biblioteca.versao, data: biblioteca.data },
     equipamentos,
     plano,
@@ -36,6 +47,8 @@ export function montarDados(equipamentos, biblioteca, ajustes = {}) {
       mediaSemana: carga2.media,
       picoSemana: carga2.pico,
       semanaPico: carga2.semanaPico,
+      dataSemanaPico: dataDaSemana(dataInicio, carga2.semanaPico),
+      cargaPorEspecialidade,
       horasPorEspecialidade: somarPor(ativas, 'especialidade', (l) => l.duracaoHoras * l.vezesAno),
       equipamentosPorTipo: somarPor(
         equipamentos.map((e) => ({ tipo: biblioteca.tipos.find((t) => t.id === e.tipo)?.nome ?? e.tipo })),

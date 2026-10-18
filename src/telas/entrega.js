@@ -1,8 +1,8 @@
 // Tela 4: Entrega — baixar a planilha .xlsx e o resumo .docx.
 import biblioteca from '../dados/biblioteca.json';
-import { estado } from '../estado.js';
+import { estado, dadosAtuais } from '../estado.js';
 import { validarLista } from '../logica/validacao.js';
-import { montarDados, nomeArquivo } from '../logica/pacote.js';
+import { nomeArquivo } from '../logica/pacote.js';
 import { gerarXlsx } from '../saida/xlsx.js';
 import { montarDocx } from '../saida/docx.js';
 import { esc, num, baixar, avisar } from '../ui.js';
@@ -31,7 +31,7 @@ export function telaEntrega(main) {
   const comErro = Object.keys(problemas).length;
   const vazio = !estado.equipamentos.length;
   const bloqueado = comErro || vazio;
-  const dados = montarDados(estado.equipamentos, biblioteca, estado.ajustes);
+  const dados = dadosAtuais();
   const r = dados.resumo;
 
   main.innerHTML = `
@@ -72,14 +72,14 @@ export function telaEntrega(main) {
   main.querySelector('#baixar-xlsx').addEventListener('click', (e) => gerando(e.target, async () => {
     // A biblioteca de planilha só é carregada quando você pede o arquivo
     const ExcelJS = (await import('exceljs')).default;
-    const buffer = await gerarXlsx(montarDados(estado.equipamentos, biblioteca, estado.ajustes), ExcelJS);
+    const buffer = await gerarXlsx(dadosAtuais(), ExcelJS);
     baixar(new Blob([buffer], { type: XLSX_MIME }), nomeArquivo('xlsx'));
     avisar('Planilha gerada.');
   }));
 
   main.querySelector('#baixar-docx').addEventListener('click', (e) => gerando(e.target, async () => {
     const docx = await import('docx');
-    const blob = await docx.Packer.toBlob(montarDocx(montarDados(estado.equipamentos, biblioteca, estado.ajustes), docx));
+    const blob = await docx.Packer.toBlob(montarDocx(dadosAtuais(), docx));
     baixar(blob, nomeArquivo('docx'));
     avisar('Resumo gerado.');
   }));

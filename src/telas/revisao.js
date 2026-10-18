@@ -1,27 +1,34 @@
 // Tela 3: Revisão — tarefas por equipamento, ajustes de periodicidade e carga semanal.
 import biblioteca from '../dados/biblioteca.json';
-import { estado, salvar } from '../estado.js';
+import { estado, salvar, dadosAtuais } from '../estado.js';
 import { validarLista } from '../logica/validacao.js';
 import { PERIODICIDADES, vezesPorAno, aplicarAjuste } from '../logica/plano.js';
-import { montarDados } from '../logica/pacote.js';
 import { esc, num, avisar } from '../ui.js';
+import { dataDaSemana, diaMes } from '../logica/cronograma.js';
 
 /** Barras da carga semanal (horas por semana). */
 function htmlCarga(dados) {
   const r = dados.resumo;
   const pico = r.picoSemana || 1;
   const barras = dados.carga.map((h, i) =>
-    `<div class="barra" style="height:${Math.max(2, (h / pico) * 100)}%" title="Semana ${i + 1}: ${num(h)} h"></div>`).join('');
+    `<div class="barra" style="height:${Math.max(2, (h / pico) * 100)}%" title="Semana ${i + 1} (${diaMes(dataDaSemana(dados.inicio, i + 1))}): ${num(h)} h"></div>`).join('');
+  const especialidades = Object.entries(r.cargaPorEspecialidade).sort((a, b) => b[1].total - a[1].total).map(([esp, c]) =>
+    `<tr><td>${esc(esp)}</td><td>${num(c.total)} h</td><td>${num(c.media)} h</td><td>S${c.semanaPico} (${diaMes(dataDaSemana(dados.inicio, c.semanaPico))}): ${num(c.pico)} h</td></tr>`).join('');
   return `
     <ul class="numeros">
       <li><strong>${r.tarefas}</strong> tarefas ativas</li>
       <li><strong>${r.tarefasSeguranca}</strong> de segurança</li>
       <li><strong>${num(r.horasAno)} h</strong> no ano</li>
       <li><strong>${num(r.mediaSemana)} h</strong> por semana em média</li>
-      <li>Semana mais carregada: <strong>S${r.semanaPico}</strong> com <strong>${num(r.picoSemana)} h</strong></li>
+      <li>Semana mais carregada: <strong>S${r.semanaPico}</strong> (a partir de ${diaMes(r.dataSemanaPico)}) com <strong>${num(r.picoSemana)} h</strong></li>
     </ul>
     <div class="grafico" role="img" aria-label="Horas previstas por semana, da semana 1 à 52. Média ${num(r.mediaSemana)} horas, pico ${num(r.picoSemana)} horas na semana ${r.semanaPico}.">${barras}</div>
-    <p class="origem">Semanas 1 a 52. As execuções foram distribuídas para evitar picos de carga.</p>`;
+    <p class="origem">Semanas 1 a 52, a partir de ${dados.inicio.toLocaleDateString('pt-BR')}. As execuções foram distribuídas para evitar picos de carga.</p>
+    <h4>Por especialidade</h4>
+    <div class="tabela-rolagem"><table>
+      <thead><tr><th>Especialidade</th><th>Horas no ano</th><th>Média por semana</th><th>Semana mais carregada</th></tr></thead>
+      <tbody>${especialidades}</tbody>
+    </table></div>`;
 }
 
 function opcoesPeriodicidade(linha) {
@@ -62,7 +69,7 @@ function htmlLinha(l) {
 export function telaRevisao(main, ir) {
   const problemas = validarLista(estado.equipamentos, biblioteca.tipos);
   const comErro = Object.keys(problemas).length;
-  const dados = montarDados(estado.equipamentos, biblioteca, estado.ajustes);
+  const dados = dadosAtuais();
 
   const blocos = estado.equipamentos
     .filter((e) => !problemas[e.id])
@@ -93,6 +100,10 @@ export function telaRevisao(main, ir) {
 
     <section class="cartao">
       <h3>Carga de trabalho no ano</h3>
+      <div class="grade duas"><div>
+        <label for="inicio">Início do plano (dia da semana 1)</label>
+        <input type="date" id="inicio" value="${esc(estado.inicio)}" required>
+      </div></div>
       <div id="carga">${htmlCarga(dados)}</div>
     </section>
 
@@ -118,8 +129,16 @@ export function telaRevisao(main, ir) {
     estado.ajustes = r.ajustes;
     salvar();
     alvo.closest('tr').classList.toggle('retirada', alvo.dataset.acao === 'ativa' && !alvo.checked);
-    main.querySelector('#carga').innerHTML = htmlCarga(montarDados(estado.equipamentos, biblioteca, estado.ajustes));
+    main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
     avisar('Ajuste salvo.');
+  });
+
+  main.querySelector('#inicio').addEventListener('change', (e) => {
+    if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(e.target.value)) { avisar('Informe uma data válida.'); return; }
+    estado.inicio = e.target.value;
+    salvar();
+    main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+    avisar('Data de início salva.');
   });
 
   main.querySelector('#desfazer').addEventListener('click', () => {

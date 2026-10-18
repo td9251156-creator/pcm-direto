@@ -21,7 +21,9 @@ com cronograma anual, em planilha (.xlsx) e documento (.docx).
 2. **Equipamentos:** cadastre um a um, cole direto do Excel ou importe um arquivo CSV.
    O app gera a TAG padronizada (setor + tipo + número) e aponta erros com sugestão de correção.
 3. **Revisão:** confira as tarefas de cada equipamento e ajuste periodicidades.
-   Tarefas de segurança só aceitam periodicidade igual ou menor (mais frequente) que a da biblioteca.
+   Tarefas de segurança só aceitam periodicidade igual ou mais frequente que a da biblioteca.
+   Escolha a data de início do plano: o cronograma mostra o dia em que cada semana começa
+   e a carga de horas por semana de cada especialidade.
 4. **Entrega:** baixe a planilha (.xlsx) e o resumo (.docx).
 
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.

@@ -5,7 +5,9 @@
 - Entrada de equipamentos: cadastro manual, colar do Excel e importar CSV.
 - TAGs padronizadas (setor + tipo + número) e validação ao vivo com sugestão de correção.
 - Biblioteca técnica inicial em um único JSON: motor elétrico, compressor de ar, bomba centrífuga e ponte rolante.
-- Plano preventivo e cronograma anual com carga balanceada por semana.
+- Plano preventivo e cronograma anual com carga balanceada por semana, com datas a partir do início do plano.
+- Tarefas diárias (ex.: verificação antes do uso pelo operador).
+- Carga semanal por especialidade.
 - Bloqueio de afrouxamento de tarefas de segurança.
 - Ficha de falha mínima para iniciar o histórico.
 - Pacote final: planilha .xlsx (6 abas) e resumo .docx.

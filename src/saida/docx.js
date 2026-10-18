@@ -61,14 +61,18 @@ export function montarDocx(dados, docx) {
           ['Tarefas retiradas na revisão', r.retiradas],
           ['Horas previstas no ano', fmt(r.horasAno)],
           ['Média de horas por semana', fmt(r.mediaSemana)],
-          ['Semana mais carregada', `Semana ${r.semanaPico}: ${fmt(r.picoSemana)} h`],
+          ['Início do plano (semana 1)', dados.inicio.toLocaleDateString('pt-BR')],
+          ['Semana mais carregada', `Semana ${r.semanaPico} (a partir de ${r.dataSemanaPico.toLocaleDateString('pt-BR')}): ${fmt(r.picoSemana)} h`],
         ]),
 
         titulo('Equipamentos'),
         tabela(['TAG', 'Descrição', 'Tipo', 'Tarefas', 'Horas/ano'], porEquipamento),
 
         titulo('Horas por especialidade no ano'),
-        tabela(['Especialidade', 'Horas/ano'], Object.entries(r.horasPorEspecialidade).map(([esp, h]) => [esp, fmt(h)])),
+        tabela(['Especialidade', 'Horas/ano', 'Média por semana', 'Semana mais carregada'], Object.entries(r.horasPorEspecialidade).map(([esp, h]) => {
+          const c = r.cargaPorEspecialidade[esp];
+          return [esp, fmt(h), `${fmt(c.media)} h`, `S${c.semanaPico}: ${fmt(c.pico)} h`];
+        })),
 
         titulo('Tarefas de segurança'),
         p('Estas tarefas só podem ter a frequência mantida ou aumentada, e não podem ser retiradas do plano.'),

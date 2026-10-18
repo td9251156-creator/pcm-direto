@@ -75,3 +75,33 @@ export function resumoCarga(carga) {
     semanaPico: carga.indexOf(pico) + 1,
   };
 }
+
+/** Converte "2027-01-04" em data local (sem problema de fuso horário). */
+export function lerData(texto) {
+  const [a, m, d] = String(texto).split('-').map(Number);
+  return new Date(a, m - 1, d);
+}
+
+/** "2027-01-04" a partir de uma data local. */
+export function textoData(data) {
+  return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+}
+
+/** Próxima segunda-feira a partir de hoje (padrão para o início do plano). */
+export function proximaSegunda(hoje = new Date()) {
+  const d = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  d.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7));
+  return d;
+}
+
+/** Data em que começa a semana n (1 a 52), dado o início do plano. */
+export function dataDaSemana(inicio, n) {
+  const d = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate());
+  d.setDate(d.getDate() + (n - 1) * 7);
+  return d;
+}
+
+/** "04/01" */
+export function diaMes(data) {
+  return `${String(data.getDate()).padStart(2, '0')}/${String(data.getMonth() + 1).padStart(2, '0')}`;
+}
