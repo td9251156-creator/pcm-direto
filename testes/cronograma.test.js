@@ -86,3 +86,25 @@ describe('datas do cronograma', () => {
     expect(proximaSegunda(new Date(2026, 9, 19)).getDate()).toBe(26); // segunda vai para a próxima
   });
 });
+
+describe('capacidade por especialidade', () => {
+  const tarefa = (i, esp, vezes, horas) => ({ tag: `T-${i}`, tarefaId: `X${i}`, especialidade: esp, vezesAno: vezes, duracaoHoras: horas, ativa: true });
+
+  it('separa tarefas para não passar do limite semanal', () => {
+    const plano = Array.from({ length: 6 }, (_, i) => tarefa(i, 'Mecânica', 4, 3));
+    const { semanasAcima, cargaPorEspecialidade } = montarCronograma(plano, { Mecânica: 3 });
+    expect(semanasAcima.Mecânica).toBe(0);
+    expect(Math.max(...cargaPorEspecialidade.Mecânica)).toBe(3);
+  });
+
+  it('conta as semanas acima quando o limite não comporta o plano', () => {
+    const plano = [tarefa(1, 'Elétrica', 52, 2), tarefa(2, 'Elétrica', 52, 2)];
+    const { semanasAcima } = montarCronograma(plano, { Elétrica: 3 });
+    expect(semanasAcima.Elétrica).toBe(52);
+  });
+
+  it('sem limite informado, nenhuma semana conta como acima', () => {
+    const { semanasAcima } = montarCronograma([tarefa(1, 'Elétrica', 52, 9)]);
+    expect(semanasAcima.Elétrica).toBe(0);
+  });
+});

@@ -1,5 +1,4 @@
 // Tela 4: Entrega — baixar a planilha .xlsx e o resumo .docx.
-import biblioteca from '../dados/biblioteca.json';
 import { estado, dadosAtuais } from '../estado.js';
 import { validarLista } from '../logica/validacao.js';
 import { nomeArquivo } from '../logica/pacote.js';
@@ -27,7 +26,7 @@ async function gerando(botao, tarefa) {
 }
 
 export function telaEntrega(main) {
-  const problemas = validarLista(estado.equipamentos, biblioteca.tipos);
+  const problemas = validarLista(estado.equipamentos, estado.biblioteca.tipos);
   const comErro = Object.keys(problemas).length;
   const vazio = !estado.equipamentos.length;
   const bloqueado = comErro || vazio;
@@ -65,7 +64,7 @@ export function telaEntrega(main) {
         <li><strong>Ficha de Falha:</strong> modelo para começar o histórico.</li>
       </ol>
       <p>Só funções clássicas (PROCV, ÍNDICE, CORRESP, SOMASE, CONT.SE), sem macros: abre em versões antigas do Excel.</p>
-      <p class="origem">${esc(biblioteca.nome)}, versão ${esc(biblioteca.versao)}. Ao terminar, guarde os arquivos:
+      <p class="origem">${esc(estado.biblioteca.nome)}, versão ${esc(estado.biblioteca.versao)}. Ao terminar, guarde os arquivos:
       a lista fica salva só neste aparelho.</p>
     </section>
   `;
@@ -96,7 +95,7 @@ export function telaEntrega(main) {
   }));
 
   main.querySelector('#baixar-csv').addEventListener('click', () => {
-    const linhas = estado.equipamentos.map((e) => ({ ...e, tipo: biblioteca.tipos.find((t) => t.id === e.tipo)?.nome ?? e.tipo }));
+    const linhas = estado.equipamentos.map((e) => ({ ...e, tipo: estado.biblioteca.tipos.find((t) => t.id === e.tipo)?.nome ?? e.tipo }));
     baixar('\uFEFF' + paraCsv(linhas), 'equipamentos.csv', 'text/csv;charset=utf-8');
   });
 }

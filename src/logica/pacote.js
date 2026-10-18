@@ -1,7 +1,7 @@
 // Junta plano, cronograma e números do resumo em um só objeto,
 // usado pelas telas e pelos geradores de planilha e documento.
 import { gerarPlano } from './plano.js';
-import { montarCronograma, resumoCarga, lerData, proximaSegunda, dataDaSemana, horasPorSemana, SEMANAS } from './cronograma.js';
+import { montarCronograma, resumoCarga, lerData, proximaSegunda, dataDaSemana } from './cronograma.js';
 
 export const AVISO =
   'O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. ' +
@@ -14,21 +14,21 @@ function somarPor(lista, campo, valor) {
   return mapa;
 }
 
-/** inicio: data da semana 1 no formato "2027-01-04". Sem data, usa a próxima segunda-feira. */
-export function montarDados(equipamentos, biblioteca, ajustes = {}, inicio = null) {
+/**
+ * inicio: data da semana 1 no formato "2027-01-04". Sem data, usa a próxima segunda-feira.
+ * capacidade: horas disponíveis por semana em cada especialidade (vazio = sem limite).
+ */
+export function montarDados(equipamentos, biblioteca, ajustes = {}, inicio = null, capacidade = {}) {
   const dataInicio = inicio ? lerData(inicio) : proximaSegunda();
   const plano = gerarPlano(equipamentos, biblioteca, ajustes);
   const ativas = plano.filter((l) => l.ativa);
-  const { itens, carga } = montarCronograma(plano);
+  const { itens, carga, cargaPorEspecialidade: porEsp, semanasAcima } = montarCronograma(plano, capacidade);
   const carga2 = resumoCarga(carga);
 
-  // Carga semanal de cada especialidade: média e semana mais carregada
-  const porEsp = {};
-  for (const it of itens) {
-    porEsp[it.especialidade] ??= new Array(SEMANAS).fill(0);
-    for (const s of it.semanas) porEsp[it.especialidade][s - 1] += horasPorSemana(it);
-  }
-  const cargaPorEspecialidade = Object.fromEntries(Object.entries(porEsp).map(([esp, c]) => [esp, resumoCarga(c)]));
+  // Carga semanal de cada especialidade: média, semana mais carregada e capacidade
+  const cargaPorEspecialidade = Object.fromEntries(Object.entries(porEsp).map(([esp, c]) => [
+    esp, { ...resumoCarga(c), capacidade: Number(capacidade[esp]) || 0, semanasAcima: semanasAcima[esp] },
+  ]));
 
   return {
     geradoEm: new Date(),

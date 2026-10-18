@@ -69,9 +69,10 @@ export function montarDocx(dados, docx) {
         tabela(['TAG', 'Descrição', 'Tipo', 'Tarefas', 'Horas/ano'], porEquipamento),
 
         titulo('Horas por especialidade no ano'),
-        tabela(['Especialidade', 'Horas/ano', 'Média por semana', 'Semana mais carregada'], Object.entries(r.horasPorEspecialidade).map(([esp, h]) => {
+        tabela(['Especialidade', 'Horas/ano', 'Média por semana', 'Semana mais carregada', 'Horas disponíveis por semana'], Object.entries(r.horasPorEspecialidade).map(([esp, h]) => {
           const c = r.cargaPorEspecialidade[esp];
-          return [esp, fmt(h), `${fmt(c.media)} h`, `S${c.semanaPico}: ${fmt(c.pico)} h`];
+          const cap = c.capacidade ? `${fmt(c.capacidade)} h${c.semanasAcima ? ` (${c.semanasAcima} semana(s) acima)` : ''}` : 'sem limite';
+          return [esp, fmt(h), `${fmt(c.media)} h`, `S${c.semanaPico}: ${fmt(c.pico)} h`, cap];
         })),
 
         titulo('Tarefas de segurança'),

@@ -26,12 +26,18 @@ export function horasPorSemana(linha) {
 
 /**
  * Monta o cronograma a partir das linhas do plano (só as tarefas ativas).
- * Retorna { itens, carga }:
+ * capacidade (opcional): horas disponíveis por semana em cada especialidade, ex.: { Mecânica: 8 }.
+ * Retorna { itens, carga, cargaPorEspecialidade, semanasAcima }:
  *  - itens: cada linha do plano com "semanas" (1 a 52) em que deve ser executada;
- *  - carga: horas previstas em cada semana (posição 0 = semana 1).
+ *  - carga: horas previstas em cada semana (posição 0 = semana 1);
+ *  - cargaPorEspecialidade: o mesmo, separado por especialidade;
+ *  - semanasAcima: quantas semanas ficaram acima da capacidade, por especialidade.
  */
-export function montarCronograma(linhasPlano) {
+export function montarCronograma(linhasPlano, capacidade = {}) {
   const carga = new Array(SEMANAS).fill(0);
+  const cargaPorEspecialidade = {};
+  // Horas que passariam do limite da especialidade em uma semana
+  const excesso = (horas, limite) => (limite > 0 ? Math.max(0, horas - limite) : 0);
 
   // Tarefas mais frequentes primeiro (têm menos opções); depois as mais longas.
   const ordem = linhasPlano
@@ -45,23 +51,42 @@ export function montarCronograma(linhasPlano) {
 
   const itens = [];
   for (const linha of ordem) {
+    const h = horasPorSemana(linha);
+    const esp = linha.especialidade;
+    const cargaEsp = (cargaPorEspecialidade[esp] ??= new Array(SEMANAS).fill(0));
+    const limite = Number(capacidade[esp]) || 0;
     let melhor = null;
     for (let inicio = 0; inicio < opcoesDeInicio(linha.vezesAno); inicio++) {
       const semanas = semanasDaTarefa(linha.vezesAno, inicio);
-      // Pico: a semana mais carregada entre as que a tarefa ocuparia
-      const h = horasPorSemana(linha);
-      const pico = Math.max(...semanas.map((s) => carga[s] + h));
-      // Desempate: soma das horas já previstas nessas semanas
-      const soma = semanas.reduce((t, s) => t + carga[s], 0);
-      if (!melhor || pico < melhor.pico || (pico === melhor.pico && soma < melhor.soma)) {
-        melhor = { semanas, pico, soma };
-      }
+      // Critérios, nesta ordem: 1) não passar da capacidade da especialidade;
+      // 2) pico da especialidade; 3) pico geral; 4) horas já previstas nessas semanas
+      const opcao = {
+        semanas,
+        acima: semanas.reduce((t, s) => t + excesso(cargaEsp[s] + h, limite) - excesso(cargaEsp[s], limite), 0),
+        picoEsp: Math.max(...semanas.map((s) => cargaEsp[s] + h)),
+        pico: Math.max(...semanas.map((s) => carga[s] + h)),
+        soma: semanas.reduce((t, s) => t + carga[s], 0),
+      };
+      if (!melhor || melhorQue(opcao, melhor)) melhor = opcao;
     }
-    for (const s of melhor.semanas) carga[s] += horasPorSemana(linha);
+    for (const s of melhor.semanas) { carga[s] += h; cargaEsp[s] += h; }
     itens.push({ ...linha, semanas: melhor.semanas.map((s) => s + 1) });
   }
 
-  return { itens, carga };
+  const semanasAcima = {};
+  for (const [esp, c] of Object.entries(cargaPorEspecialidade)) {
+    const limite = Number(capacidade[esp]) || 0;
+    semanasAcima[esp] = limite > 0 ? c.filter((x) => x > limite + 1e-9).length : 0;
+  }
+  return { itens, carga, cargaPorEspecialidade, semanasAcima };
+}
+
+/** Compara duas opções de semana de início (veja os critérios em montarCronograma). */
+function melhorQue(a, b) {
+  for (const k of ['acima', 'picoEsp', 'pico', 'soma']) {
+    if (Math.abs(a[k] - b[k]) > 1e-9) return a[k] < b[k];
+  }
+  return false;
 }
 
 /** Números para o resumo: total de horas no ano, média semanal, pico e a semana do pico. */

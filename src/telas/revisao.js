@@ -1,5 +1,4 @@
 // Tela 3: Revisão — tarefas por equipamento, ajustes de periodicidade e carga semanal.
-import biblioteca from '../dados/biblioteca.json';
 import { estado, salvar, dadosAtuais } from '../estado.js';
 import { validarLista } from '../logica/validacao.js';
 import { PERIODICIDADES, vezesPorAno, aplicarAjuste } from '../logica/plano.js';
@@ -13,7 +12,11 @@ function htmlCarga(dados) {
   const barras = dados.carga.map((h, i) =>
     `<div class="barra" style="height:${Math.max(2, (h / pico) * 100)}%" title="Semana ${i + 1} (${diaMes(dataDaSemana(dados.inicio, i + 1))}): ${num(h)} h"></div>`).join('');
   const especialidades = Object.entries(r.cargaPorEspecialidade).sort((a, b) => b[1].total - a[1].total).map(([esp, c]) =>
-    `<tr><td>${esc(esp)}</td><td>${num(c.total)} h</td><td>${num(c.media)} h</td><td>S${c.semanaPico} (${diaMes(dataDaSemana(dados.inicio, c.semanaPico))}): ${num(c.pico)} h</td></tr>`).join('');
+    `<tr class="${c.semanasAcima ? 'linha-erro' : ''}"><td>${esc(esp)}</td><td>${num(c.total)} h</td><td>${num(c.media)} h</td>
+      <td>S${c.semanaPico} (${diaMes(dataDaSemana(dados.inicio, c.semanaPico))}): ${num(c.pico)} h</td>
+      <td><label class="oculto" for="cap-${esc(esp)}">Horas disponíveis por semana em ${esc(esp)}</label>
+        <input type="number" min="0" step="0.5" class="capacidade" id="cap-${esc(esp)}" data-especialidade="${esc(esp)}" value="${c.capacidade || ''}" placeholder="sem limite"></td>
+      <td>${c.capacidade ? (c.semanasAcima ? `<span class="erro">⚠ ${c.semanasAcima} semana(s) acima</span>` : '<span class="ok">✔ dentro do limite</span>') : '—'}</td></tr>`).join('');
   return `
     <ul class="numeros">
       <li><strong>${r.tarefas}</strong> tarefas ativas</li>
@@ -25,8 +28,9 @@ function htmlCarga(dados) {
     <div class="grafico" role="img" aria-label="Horas previstas por semana, da semana 1 à 52. Média ${num(r.mediaSemana)} horas, pico ${num(r.picoSemana)} horas na semana ${r.semanaPico}.">${barras}</div>
     <p class="origem">Semanas 1 a 52, a partir de ${dados.inicio.toLocaleDateString('pt-BR')}. As execuções foram distribuídas para evitar picos de carga.</p>
     <h4>Por especialidade</h4>
+    <p class="origem">Informe as horas que a equipe tem por semana em cada especialidade. O cronograma passa a distribuir as tarefas respeitando esse limite; deixe em branco para não limitar.</p>
     <div class="tabela-rolagem"><table>
-      <thead><tr><th>Especialidade</th><th>Horas no ano</th><th>Média por semana</th><th>Semana mais carregada</th></tr></thead>
+      <thead><tr><th>Especialidade</th><th>Horas no ano</th><th>Média por semana</th><th>Semana mais carregada</th><th>Horas disponíveis por semana</th><th>Situação</th></tr></thead>
       <tbody>${especialidades}</tbody>
     </table></div>`;
 }
@@ -67,7 +71,7 @@ function htmlLinha(l) {
 }
 
 export function telaRevisao(main, ir) {
-  const problemas = validarLista(estado.equipamentos, biblioteca.tipos);
+  const problemas = validarLista(estado.equipamentos, estado.biblioteca.tipos);
   const comErro = Object.keys(problemas).length;
   const dados = dadosAtuais();
 
@@ -94,7 +98,7 @@ export function telaRevisao(main, ir) {
         <a href="#equipamentos">Corrigir na tela Equipamentos</a>.</p>` : ''}
       <p>Confira as tarefas de cada equipamento. Você pode mudar a periodicidade e retirar tarefas que não se aplicam.
       <strong>Tarefas de segurança</strong> só aceitam periodicidade igual ou mais frequente e não podem ser retiradas.</p>
-      <p class="origem">Biblioteca: ${esc(biblioteca.nome)}, versão ${esc(biblioteca.versao)} (${esc(biblioteca.data)}).
+      <p class="origem">Biblioteca: ${esc(estado.biblioteca.nome)}, versão ${esc(estado.biblioteca.versao)} (${esc(estado.biblioteca.data)}).
       Todas as tarefas são base genérica a validar com o manual do fabricante.</p>
     </section>
 
@@ -119,7 +123,7 @@ export function telaRevisao(main, ir) {
   main.querySelector('#tarefas').addEventListener('change', (e) => {
     const alvo = e.target;
     if (!alvo.dataset.acao) return;
-    const tarefa = biblioteca.tipos.flatMap((t) => t.tarefas).find((t) => t.id === alvo.dataset.tarefa);
+    const tarefa = estado.biblioteca.tipos.flatMap((t) => t.tarefas).find((t) => t.id === alvo.dataset.tarefa);
     const alteracao = alvo.dataset.acao === 'ativa' ? { ativa: alvo.checked } : { periodicidade: alvo.value };
     const r = aplicarAjuste(estado.ajustes, alvo.dataset.eq, tarefa, alteracao);
     if (!r.ok) {
@@ -132,6 +136,17 @@ export function telaRevisao(main, ir) {
     alvo.closest('tr').classList.toggle('retirada', alvo.dataset.acao === 'ativa' && !alvo.checked);
     main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
     avisar('Ajuste salvo.');
+  });
+
+  // Capacidade por especialidade (o quadro é redesenhado, então o evento fica no contêiner)
+  main.querySelector('#carga').addEventListener('change', (e) => {
+    if (!e.target.classList.contains('capacidade')) return;
+    const valor = Number(e.target.value);
+    if (e.target.value === '' || !(valor > 0)) delete estado.capacidade[e.target.dataset.especialidade];
+    else estado.capacidade[e.target.dataset.especialidade] = valor;
+    salvar();
+    main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+    avisar('Capacidade salva. Cronograma redistribuído.');
   });
 
   main.querySelector('#inicio').addEventListener('change', (e) => {

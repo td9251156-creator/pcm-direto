@@ -1,5 +1,4 @@
 // Tela 1: Início
-import biblioteca from '../dados/biblioteca.json';
 import { estado, limpar, carregarExemplo } from '../estado.js';
 import { esc, avisar } from '../ui.js';
 
@@ -34,8 +33,8 @@ export function telaInicio(main, ir) {
 
     <section class="cartao">
       <h3>Equipamentos atendidos pela biblioteca</h3>
-      <ul>${biblioteca.tipos.map((t) => `<li>${esc(t.nome)} (${esc(t.sigla)}) — ${t.tarefas.length} tarefas</li>`).join('')}</ul>
-      <p class="origem">${esc(biblioteca.nome)}, versão ${esc(biblioteca.versao)} (${esc(biblioteca.data)}). ${esc(biblioteca.aviso)}</p>
+      <ul>${estado.biblioteca.tipos.map((t) => `<li>${esc(t.nome)} (${esc(t.sigla)}) — ${t.tarefas.length} tarefas</li>`).join('')}</ul>
+      <p class="origem">${esc(estado.biblioteca.nome)}, versão ${esc(estado.biblioteca.versao)} (${esc(estado.biblioteca.data)}). ${esc(estado.biblioteca.aviso)}</p>
     </section>
 
     <section class="cartao">

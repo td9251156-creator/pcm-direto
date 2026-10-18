@@ -1,13 +1,12 @@
 // Tela 2: Equipamentos — cadastro manual, colar do Excel, importar CSV e lista com validação ao vivo.
-import biblioteca from '../dados/biblioteca.json';
 import { estado, salvar, adicionar, remover, limpar, atualizarTag } from '../estado.js';
 import { validarEquipamento, validarLista } from '../logica/validacao.js';
 import { lerTabela, novoId, paraCsv } from '../logica/entrada.js';
 import { normalizarSetor, proximoNumero, gerarTag } from '../logica/tag.js';
 import { esc, baixar, avisar } from '../ui.js';
 
-const tipos = biblioteca.tipos;
-const nomeTipo = (id) => tipos.find((t) => t.id === id)?.nome ?? id;
+const tipos = () => estado.biblioteca.tipos; // tipos da biblioteca em uso
+const nomeTipo = (id) => tipos().find((t) => t.id === id)?.nome ?? id;
 
 const CAMPOS_TEXTO = [
   ['descricao', 'Descrição', 'Ex.: Motor do exaustor 1'],
@@ -16,9 +15,9 @@ const CAMPOS_TEXTO = [
 ];
 
 function opcoesTipo(atual) {
-  const conhecido = tipos.some((t) => t.id === atual);
+  const conhecido = tipos().some((t) => t.id === atual);
   return (conhecido ? '' : `<option value="${esc(atual)}" selected>${atual ? esc(atual) + ' (não reconhecido)' : 'Escolha o tipo'}</option>`) +
-    tipos.map((t) => `<option value="${t.id}" ${t.id === atual ? 'selected' : ''}>${esc(t.nome)}</option>`).join('');
+    tipos().map((t) => `<option value="${t.id}" ${t.id === atual ? 'selected' : ''}>${esc(t.nome)}</option>`).join('');
 }
 
 /** Lista de problemas com botão para aplicar a sugestão. */
@@ -121,7 +120,7 @@ export function telaEquipamentos(main, ir) {
 
   // Desenha a lista inteira (usado ao adicionar, remover ou aplicar sugestão)
   function desenharLista() {
-    const problemas = validarLista(estado.equipamentos, tipos);
+    const problemas = validarLista(estado.equipamentos, tipos());
     // Abre os que têm pendência e os que o usuário já tinha aberto
     lista.innerHTML = estado.equipamentos.map((e) => htmlEquipamento(e, problemas[e.id] || abertos.has(e.id))).join('') ||
       '<p>Nenhum equipamento ainda. Cadastre acima, cole do Excel ou importe um CSV.</p>';
@@ -130,7 +129,7 @@ export function telaEquipamentos(main, ir) {
 
   // Atualiza só mensagens, TAGs e contagem, sem redesenhar os campos (não perde o cursor)
   function atualizarValidacao() {
-    const problemas = validarLista(estado.equipamentos, tipos);
+    const problemas = validarLista(estado.equipamentos, tipos());
     for (const fs of lista.querySelectorAll('.equip')) {
       const eq = estado.equipamentos.find((e) => e.id === fs.dataset.id);
       fs.querySelector('.tag-eq').textContent = eq.tag;
@@ -203,13 +202,13 @@ export function telaEquipamentos(main, ir) {
     const d = Object.fromEntries(new FormData(form));
     const eq = { ...d, id: 'novo' };
     eq.numero = proximoNumero(estado.equipamentos, eq.setor, eq.tipo);
-    eq.tag = gerarTag(eq.setor || '???', tipos.find((t) => t.id === eq.tipo)?.sigla ?? '???', eq.numero);
+    eq.tag = gerarTag(eq.setor || '???', tipos().find((t) => t.id === eq.tipo)?.sigla ?? '???', eq.numero);
     return eq;
   }
   function validarNovo(mostrarTudo) {
     const eq = rascunhoNovo();
     main.querySelector('#novo-tag').textContent = eq.tag;
-    let problemas = validarEquipamento(eq, tipos, [...estado.equipamentos, eq]);
+    let problemas = validarEquipamento(eq, tipos(), [...estado.equipamentos, eq]);
     // Enquanto digita, não reclama de campo que ainda não foi preenchido
     if (!mostrarTudo) problemas = problemas.filter((p) => String(eq[p.campo] ?? '').trim());
     main.querySelector('#novo-problemas').innerHTML = problemas.length ? htmlProblemas(problemas) : '';
@@ -247,7 +246,7 @@ export function telaEquipamentos(main, ir) {
   // ----- Colar do Excel -----
   main.querySelector('#adicionar-colado').addEventListener('click', () => {
     const campo = main.querySelector('#colar');
-    const novos = lerTabela(campo.value, tipos);
+    const novos = lerTabela(campo.value, tipos());
     if (!novos.length) { avisar('Nada para adicionar. Cole as linhas copiadas do Excel.'); return; }
     adicionar(novos);
     campo.value = '';
@@ -263,7 +262,7 @@ export function telaEquipamentos(main, ir) {
     let texto = new TextDecoder('utf-8').decode(bytes);
     // CSV salvo pelo Excel em português costuma vir em Windows-1252 (acentos quebram em UTF-8)
     if (texto.includes('\uFFFD')) texto = new TextDecoder('windows-1252').decode(bytes);
-    const novos = lerTabela(texto, tipos);
+    const novos = lerTabela(texto, tipos());
     e.target.value = '';
     if (!novos.length) { avisar('O arquivo não tem linhas de equipamento.'); return; }
     adicionar(novos);
