@@ -16,11 +16,20 @@ self.addEventListener('activate', (evento) => {
   );
 });
 
-// Primeiro o que está guardado; se não tiver, busca na internet
 self.addEventListener('fetch', (evento) => {
   const req = evento.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
-  evento.respondWith(
-    caches.match(req, { ignoreSearch: true }).then((guardado) => guardado || fetch(req).catch(() => caches.match('./'))),
-  );
+
+  // Página: primeiro a internet (para pegar a versão nova); sem internet, a guardada
+  if (req.mode === 'navigate') {
+    evento.respondWith(
+      fetch(req)
+        .then((resp) => { const copia = resp.clone(); caches.open(CACHE).then((c) => c.put('./', copia)); return resp; })
+        .catch(() => caches.match('./')),
+    );
+    return;
+  }
+
+  // Demais arquivos (nomes mudam a cada versão): primeiro o guardado; se não tiver, busca na internet
+  evento.respondWith(caches.match(req, { ignoreSearch: true }).then((guardado) => guardado || fetch(req)));
 });

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PCM Direto">
+  <rect width="512" height="512" fill="#13304A"/>
+  <text x="256" y="262" text-anchor="middle" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900" font-size="168" fill="#FFFFFF" letter-spacing="-4">PCM</text>
+  <rect x="96" y="294" width="320" height="10" fill="#D97030"/>
+  <text x="256" y="384" text-anchor="middle" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900" font-size="66" fill="#D97030" letter-spacing="10">DIRETO</text>
+</svg>

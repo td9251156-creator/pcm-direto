@@ -1,3 +1,5 @@
+<p align="center"><img src="public/icones/logo.svg" alt="PCM Direto" width="160"></p>
+
 # PCM Direto
 
 Gerador de PCM (Planejamento e Controle de Manutenção) aberto e em português.
@@ -56,7 +58,12 @@ Outros comandos:
 | `npm run lint`    | Verifica o código                                  |
 | `npm run build`   | Gera a versão final na pasta `dist/`               |
 | `npm run preview` | Abre a versão final localmente                     |
-| `npm run icones`  | Gera de novo os ícones do app                      |
+
+## Logo e ícones
+
+O logo fica em [`public/icones/logo.svg`](public/icones/logo.svg). Os ícones do aplicativo
+(`icone-192.png`, `icone-512.png` e `icone-maskable-512.png`) são imagens geradas a partir dele.
+Para trocar o logo, substitua esses quatro arquivos mantendo os nomes.
 
 ## Biblioteca técnica
 

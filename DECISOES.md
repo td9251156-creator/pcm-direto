@@ -17,8 +17,9 @@ HTML, CSS e JavaScript puro, sem framework. Vite só para rodar localmente e ger
 Bibliotecas: ExcelJS (.xlsx) e docx (.docx), ambas MIT. Hospedagem no GitHub Pages, custo zero.
 
 ## Identidade visual
-Paleta "Azul aço": azul #0B3D63 (topo, cabeçalhos, botões), laranja #B85C00 (foco do teclado) e #FF9900 (ícone),
+Paleta "Azul aço": azul #0B3D63 (topo, cabeçalhos, botões), laranja #B85C00 (foco do teclado),
 aviso em amarelo #FFF4C2 e selo de segurança em vinho #7A0019. Cores centralizadas em src/marca.js.
+Logo: quadrado azul #13304A, "PCM" em branco, barra e "DIRETO" em laranja #D97030 (public/icones/logo.svg).
 
 ## Licença
 MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação livres, sem garantia.
