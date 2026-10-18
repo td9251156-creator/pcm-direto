@@ -88,3 +88,10 @@ describe('plano preventivo', () => {
     expect(linha.vezesAno).toBe(6);
   });
 });
+
+describe('periodicidade diária', () => {
+  it('é a mais frequente e não pode ser afrouxada se for de segurança', () => {
+    expect(vezesPorAno('Diária')).toBe(260);
+    expect(podeAlterar({ periodicidade: 'Diária', seguranca: true }, { periodicidade: 'Semanal' }).ok).toBe(false);
+  });
+});

@@ -328,6 +328,17 @@
       "sigla": "PRL",
       "tarefas": [
         {
+          "id": "PRL-11",
+          "descricao": "Verificação antes do uso pelo operador: freios, fim de curso, botoeira, gancho e trava, ruídos anormais",
+          "periodicidade": "Diária",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Registrar em checklist de turno. Exigências legais de inspeção: verificar na fonte oficial."
+        },
+        {
           "id": "PRL-01",
           "descricao": "Testar freios de elevação, carro e ponte (sem carga)",
           "periodicidade": "Semanal",
@@ -336,7 +347,7 @@
           "seguranca": true,
           "origem": "base genérica a validar com manual do fabricante",
           "versao": "0.1.0",
-          "observacao": "A verificação antes do uso, feita pelo operador, deve ter checklist próprio e não entra neste cronograma."
+          "observacao": "Teste semanal pela manutenção. A verificação diária do operador está na tarefa PRL-11."
         },
         {
           "id": "PRL-02",

@@ -59,3 +59,12 @@ describe('balanceamento de carga', () => {
     expect(pico).toBeLessThanOrEqual(media * 2); // nenhuma semana com mais que o dobro da média
   });
 });
+
+describe('tarefa diária', () => {
+  it('aparece em todas as semanas, com 5 execuções por semana nas horas', () => {
+    const { itens, carga } = montarCronograma(linhas(1, 260, 0.25));
+    expect(itens[0].semanas).toHaveLength(SEMANAS);
+    expect(carga.every((h) => h === 1.25)).toBe(true);
+    expect(resumoCarga(carga).total).toBeCloseTo(260 * 0.25);
+  });
+});

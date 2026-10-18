@@ -5,7 +5,7 @@
 // PROCV, ÍNDICE, CORRESP etc. Cada fórmula leva também o resultado já calculado.
 import { AVISO } from '../logica/pacote.js';
 import { PERIODICIDADES } from '../logica/plano.js';
-import { SEMANAS } from '../logica/cronograma.js';
+import { SEMANAS, horasPorSemana } from '../logica/cronograma.js';
 import { MARCA, clarear } from '../marca.js';
 
 const AZUL = 'FF' + MARCA.primaria;
@@ -120,7 +120,7 @@ export async function gerarXlsx(dados, ExcelJS) {
   const ultCron = PRIMEIRA + itens.length - 1;
   escreverAviso(abaCron, colUlt);
   escreverCabecalho(abaCron,
-    ['TAG', 'ID tarefa', 'Tarefa', 'Especialidade', 'Horas', ...Array.from({ length: SEMANAS }, (_, i) => `S${i + 1}`)],
+    ['TAG', 'ID tarefa', 'Tarefa', 'Especialidade', 'Horas na semana', ...Array.from({ length: SEMANAS }, (_, i) => `S${i + 1}`)],
     [14, 9, 40, 13, 7, ...new Array(SEMANAS).fill(4.5)], 5);
   // Ordena por TAG e tarefa para ficar fácil de ler
   const ordenados = itens.slice().sort((a, b) => a.tag.localeCompare(b.tag) || a.tarefaId.localeCompare(b.tarefaId));
@@ -128,7 +128,9 @@ export async function gerarXlsx(dados, ExcelJS) {
     const r = PRIMEIRA + i;
     const busca = (col) => `INDEX(${faixaPlano(col)},MATCH(A${r}&"|"&B${r},${faixaPlano('A')},0))`;
     const linha = abaCron.getRow(r);
-    linha.values = [it.tag, it.tarefaId, f(busca('E'), it.descricao), f(busca('H'), it.especialidade), f(busca('I'), it.duracaoHoras)];
+        // Horas na semana = horas por execução × execuções na semana (diária = 5; demais = 1)
+    const horasSemana = f(`${busca('I')}*MAX(1,${busca('G')}/${SEMANAS})`, horasPorSemana(it));
+    linha.values = [it.tag, it.tarefaId, f(busca('E'), it.descricao), f(busca('H'), it.especialidade), horasSemana];
     for (const s of it.semanas) {
       const c = linha.getCell(COL_S1 + s - 1);
       c.value = 'X';
@@ -235,7 +237,7 @@ export async function gerarXlsx(dados, ExcelJS) {
     ['Cronograma', 'Semanas do ano (S1 a S52) em que cada tarefa deve ser executada. As execuções foram distribuídas para evitar picos de carga. Tarefas de segurança em vermelho claro.'],
     ['Ficha de Falha', 'Modelo para iniciar o histórico de falhas. Escolha a TAG na lista; o nome do equipamento e as horas paradas são preenchidos por fórmula.'],
     [],
-    ['Periodicidades', PERIODICIDADES.map((p) => `${p.nome} = ${p.vezes} vez(es) por ano`).join('; ') + '.'],
+    ['Periodicidades', PERIODICIDADES.map((p) => `${p.nome} = ${p.vezes} vez(es) por ano`).join('; ') + '. Diária considera 5 dias úteis por semana.'],
     ['Fórmulas', 'Só funções clássicas: PROCV, ÍNDICE, CORRESP, SOMASE, CONT.SE, CONT.VALORES, SE, É.NÃO.DISP, MÉDIA, MÁXIMO e SOMA. Sem macros e sem funções de matriz dinâmica.'],
     ['Importante', 'Normas: nenhuma exigência legal ou normativa foi citada neste arquivo. Onde houver dúvida, verificar na fonte oficial.'],
   ];

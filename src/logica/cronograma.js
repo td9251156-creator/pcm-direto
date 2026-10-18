@@ -7,6 +7,8 @@ export const SEMANAS = 52;
 
 /** Semanas (0 a 51) em que a tarefa ocorre, dado quantas vezes por ano e a semana de início. */
 export function semanasDaTarefa(vezes, inicio) {
+  // Mais de uma vez por semana (ex.: diária): ocorre em todas as semanas
+  if (vezes >= SEMANAS) return Array.from({ length: SEMANAS }, (_, i) => i);
   const semanas = [];
   for (let k = 0; k < vezes; k++) semanas.push(inicio + Math.round((k * SEMANAS) / vezes));
   return semanas;
@@ -15,6 +17,11 @@ export function semanasDaTarefa(vezes, inicio) {
 /** Quantas semanas de início são possíveis (Semanal = 1, Mensal = 4, Anual = 52). */
 export function opcoesDeInicio(vezes) {
   return Math.max(1, Math.floor(SEMANAS / vezes));
+}
+
+/** Horas da tarefa em cada semana em que ela aparece (diária = 5 execuções na semana). */
+export function horasPorSemana(linha) {
+  return linha.duracaoHoras * Math.max(1, linha.vezesAno / SEMANAS);
 }
 
 /**
@@ -42,14 +49,15 @@ export function montarCronograma(linhasPlano) {
     for (let inicio = 0; inicio < opcoesDeInicio(linha.vezesAno); inicio++) {
       const semanas = semanasDaTarefa(linha.vezesAno, inicio);
       // Pico: a semana mais carregada entre as que a tarefa ocuparia
-      const pico = Math.max(...semanas.map((s) => carga[s] + linha.duracaoHoras));
+      const h = horasPorSemana(linha);
+      const pico = Math.max(...semanas.map((s) => carga[s] + h));
       // Desempate: soma das horas já previstas nessas semanas
       const soma = semanas.reduce((t, s) => t + carga[s], 0);
       if (!melhor || pico < melhor.pico || (pico === melhor.pico && soma < melhor.soma)) {
         melhor = { semanas, pico, soma };
       }
     }
-    for (const s of melhor.semanas) carga[s] += linha.duracaoHoras;
+    for (const s of melhor.semanas) carga[s] += horasPorSemana(linha);
     itens.push({ ...linha, semanas: melhor.semanas.map((s) => s + 1) });
   }
 

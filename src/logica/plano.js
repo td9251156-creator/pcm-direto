@@ -1,7 +1,12 @@
 // Biblioteca técnica, plano preventivo e bloqueio de afrouxamento de tarefas de segurança.
 
-/** Periodicidades aceitas e quantas vezes por ano cada uma ocorre. Da mais frequente para a menos. */
+/**
+ * Periodicidades aceitas e quantas vezes por ano cada uma ocorre. Da mais frequente para a menos.
+ * Diária = dias úteis (5 por semana × 52 semanas).
+ */
+export const DIAS_UTEIS_SEMANA = 5;
 export const PERIODICIDADES = [
+  { nome: 'Diária', vezes: 52 * DIAS_UTEIS_SEMANA },
   { nome: 'Semanal', vezes: 52 },
   { nome: 'Quinzenal', vezes: 26 },
   { nome: 'Mensal', vezes: 12 },

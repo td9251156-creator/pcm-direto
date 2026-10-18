@@ -30,7 +30,7 @@ biblioteca
 |-----------------|------------------------------------------------------------|---------|
 | `id`            | Código único da tarefa (sigla + número)                    | `CMP-06` |
 | `descricao`     | O que fazer, em linguagem de chão de fábrica               | `Testar o funcionamento da válvula de segurança` |
-| `periodicidade` | Uma destas palavras, exatamente assim: `Semanal`, `Quinzenal`, `Mensal`, `Bimestral`, `Trimestral`, `Semestral`, `Anual` | `Mensal` |
+| `periodicidade` | Uma destas palavras, exatamente assim: `Diária`, `Semanal`, `Quinzenal`, `Mensal`, `Bimestral`, `Trimestral`, `Semestral`, `Anual` | `Mensal` |
 | `especialidade` | Quem executa                                               | `Mecânica`, `Elétrica`, `Lubrificação`, `Preditiva`, `Operação`, `Instrumentação` |
 | `duracao_horas` | Tempo estimado por execução, em horas (use ponto: `0.5`)   | `0.5` |
 | `seguranca`     | `true` se a tarefa é de segurança, `false` se não é         | `true` |
@@ -47,8 +47,8 @@ biblioteca
   a versão e a data em mãos. Na dúvida, escreva `"verificar na fonte oficial"` na observação.
 - **Sem acento no `id`**, sem vírgula sobrando no fim das listas e com aspas duplas em todos os textos
   (o formato JSON é rígido). Se algo quebrar, o comando `npm test` aponta o erro.
-- O cronograma usa semanas. Tarefas diárias (como a verificação antes do uso pelo operador) ficam fora do
-  cronograma e devem ter checklist próprio.
+- O cronograma usa semanas. Tarefa `Diária` aparece em todas as semanas, contando 5 dias úteis por semana
+  nas horas (ex.: 0,25 h por dia = 1,25 h na semana).
 
 ### Como adicionar um novo tipo de equipamento
 
@@ -118,6 +118,7 @@ Marque `[x]` na coluna OK quando a tarefa estiver revisada.
 
 | OK | ID | Tarefa | Periodicidade | Especialidade | Horas | Segurança | Ajuste proposto / fonte consultada |
 |---|---|---|---|---|---|---|---|
+| [ ] | PRL-11 | Verificação antes do uso pelo operador: freios, fim de curso, botoeira, gancho e trava, ruídos anormais | Diária | Operação | 0.25 | **Sim** |  |
 | [ ] | PRL-01 | Testar freios de elevação, carro e ponte (sem carga) | Semanal | Mecânica | 0.5 | **Sim** |  |
 | [ ] | PRL-02 | Testar limites de fim de curso de elevação, carro e ponte | Semanal | Elétrica | 0.5 | **Sim** |  |
 | [ ] | PRL-03 | Testar botoeira ou controle remoto, incluindo o botão de emergência | Semanal | Elétrica | 0.25 | **Sim** |  |
