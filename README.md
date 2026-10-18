@@ -7,7 +7,7 @@ Você informa a lista de equipamentos e recebe o plano de manutenção preventiv
 com cronograma anual, em planilha (.xlsx) e documento (.docx).
 
 - Roda 100% no navegador: sem servidor, sem login e sem banco de dados.
-- Seus dados ficam só no seu computador ou celular (rascunho salvo no próprio navegador).
+- Seus dados ficam só no seu computador ou celular (lista salva no próprio navegador).
 - Funciona como aplicativo no PC e no celular (PWA instalável).
 - Gratuito e de código aberto (licença MIT).
 

@@ -34,7 +34,7 @@ MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação liv
 ## Riscos conhecidos
 | Risco | Como tratamos |
 |---|---|
-| Periodicidades genéricas aplicadas sem validação | Aviso permanente em todas as telas e em todos os arquivos gerados; origem marcada em cada tarefa |
+| Periodicidades genéricas aplicadas sem validação | Aviso discreto no rodapé de todas as telas (decisão de 18/10/2026: sai o destaque amarelo para melhorar a leitura) e completo em todos os arquivos gerados; origem marcada em cada tarefa |
 | Usuário afrouxar tarefa de segurança | Bloqueio no app: só aceita periodicidade igual ou mais frequente |
 | Interpretação como garantia de conformidade | Nenhuma citação de norma sem fonte oficial; nenhuma promessa de conformidade |
 | Perda do rascunho (limpeza do navegador) | Rascunho só no localStorage; orientar a baixar a planilha ao final |
