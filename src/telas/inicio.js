@@ -34,6 +34,7 @@ export function telaInicio(main, ir) {
     <section class="cartao">
       <h3>Equipamentos atendidos pela biblioteca</h3>
       <ul>${estado.biblioteca.tipos.map((t) => `<li>${esc(t.nome)} (${esc(t.sigla)}) — ${t.tarefas.length} tarefas</li>`).join('')}</ul>
+      <p><a href="#biblioteca">Ver e editar a biblioteca técnica</a> (tarefas, periodicidades e novos tipos).</p>
       <p class="origem">${esc(estado.biblioteca.nome)}, versão ${esc(estado.biblioteca.versao)} (${esc(estado.biblioteca.data)}). ${esc(estado.biblioteca.aviso)}</p>
     </section>
 

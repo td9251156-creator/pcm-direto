@@ -3,6 +3,10 @@
 Todas as tarefas de manutenção ficam em **um único arquivo**: [`src/dados/biblioteca.json`](src/dados/biblioteca.json).
 Você pode editar esse arquivo no VS Code (ou no próprio site do GitHub) sem programar.
 
+Outra forma: no app, abra **Biblioteca técnica** (link na tela Início). Lá dá para editar tarefas, criar
+tipos e baixar o arquivo `biblioteca.json` pronto para substituir o do projeto. As tarefas de segurança que
+vêm com o app continuam travadas: só aceitam periodicidade igual ou mais frequente e não podem ser apagadas.
+
 > **Aviso:** O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o
 > texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante.
 

@@ -144,3 +144,9 @@ details.cartao[open] > summary { margin-bottom: .75rem; }
 .linha-erro { border-color: var(--erro); }
 .equip > summary::before { content: '▸'; color: var(--primaria); }
 .equip[open] > summary::before { content: '▾'; }
+
+/* Edição da biblioteca */
+.tarefa-edicao { border: 1px solid var(--borda); border-radius: 6px; padding: .5rem .75rem .75rem; margin: 0 0 .75rem; }
+.tarefa-edicao legend { padding: 0 .3rem; }
+label.caixa { display: inline-flex; align-items: center; gap: .4rem; font-weight: 600; margin: 0; }
+label.caixa input { width: 22px; height: 22px; min-height: 0; }

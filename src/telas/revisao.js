@@ -99,7 +99,8 @@ export function telaRevisao(main, ir) {
       <p>Confira as tarefas de cada equipamento. Você pode mudar a periodicidade e retirar tarefas que não se aplicam.
       <strong>Tarefas de segurança</strong> só aceitam periodicidade igual ou mais frequente e não podem ser retiradas.</p>
       <p class="origem">Biblioteca: ${esc(estado.biblioteca.nome)}, versão ${esc(estado.biblioteca.versao)} (${esc(estado.biblioteca.data)}).
-      Todas as tarefas são base genérica a validar com o manual do fabricante.</p>
+      Todas as tarefas são base genérica a validar com o manual do fabricante.
+      <a href="#biblioteca">Editar a biblioteca</a>.</p>
     </section>
 
     <section class="cartao">
