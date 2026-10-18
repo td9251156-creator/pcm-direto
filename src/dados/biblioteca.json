@@ -1,0 +1,443 @@
+{
+  "nome": "Biblioteca técnica PCM Direto",
+  "versao": "0.1.0",
+  "data": "2026-10-18",
+  "aviso": "Base genérica para iniciar o plano. Toda periodicidade e tarefa deve ser confirmada com o manual do fabricante e com a avaliação de profissional habilitado. Não substitui o texto oficial das normas.",
+  "tipos": [
+    {
+      "id": "motor_eletrico",
+      "nome": "Motor elétrico",
+      "sigla": "MOT",
+      "tarefas": [
+        {
+          "id": "MOT-01",
+          "descricao": "Inspeção visual e limpeza externa da carcaça, aletas e entrada de ventilação",
+          "periodicidade": "Mensal",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "MOT-02",
+          "descricao": "Verificar ruído e vibração anormal (sensitiva ou com coletor de vibração)",
+          "periodicidade": "Mensal",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "MOT-03",
+          "descricao": "Medir corrente nas três fases e comparar com a corrente nominal da placa",
+          "periodicidade": "Trimestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "MOT-04",
+          "descricao": "Medir temperatura da carcaça e dos mancais (termômetro ou termografia)",
+          "periodicidade": "Trimestral",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "MOT-05",
+          "descricao": "Lubrificar rolamentos com o tipo e a quantidade de graxa indicados pelo fabricante",
+          "periodicidade": "Trimestral",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Motores com rolamento blindado podem não ter ponto de lubrificação. Confirmar na placa e no manual."
+        },
+        {
+          "id": "MOT-06",
+          "descricao": "Reapertar conexões da caixa de ligação e verificar estado dos cabos e prensa-cabos",
+          "periodicidade": "Semestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 1,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "MOT-07",
+          "descricao": "Verificar continuidade do aterramento da carcaça",
+          "periodicidade": "Anual",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Exigências legais sobre instalações elétricas: verificar na fonte oficial."
+        },
+        {
+          "id": "MOT-08",
+          "descricao": "Medir resistência de isolamento dos enrolamentos (megômetro) e registrar o valor",
+          "periodicidade": "Anual",
+          "especialidade": "Elétrica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Comparar com medições anteriores e com o valor mínimo indicado pelo fabricante."
+        }
+      ]
+    },
+    {
+      "id": "compressor_ar",
+      "nome": "Compressor de ar",
+      "sigla": "CMP",
+      "tarefas": [
+        {
+          "id": "CMP-01",
+          "descricao": "Drenar condensado do reservatório e dos filtros (ou verificar o dreno automático)",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Muitos fabricantes indicam drenagem diária. Confirmar no manual."
+        },
+        {
+          "id": "CMP-02",
+          "descricao": "Verificar nível de óleo do compressor",
+          "periodicidade": "Semanal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "CMP-03",
+          "descricao": "Limpar ou trocar o filtro de ar de admissão",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Ambientes com muita poeira pedem intervalo menor."
+        },
+        {
+          "id": "CMP-04",
+          "descricao": "Verificar vazamentos de ar em conexões, mangueiras e linha próxima",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "CMP-05",
+          "descricao": "Inspecionar correias (tensão e desgaste) e fixação das proteções de partes móveis",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Não se aplica a compressores de acionamento direto, exceto a parte das proteções."
+        },
+        {
+          "id": "CMP-06",
+          "descricao": "Testar o funcionamento da válvula de segurança (alívio de pressão)",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.25,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Calibração e exigências legais para vasos de pressão: verificar na fonte oficial."
+        },
+        {
+          "id": "CMP-07",
+          "descricao": "Conferir manômetros e pressostato (pressões de carga e alívio)",
+          "periodicidade": "Trimestral",
+          "especialidade": "Instrumentação",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "CMP-08",
+          "descricao": "Trocar óleo e filtro de óleo",
+          "periodicidade": "Semestral",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 2,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Fabricantes costumam indicar por horas de operação. Converter para o regime de uso real."
+        },
+        {
+          "id": "CMP-09",
+          "descricao": "Trocar elemento separador ar/óleo (compressor de parafuso)",
+          "periodicidade": "Anual",
+          "especialidade": "Mecânica",
+          "duracao_horas": 2,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Não se aplica a compressores de pistão."
+        },
+        {
+          "id": "CMP-10",
+          "descricao": "Inspecionar externamente o reservatório: corrosão, suportes, identificação e acessórios",
+          "periodicidade": "Anual",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "O reservatório pode ser vaso de pressão sujeito a regras legais próprias: verificar na fonte oficial."
+        }
+      ]
+    },
+    {
+      "id": "bomba_centrifuga",
+      "nome": "Bomba centrífuga",
+      "sigla": "BCF",
+      "tarefas": [
+        {
+          "id": "BCF-01",
+          "descricao": "Verificar vazamento na vedação (selo mecânico ou gaxeta)",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Gaxeta normalmente trabalha com gotejamento controlado. Confirmar no manual."
+        },
+        {
+          "id": "BCF-02",
+          "descricao": "Registrar pressões de sucção e recalque e comparar com o ponto de operação",
+          "periodicidade": "Mensal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "BCF-03",
+          "descricao": "Verificar ruído, vibração e temperatura dos mancais",
+          "periodicidade": "Mensal",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "BCF-04",
+          "descricao": "Verificar fixação e estado da proteção do acoplamento",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.25,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "BCF-05",
+          "descricao": "Lubrificar mancais ou verificar nível de óleo do suporte de mancais",
+          "periodicidade": "Trimestral",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "BCF-06",
+          "descricao": "Inspecionar acoplamento e elemento elástico",
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "BCF-07",
+          "descricao": "Verificar alinhamento entre motor e bomba",
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 2,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Tolerâncias conforme fabricante do acoplamento."
+        },
+        {
+          "id": "BCF-08",
+          "descricao": "Reapertar base, chumbadores e flanges",
+          "periodicidade": "Anual",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "BCF-09",
+          "descricao": "Inspeção interna: rotor, anéis de desgaste e folgas",
+          "periodicidade": "Anual",
+          "especialidade": "Mecânica",
+          "duracao_horas": 4,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Pode ser substituída por acompanhamento de desempenho, se o histórico permitir."
+        }
+      ]
+    },
+    {
+      "id": "ponte_rolante",
+      "nome": "Ponte rolante",
+      "sigla": "PRL",
+      "tarefas": [
+        {
+          "id": "PRL-01",
+          "descricao": "Testar freios de elevação, carro e ponte (sem carga)",
+          "periodicidade": "Semanal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "A verificação antes do uso, feita pelo operador, deve ter checklist próprio e não entra neste cronograma."
+        },
+        {
+          "id": "PRL-02",
+          "descricao": "Testar limites de fim de curso de elevação, carro e ponte",
+          "periodicidade": "Semanal",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "PRL-03",
+          "descricao": "Testar botoeira ou controle remoto, incluindo o botão de emergência",
+          "periodicidade": "Semanal",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.25,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "PRL-04",
+          "descricao": "Inspecionar cabo de aço: fios rompidos, amassamentos, corrosão e lubrificação",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Critério de descarte conforme fabricante do cabo; exigências legais: verificar na fonte oficial."
+        },
+        {
+          "id": "PRL-05",
+          "descricao": "Inspecionar gancho, trava de segurança e moitão (trincas, deformação, abertura)",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "PRL-06",
+          "descricao": "Verificar nível de óleo e vazamentos dos redutores",
+          "periodicidade": "Mensal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "PRL-07",
+          "descricao": "Lubrificar cabo de aço, rodas, mancais e engrenagens abertas",
+          "periodicidade": "Trimestral",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 2,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "PRL-08",
+          "descricao": "Inspecionar barramento ou festoon, coletores de corrente e painel elétrico",
+          "periodicidade": "Trimestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 1,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "PRL-09",
+          "descricao": "Inspecionar trilhos, rodas, batentes e para-choques",
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 3,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Trabalho em altura: seguir os procedimentos internos de segurança."
+        },
+        {
+          "id": "PRL-10",
+          "descricao": "Inspeção geral da estrutura, fixações e placa de capacidade, por profissional habilitado",
+          "periodicidade": "Anual",
+          "especialidade": "Mecânica",
+          "duracao_horas": 4,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Exigências legais de inspeção periódica e teste de carga: verificar na fonte oficial."
+        }
+      ]
+    }
+  ]
+}
