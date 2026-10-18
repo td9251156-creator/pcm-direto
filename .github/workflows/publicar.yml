@@ -1,0 +1,53 @@
+# Verifica o código (lint), roda os testes, gera a versão final e publica no GitHub Pages.
+# Em pull requests, só verifica. Em push na main (ou rodando à mão), também publica.
+name: Verificar e publicar
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+      - name: Instalar dependências
+        run: npm ci
+      - name: Verificar o código (lint)
+        run: npm run lint
+      - name: Rodar os testes
+        run: npm test
+      - name: Gerar a versão final
+        run: npm run build
+      - name: Guardar a versão final para publicar
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  publicar:
+    if: github.event_name != 'pull_request'
+    needs: verificar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacao.outputs.page_url }}
+    steps:
+      - name: Publicar no GitHub Pages
+        id: publicacao
+        uses: actions/deploy-pages@v4
