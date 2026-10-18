@@ -66,6 +66,8 @@ Outros comandos:
 O logo fica em [`public/icones/logo.svg`](public/icones/logo.svg). Os ícones do aplicativo
 (`icone-192.png`, `icone-512.png` e `icone-maskable-512.png`) são imagens geradas a partir dele.
 Para trocar o logo, substitua esses quatro arquivos mantendo os nomes.
+As letras do logo usam a fonte DejaVu Sans Bold (licença livre do projeto DejaVu), convertidas em desenho
+para aparecerem iguais em qualquer aparelho.
 
 ## Biblioteca técnica
 
