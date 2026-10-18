@@ -10,6 +10,8 @@
     <link rel="icon" href="./icones/logo.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icones/icone-192.png" />
     <link rel="stylesheet" href="./src/estilo.css" />
+    <!-- Aplica o tema escolhido antes de desenhar a página (evita piscar) -->
+    <script>try { const t = localStorage.getItem('pcm-direto:tema'); if (t) document.documentElement.dataset.tema = t; } catch (e) { /* sem acesso ao armazenamento */ }</script>
   </head>
   <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -33,6 +35,7 @@
 
     <footer class="rodape">
       <p>PCM Direto · código aberto (MIT) · seus dados ficam só neste aparelho.</p>
+      <button type="button" class="secundario tema" id="tema">Tema: automático</button>
       <!-- Aviso: discreto no rodapé de todas as telas; completo na planilha, no Word e no README -->
       <p class="aviso-rodape" id="aviso-permanente">
         O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o

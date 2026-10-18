@@ -14,6 +14,25 @@
   --seguranca: #7a0019;
   --destaque: #b85c00; /* contorno de foco e detalhes; mesma cor de src/marca.js */
   --foco: var(--destaque);
+  --acento: var(--primaria); /* cor de links, botões secundários e marcas sobre o fundo */
+  --th-fundo: #e8eef4;
+  --botao: var(--primaria); /* fundo do botão principal */
+  --seguranca-texto: #7a0019;
+  color-scheme: light;
+}
+
+/* Modo escuro: segue o aparelho, ou a escolha no rodapé (data-tema no <html>) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fundo: #10161d; --texto: #e8edf2; --suave: #b3bec9; --borda: #6b7785;
+    --erro: #ff9a9a; --erro-fundo: #3a1717; --ok: #86dc98; --destaque: #ffb04d;
+    --acento: #8cc4ff; --th-fundo: #1d2a36; --botao: #1d5f96; --seguranca-texto: #ff8fa3; color-scheme: dark;
+  }
+}
+:root[data-tema="escuro"] {
+  --fundo: #10161d; --texto: #e8edf2; --suave: #b3bec9; --borda: #6b7785;
+  --erro: #ff9a9a; --erro-fundo: #3a1717; --ok: #86dc98; --destaque: #ffb04d;
+  --acento: #8cc4ff; --th-fundo: #1d2a36; --botao: #1d5f96; --seguranca-texto: #ff8fa3; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -55,10 +74,10 @@ h2 { margin-top: 0; }
 
 button, .botao {
   font: inherit; padding: .6rem 1rem; border-radius: 4px; cursor: pointer;
-  border: 2px solid var(--primaria); background: var(--primaria); color: var(--primaria-texto);
+  border: 2px solid var(--botao); background: var(--botao); color: var(--primaria-texto);
   min-height: 44px; /* área de toque confortável no celular */
 }
-button.secundario { background: var(--fundo); color: var(--primaria); }
+button.secundario { background: var(--fundo); color: var(--acento); border-color: var(--acento); }
 button:disabled { opacity: .5; cursor: not-allowed; }
 
 label { display: block; font-weight: 600; margin-bottom: .25rem; }
@@ -76,7 +95,7 @@ textarea { min-height: 8rem; }
 .tabela-rolagem { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: .95rem; }
 th, td { border: 1px solid var(--borda); padding: .4rem .5rem; text-align: left; vertical-align: top; }
-th { background: #e8eef4; }
+th { background: var(--th-fundo); }
 
 .erro { color: var(--erro); }
 .linha-erro { background: var(--erro-fundo); }
@@ -108,7 +127,7 @@ th { background: #e8eef4; }
   display: flex; align-items: flex-end; gap: 1px; height: 120px;
   border-bottom: 2px solid var(--borda); border-left: 2px solid var(--borda); padding-left: 2px;
 }
-.barra { flex: 1; background: var(--primaria); min-width: 2px; }
+.barra { flex: 1; background: var(--acento); min-width: 2px; }
 
 /* Lista de equipamentos */
 fieldset.equip legend { padding: 0 .4rem; font-size: 1.1rem; }
@@ -122,7 +141,7 @@ tr.retirada td { color: var(--suave); text-decoration: line-through; }
 tr.retirada td select, tr.retirada td input { text-decoration: none; }
 td input[type="checkbox"] { width: 24px; height: 24px; min-height: 0; }
 td select { min-width: 9rem; }
-a { color: var(--primaria); }
+a { color: var(--acento); }
 .erro a { color: var(--erro); font-weight: 700; }
 
 /* Menu de etapas: no celular, 4 abas lado a lado */
@@ -142,7 +161,7 @@ details.cartao[open] > summary { margin-bottom: .75rem; }
 .equip .desc-eq { flex: 1; min-width: 10rem; }
 .equip { padding: .6rem 1rem; margin-bottom: .5rem; }
 .linha-erro { border-color: var(--erro); }
-.equip > summary::before { content: '▸'; color: var(--primaria); }
+.equip > summary::before { content: '▸'; color: var(--acento); }
 .equip[open] > summary::before { content: '▾'; }
 
 /* Edição da biblioteca */
@@ -153,7 +172,7 @@ label.caixa input { width: 22px; height: 22px; min-height: 0; }
 
 /* Links com cara de botão */
 a.botao { display: inline-flex; align-items: center; text-decoration: none; }
-a.botao.secundario { background: var(--fundo); color: var(--primaria); }
+a.botao.secundario { background: var(--fundo); color: var(--acento); border-color: var(--acento); }
 a.botao[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 
 /* Cronograma para imprimir */
@@ -167,8 +186,8 @@ a.botao[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 .cronograma-impresso th, .cronograma-impresso td { padding: .15rem .25rem; }
 .cronograma-impresso th.sem { text-align: center; font-size: .65rem; }
 .cronograma-impresso th.sem span { font-weight: 400; }
-.cronograma-impresso td.x { text-align: center; color: var(--primaria); padding: 0; }
-.cronograma-impresso tr.seg td.x { color: var(--seguranca); }
+.cronograma-impresso td.x { text-align: center; color: var(--acento); padding: 0; }
+.cronograma-impresso tr.seg td.x { color: var(--seguranca-texto); }
 .cronograma-impresso td.tag { white-space: nowrap; }
 .cronograma-impresso .num { text-align: right; white-space: nowrap; }
 .aviso-impresso { font-size: .7rem; color: var(--suave); }
@@ -176,6 +195,7 @@ a.botao[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 @media print {
   @page { size: A4 landscape; margin: 8mm; }
   .topo, .rodape, .mensagens, .nao-imprimir, .pular { display: none !important; }
+  :root { --fundo: #fff; --texto: #000; --suave: #333; --borda: #555; --acento: #0b3d63; --th-fundo: #e8eef4; --seguranca-texto: #7a0019; }
   body { background: #fff; color: #000; }
   main { padding: 0; max-width: none; }
   .folha { overflow: visible; }
@@ -186,3 +206,6 @@ a.botao[aria-disabled="true"] { opacity: .5; pointer-events: none; }
   .quebra { break-after: page; }
   th { background: #e8eef4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Botão de tema no rodapé */
+.tema { min-height: 36px; padding: .2rem .7rem; font-size: .85rem; margin-top: .5rem; }

@@ -18,13 +18,17 @@ com cronograma anual, em planilha (.xlsx) e documento (.docx).
 ## Como usar
 
 1. **Início:** abra o app. Um exemplo com dados fictícios já vem carregado para você ver o resultado.
-2. **Equipamentos:** cadastre um a um, cole direto do Excel ou importe um arquivo CSV.
+2. **Equipamentos:** cadastre um a um, cole direto do Excel ou importe uma planilha (.xlsx) ou CSV.
    O app gera a TAG padronizada (setor + tipo + número) e aponta erros com sugestão de correção.
 3. **Revisão:** confira as tarefas de cada equipamento e ajuste periodicidades.
    Tarefas de segurança só aceitam periodicidade igual ou mais frequente que a da biblioteca.
    Escolha a data de início do plano: o cronograma mostra o dia em que cada semana começa
    e a carga de horas por semana de cada especialidade.
-4. **Entrega:** baixe a planilha (.xlsx) e o resumo (.docx).
+   Informe as horas disponíveis por semana em cada especialidade: o cronograma respeita esse limite.
+4. **Entrega:** baixe a planilha (.xlsx) e o resumo (.docx), ou imprima o cronograma em A4 deitado.
+
+Extras: a tela **Biblioteca técnica** (link no Início) permite editar tarefas e criar tipos de equipamento
+no próprio app, e o botão de tema no rodapé alterna entre claro, escuro e automático.
 
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.

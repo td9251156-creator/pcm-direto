@@ -41,6 +41,21 @@ function mostrar() {
   window.scrollTo(0, 0);
 }
 
+// Tema: automático (segue o aparelho) → claro → escuro
+const TEMAS = ['', 'claro', 'escuro'];
+const NOMES_TEMA = { '': 'automático', claro: 'claro', escuro: 'escuro' };
+const botaoTema = document.getElementById('tema');
+function mostrarTema() { botaoTema.textContent = `Tema: ${NOMES_TEMA[document.documentElement.dataset.tema ?? '']}`; }
+botaoTema.addEventListener('click', () => {
+  const atual = document.documentElement.dataset.tema ?? '';
+  const novo = TEMAS[(TEMAS.indexOf(atual) + 1) % TEMAS.length];
+  if (novo) document.documentElement.dataset.tema = novo;
+  else delete document.documentElement.dataset.tema;
+  try { if (novo) localStorage.setItem('pcm-direto:tema', novo); else localStorage.removeItem('pcm-direto:tema'); } catch { /* segue sem salvar */ }
+  mostrarTema();
+});
+mostrarTema();
+
 carregar();
 window.addEventListener('hashchange', mostrar);
 mostrar();

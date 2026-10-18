@@ -11,7 +11,11 @@
 - Bloqueio de afrouxamento de tarefas de segurança.
 - Ficha de falha mínima para iniciar o histórico.
 - Pacote final: planilha .xlsx (6 abas) e resumo .docx.
-- PWA instalável, rascunho salvo no navegador.
+- PWA instalável, lista salva no navegador, modo escuro.
+- Capacidade de horas por especialidade respeitada no cronograma.
+- Edição da biblioteca técnica no app (com as tarefas de segurança travadas).
+- Cronograma para imprimir em A4 deitado.
+- Importação de equipamentos direto de planilha .xlsx.
 
 ## Próximas etapas
 
@@ -26,6 +30,6 @@ e revisão por profissional habilitado.
 MTBF, MTTR e disponibilidade a partir do histórico de falhas.
 
 ### Etapa 5 — Planejamento avançado
-Capacidade de mão de obra por especialidade, paradas programadas e agrupamento de tarefas por janela.
+Paradas programadas e agrupamento de tarefas por janela.
 
 Sugestões são bem-vindas por *issue*.
