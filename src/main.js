@@ -6,6 +6,7 @@ import { telaEquipamentos } from './telas/equipamentos.js';
 import { telaRevisao } from './telas/revisao.js';
 import { telaEntrega } from './telas/entrega.js';
 import { telaBiblioteca } from './telas/biblioteca.js';
+import { telaImpressao } from './telas/impressao.js';
 
 const TELAS = {
   inicio: { titulo: 'Início', desenhar: telaInicio },
@@ -13,6 +14,7 @@ const TELAS = {
   revisao: { titulo: 'Revisão', desenhar: telaRevisao },
   entrega: { titulo: 'Entrega', desenhar: telaEntrega },
   biblioteca: { titulo: 'Biblioteca técnica', desenhar: telaBiblioteca }, // fora das 4 etapas
+  impressao: { titulo: 'Cronograma para imprimir', desenhar: telaImpressao },
 };
 
 const main = document.getElementById('conteudo');

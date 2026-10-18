@@ -49,6 +49,7 @@ export function telaEntrega(main) {
         <button type="button" id="baixar-tudo" ${bloqueado ? 'disabled' : ''}>Baixar planilha e resumo</button>
         <button type="button" class="secundario" id="baixar-xlsx" ${bloqueado ? 'disabled' : ''}>Só a planilha (.xlsx)</button>
         <button type="button" class="secundario" id="baixar-docx" ${bloqueado ? 'disabled' : ''}>Só o resumo (.docx)</button>
+        <a class="botao secundario" href="#impressao" ${bloqueado ? 'aria-disabled="true" tabindex="-1"' : ''}>Imprimir cronograma (A4)</a>
         <button type="button" class="secundario" id="baixar-csv" ${vazio ? 'disabled' : ''}>Baixar equipamentos (.csv)</button>
       </div>
     </section>

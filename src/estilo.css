@@ -150,3 +150,39 @@ details.cartao[open] > summary { margin-bottom: .75rem; }
 .tarefa-edicao legend { padding: 0 .3rem; }
 label.caixa { display: inline-flex; align-items: center; gap: .4rem; font-weight: 600; margin: 0; }
 label.caixa input { width: 22px; height: 22px; min-height: 0; }
+
+/* Links com cara de botão */
+a.botao { display: inline-flex; align-items: center; text-decoration: none; }
+a.botao.secundario { background: var(--fundo); color: var(--primaria); }
+a.botao[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+
+/* Cronograma para imprimir */
+.folha { overflow-x: auto; }
+.cab-impressao { display: flex; gap: .75rem; align-items: center; margin-bottom: .5rem; font-size: .9rem; }
+.cronograma-impresso { font-size: .72rem; margin-bottom: 1rem; table-layout: fixed; min-width: 1000px; }
+.cronograma-impresso col.c-tag { width: 19mm; }
+.cronograma-impresso col.c-tarefa { width: 66mm; }
+.cronograma-impresso col.c-esp { width: 20mm; }
+.cronograma-impresso col.c-h { width: 9mm; }
+.cronograma-impresso th, .cronograma-impresso td { padding: .15rem .25rem; }
+.cronograma-impresso th.sem { text-align: center; font-size: .65rem; }
+.cronograma-impresso th.sem span { font-weight: 400; }
+.cronograma-impresso td.x { text-align: center; color: var(--primaria); padding: 0; }
+.cronograma-impresso tr.seg td.x { color: var(--seguranca); }
+.cronograma-impresso td.tag { white-space: nowrap; }
+.cronograma-impresso .num { text-align: right; white-space: nowrap; }
+.aviso-impresso { font-size: .7rem; color: var(--suave); }
+
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  .topo, .rodape, .mensagens, .nao-imprimir, .pular { display: none !important; }
+  body { background: #fff; color: #000; }
+  main { padding: 0; max-width: none; }
+  .folha { overflow: visible; }
+  .cronograma-impresso { font-size: 6.5pt; min-width: 0; width: 100%; }
+  .cronograma-impresso th.sem { font-size: 5.5pt; }
+  .cronograma-impresso thead { display: table-header-group; }
+  .cronograma-impresso tr { break-inside: avoid; }
+  .quebra { break-after: page; }
+  th { background: #e8eef4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
