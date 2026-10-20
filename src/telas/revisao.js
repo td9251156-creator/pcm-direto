@@ -71,6 +71,13 @@ function htmlLinha(l) {
     </tr>`;
 }
 
+function redesenharCarga(main, especialidadeFocada = null) {
+  main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+  if (!especialidadeFocada) return;
+  const seletor = globalThis.CSS?.escape ? CSS.escape(especialidadeFocada) : especialidadeFocada;
+  main.querySelector(`#cap-${seletor}`)?.focus();
+}
+
 export function telaRevisao(main, ir) {
   const problemas = validarLista(estado.equipamentos, estado.biblioteca.tipos);
   const comErro = Object.keys(problemas).length;
@@ -137,7 +144,7 @@ export function telaRevisao(main, ir) {
     estado.ajustes = r.ajustes;
     salvar();
     alvo.closest('tr').classList.toggle('retirada', alvo.dataset.acao === 'ativa' && !alvo.checked);
-    main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+    redesenharCarga(main);
     avisar('Ajuste aplicado.');
   });
 
@@ -148,7 +155,15 @@ export function telaRevisao(main, ir) {
     if (e.target.value === '' || !(valor > 0)) delete estado.capacidade[e.target.dataset.especialidade];
     else estado.capacidade[e.target.dataset.especialidade] = valor;
     salvar();
-    main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+    const painel = main.querySelector('#carga');
+    // O change ocorre antes de o Tab concluir a troca de foco. Preserve o destino
+    // escolhido pelo navegador, depois dessa navegação, ao substituir os campos.
+    requestAnimationFrame(() => {
+      if (main.querySelector('#carga') !== painel) return;
+      const foco = document.activeElement;
+      const especialidade = foco?.classList?.contains('capacidade') ? foco.dataset.especialidade : null;
+      redesenharCarga(main, especialidade);
+    });
     avisar('Capacidade atualizada. Cronograma redistribuído.');
   });
 
@@ -156,7 +171,7 @@ export function telaRevisao(main, ir) {
     if (!dataValida(e.target.value)) { avisar('Informe uma data válida.'); return; }
     estado.inicio = e.target.value;
     salvar();
-    main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+    redesenharCarga(main);
     avisar('Data de início atualizada.');
   });
 

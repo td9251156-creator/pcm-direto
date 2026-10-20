@@ -32,6 +32,31 @@ await executarComRecursos({
     await page.locator('.pular').focus();
     await page.keyboard.press('Enter');
     assert.ok(page.url().endsWith('#equipamentos'), 'Pular para conteúdo não deve trocar de tela');
+    await page.goto('http://127.0.0.1:4175/#revisao');
+    const capacidade = page.locator('.capacidade').first();
+    const aguardarRedesenho = () => page.evaluate(() => new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await capacidade.waitFor();
+    const idCapacidade = await capacidade.getAttribute('id');
+    const idProximaCapacidade = await page.locator('.capacidade').nth(1).getAttribute('id');
+    await capacidade.focus();
+    for (const [tecla, valor] of [['ArrowUp', 0.5], ['ArrowUp', 1], ['ArrowDown', 0.5]]) {
+      await capacidade.press(tecla);
+      await aguardarRedesenho();
+      await page.waitForFunction((id) => document.activeElement?.id === id, idCapacidade);
+      assert.equal(Number(await capacidade.inputValue()), valor);
+    }
+    await capacidade.fill('2');
+    await capacidade.press('Tab');
+    await aguardarRedesenho();
+    await page.waitForFunction((id) => document.activeElement?.id === id, idProximaCapacidade);
+    await page.reload();
+    await capacidade.waitFor();
+    assert.equal(Number(await capacidade.inputValue()), 2);
+    await capacidade.fill('');
+    await capacidade.press('Tab');
+    await aguardarRedesenho();
+    await page.waitForFunction((id) => document.activeElement?.id === id, idProximaCapacidade);
     await page.goto('http://127.0.0.1:4175/#biblioteca');
     await page.locator('#importar-json').setInputFiles({ name: 'invalido.json', mimeType: 'application/json', buffer: Buffer.from('null') });
     await page.waitForFunction(() => document.querySelector('#mensagens').textContent.includes('Biblioteca não importada'));
