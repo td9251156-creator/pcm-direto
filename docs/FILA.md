@@ -12,6 +12,27 @@ Uma implementação por vez. Um item só termina com evidência e revisão indep
 | F-004 | Média | Conferir leitor de tela, celular real e arquivos no Excel antigo. | Registrar aparelho/programa e versão, passos e resultado; corrigir problemas encontrados sem usar dados reais. | Aguardando acesso aos aparelhos/programas. |
 | F-005 | Média | Definir cálculo de MTBF, MTTR e disponibilidade, item 14 do diagnóstico. | Mantenedor define funcionamento, falha, reparo, período e tratamento de paradas planejadas; exemplos numéricos aprovados antes de implementar. | Aguardando definição técnica. |
 | F-006 | Média | Definir janelas e paradas programadas, item 15 do diagnóstico. | Mantenedor aprova exemplos e limites; nenhuma tarefa de segurança pode ser adiada fora da regra definida. | Aguardando definição técnica. |
+| F-007 | Média | Preservar o foco de teclado ao ajustar a capacidade por especialidade na Revisão. O redesenho do quadro remove o campo focado após a primeira seta. | Setas consecutivas continuam ajustando o mesmo campo; Tab segue a ordem normal sem recuperar foco indevidamente; capacidade, carga e salvamento permanecem corretos; regressão coberta por teste. | Pronta |
+
+## F-007 — primeira tarefa da execução por agentes
+
+- **Evidência:** em 20/10/2026, no Chromium, abrir Revisão com o exemplo fictício e focar
+  `#cap-Operação`. Após `ArrowUp`, o valor passa a `0.5`, mas `document.activeElement` passa
+  de `INPUT#cap-Operação` para `BODY`. A segunda seta não ajusta o campo. O evento `change`
+  em `src/telas/revisao.js` substitui todo o conteúdo de `#carga`, removendo o elemento focado.
+- **Impacto:** quem usa teclado precisa localizar e focar o campo de novo a cada ajuste.
+- **Resultado:** manter o foco da mesma especialidade se a atualização acontecer com o campo
+  ainda focado. Não puxar o foco de volta quando a alteração tiver sido confirmada por Tab ou blur.
+- **Escopo:** `src/telas/revisao.js`, eventual auxiliar JavaScript de interface e teste de regressão
+  JavaScript em `testes/`; atualizar esta fila. Não mudar regras de capacidade, biblioteca técnica,
+  dados salvos, dependências ou automações. Uma implementação pequena, dentro dos limites do executor.
+- **Como conferir:** a partir do campo vazio, duas setas para cima devem chegar a `1.0` com foco
+  no mesmo campo; uma seta para baixo retorna a `0.5`. Tab segue para o próximo controle sem
+  reiniciar a navegação. Conferir atualização da carga e persistência ao reabrir a tela. Um teste
+  relevante deve reproduzir a perda de foco antes e passar depois; executar também as verificações
+  completas e o roteiro de navegador existentes.
+- **Diagnóstico:** agente separado, somente leitura, com reprodução no Chromium. Implementação
+  e revisão da correção ainda não ocorreram; este registro prepara o trabalho, não declara entrega.
 
 ## Modelo para adicionar um item
 
@@ -41,3 +62,7 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
 - Revisão independente dos workflows, prazos, fechamento de recursos e correção da espera entre rotas.
 - Dependabot já gerou propostas no repositório; nenhuma atualização é integrada sem a revisão aplicável.
 - Executor escolhido: GitHub Actions. Fluxo preparado com ativação explícita; credencial, modelo e primeira rodada real ainda precisam ser comprovados. Veja [AGENTES-GITHUB-ACTIONS.md](AGENTES-GITHUB-ACTIONS.md).
+- [Diagnóstico após cadastro da chave](https://github.com/td9251156-creator/pcm-direto/actions/runs/39499911020):
+  o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
+  portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
+  as duas variáveis pela integração retornaram HTTP 403; precisam ser cadastradas nas configurações do GitHub.
