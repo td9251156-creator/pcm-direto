@@ -88,3 +88,7 @@ para vulnerabilidades; não abra relato público com detalhes exploráveis antes
 A rotina semanal do GitHub Actions verifica código e dependências. Ela não executa agentes de IA,
 não modifica o produto e não abre PRs de implementação. Não prometa agentes trabalhando depois
 do encerramento da sessão sem um executor persistente efetivamente configurado e verificado.
+
+O fluxo separado de implementação no Actions está documentado em `docs/AGENTES-GITHUB-ACTIONS.md`.
+Ele exige ativação explícita e credencial de desenvolvimento, gera PRs em rascunho e não integra
+ou publica automaticamente. Sua configuração não prova que os agentes já estejam ativos.

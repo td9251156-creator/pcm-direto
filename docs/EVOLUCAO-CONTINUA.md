@@ -133,21 +133,18 @@ Quando apontar um problema, a próxima rodada de trabalho deve conferir o relat�
 a falha antes de propor uma correção. Um alerta de dependência não autoriza atualizar tudo de uma
 vez nem desativar verificações para fazer os testes passarem.
 
-Os agentes desta conversa trabalham enquanto existe uma tarefa ativa. Para desenvolver sem uma
-sessão ativa, seria necessário um executor persistente, acesso configurado e limites de execução.
-Esse executor ainda não foi conectado ou verificado neste ambiente. Uma agenda de testes não
-equivale a agentes programando continuamente. A integração atual não permite consultar os segredos
-e executores privados do repositório; isso não prova que uma conta externa não exista.
+O executor escolhido para os agentes é o GitHub Actions. O fluxo de implementação é separado
+da rotina de qualidade: tem ativação explícita, uma implementação por vez, revisão independente
+em outra máquina, testes e criação de PR em rascunho. Ele não integra nem publica melhorias sozinho.
+O passo a passo e os limites estão em [AGENTES-GITHUB-ACTIONS.md](AGENTES-GITHUB-ACTIONS.md).
 
-Para completar essa parte, o mantenedor precisa identificar uma automação do Codex ou outro executor
-que já tenha disponível e conectá-lo por sua configuração segura. Não enviar chaves ou senhas pelo
-chat. Depois é necessário executar uma tarefa pequena, confirmar a revisão independente e conferir
-o PR gerado antes de considerar agentes de implementação realmente autônomos.
+A ativação depende de uma credencial de API de desenvolvimento, modelo autorizado e permissão
+de criar PRs. Esses requisitos não foram comprovados nesta sessão; a integração administrativa
+retornou HTTP 403. O diagnóstico não faz chamadas à IA. Não considerar desenvolvimento contínuo
+ativo até concluir uma rodada real com revisão, testes e PR. Não enviar credenciais pelo chat.
 
-O PR #18 foi integrado e a revisão semanal foi executada com sucesso em 20/10/2026.
-A rodada seguinte prepara o navegador fixado e protegido por limites de tempo para rodar nas mesmas
-rotinas, incluindo a validação anterior à publicação. Nenhuma dessas ativações configura uma
-credencial de IA ou autoriza despesas novas.
+Os PRs #18 e #22 foram integrados. A revisão semanal completa, incluindo navegador e auditorias,
+passou em 20/10/2026, assim como a publicação protegida pelos testes.
 
 Não será acrescentada API, assinatura ou serviço pago ao produto. Ferramentas de agentes e contas
 de execução têm seus próprios limites; não há promessa de uso ilimitado ou gratuito de IA. O app
