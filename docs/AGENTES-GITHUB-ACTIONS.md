@@ -1,7 +1,40 @@
-# Agentes no GitHub Actions
+# Desenvolvimento com o Plus e GitHub Actions
+
+## Modo escolhido: Codex com login do ChatGPT Plus
+
+O mantenedor escolheu desenvolver nas tarefas do Codex vinculadas ao ChatGPT Plus,
+aproveitando os limites disponíveis na conta. A chave `OPENAI_API_KEY` usa cobrança de API
+separada e não consome a cota do Plus.
+
+O trabalho por agentes segue `AGENTS.md`: uma implementação por vez, revisão independente,
+testes e PR. As sessões do Codex podem atingir limites do plano; confira a disponibilidade
+no cliente. Esta configuração não promete agentes trabalhando continuamente fora de uma tarefa
+ativa nem agenda tarefas na conta do ChatGPT.
+
+O GitHub Actions continua responsável pela revisão semanal de qualidade, pelas verificações de
+PR e pela publicação após integração. O Dependabot continua propondo atualizações. O fluxo
+`agentes-ia.yml` fica sem agenda e com a ativação de API fixada em `false` no código; mesmo uma
+variável antiga `PCM_IA_ATIVA=true` não libera chamadas depois que esta configuração é integrada.
+
+Para pausar a versão anterior já publicada, ajuste `PCM_IA_ATIVA=false` nas variáveis do GitHub
+e cancele qualquer execução de IA ainda em andamento. Alterar a variável não interrompe um job
+já iniciado. A conexão desta sessão apresentou HTTP 401 temporário. Após o acesso voltar, o workflow
+foi desativado no GitHub e seu estado `disabled_manually` foi confirmado. A rodada anterior já
+estava encerrada. A alteração do código acrescenta a pausa explícita à desativação remota. Mantenha o workflow desativado; sua reativação exige novo pedido do mantenedor.
+
+Para iniciar uma rodada no Codex com seu login do Plus:
+
+> Leia AGENTS.md e docs/FILA.md. Escolha a próxima tarefa pronta, faça uma implementação pequena,
+> peça revisão independente a outro agente e execute as verificações necessárias. Preserve as regras
+> de segurança e dados. Respeite as autorizações existentes para integrar e publicar; informe bloqueios
+> concretos. Não reative a API do GitHub Actions.
+
+## Fluxo de API preservado para eventual reativação
 
 O executor escolhido é o GitHub Actions. O fluxo `Agentes de melhoria` tem uma agenda semanal
-e execução manual. Ele só chama a IA depois de uma ativação explícita. A rotina de qualidade
+na versão anterior e execução manual. A agenda foi retirada nesta mudança. Ele só poderá voltar
+a chamar IA depois de remover a pausa explícita do código com nova autorização de consumo.
+A rotina de qualidade
 semanal e o Dependabot continuam funcionando independentemente dessa ativação.
 
 ## Preparação pelo mantenedor
@@ -15,7 +48,8 @@ Em **Settings → Secrets and variables → Actions** do repositório:
    fornece automaticamente créditos da API. Minutos do Actions também seguem os limites da conta.
    Limites de tempo e tamanho do fluxo não são um teto financeiro garantido; alertas de orçamento
    do provedor podem não interromper chamadas. Use os controles efetivamente disponíveis no projeto.
-4. Para autorizar o consumo configurado, cadastre `PCM_IA_ATIVA` com o valor `true`.
+4. Somente com nova autorização de consumo, reabilite o workflow no GitHub, altere a pausa explícita no código e configure
+   `PCM_IA_ATIVA=true`. A variável sozinha não reativa a versão pausada.
 5. Em **Settings → Actions → General → Workflow permissions**, permita que o Actions crie PRs.
    O workflow concede escrita somente ao job que abre o PR.
 6. Na tabela de `docs/FILA.md`, deixe uma tarefa pequena com critérios definidos e situação exatamente

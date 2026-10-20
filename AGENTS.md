@@ -90,5 +90,7 @@ não modifica o produto e não abre PRs de implementação. Não prometa agentes
 do encerramento da sessão sem um executor persistente efetivamente configurado e verificado.
 
 O fluxo separado de implementação no Actions está documentado em `docs/AGENTES-GITHUB-ACTIONS.md`.
-Ele exige ativação explícita e credencial de desenvolvimento, gera PRs em rascunho e não integra
-ou publica automaticamente. Sua configuração não prova que os agentes já estejam ativos.
+O mantenedor escolheu desenvolver em tarefas do Codex com login do ChatGPT Plus e pausar
+as chamadas de IA pela API do Actions. Não reative a API nem sua agenda sem novo pedido.
+O fluxo de API preservado no repositório gera PRs em rascunho e não integra ou publica sozinho.
+O Actions continua executando testes e publicação. Não prometa execução permanente com a cota do Plus.
