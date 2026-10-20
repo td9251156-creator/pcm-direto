@@ -29,7 +29,7 @@ function htmlCarga(dados) {
     <div class="grafico" role="img" aria-label="Horas previstas por semana, da semana 1 à 52. Média ${num(r.mediaSemana)} horas, pico ${num(r.picoSemana)} horas na semana ${r.semanaPico}.">${barras}</div>
     <p class="origem">Semanas 1 a 52, a partir de ${dados.inicio.toLocaleDateString('pt-BR')}. As execuções foram distribuídas para evitar picos de carga.</p>
     <h4>Por especialidade</h4>
-    <p class="origem">Informe as horas que a equipe tem por semana em cada especialidade. O cronograma passa a distribuir as tarefas respeitando esse limite; deixe em branco para não limitar.</p>
+    <p class="origem">Informe as horas que a equipe tem por semana em cada especialidade. O cronograma busca distribuir as tarefas dentro desse limite e avisa quando houver semanas acima. Deixe em branco para não limitar. Uma equipe sem capacidade suficiente exige revisar os recursos disponíveis; nenhuma tarefa de segurança será retirada.</p>
     <div class="tabela-rolagem"><table>
       <thead><tr><th>Especialidade</th><th>Horas no ano</th><th>Média por semana</th><th>Semana mais carregada</th><th>Horas disponíveis por semana</th><th>Situação</th></tr></thead>
       <tbody>${especialidades}</tbody>

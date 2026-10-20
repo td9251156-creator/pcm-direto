@@ -61,6 +61,19 @@ try {
   await page.locator('#restaurar-backup').setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: bytesBackup });
   await page.waitForFunction(() => document.querySelector('#mensagens').textContent.includes('Backup restaurado'));
   assert.equal(await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('pcm-direto:rascunho:v1')).execucoes).length), 1);
+  await page.getByRole('link', { name: '2. Equipamentos' }).click();
+  const quantidade = await page.locator('.equip').count();
+  await page.locator('.equip > summary').first().click();
+  await page.locator('.equip .remover').first().click();
+  assert.equal(await page.locator('.equip').count(), quantidade - 1);
+  await page.locator('#desfazer-remocao').click();
+  assert.equal(await page.locator('.equip').count(), quantidade);
+  await page.goto('http://127.0.0.1:4175/#impressao');
+  await page.locator('#filtro-setor').selectOption('PRD');
+  await page.locator('#filtro-especialidade').selectOption('Elétrica');
+  assert.ok((await page.locator('#folha-cronograma tbody .tag').allTextContents()).every((tag) => tag.startsWith('PRD-')));
+  assert.ok((await page.locator('#folha-cronograma tbody .tag').count()) > 0);
+  assert.ok((await page.locator('#folha-cronograma').innerText()).includes('Filtros: PRD · Elétrica'));
   await page.goto('http://127.0.0.1:4175/#execucao');
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
@@ -76,12 +89,18 @@ try {
     assert.equal(bytes.subarray(0, 2).toString(), 'PK');
   }
   await contexto.setOffline(false);
+  await page.goto('http://127.0.0.1:4175/#revisao');
+  await page.evaluate(() => { Storage.prototype.setItem = () => { throw new Error('Falha simulada de armazenamento'); }; });
+  await page.locator('.capacidade').first().fill('0.5');
+  await page.locator('.capacidade').first().press('Tab');
+  await page.locator('#aviso-armazenamento').waitFor({ state: 'visible' });
+  await page.reload();
   await page.evaluate(() => localStorage.setItem('pcm-direto:rascunho:v1', '{'));
   await page.reload();
   await page.getByRole('button', { name: 'Baixar dados originais para recuperação' }).waitFor();
   assert.equal(await page.evaluate(() => localStorage.getItem('pcm-direto:rascunho:v1')), '{');
   assert.deepEqual(erros, []);
-  console.log('Aprovado: celular, teclado, importação inválida, recuperação, abertura offline e geração offline de XLSX e DOCX.');
+  console.log('Aprovado: celular, teclado, importação, checklist, backup/restauração, desfazer remoção, filtros, falha de gravação, recuperação, abertura offline e XLSX/DOCX offline.');
 } finally {
   await browser?.close();
   servidor.kill();

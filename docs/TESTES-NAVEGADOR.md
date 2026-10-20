@@ -20,3 +20,6 @@ Não use essa opção para navegar em sites desconhecidos.
 O roteiro confere navegação por teclado, largura de celular, importação inválida sem perda da
 biblioteca, abertura sem conexão, geração de XLSX e DOCX sem internet e preservação de rascunho
 danificado. Leitor de tela, aparelhos reais e Excel antigo ainda exigem conferência manual.
+
+O roteiro também confere checklist após recarregar, download e restauração do backup, recuperação
+da última máquina removida, filtros de impressão e aviso visível após falha simulada de gravação.
