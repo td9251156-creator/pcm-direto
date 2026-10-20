@@ -100,6 +100,7 @@ jobs:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           codex-version: '0.163.0'
           model: ${{ vars.PCM_IA_MODELO }}
+          effort: medium
           permission-profile: ':workspace'
           safety-strategy: drop-sudo
           prompt-file: .github/prompts/implementar.md
@@ -151,6 +152,7 @@ jobs:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           codex-version: '0.163.0'
           model: ${{ vars.PCM_IA_MODELO }}
+          effort: medium
           permission-profile: ':read-only'
           safety-strategy: drop-sudo
           prompt-file: .github/prompts/revisar.md
