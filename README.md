@@ -33,6 +33,9 @@ no próprio app, e o botão de tema no rodapé alterna entre claro, escuro e aut
 Ao importar uma biblioteca `.json`, o app confere o formato antes de substituir a biblioteca atual.
 Se houver campos inválidos ou códigos repetidos, ele informa o problema e mantém a biblioteca em uso.
 
+Se dados salvos estiverem danificados, o app avisa e oferece o download dos originais para recuperação.
+Antes de substituir esses dados, guarda uma cópia local; se não houver espaço, mantém o original.
+
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
 
