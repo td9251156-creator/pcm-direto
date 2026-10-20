@@ -1,9 +1,8 @@
 name: Agentes de melhoria
 
 on:
-  schedule:
-    # Terça-feira, 10h17 em São Paulo. No máximo uma rodada por semana.
-    - cron: '17 13 * * 2'
+  # Chamadas de IA por API pausadas por escolha do mantenedor.
+  # Desenvolvimento passa a usar tarefas do Codex com login do ChatGPT Plus.
   workflow_dispatch:
     inputs:
       diagnostico:
@@ -38,7 +37,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          PCM_IA_ATIVA: ${{ vars.PCM_IA_ATIVA }}
+          PCM_IA_ATIVA: 'false'
           PCM_IA_MODELO: ${{ vars.PCM_IA_MODELO }}
           PCM_CHAVE_IA: ${{ secrets.OPENAI_API_KEY }}
           PCM_DIAGNOSTICO: ${{ github.event_name == 'workflow_dispatch' && inputs.diagnostico }}
@@ -48,7 +47,7 @@ jobs:
           command -v grep >/dev/null
           motivos=()
           [[ "$PCM_REF" == 'refs/heads/main' ]] || motivos+=('Geração permitida apenas na main.')
-          [[ "$PCM_IA_ATIVA" == 'true' ]] || motivos+=('PCM_IA_ATIVA precisa ser true após autorizar consumo e configurar o provedor.')
+          [[ "$PCM_IA_ATIVA" == 'true' ]] || motivos+=('IA por API pausada no workflow. Use tarefas do Codex com login do ChatGPT Plus. Reativação exige nova alteração e autorização de consumo.')
           [[ -n "$PCM_IA_MODELO" ]] || motivos+=('Defina PCM_IA_MODELO com um modelo autorizado para a chave.')
           [[ -n "$PCM_CHAVE_IA" ]] || motivos+=('Cadastre OPENAI_API_KEY nos secrets do Actions; não envie a chave pelo chat.')
           [[ "$PCM_DIAGNOSTICO" != 'true' ]] || motivos+=('Modo diagnóstico: nenhuma chamada de IA será feita.')

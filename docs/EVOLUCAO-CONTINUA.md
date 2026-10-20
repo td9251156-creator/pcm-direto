@@ -133,15 +133,18 @@ Quando apontar um problema, a próxima rodada de trabalho deve conferir o relat�
 a falha antes de propor uma correção. Um alerta de dependência não autoriza atualizar tudo de uma
 vez nem desativar verificações para fazer os testes passarem.
 
-O executor escolhido para os agentes é o GitHub Actions. O fluxo de implementação é separado
-da rotina de qualidade: tem ativação explícita, uma implementação por vez, revisão independente
-em outra máquina, testes e criação de PR em rascunho. Ele não integra nem publica melhorias sozinho.
-O passo a passo e os limites estão em [AGENTES-GITHUB-ACTIONS.md](AGENTES-GITHUB-ACTIONS.md).
+O mantenedor escolheu usar as tarefas do Codex com seu login do ChatGPT Plus para desenvolvimento,
+dentro dos limites disponíveis no plano. O GitHub Actions continua executando testes, auditorias e
+publicação. O fluxo anterior de implementação por API fica preservado, sem agenda e desativado
+explicitamente no código; não reativar sem novo pedido. O passo a passo e os limites estão em
+[AGENTES-GITHUB-ACTIONS.md](AGENTES-GITHUB-ACTIONS.md).
 
-A ativação depende de uma credencial de API de desenvolvimento, modelo autorizado e permissão
-de criar PRs. Esses requisitos não foram comprovados nesta sessão; a integração administrativa
-retornou HTTP 403. O diagnóstico não faz chamadas à IA. Não considerar desenvolvimento contínuo
-ativo até concluir uma rodada real com revisão, testes e PR. Não enviar credenciais pelo chat.
+Na validação do fluxo anterior, a chave e o modelo foram usados em chamadas reais; revisão e testes
+bloquearam uma proposta defeituosa. Isso não comprova uma entrega correta nem execução contínua.
+Após uma falha temporária HTTP 401, o acesso ao GitHub voltou e o workflow foi desativado:
+`disabled_manually` confirmado. A rodada anterior já estava encerrada. Esta configuração também
+retira a agenda e fixa a ativação em false no código. Não reabilitar o workflow sem novo pedido.
+Não enviar credenciais pelo chat.
 
 Os PRs #18 e #22 foram integrados. A revisão semanal completa, incluindo navegador e auditorias,
 passou em 20/10/2026, assim como a publicação protegida pelos testes.
