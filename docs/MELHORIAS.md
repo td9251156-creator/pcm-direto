@@ -51,7 +51,7 @@ por profissional habilitado. Não ampliar tarefas técnicas ou periodicidades se
 
 | Ordem | Proposta e problema atendido | Impacto para quem usa | Esforço | Risco da mudança | Situação |
 |---|---|---|---|---|---|
-| 16 | Backup e restauração da lista completa, ajustes e biblioteca em JSON; CSV não guarda tudo. | Levar o trabalho a outro aparelho e recuperar uma cópia. | Médio | Alto: validar antes de substituir; manter compatibilidade e confirmar a troca. | Pendente. |
+| 16 | Backup e restauração da lista completa, ajustes e biblioteca em JSON; CSV não guarda tudo. | Levar o trabalho a outro aparelho e recuperar uma cópia. | Médio | Alto: validar antes de substituir; manter compatibilidade e confirmar a troca. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/melhoria%2Fchecklist-execucao...melhoria%2Fbackup-completo?expand=1). |
 | 17 | Desfazer a última remoção de equipamento. A confirmação já existe. | Recuperar um clique errado sem recadastrar os dados. | Médio | Médio: recuperar também os ajustes daquela máquina. | Pendente. |
 | 18 | Filtros por setor/especialidade e instruções mais claras sobre semanas acima da capacidade. | Encontrar tarefas e entender limites sem precisar conhecer o sistema. | Médio | Médio: deixar claro o que está filtrado e não ocultar alertas de segurança. | Pendente. |
 

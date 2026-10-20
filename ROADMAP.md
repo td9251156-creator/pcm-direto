@@ -16,6 +16,7 @@
 - Edição da biblioteca técnica no app (com as tarefas de segurança travadas).
 - Cronograma para imprimir em A4 deitado.
 - Importação de equipamentos direto de planilha .xlsx.
+- Backup completo e restauração de equipamentos, biblioteca, ajustes e marcações de execução em JSON.
 
 ## Próximas etapas
 

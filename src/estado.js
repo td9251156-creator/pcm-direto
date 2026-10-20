@@ -9,6 +9,8 @@ import { proximaSegunda, textoData } from './logica/cronograma.js';
 import { lerRascunho } from './logica/rascunho.js';
 import { verificarBibliotecaEditada } from './logica/edicao.js';
 import { validarExecucoes } from './logica/execucao.js';
+import { verificarBackup } from './logica/backup.js';
+import { recuperarTransacao, lerDadoLocal, guardarBackupLocal } from './armazenamento.js';
 
 const CHAVE = 'pcm-direto:rascunho:v1';
 const CHAVE_BIBLIOTECA = 'pcm-direto:biblioteca:v1';
@@ -18,7 +20,7 @@ export const armazenamento = { rascunho: true, biblioteca: true, leitura: true }
 
 function lerLocal(chave) {
   let original;
-  try { original = localStorage.getItem(chave); } catch { armazenamento.leitura = false; return null; }
+  try { original = lerDadoLocal(chave); } catch { armazenamento.leitura = false; return null; }
   if (original === null) return null;
   try { return { valor: JSON.parse(original), original }; }
   catch { return { valor: null, original }; }
@@ -32,6 +34,7 @@ function preservar(chave, original) {
 /** Guarda os originais antes de permitir qualquer substituição dos dados locais. */
 function prepararGravacao() {
   try {
+    if (!recuperarTransacao()) return false;
     for (const [chave, original] of originaisPendentes) {
       localStorage.setItem(`pcm-direto:recuperacao:v1:${novoId()}`, JSON.stringify({ chave, original }));
       originaisPendentes.delete(chave);
@@ -78,6 +81,7 @@ export function listaExemplo() {
 /** Lê o que está salvo. Na primeira abertura (nada salvo), carrega o exemplo. */
 export function carregar() {
   Object.assign(armazenamento, { rascunho: true, biblioteca: true, leitura: true });
+  if (!recuperarTransacao()) armazenamento.leitura = false;
   recuperacao.length = 0;
   originaisPendentes.clear();
   estado.biblioteca = copia(padrao);
@@ -107,6 +111,18 @@ export function carregar() {
     estado.ajustes = {};
     estado.exemplo = !local;
   }
+}
+
+/** Valida tudo antes de restaurar; mantém os originais se a gravação não terminar. */
+export function restaurarBackup(arquivo) {
+  const r = verificarBackup(arquivo, padrao);
+  if (!r.ok) return r;
+  if (!prepararGravacao() || !guardarBackupLocal(r.biblioteca, r.rascunho)) {
+    armazenamento.rascunho = false;
+    return { ok: false, motivo: 'Não foi possível guardar o backup neste aparelho. Os dados anteriores foram preservados; baixe uma cópia antes de sair.' };
+  }
+  carregar();
+  return { ok: true };
 }
 
 /** Salva a lista no navegador. Se o navegador bloquear, o app continua funcionando. */

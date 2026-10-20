@@ -33,6 +33,13 @@ MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação liv
 
 ## Riscos conhecidos
 
+### Backup completo
+
+Formato JSON identificado por aplicativo e versão. Validar lista, biblioteca e marcações antes de
+confirmar a substituição. A restauração guarda temporariamente o par anterior de chaves locais;
+se a escrita for interrompida, a próxima abertura recupera esse par. Falta de espaço não autoriza
+descartar os originais. Nenhum dado é enviado para fora do navegador.
+
 ### Primeira versão do checklist
 
 Registrar somente a última marcação por equipamento e tarefa, com data até hoje e observação
