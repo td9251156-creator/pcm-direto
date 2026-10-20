@@ -35,6 +35,7 @@ describe('cache do aplicativo', () => {
     let resposta;
     w.eventos.fetch({ request: req, respondWith: (p) => { resposta = p; } });
     expect(await resposta).toBe('página offline');
+    expect(w.cache.match).toHaveBeenCalledWith(req, { ignoreSearch: true, ignoreVary: true });
     expect(w.fetch).not.toHaveBeenCalled();
     w.cache.match.mockResolvedValue(undefined);
     w.eventos.fetch({ request: req, respondWith: (p) => { resposta = p; } });

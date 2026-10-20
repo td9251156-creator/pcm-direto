@@ -38,5 +38,6 @@ self.addEventListener('fetch', (evento) => {
   }
 
   // Demais arquivos (nomes mudam a cada versão): primeiro o guardado; se não tiver, busca na internet
-  evento.respondWith(caches.open(CACHE).then((c) => c.match(req, { ignoreSearch: true })).then((guardado) => guardado || fetch(req)));
+  // Arquivos estáticos do próprio app não variam conforme o cabeçalho Origin do navegador.
+  evento.respondWith(caches.open(CACHE).then((c) => c.match(req, { ignoreSearch: true, ignoreVary: true })).then((guardado) => guardado || fetch(req)));
 });
