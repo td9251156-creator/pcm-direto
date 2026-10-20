@@ -33,7 +33,7 @@ revisa antes de publicar. Itens ainda não implementados não são promessas de 
 | Ordem | Problema | Impacto para quem usa | Esforço | Risco da mudança | Situação |
 |---|---|---|---|---|---|
 | 10 | Faltam testes de carregar/salvar, falha de armazenamento e compatibilidade com rascunhos antigos. | Menos proteção contra perda de listas em atualizações. | Médio | Baixo: usar exemplos fictícios e armazenamento simulado. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/correcao%2Favisar-falha-armazenamento...testes%2Fcompatibilidade-rascunhos?expand=1). |
-| 11 | Não há testes de troca de versão e funcionamento offline do PWA. | Falhas podem aparecer só depois de publicar. | Médio | Médio: testar caches e atualização sem mudar a biblioteca técnica. | Pendente. |
+| 11 | Não há testes de troca de versão e funcionamento offline do PWA. | Falhas podem aparecer só depois de publicar. | Médio | Médio: testar caches e atualização sem mudar a biblioteca técnica. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/testes%2Fcompatibilidade-rascunhos...testes%2Finstalacao-offline?expand=1). |
 | 12 | Os testes atuais concentram-se na lógica; faltam verificações das telas por teclado e em celular. | Botões, foco e mensagens podem falhar mesmo com os testes atuais aprovados. | Médio | Baixo: começar com fluxos principais; avaliar ferramenta antes de adicionar dependência. | Pendente. |
 
 ## Funções novas — respeitar o roteiro
