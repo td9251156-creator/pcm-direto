@@ -45,17 +45,18 @@ jobs:
           PCM_REF: ${{ github.ref }}
         run: |
           set -euo pipefail
+          command -v grep >/dev/null
           motivos=()
           [[ "$PCM_REF" == 'refs/heads/main' ]] || motivos+=('Geração permitida apenas na main.')
           [[ "$PCM_IA_ATIVA" == 'true' ]] || motivos+=('PCM_IA_ATIVA precisa ser true após autorizar consumo e configurar o provedor.')
           [[ -n "$PCM_IA_MODELO" ]] || motivos+=('Defina PCM_IA_MODELO com um modelo autorizado para a chave.')
           [[ -n "$PCM_CHAVE_IA" ]] || motivos+=('Cadastre OPENAI_API_KEY nos secrets do Actions; não envie a chave pelo chat.')
           [[ "$PCM_DIAGNOSTICO" != 'true' ]] || motivos+=('Modo diagnóstico: nenhuma chamada de IA será feita.')
-          if ! rg -q '\|[[:space:]]*Pronta[[:space:]]*\|' docs/FILA.md; then
+          if ! grep -Eq '\|[[:space:]]*Pronta[[:space:]]*\|' docs/FILA.md; then
             motivos+=('Não há tarefa com situação Pronta em docs/FILA.md.')
           fi
           abertas=$(gh api --paginate "repos/$GH_REPO/pulls?state=open&per_page=100" --jq '.[].head.ref')
-          if printf '%s\n' "$abertas" | rg -q '^agentes-ia/'; then
+          if grep -Eq '^agentes-ia/' <<< "$abertas"; then
             motivos+=('Já existe uma proposta de agentes aberta; conclua sua revisão primeiro.')
           fi
           if (( ${#motivos[@]} )); then
