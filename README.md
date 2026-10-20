@@ -109,6 +109,8 @@ Veja [BIBLIOTECA.md](BIBLIOTECA.md) para entender o formato e o checklist de rev
 [Lista priorizada de melhorias](docs/MELHORIAS.md), com problemas encontrados e próximas rodadas.
 [Histórico das revisões e melhorias](docs/REVISOES.md).
 
+[Estratégia de evolução com agentes](docs/EVOLUCAO-CONTINUA.md) · [Fila de trabalho atual](docs/FILA.md).
+
 ## Sobre o autor
 
 **Thiago Oliveira Lima** — Engenheiro de Produção com mais de 10 anos em manutenção industrial no setor automotivo,

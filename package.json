@@ -11,7 +11,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "verificar": "npm run lint && npm test && npm run build",
+    "test:navegador": "node scripts/verificar-navegador.mjs"
   },
   "dependencies": {
     "docx": "^9.12.0",

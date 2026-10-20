@@ -10,8 +10,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -20,6 +18,7 @@ concurrency:
 jobs:
   verificar:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -28,22 +27,23 @@ jobs:
           cache: npm
       - name: Instalar dependências
         run: npm ci
-      - name: Verificar o código (lint)
-        run: npm run lint
-      - name: Rodar os testes
-        run: npm test
-      - name: Gerar a versão final
-        run: npm run build
+      - name: Verificar código, testes e versão final
+        run: npm run verificar
       - name: Guardar a versão final para publicar
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
   publicar:
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: verificar
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.publicacao.outputs.page_url }}

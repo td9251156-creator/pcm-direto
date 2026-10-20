@@ -1,0 +1,55 @@
+name: Revisão semanal de qualidade
+
+on:
+  # Segunda-feira, 09h17 em São Paulo (12h17 UTC).
+  schedule:
+    - cron: '17 12 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: revisao-semanal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependências conforme o arquivo de versões
+        id: instalacao
+        run: npm ci
+      - name: Conferir código, testes e versão final
+        id: verificacao
+        run: npm run verificar
+      - name: Auditar dependências
+        id: auditoria
+        if: always() && steps.instalacao.outcome == 'success'
+        run: npm audit --audit-level=moderate
+      - name: Registrar o resultado da rodada
+        if: always()
+        env:
+          INSTALACAO: ${{ steps.instalacao.outcome }}
+          VERIFICACAO: ${{ steps.verificacao.outcome }}
+          AUDITORIA: ${{ steps.auditoria.outcome }}
+        run: |
+          {
+            echo '## Revisão semanal do PCM Direto'
+            echo ''
+            echo '| Etapa | Resultado |'
+            echo '|---|---|'
+            printf '| Instalação | %s |\n' "$INSTALACAO"
+            printf '| Código, testes e build | %s |\n' "$VERIFICACAO"
+            printf '| Auditoria de dependências | %s |\n' "$AUDITORIA"
+            echo ''
+            echo 'success = aprovado; failure = falhou; skipped = não executado.'
+            echo 'Falha de auditoria pode indicar um alerta ou indisponibilidade do serviço. Confira a etapa antes de concluir.'
+            echo 'Esta rotina não altera código, não executa agentes de IA e não publica o site.'
+          } >> "$GITHUB_STEP_SUMMARY"
