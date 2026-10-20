@@ -107,6 +107,7 @@ Veja [BIBLIOTECA.md](BIBLIOTECA.md) para entender o formato e o checklist de rev
 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [LICENSE](LICENSE)
 
 [Lista priorizada de melhorias](docs/MELHORIAS.md), com problemas encontrados e próximas rodadas.
+[Revisões prontas e ordem de integração](docs/REVISOES.md).
 
 ## Sobre o autor
 
