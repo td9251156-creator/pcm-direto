@@ -18,6 +18,44 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('rascunhos e biblioteca salvos', () => {
+  it('mantém biblioteca editada, capacidade, início e ajustes após gravar e reabrir', async () => {
+    const app = await import('../src/estado.js');
+    app.carregar();
+    const bib = structuredClone(padrao);
+    bib.tipos[0].tarefas[0].descricao = 'Descrição fictícia revisada';
+    app.usarBiblioteca(bib);
+    app.estado.equipamentos = [equipamento];
+    app.estado.exemplo = false;
+    app.estado.inicio = '2027-01-04';
+    app.estado.capacidade = { Elétrica: 8 };
+    app.estado.ajustes = { 'eq1|MOT-01': { periodicidade: 'Semanal' } };
+    expect(app.salvar()).toBe(true);
+    app.carregar();
+    expect(app.estado.biblioteca).toEqual(bib);
+    expect(app.estado.bibliotecaEditada).toBe(true);
+    expect(app.estado.inicio).toBe('2027-01-04');
+    expect(app.estado.capacidade).toEqual({ Elétrica: 8 });
+    expect(app.estado.ajustes['eq1|MOT-01'].periodicidade).toBe('Semanal');
+    expect(app.estado.equipamentos).toEqual([equipamento]);
+  });
+
+  it('não duplica cópias de recuperação a cada gravação da mesma sessão', async () => {
+    dados.set(CHAVE, '{');
+    const app = await import('../src/estado.js');
+    app.carregar();
+    app.salvar();
+    app.salvar();
+    expect([...dados.keys()].filter((k) => k.startsWith('pcm-direto:recuperacao:'))).toHaveLength(1);
+  });
+
+  it('mantém travas de segurança mesmo com ajuste proibido no rascunho antigo', async () => {
+    dados.set(CHAVE, JSON.stringify({ equipamentos: [equipamento], ajustes: { 'eq1|MOT-06': { ativa: false, periodicidade: 'Anual' } } }));
+    const app = await import('../src/estado.js');
+    app.carregar();
+    const tarefa = app.dadosAtuais().plano.find((t) => t.tarefaId === 'MOT-06');
+    expect(tarefa.ativa).toBe(true);
+    expect(tarefa.periodicidade).toBe('Semestral');
+  });
   it('avisa falhas de escrita e só limpa a falha da biblioteca após gravá-la', async () => {
     const app = await import('../src/estado.js');
     app.carregar();
