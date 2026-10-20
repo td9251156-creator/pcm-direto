@@ -91,7 +91,7 @@ export function validarEquipamento(eq, tipos, todos = []) {
 
 /** Valida a lista inteira. Retorna um mapa id -> problemas (só equipamentos com problema). */
 export function validarLista(equipamentos, tipos) {
-  const mapa = {};
+  const mapa = Object.create(null);
   for (const eq of equipamentos) {
     const p = validarEquipamento(eq, tipos, equipamentos);
     if (p.length) mapa[eq.id] = p;

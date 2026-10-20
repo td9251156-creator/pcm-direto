@@ -2,6 +2,7 @@
 // usado pelas telas e pelos geradores de planilha e documento.
 import { gerarPlano } from './plano.js';
 import { montarCronograma, resumoCarga, lerData, proximaSegunda, dataDaSemana } from './cronograma.js';
+import { validarLista } from './validacao.js';
 
 export const AVISO =
   'O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. ' +
@@ -9,7 +10,7 @@ export const AVISO =
 
 /** Soma valores agrupando por uma chave: somarPor(lista, 'especialidade', l => l.horas) */
 function somarPor(lista, campo, valor) {
-  const mapa = {};
+  const mapa = Object.create(null);
   for (const item of lista) mapa[item[campo]] = (mapa[item[campo]] ?? 0) + valor(item);
   return mapa;
 }
@@ -19,6 +20,8 @@ function somarPor(lista, campo, valor) {
  * capacidade: horas disponíveis por semana em cada especialidade (vazio = sem limite).
  */
 export function montarDados(equipamentos, biblioteca, ajustes = {}, inicio = null, capacidade = {}) {
+  const problemas = validarLista(equipamentos, biblioteca.tipos);
+  equipamentos = equipamentos.filter((e) => !problemas[e.id]);
   const dataInicio = inicio ? lerData(inicio) : proximaSegunda();
   const plano = gerarPlano(equipamentos, biblioteca, ajustes);
   const ativas = plano.filter((l) => l.ativa);
