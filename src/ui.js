@@ -1,4 +1,10 @@
 // Ajudantes pequenos para montar as telas.
+import { armazenamento } from './estado.js';
+
+export function atualizarAvisoArmazenamento() {
+  const aviso = document.getElementById('aviso-armazenamento');
+  if (aviso) aviso.hidden = Object.values(armazenamento).every(Boolean);
+}
 
 /** Protege texto antes de colocar no HTML (evita que um texto colado vire código). */
 export function esc(texto) {
@@ -25,6 +31,7 @@ export function baixar(conteudo, nome, tipo) {
 
 /** Mensagem curta para leitores de tela e para quem está olhando. */
 export function avisar(texto) {
+  atualizarAvisoArmazenamento();
   const area = document.getElementById('mensagens');
   if (!area) return;
   area.textContent = texto;

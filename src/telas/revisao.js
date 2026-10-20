@@ -4,6 +4,7 @@ import { validarLista } from '../logica/validacao.js';
 import { PERIODICIDADES, vezesPorAno, aplicarAjuste } from '../logica/plano.js';
 import { esc, num, avisar } from '../ui.js';
 import { dataDaSemana, diaMes } from '../logica/cronograma.js';
+import { dataValida } from '../logica/rascunho.js';
 
 /** Barras da carga semanal (horas por semana). */
 function htmlCarga(dados) {
@@ -136,7 +137,7 @@ export function telaRevisao(main, ir) {
     salvar();
     alvo.closest('tr').classList.toggle('retirada', alvo.dataset.acao === 'ativa' && !alvo.checked);
     main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
-    avisar('Ajuste salvo.');
+    avisar('Ajuste aplicado.');
   });
 
   // Capacidade por especialidade (o quadro é redesenhado, então o evento fica no contêiner)
@@ -147,15 +148,15 @@ export function telaRevisao(main, ir) {
     else estado.capacidade[e.target.dataset.especialidade] = valor;
     salvar();
     main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
-    avisar('Capacidade salva. Cronograma redistribuído.');
+    avisar('Capacidade atualizada. Cronograma redistribuído.');
   });
 
   main.querySelector('#inicio').addEventListener('change', (e) => {
-    if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(e.target.value)) { avisar('Informe uma data válida.'); return; }
+    if (!dataValida(e.target.value)) { avisar('Informe uma data válida.'); return; }
     estado.inicio = e.target.value;
     salvar();
     main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
-    avisar('Data de início salva.');
+    avisar('Data de início atualizada.');
   });
 
   main.querySelector('#desfazer').addEventListener('click', () => {

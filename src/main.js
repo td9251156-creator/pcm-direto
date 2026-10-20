@@ -1,7 +1,7 @@
 // Ponto de entrada: carrega o rascunho, troca de tela pelo endereço (#inicio, #equipamentos...)
 // e registra o service worker para funcionar como aplicativo e sem internet.
 import { carregar, recuperacao } from './estado.js';
-import { baixar } from './ui.js';
+import { baixar, atualizarAvisoArmazenamento } from './ui.js';
 import { telaInicio } from './telas/inicio.js';
 import { telaEquipamentos } from './telas/equipamentos.js';
 import { telaRevisao } from './telas/revisao.js';
@@ -58,6 +58,7 @@ botaoTema.addEventListener('click', () => {
 mostrarTema();
 
 carregar();
+atualizarAvisoArmazenamento();
 if (recuperacao.length) {
   const aviso = document.createElement('section');
   aviso.className = 'cartao erro';

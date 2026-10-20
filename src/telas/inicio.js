@@ -20,7 +20,7 @@ export function telaInicio(main, ir) {
         <li><strong>Entrega:</strong> baixe a planilha (.xlsx) com plano, cronograma e ficha de falha, e o resumo (.docx).</li>
       </ol>
       <p>
-        Lista salva neste aparelho: <strong>${n} equipamento${n === 1 ? '' : 's'}</strong>
+        Lista aberta neste aparelho: <strong>${n} equipamento${n === 1 ? '' : 's'}</strong>
         ${estado.exemplo ? ' — exemplo com dados fictícios, para você ver o resultado.' : '.'}
       </p>
       <div class="acoes">
