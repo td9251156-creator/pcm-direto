@@ -3,6 +3,15 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 
+/** A versão muda também quando só o conteúdo de um arquivo fixo ou do worker muda. */
+export function versaoDoCache(arquivos) {
+  const hash = createHash('sha256');
+  for (const [nome, conteudo] of [...arquivos].sort(([a], [b]) => a.localeCompare(b))) {
+    hash.update(nome).update('\0').update(conteudo).update('\0');
+  }
+  return hash.digest('hex').slice(0, 16);
+}
+
 // Gera o sw.js na pasta final com a lista de todos os arquivos do app,
 // para o aplicativo abrir e gerar planilhas mesmo sem internet.
 function serviceWorker() {
@@ -15,8 +24,12 @@ function serviceWorker() {
         .map((f) => String(f).split(path.sep).join('/'))
         .filter((f) => statSync('public/' + f).isFile());
       const arquivos = [...Object.keys(pacote), ...publicos].filter((f) => !f.endsWith('.map')).sort();
-      const versao = createHash('sha1').update(arquivos.join('|')).digest('hex').slice(0, 10);
-      const codigo = readFileSync('src/sw.js', 'utf8')
+      const worker = readFileSync('src/sw.js', 'utf8');
+      const conteudos = arquivos.map((nome) => [nome, pacote[nome]
+        ? (pacote[nome].type === 'chunk' ? pacote[nome].code : pacote[nome].source)
+        : readFileSync(path.join('public', nome))]);
+      const versao = versaoDoCache([...conteudos, ['src/sw.js', worker]]);
+      const codigo = worker
         .replace('[/*ARQUIVOS*/]', JSON.stringify(arquivos.map((f) => './' + f)))
         .replace('/*VERSAO*/', versao);
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: codigo });
