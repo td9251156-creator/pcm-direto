@@ -19,6 +19,11 @@ const TELAS = {
 };
 
 const main = document.getElementById('conteudo');
+document.querySelector('.pular').addEventListener('click', (e) => {
+  e.preventDefault();
+  main.focus();
+  main.scrollIntoView();
+});
 
 /** Vai para outra tela. */
 function ir(nome) {
