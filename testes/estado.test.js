@@ -18,6 +18,33 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('rascunhos e biblioteca salvos', () => {
+  it('desfaz remoção com ajustes e marcações e mantém a posição na lista', async () => {
+    const app = await import('../src/estado.js');
+    app.carregar();
+    app.estado.equipamentos = [equipamento, { ...equipamento, id: 'eq2', numero: 2, tag: 'UTL-MOT-002' }];
+    app.estado.ajustes = { 'eq1|MOT-01': { ativa: false } };
+    app.estado.execucoes = { 'eq1|MOT-01': { data: '2026-10-20', observacao: '' } };
+    app.remover('eq1');
+    expect(app.estado.equipamentos).toHaveLength(1);
+    expect(app.estado.ajustes).toEqual({});
+    expect(app.desfazerRemocao().ok).toBe(true);
+    expect(app.estado.equipamentos[0]).toEqual(equipamento);
+    expect(app.estado.ajustes['eq1|MOT-01']).toEqual({ ativa: false });
+    expect(app.estado.execucoes['eq1|MOT-01'].data).toBe('2026-10-20');
+    expect(app.podeDesfazerRemocao()).toBe(false);
+  });
+
+  it('não duplica TAG ao desfazer e não recupera remoção depois de limpar a lista', async () => {
+    const app = await import('../src/estado.js');
+    app.carregar();
+    app.estado.equipamentos = [equipamento];
+    app.remover('eq1');
+    app.adicionar([{ ...equipamento, id: 'outro' }]);
+    expect(app.desfazerRemocao().ok).toBe(false);
+    expect(app.estado.equipamentos).toHaveLength(1);
+    app.limpar();
+    expect(app.desfazerRemocao().ok).toBe(false);
+  });
   it('mantém biblioteca editada, capacidade, início e ajustes após gravar e reabrir', async () => {
     const app = await import('../src/estado.js');
     app.carregar();

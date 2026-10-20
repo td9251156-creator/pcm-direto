@@ -46,6 +46,9 @@ a lista, a biblioteca, os ajustes, a capacidade, a data de início e as marcaç�
 Para restaurar, selecione esse arquivo e confirme a substituição. Arquivos inválidos são recusados.
 O app preserva o par anterior de biblioteca e lista se a gravação da restauração for interrompida.
 
+Na tela **Equipamentos**, **Desfazer última remoção** recupera a última máquina removida nesta sessão,
+incluindo seus ajustes e marcações. Essa opção não recupera dados após fechar a página ou começar uma lista nova.
+
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
 
