@@ -71,18 +71,19 @@ export function validarEquipamento(eq, tipos, todos = []) {
 
   // Número
   const numero = Number(eq.numero);
+  const sugestaoNumero = () => proximoNumero(todos, eq.setor, eq.tipo, eq.id);
   if (!Number.isInteger(numero) || numero < 1 || numero > 999) {
     problemas.push({
       campo: 'numero',
-      mensagem: 'O número deve ser inteiro, de 1 a 999.',
-      sugestao: proximoNumero(todos, eq.setor, eq.tipo, eq.id),
+      mensagem: sugestaoNumero() === null ? 'Os números de 1 a 999 deste setor e tipo estão ocupados. Revise a lista ou escolha outro setor.' : 'O número deve ser inteiro, de 1 a 999.',
+      sugestao: sugestaoNumero(),
     });
   } else if (eq.tag && todos.some((o) => o.id !== eq.id && o.tag === eq.tag)) {
     // TAG repetida
     problemas.push({
       campo: 'numero',
-      mensagem: `A TAG ${eq.tag} já existe em outro equipamento.`,
-      sugestao: proximoNumero(todos, eq.setor, eq.tipo, eq.id),
+      mensagem: `A TAG ${eq.tag} já existe em outro equipamento.${sugestaoNumero() === null ? ' Todos os números deste setor e tipo estão ocupados.' : ''}`,
+      sugestao: sugestaoNumero(),
     });
   }
 

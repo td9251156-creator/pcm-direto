@@ -11,6 +11,14 @@ const tipos = [
 const siglas = Object.fromEntries(tipos.map((t) => [t.id, t.sigla]));
 
 describe('geração de TAG', () => {
+  it('procura lacunas ao atingir 999 e retorna null quando todos estão ocupados', () => {
+    const todos = Array.from({ length: 999 }, (_, i) => ({ id: `e${i}`, setor: 'UTL', tipo: 'motor_eletrico', numero: i + 1 }));
+    expect(proximoNumero(todos, 'UTL', 'motor_eletrico')).toBeNull();
+    expect(proximoNumero(todos.filter((e) => e.numero !== 42), 'UTL', 'motor_eletrico')).toBe(42);
+    expect(gerarTag('UTL', 'MOT', null)).toBe('UTL-MOT-???');
+    const p = validarEquipamento({ id: 'novo', setor: 'UTL', tipo: 'motor_eletrico', numero: null, descricao: 'Motor fictício' }, tipos, todos);
+    expect(p).toContainEqual(expect.objectContaining({ campo: 'numero', sugestao: null, mensagem: expect.stringContaining('ocupados') }));
+  });
   it('monta SETOR-SIGLA-NÚMERO com 3 dígitos', () => {
     expect(gerarTag('UTL', 'CMP', 1)).toBe('UTL-CMP-001');
     expect(gerarTag('PRD', 'MOT', 42)).toBe('PRD-MOT-042');
