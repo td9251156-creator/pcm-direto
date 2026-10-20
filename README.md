@@ -41,6 +41,11 @@ registrar a data e uma observação técnica sem dados pessoais. Guarda apenas a
 de cada tarefa neste aparelho, com opção de baixar as marcações em JSON. Isso não muda a frequência
 nem o cronograma do plano e não substitui um histórico completo de execução.
 
+Em **Início → Seus dados**, baixe o **backup completo (.json)** para guardar ou levar a outro aparelho
+a lista, a biblioteca, os ajustes, a capacidade, a data de início e as marcações de execução.
+Para restaurar, selecione esse arquivo e confirme a substituição. Arquivos inválidos são recusados.
+O app preserva o par anterior de biblioteca e lista se a gravação da restauração for interrompida.
+
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
 

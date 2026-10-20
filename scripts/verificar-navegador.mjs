@@ -52,6 +52,16 @@ try {
   await page.reload();
   await page.locator('#checklists details > summary').first().click();
   assert.equal(await page.locator('#checklists form [name="concluida"]').first().isChecked(), true);
+  await page.getByRole('link', { name: '1. Início' }).click();
+  const [backup] = await Promise.all([page.waitForEvent('download'), page.locator('#baixar-backup').click()]);
+  const bytesBackup = await readFile(await backup.path());
+  page.on('dialog', (d) => d.accept());
+  await page.locator('#em-branco').click();
+  await page.getByRole('link', { name: '1. Início' }).click();
+  await page.locator('#restaurar-backup').setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: bytesBackup });
+  await page.waitForFunction(() => document.querySelector('#mensagens').textContent.includes('Backup restaurado'));
+  assert.equal(await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('pcm-direto:rascunho:v1')).execucoes).length), 1);
+  await page.goto('http://127.0.0.1:4175/#execucao');
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await contexto.setOffline(true);

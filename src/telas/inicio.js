@@ -1,6 +1,9 @@
 // Tela 1: Início
-import { estado, limpar, carregarExemplo } from '../estado.js';
-import { esc, avisar } from '../ui.js';
+import { estado, limpar, carregarExemplo, restaurarBackup } from '../estado.js';
+import { criarBackup } from '../logica/backup.js';
+import { verificarBackup } from '../logica/backup.js';
+import { BIBLIOTECA_PADRAO } from '../estado.js';
+import { esc, avisar, baixar } from '../ui.js';
 
 let pedidoInstalacao = null; // evento do navegador para instalar o app
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -43,10 +46,32 @@ export function telaInicio(main, ir) {
       <h3>Seus dados</h3>
       <p>Tudo é feito neste navegador. Nenhum dado é enviado para servidor. O rascunho fica salvo aqui mesmo,
       então limpar os dados do navegador apaga a lista: ao terminar, baixe a planilha.</p>
+      <p>O backup completo guarda equipamentos, biblioteca, ajustes, capacidade, data do plano e marcações de execução.</p>
+      <button type="button" id="baixar-backup">Baixar backup completo (.json)</button>
+      <div class="acoes"><div><label for="restaurar-backup">Restaurar backup completo (.json)</label>
+        <input type="file" id="restaurar-backup" accept=".json,application/json"></div></div>
     </section>
   `;
 
   main.querySelector('#ir-equipamentos').addEventListener('click', () => ir('equipamentos'));
+  main.querySelector('#baixar-backup').addEventListener('click', () => {
+    baixar(JSON.stringify(criarBackup(estado), null, 2), 'pcm-direto-backup.json', 'application/json');
+    avisar('Backup completo baixado. Guarde o arquivo em um lugar seguro.');
+  });
+  main.querySelector('#restaurar-backup').addEventListener('change', async (e) => {
+    const arquivo = e.target.files[0];
+    e.target.value = '';
+    if (!arquivo) return;
+    let dados;
+    try { dados = JSON.parse(await arquivo.text()); } catch { avisar('O arquivo não é um JSON válido. A lista atual foi mantida.'); return; }
+    const valido = verificarBackup(dados, BIBLIOTECA_PADRAO);
+    if (!valido.ok) { avisar(valido.motivo); return; }
+    if (!confirm(`Restaurar ${valido.rascunho.equipamentos.length} equipamento(s) e a biblioteca deste backup? Isso substitui a lista atual. Baixe o backup atual antes, se quiser guardá-lo.`)) return;
+    const r = restaurarBackup(dados);
+    if (!r.ok) { avisar(r.motivo); return; }
+    telaInicio(main, ir);
+    avisar('Backup restaurado neste aparelho.');
+  });
   main.querySelector('#em-branco').addEventListener('click', () => {
     if (n && !confirm('Apagar a lista atual e começar em branco?')) return;
     limpar();
