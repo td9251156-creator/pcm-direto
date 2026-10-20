@@ -8,6 +8,7 @@ import { montarDados } from './logica/pacote.js';
 import { proximaSegunda, textoData } from './logica/cronograma.js';
 import { lerRascunho } from './logica/rascunho.js';
 import { verificarBibliotecaEditada } from './logica/edicao.js';
+import { validarExecucoes } from './logica/execucao.js';
 
 const CHAVE = 'pcm-direto:rascunho:v1';
 const CHAVE_BIBLIOTECA = 'pcm-direto:biblioteca:v1';
@@ -46,6 +47,7 @@ const copia = (obj) => JSON.parse(JSON.stringify(obj));
 export const estado = {
   equipamentos: [],
   ajustes: {}, // ajustes da revisão: { "idEquipamento|idTarefa": { periodicidade, ativa } }
+  execucoes: {}, // última marcação por equipamento e tarefa; não altera o plano
   exemplo: false, // true enquanto a lista for o exemplo da abertura
   inicio: textoData(proximaSegunda()), // data da semana 1 do cronograma
   capacidade: {}, // horas disponíveis por semana em cada especialidade: { Mecânica: 8 }
@@ -89,7 +91,9 @@ export function carregar() {
   estado.inicio = textoData(proximaSegunda());
   estado.capacidade = {};
   const local = lerLocal(CHAVE);
-  const salvo = local && lerRascunho(local.valor);
+  const lido = local && lerRascunho(local.valor);
+  const salvo = lido && validarExecucoes(lido.execucoes ?? {}) ? lido : null;
+  estado.execucoes = salvo?.execucoes ?? {};
   if (salvo) {
     estado.equipamentos = salvo.equipamentos.map((e) => ({ ...e }));
     for (const e of estado.equipamentos) atualizarTag(e);
@@ -112,6 +116,7 @@ export function salvar() {
     localStorage.setItem(CHAVE, JSON.stringify({
       equipamentos: estado.equipamentos,
       ajustes: estado.ajustes,
+      execucoes: estado.execucoes,
       exemplo: estado.exemplo,
       inicio: estado.inicio,
       capacidade: estado.capacidade,
@@ -167,6 +172,7 @@ export function remover(id) {
   estado.equipamentos = estado.equipamentos.filter((e) => e.id !== id);
   // Remove também os ajustes desse equipamento
   for (const k of Object.keys(estado.ajustes)) if (k.startsWith(id + '|')) delete estado.ajustes[k];
+  for (const k of Object.keys(estado.execucoes)) if (k.startsWith(id + '|')) delete estado.execucoes[k];
   salvar();
 }
 
@@ -174,6 +180,7 @@ export function remover(id) {
 export function limpar() {
   estado.equipamentos = [];
   estado.ajustes = {};
+  estado.execucoes = {};
   estado.exemplo = false;
   salvar();
 }
@@ -182,6 +189,7 @@ export function limpar() {
 export function carregarExemplo() {
   estado.equipamentos = listaExemplo();
   estado.ajustes = {};
+  estado.execucoes = {};
   estado.exemplo = true;
   salvar();
 }

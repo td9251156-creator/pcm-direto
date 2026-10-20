@@ -118,6 +118,7 @@ export function telaRevisao(main, ir) {
 
     <div class="acoes">
       <button type="button" id="ir-entrega">Próximo: baixar os arquivos</button>
+      <a class="botao secundario" href="#execucao">Checklist de execução</a>
       <button type="button" class="secundario" id="desfazer">Desfazer meus ajustes</button>
     </div>
   `;

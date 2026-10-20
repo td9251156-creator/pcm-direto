@@ -36,6 +36,11 @@ Se houver campos inválidos ou códigos repetidos, ele informa o problema e mant
 Se dados salvos estiverem danificados, o app avisa e oferece o download dos originais para recuperação.
 Antes de substituir esses dados, guarda uma cópia local; se não houver espaço, mantém o original.
 
+O **Checklist de execução**, acessível pelo Início ou pela Revisão, permite marcar a execução,
+registrar a data e uma observação técnica sem dados pessoais. Guarda apenas a última marcação
+de cada tarefa neste aparelho, com opção de baixar as marcações em JSON. Isso não muda a frequência
+nem o cronograma do plano e não substitui um histórico completo de execução.
+
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
 

@@ -29,6 +29,7 @@ describe('rascunhos e biblioteca salvos', () => {
     app.estado.inicio = '2027-01-04';
     app.estado.capacidade = { Elétrica: 8 };
     app.estado.ajustes = { 'eq1|MOT-01': { periodicidade: 'Semanal' } };
+    app.estado.execucoes = { 'eq1|MOT-01': { data: '2026-10-20', observacao: 'Conferência fictícia' } };
     expect(app.salvar()).toBe(true);
     app.carregar();
     expect(app.estado.biblioteca).toEqual(bib);
@@ -36,6 +37,7 @@ describe('rascunhos e biblioteca salvos', () => {
     expect(app.estado.inicio).toBe('2027-01-04');
     expect(app.estado.capacidade).toEqual({ Elétrica: 8 });
     expect(app.estado.ajustes['eq1|MOT-01'].periodicidade).toBe('Semanal');
+    expect(app.estado.execucoes['eq1|MOT-01'].observacao).toBe('Conferência fictícia');
     expect(app.estado.equipamentos).toEqual([equipamento]);
   });
 

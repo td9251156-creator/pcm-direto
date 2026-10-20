@@ -42,11 +42,21 @@ try {
   await page.locator('#importar-json').setInputFiles({ name: 'invalido.json', mimeType: 'application/json', buffer: Buffer.from('null') });
   await page.waitForFunction(() => document.querySelector('#mensagens').textContent.includes('Biblioteca não importada'));
   assert.equal(await page.locator('#tipos > details').count(), 4);
+  await page.goto('http://127.0.0.1:4175/#execucao');
+  await page.locator('#checklists details > summary').first().click();
+  const tarefa = page.locator('#checklists form').first();
+  await tarefa.locator('[name="concluida"]').check();
+  await tarefa.locator('[name="observacao"]').fill('Conferência fictícia do roteiro de teste');
+  await tarefa.getByRole('button').click();
+  await page.waitForFunction(() => Object.keys(JSON.parse(localStorage.getItem('pcm-direto:rascunho:v1')).execucoes).length === 1);
+  await page.reload();
+  await page.locator('#checklists details > summary').first().click();
+  assert.equal(await page.locator('#checklists form [name="concluida"]').first().isChecked(), true);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await contexto.setOffline(true);
   await page.reload();
-  await page.getByRole('heading', { name: 'Biblioteca técnica', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'Checklist de execução', exact: true }).waitFor();
   await page.getByRole('link', { name: '4. Entrega' }).click();
   for (const [botao, extensao] of [['#baixar-xlsx', '.xlsx'], ['#baixar-docx', '.docx']]) {
     const [arquivo] = await Promise.all([page.waitForEvent('download'), page.locator(botao).click()]);
