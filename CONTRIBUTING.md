@@ -21,9 +21,12 @@ Obrigado pelo interesse no PCM Direto. Toda ajuda é bem-vinda, principalmente d
 ## Passo a passo para código
 
 1. Faça um *fork* e crie um ramo: `git checkout -b minha-melhoria`.
-2. Rode `npm install`, depois `npm run lint` e `npm test` antes de enviar.
+2. Rode `npm ci`, depois `npm run verificar` antes de enviar.
 3. Escreva o código e os comentários em português, de forma simples.
 4. Abra um *pull request* explicando o antes e o depois.
+
+Para desenvolvimento com agentes, siga [AGENTS.md](AGENTS.md), a
+[estratégia de evolução](docs/EVOLUCAO-CONTINUA.md) e a [fila atual](docs/FILA.md).
 
 Ao contribuir, você concorda que sua contribuição será publicada sob a [licença MIT](LICENSE)
 e que seguirá o [Código de Conduta](CODE_OF_CONDUCT.md).
