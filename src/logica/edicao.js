@@ -44,6 +44,8 @@ export function podeApagarTipo(padrao, tipoId, equipamentos) {
  */
 export function verificarBibliotecaEditada(padrao, bib) {
   const problemas = validarBiblioteca(bib);
+  // Só percorre tarefas e confere a segurança depois de validar a estrutura do arquivo.
+  if (problemas.length) return problemas;
   for (const tipoOriginal of padrao.tipos) {
     const tipo = bib.tipos?.find((t) => t.id === tipoOriginal.id);
     if (!tipo) { problemas.push(`O tipo "${tipoOriginal.nome}" não pode ser retirado.`); continue; }

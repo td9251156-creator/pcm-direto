@@ -30,6 +30,9 @@ com cronograma anual, em planilha (.xlsx) e documento (.docx).
 Extras: a tela **Biblioteca técnica** (link no Início) permite editar tarefas e criar tipos de equipamento
 no próprio app, e o botão de tema no rodapé alterna entre claro, escuro e automático.
 
+Ao importar uma biblioteca `.json`, o app confere o formato antes de substituir a biblioteca atual.
+Se houver campos inválidos ou códigos repetidos, ele informa o problema e mantém a biblioteca em uso.
+
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
 
@@ -82,6 +85,8 @@ Veja [BIBLIOTECA.md](BIBLIOTECA.md) para entender o formato e o checklist de rev
 
 [ROADMAP.md](ROADMAP.md) · [DECISOES.md](DECISOES.md) · [CONTRIBUTING.md](CONTRIBUTING.md) ·
 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [LICENSE](LICENSE)
+
+[Lista priorizada de melhorias](docs/MELHORIAS.md), com problemas encontrados e próximas rodadas.
 
 ## Sobre o autor
 

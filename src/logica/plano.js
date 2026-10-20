@@ -32,25 +32,39 @@ export function siglasDaBiblioteca(biblioteca) {
  */
 export function validarBiblioteca(biblioteca) {
   const problemas = [];
+  const objeto = (valor) => valor !== null && typeof valor === 'object' && !Array.isArray(valor);
+  const texto = (valor) => typeof valor === 'string' && valor.trim().length > 0;
+  if (!objeto(biblioteca) || !Array.isArray(biblioteca.tipos)) {
+    return ['A biblioteca deve ser um objeto com uma lista de tipos.'];
+  }
+  const tipos = new Set();
   const ids = new Set();
   const siglas = new Set();
-  for (const tipo of biblioteca.tipos ?? []) {
-    if (!tipo.id || !tipo.nome || !tipo.sigla) problemas.push(`Tipo sem id, nome ou sigla: ${JSON.stringify(tipo.id ?? tipo.nome)}`);
-    if (!/^[A-Z]{3}$/.test(tipo.sigla ?? '')) problemas.push(`${tipo.id}: a sigla deve ter 3 letras maiúsculas.`);
-    if (siglas.has(tipo.sigla)) problemas.push(`${tipo.id}: sigla ${tipo.sigla} repetida.`);
+  for (const tipo of biblioteca.tipos) {
+    if (!objeto(tipo)) { problemas.push('Cada tipo deve ser um objeto com id, nome, sigla e tarefas.'); continue; }
+    const idTipo = typeof tipo.id === 'string' ? tipo.id : '(tipo sem id válido)';
+    if (!texto(tipo.id) || !/^[a-z0-9_]+$/.test(tipo.id)) problemas.push('O id do tipo deve conter apenas letras minúsculas sem acento, números e sublinhado.');
+    if (tipos.has(tipo.id)) problemas.push(`${idTipo}: id de tipo repetido.`);
+    tipos.add(tipo.id);
+    if (!texto(tipo.nome)) problemas.push(`${idTipo}: falta o nome do tipo em texto.`);
+    if (!texto(tipo.sigla) || !/^[A-Z]{3}$/.test(tipo.sigla)) problemas.push(`${idTipo}: a sigla deve ter 3 letras maiúsculas.`);
+    if (siglas.has(tipo.sigla)) problemas.push(`${idTipo}: sigla repetida.`);
     siglas.add(tipo.sigla);
-    for (const t of tipo.tarefas ?? []) {
-      const nome = `${tipo.id} / ${t.id ?? '(sem id)'}`;
-      if (!t.id) problemas.push(`${nome}: tarefa sem id.`);
+    if (!Array.isArray(tipo.tarefas)) { problemas.push(`${idTipo}: tarefas deve ser uma lista.`); continue; }
+    for (const t of tipo.tarefas) {
+      if (!objeto(t)) { problemas.push(`${idTipo}: cada tarefa deve ser um objeto.`); continue; }
+      const nome = `${idTipo} / ${typeof t.id === 'string' ? t.id : '(sem id válido)'}`;
+      if (!texto(t.id) || !/^[A-Za-z0-9_-]+$/.test(t.id)) problemas.push(`${nome}: o id da tarefa deve conter apenas letras sem acento, números, hífen e sublinhado.`);
       if (ids.has(t.id)) problemas.push(`${nome}: id repetido.`);
       ids.add(t.id);
-      if (!t.descricao) problemas.push(`${nome}: falta a descrição.`);
-      if (!vezesPorAno(t.periodicidade)) problemas.push(`${nome}: periodicidade "${t.periodicidade}" não aceita. Use: ${PERIODICIDADES.map((p) => p.nome).join(', ')}.`);
-      if (!t.especialidade) problemas.push(`${nome}: falta a especialidade.`);
-      if (!(t.duracao_horas > 0)) problemas.push(`${nome}: duracao_horas deve ser maior que zero.`);
+      if (!texto(t.descricao)) problemas.push(`${nome}: falta a descrição em texto.`);
+      if (!vezesPorAno(t.periodicidade)) problemas.push(`${nome}: periodicidade "${typeof t.periodicidade === 'string' ? t.periodicidade : '(inválida)'}" não aceita. Use: ${PERIODICIDADES.map((p) => p.nome).join(', ')}.`);
+      if (!texto(t.especialidade)) problemas.push(`${nome}: falta a especialidade em texto.`);
+      if (!Number.isFinite(t.duracao_horas) || t.duracao_horas <= 0) problemas.push(`${nome}: duracao_horas deve ser um número finito maior que zero.`);
       if (typeof t.seguranca !== 'boolean') problemas.push(`${nome}: seguranca deve ser true ou false.`);
-      if (!t.origem) problemas.push(`${nome}: falta a origem.`);
-      if (!t.versao) problemas.push(`${nome}: falta a versão.`);
+      if (!texto(t.origem)) problemas.push(`${nome}: falta a origem em texto.`);
+      if (!texto(t.versao)) problemas.push(`${nome}: falta a versão em texto.`);
+      if (t.observacao !== undefined && typeof t.observacao !== 'string') problemas.push(`${nome}: observacao deve ser um texto.`);
     }
   }
   return problemas;
