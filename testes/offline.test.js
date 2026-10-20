@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
+import { versaoDoCache } from '../vite.config.js';
 
 function worker() {
   const scope = 'https://exemplo.test/pcm/';
@@ -19,6 +20,15 @@ function worker() {
 }
 
 describe('cache do aplicativo', () => {
+  it('muda de versão quando manifesto, ícone ou worker muda sem trocar o nome', () => {
+    const base = [['manifest.webmanifest', 'primeiro'], ['icone.png', 'imagem'], ['sw.js', 'worker']];
+    const anterior = versaoDoCache(base);
+    for (let i = 0; i < base.length; i++) {
+      const alterado = base.map(([nome, conteudo], j) => [nome, j === i ? conteudo + 'novo' : conteudo]);
+      expect(versaoDoCache(alterado)).not.toBe(anterior);
+    }
+    expect(versaoDoCache([...base].reverse())).toBe(anterior);
+  });
   it('remove apenas versões antigas do mesmo aplicativo e endereço', async () => {
     const w = worker();
     let pronto;

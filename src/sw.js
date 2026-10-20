@@ -26,7 +26,10 @@ self.addEventListener('fetch', (evento) => {
     evento.respondWith(
       fetch(req)
         .then((resp) => {
-          if (resp.ok) evento.waitUntil(caches.open(CACHE).then((c) => c.put('./', resp.clone())).catch(() => {}));
+          if (resp.ok) {
+            const copia = resp.clone();
+            evento.waitUntil(caches.open(CACHE).then((c) => c.put('./', copia)).catch(() => {}));
+          }
           return resp;
         })
         .catch(() => caches.open(CACHE).then((c) => c.match('./'))),
