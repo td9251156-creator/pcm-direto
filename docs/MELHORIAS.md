@@ -53,7 +53,7 @@ por profissional habilitado. Não ampliar tarefas técnicas ou periodicidades se
 |---|---|---|---|---|---|
 | 16 | Backup e restauração da lista completa, ajustes e biblioteca em JSON; CSV não guarda tudo. | Levar o trabalho a outro aparelho e recuperar uma cópia. | Médio | Alto: validar antes de substituir; manter compatibilidade e confirmar a troca. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/melhoria%2Fchecklist-execucao...melhoria%2Fbackup-completo?expand=1). |
 | 17 | Desfazer a última remoção de equipamento. A confirmação já existe. | Recuperar um clique errado sem recadastrar os dados. | Médio | Médio: recuperar também os ajustes daquela máquina. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/melhoria%2Fbackup-completo...melhoria%2Fdesfazer-remocao?expand=1). |
-| 18 | Filtros por setor/especialidade e instruções mais claras sobre semanas acima da capacidade. | Encontrar tarefas e entender limites sem precisar conhecer o sistema. | Médio | Médio: deixar claro o que está filtrado e não ocultar alertas de segurança. | Pendente. |
+| 18 | Filtros por setor/especialidade e instruções mais claras sobre semanas acima da capacidade. | Encontrar tarefas e entender limites sem precisar conhecer o sistema. | Médio | Médio: deixar claro o que está filtrado e não ocultar alertas de segurança. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/melhoria%2Fdesfazer-remocao...melhoria%2Ffiltrar-cronograma?expand=1). |
 
 ## Rodada 1 — importação de biblioteca
 

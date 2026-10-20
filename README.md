@@ -49,6 +49,10 @@ O app preserva o par anterior de biblioteca e lista se a gravação da restaura�
 Na tela **Equipamentos**, **Desfazer última remoção** recupera a última máquina removida nesta sessão,
 incluindo seus ajustes e marcações. Essa opção não recupera dados após fechar a página ou começar uma lista nova.
 
+Na impressão do cronograma, filtre por **setor** e **especialidade**. As horas impressas refletem
+somente as tarefas visíveis, sem redistribuir semanas. Os alertas de capacidade do plano completo
+continuam aparecendo; os arquivos da Entrega mantêm o plano completo.
+
 A planilha tem as abas: Leia-me, Resumo, Equipamentos, Plano, Cronograma e Ficha de Falha.
 Ela usa só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros, e abre em versões antigas do Excel.
 
