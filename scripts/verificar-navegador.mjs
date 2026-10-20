@@ -26,6 +26,7 @@ await executarComRecursos({
     await page.getByRole('link', { name: '2. Equipamentos' }).focus();
     await page.keyboard.press('Enter');
     await page.waitForURL('**/#equipamentos');
+    await page.waitForFunction(() => document.activeElement?.id === 'conteudo');
     assert.equal(await page.evaluate(() => document.activeElement.id), 'conteudo');
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'A página excedeu a largura do celular');
     await page.locator('.pular').focus();
