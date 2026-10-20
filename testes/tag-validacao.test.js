@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { normalizarSetor, gerarTag, proximoNumero, atribuirTags } from '../src/logica/tag.js';
 import { validarEquipamento, resolverTipo, tipoMaisParecido } from '../src/logica/validacao.js';
-import { lerTabela, quebrarLinha } from '../src/logica/entrada.js';
+import { lerTabela, quebrarLinha, paraCsv } from '../src/logica/entrada.js';
 
 const tipos = [
   { id: 'motor_eletrico', nome: 'Motor elétrico', sigla: 'MOT' },
@@ -80,6 +80,20 @@ describe('validação com sugestão', () => {
 });
 
 describe('entrada de dados', () => {
+  it.each(['Motor\nda torre', 'Motor\r\nda torre', 'Motor\rda torre', 'Motor; "reserva"'])('preserva uma descrição ao exportar e importar: %j', (descricao) => {
+    const e = { setor: 'UTL', tipo: 'motor_eletrico', descricao, fabricante: 'Fabricante fictício', modelo: 'M1' };
+    const lista = lerTabela(paraCsv([e]), tipos);
+    expect(lista).toHaveLength(1);
+    expect(lista[0]).toMatchObject(e);
+  });
+
+  it('ignora separador dentro de aspas ao detectar o formato', () => {
+    expect(lerTabela('UTL,MOT,"Motor; reserva",Fictício,M1', tipos)[0].descricao).toBe('Motor; reserva');
+  });
+
+  it('recusa aspas não fechadas em vez de importar dados partidos', () => {
+    expect(() => lerTabela('UTL;MOT;"Motor\nreserva', tipos)).toThrow(/aspas sem fechamento/);
+  });
   it('lê texto colado do Excel (tabulação) com cabeçalho', () => {
     const texto = 'Setor\tTipo\tDescrição\tFabricante\tModelo\nutl\tCompressor de ar\tCompressor 1\tFab X\tM1\n\n';
     const lista = lerTabela(texto, tipos);

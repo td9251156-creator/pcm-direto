@@ -8,9 +8,15 @@ export const COLUNAS = ['setor', 'tipo', 'descricao', 'fabricante', 'modelo'];
 
 /** Descobre o separador olhando a primeira linha: tabulação (Excel), ponto e vírgula ou vírgula. */
 export function detectarSeparador(linha) {
-  if (linha.includes('\t')) return '\t';
-  if (linha.includes(';')) return ';';
-  return ',';
+  const contagem = { '\t': 0, ';': 0, ',': 0 };
+  let aspas = false;
+  for (let i = 0; i < linha.length; i++) {
+    if (linha[i] === '"') {
+      if (aspas && linha[i + 1] === '"') i++;
+      else aspas = !aspas;
+    } else if (!aspas && Object.hasOwn(contagem, linha[i])) contagem[linha[i]]++;
+  }
+  return Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a])[0];
 }
 
 /** Quebra uma linha em células, respeitando aspas ("Motor, 5 cv"). */
@@ -83,7 +89,22 @@ export function lerMatriz(matriz, tipos) {
 
 /** Converte o texto colado do Excel ou de um arquivo CSV em lista de equipamentos. */
 export function lerTabela(texto, tipos) {
-  const linhas = String(texto ?? '').replace(/^\uFEFF/, '').split(/\r?\n/).filter((l) => l.trim());
+  texto = String(texto ?? '').replace(/^\uFEFF/, '');
+  const linhas = [];
+  let aspas = false;
+  let inicio = 0;
+  for (let i = 0; i < texto.length; i++) {
+    if (texto[i] === '"') {
+      if (aspas && texto[i + 1] === '"') i++;
+      else aspas = !aspas;
+    } else if (!aspas && /[\r\n]/.test(texto[i])) {
+      if (texto.slice(inicio, i).trim()) linhas.push(texto.slice(inicio, i));
+      if (texto[i] === '\r' && texto[i + 1] === '\n') i++;
+      inicio = i + 1;
+    }
+  }
+  if (aspas) throw new Error('Há um campo com aspas sem fechamento. Confira o arquivo antes de importar.');
+  if (texto.slice(inicio).trim()) linhas.push(texto.slice(inicio));
   if (!linhas.length) return [];
   const sep = detectarSeparador(linhas[0]);
   return lerMatriz(linhas.map((l) => quebrarLinha(l, sep)), tipos);
@@ -114,7 +135,7 @@ export async function lerXlsx(buffer, tipos, ExcelJS) {
 export function paraCsv(equipamentos) {
   const esc = (v) => {
     const s = String(v ?? '');
-    return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    return /[;"\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   const linhas = [COLUNAS.join(';')];
   for (const e of equipamentos) linhas.push(COLUNAS.map((c) => esc(e[c])).join(';'));
