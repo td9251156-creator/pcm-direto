@@ -32,6 +32,14 @@ MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação liv
 - Contato público: pcmdireto@gmail.com.
 
 ## Riscos conhecidos
+
+### Validação da biblioteca importada (20/10/2026)
+
+Arquivos JSON devem ser conferidos antes de substituir a biblioteca em uso: tipos e tarefas em listas,
+códigos válidos e sem repetição, textos obrigatórios preenchidos e duração numérica positiva e finita.
+Um arquivo recusado mantém a biblioteca atual. A conferência de formato vem antes das travas de segurança,
+que continuam obrigatórias. O formato do rascunho e suas chaves de armazenamento permanecem iguais.
+
 | Risco | Como tratamos |
 |---|---|
 | Periodicidades genéricas aplicadas sem validação | Aviso discreto no rodapé de todas as telas (decisão de 18/10/2026: sai o destaque amarelo para melhorar a leitura) e completo em todos os arquivos gerados; origem marcada em cada tarefa |

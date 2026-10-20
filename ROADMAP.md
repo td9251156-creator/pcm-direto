@@ -19,6 +19,9 @@
 
 ## Próximas etapas
 
+Antes das funções novas, corrigir os erros e riscos e reforçar os testes na ordem registrada em
+[docs/MELHORIAS.md](docs/MELHORIAS.md). A primeira correção valida arquivos de biblioteca antes da importação.
+
 ### Etapa 2 — Checklists com evidência
 Checklists de execução por tarefa, com campo para registro de evidência (foto, medição, assinatura).
 

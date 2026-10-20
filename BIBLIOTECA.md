@@ -51,6 +51,12 @@ biblioteca
   a versão e a data em mãos. Na dúvida, escreva `"verificar na fonte oficial"` na observação.
 - **Sem acento no `id`**, sem vírgula sobrando no fim das listas e com aspas duplas em todos os textos
   (o formato JSON é rígido). Se algo quebrar, o comando `npm test` aponta o erro.
+- **Códigos únicos:** o `id` do tipo aceita letras minúsculas, números e sublinhado (`_`);
+  o da tarefa aceita letras sem acento, números, hífen (`-`) e sublinhado. Não repita códigos de tipos
+  nem códigos de tarefas. `tipos` e `tarefas` devem ser listas, mesmo quando vazias.
+- **Duração numérica:** escreva `0.5`, sem aspas, e sempre maior que zero. Descrição, especialidade,
+  origem e versão devem ser textos preenchidos. Ao importar um arquivo inválido pelo app, a biblioteca
+  em uso é mantida e a mensagem indica o primeiro problema.
 - O cronograma usa semanas. Tarefa `Diária` aparece em todas as semanas, contando 5 dias úteis por semana
   nas horas (ex.: 0,25 h por dia = 1,25 h na semana).
 
