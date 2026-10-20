@@ -1,5 +1,5 @@
 // Tela 2: Equipamentos — cadastro manual, colar do Excel, importar CSV ou .xlsx e lista com validação ao vivo.
-import { estado, salvar, adicionar, remover, limpar, atualizarTag } from '../estado.js';
+import { estado, salvar, adicionar, remover, limpar, atualizarTag, podeDesfazerRemocao, desfazerRemocao } from '../estado.js';
 import { validarEquipamento, validarLista } from '../logica/validacao.js';
 import { lerTabela, lerXlsx, novoId, paraCsv } from '../logica/entrada.js';
 import { normalizarSetor, proximoNumero, gerarTag } from '../logica/tag.js';
@@ -68,6 +68,7 @@ export function telaEquipamentos(main, ir) {
       <div class="acoes">
         <button type="button" id="ir-revisao">Próximo: revisar o plano</button>
         <button type="button" class="secundario" id="limpar">Começar lista em branco</button>
+        <button type="button" class="secundario" id="desfazer-remocao" ${podeDesfazerRemocao() ? '' : 'disabled'}>Desfazer última remoção</button>
       </div>
     </section>
 
@@ -120,6 +121,7 @@ export function telaEquipamentos(main, ir) {
 
   // Desenha a lista inteira (usado ao adicionar, remover ou aplicar sugestão)
   function desenharLista() {
+    main.querySelector('#desfazer-remocao').disabled = !podeDesfazerRemocao();
     const problemas = validarLista(estado.equipamentos, tipos());
     // Abre os que têm pendência e os que o usuário já tinha aberto
     lista.innerHTML = estado.equipamentos.map((e) => htmlEquipamento(e, problemas[e.id] || abertos.has(e.id))).join('') ||
@@ -301,6 +303,13 @@ export function telaEquipamentos(main, ir) {
     avisar('Lista em branco.');
   });
   main.querySelector('#ir-revisao').addEventListener('click', () => ir('revisao'));
+  main.querySelector('#desfazer-remocao').addEventListener('click', () => {
+    const r = desfazerRemocao();
+    if (!r.ok) { avisar(r.motivo); return; }
+    desenharLista();
+    avisar('Equipamento recuperado com seus ajustes e marcações.');
+    main.querySelector('#ir-revisao').focus();
+  });
 
   desenharLista();
 }

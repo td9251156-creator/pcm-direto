@@ -17,6 +17,8 @@ const CHAVE_BIBLIOTECA = 'pcm-direto:biblioteca:v1';
 const originaisPendentes = new Map();
 export const recuperacao = [];
 export const armazenamento = { rascunho: true, biblioteca: true, leitura: true };
+let ultimaRemocao = null;
+export const podeDesfazerRemocao = () => ultimaRemocao !== null;
 
 function lerLocal(chave) {
   let original;
@@ -80,6 +82,7 @@ export function listaExemplo() {
 
 /** Lê o que está salvo. Na primeira abertura (nada salvo), carrega o exemplo. */
 export function carregar() {
+  ultimaRemocao = null;
   Object.assign(armazenamento, { rascunho: true, biblioteca: true, leitura: true });
   if (!recuperarTransacao()) armazenamento.leitura = false;
   recuperacao.length = 0;
@@ -185,6 +188,13 @@ export function adicionar(novos) {
 }
 
 export function remover(id) {
+  const indice = estado.equipamentos.findIndex((e) => e.id === id);
+  if (indice < 0) return;
+  const selecionar = (dados) => Object.fromEntries(Object.entries(dados).filter(([k]) => k.startsWith(id + '|')));
+  ultimaRemocao = {
+    equipamento: { ...estado.equipamentos[indice] }, indice,
+    ajustes: selecionar(estado.ajustes), execucoes: selecionar(estado.execucoes),
+  };
   estado.equipamentos = estado.equipamentos.filter((e) => e.id !== id);
   // Remove também os ajustes desse equipamento
   for (const k of Object.keys(estado.ajustes)) if (k.startsWith(id + '|')) delete estado.ajustes[k];
@@ -192,8 +202,26 @@ export function remover(id) {
   salvar();
 }
 
+/** Desfaz uma remoção desta sessão, recuperando também ajustes e marcações. */
+export function desfazerRemocao() {
+  if (!ultimaRemocao) return { ok: false, motivo: 'Não há remoção para desfazer nesta sessão.' };
+  const { equipamento, indice, ajustes, execucoes } = ultimaRemocao;
+  const eq = { ...equipamento };
+  atualizarTag(eq);
+  if (estado.equipamentos.some((e) => e.id === eq.id || e.tag === eq.tag)) {
+    return { ok: false, motivo: 'A TAG removida já está em uso. Corrija a numeração desse equipamento antes de desfazer.' };
+  }
+  estado.equipamentos.splice(indice, 0, eq);
+  Object.assign(estado.ajustes, ajustes);
+  Object.assign(estado.execucoes, execucoes);
+  ultimaRemocao = null;
+  salvar();
+  return { ok: true };
+}
+
 /** Começa uma lista vazia. */
 export function limpar() {
+  ultimaRemocao = null;
   estado.equipamentos = [];
   estado.ajustes = {};
   estado.execucoes = {};
@@ -203,6 +231,7 @@ export function limpar() {
 
 /** Volta para o exemplo da abertura. */
 export function carregarExemplo() {
+  ultimaRemocao = null;
   estado.equipamentos = listaExemplo();
   estado.ajustes = {};
   estado.execucoes = {};
