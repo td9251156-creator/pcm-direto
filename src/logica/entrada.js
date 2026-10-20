@@ -118,6 +118,7 @@ export async function lerXlsx(buffer, tipos, ExcelJS) {
   const wb = new ExcelJS.Workbook();
   await wb.xlsx.load(buffer);
   const abas = [wb.getWorksheet('Equipamentos'), ...wb.worksheets].filter(Boolean);
+  const tabelas = [];
   for (const aba of abas) {
     const matriz = [];
     aba.eachRow({ includeEmpty: false }, (row) => {
@@ -125,6 +126,22 @@ export async function lerXlsx(buffer, tipos, ExcelJS) {
       row.eachCell({ includeEmpty: true }, (cell, col) => { l[col - 1] = cell.text; });
       matriz.push(Array.from(l, (c) => c ?? ''));
     });
+    tabelas.push(matriz);
+  }
+  // Primeiro procura uma tabela identificada; uma capa não deve esconder a aba correta.
+  for (const matriz of tabelas) {
+    const cabecalho = matriz.filter((l) => l.some((c) => c.trim())).slice(0, 5).some((l) => {
+      const nomes = l.map(chave);
+      return nomes.includes('setor') && nomes.includes('tipo');
+    });
+    if (cabecalho) {
+      const lista = lerMatriz(matriz, tipos);
+      if (lista.length) return lista;
+    }
+  }
+  // Sem cabeçalho, mantém o formato documentado de setor, tipo e descrição.
+  for (const matriz of tabelas) {
+    if (!matriz.some((l) => /^[a-zA-Z0-9]{2,4}$/.test(l[0]?.trim() ?? '') && l[1]?.trim() && l[2]?.trim())) continue;
     const lista = lerMatriz(matriz, tipos);
     if (lista.length) return lista;
   }
