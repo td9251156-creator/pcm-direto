@@ -13,10 +13,11 @@ const CHAVE = 'pcm-direto:rascunho:v1';
 const CHAVE_BIBLIOTECA = 'pcm-direto:biblioteca:v1';
 const originaisPendentes = new Map();
 export const recuperacao = [];
+export const armazenamento = { rascunho: true, biblioteca: true, leitura: true };
 
 function lerLocal(chave) {
   let original;
-  try { original = localStorage.getItem(chave); } catch { return null; }
+  try { original = localStorage.getItem(chave); } catch { armazenamento.leitura = false; return null; }
   if (original === null) return null;
   try { return { valor: JSON.parse(original), original }; }
   catch { return { valor: null, original }; }
@@ -74,6 +75,7 @@ export function listaExemplo() {
 
 /** Lê o que está salvo. Na primeira abertura (nada salvo), carrega o exemplo. */
 export function carregar() {
+  Object.assign(armazenamento, { rascunho: true, biblioteca: true, leitura: true });
   recuperacao.length = 0;
   originaisPendentes.clear();
   estado.biblioteca = copia(padrao);
@@ -106,7 +108,7 @@ export function carregar() {
 /** Salva a lista no navegador. Se o navegador bloquear, o app continua funcionando. */
 export function salvar() {
   try {
-    if (!prepararGravacao()) return false;
+    if (!prepararGravacao()) { armazenamento.rascunho = false; return false; }
     localStorage.setItem(CHAVE, JSON.stringify({
       equipamentos: estado.equipamentos,
       ajustes: estado.ajustes,
@@ -115,8 +117,10 @@ export function salvar() {
       capacidade: estado.capacidade,
       salvoEm: new Date().toISOString(),
     }));
+    armazenamento.rascunho = true;
     return true;
   } catch {
+    armazenamento.rascunho = false;
     return false;
   }
 }
@@ -126,8 +130,12 @@ export function usarBiblioteca(nova) {
   estado.biblioteca = nova;
   estado.bibliotecaEditada = true;
   for (const eq of estado.equipamentos) atualizarTag(eq); // a sigla de um tipo pode ter mudado
-  try { if (prepararGravacao()) localStorage.setItem(CHAVE_BIBLIOTECA, JSON.stringify(nova)); } catch { /* segue sem salvar */ }
-  salvar();
+  try {
+    if (!prepararGravacao()) throw new Error('Cópia de recuperação indisponível');
+    localStorage.setItem(CHAVE_BIBLIOTECA, JSON.stringify(nova));
+    armazenamento.biblioteca = true;
+  } catch { armazenamento.biblioteca = false; }
+  return salvar() && armazenamento.biblioteca;
 }
 
 /** Volta para a biblioteca que vem com o app. */
@@ -135,8 +143,12 @@ export function restaurarBiblioteca() {
   estado.biblioteca = copia(padrao);
   estado.bibliotecaEditada = false;
   for (const eq of estado.equipamentos) atualizarTag(eq);
-  try { if (prepararGravacao()) localStorage.removeItem(CHAVE_BIBLIOTECA); } catch { /* nada a fazer */ }
-  salvar();
+  try {
+    if (!prepararGravacao()) throw new Error('Cópia de recuperação indisponível');
+    localStorage.removeItem(CHAVE_BIBLIOTECA);
+    armazenamento.biblioteca = true;
+  } catch { armazenamento.biblioteca = false; }
+  return salvar() && armazenamento.biblioteca;
 }
 
 /** Adiciona equipamentos já lidos (cadastro, colagem ou arquivo), numerando os que não têm número. */

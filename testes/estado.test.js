@@ -18,6 +18,27 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('rascunhos e biblioteca salvos', () => {
+  it('avisa falhas de escrita e só limpa a falha da biblioteca após gravá-la', async () => {
+    const app = await import('../src/estado.js');
+    app.carregar();
+    const gravar = localStorage.setItem;
+    localStorage.setItem = (k, v) => { if (k === BIB) throw new Error('Sem espaço'); return gravar(k, v); };
+    expect(app.usarBiblioteca(structuredClone(padrao))).toBe(false);
+    expect(app.armazenamento.biblioteca).toBe(false);
+    expect(app.salvar()).toBe(true);
+    expect(app.armazenamento.biblioteca).toBe(false);
+    localStorage.setItem = gravar;
+    expect(app.usarBiblioteca(structuredClone(padrao))).toBe(true);
+    expect(app.armazenamento.biblioteca).toBe(true);
+  });
+
+  it('informa bloqueio de leitura sem interromper o app', async () => {
+    localStorage.getItem = () => { throw new Error('Bloqueado'); };
+    const app = await import('../src/estado.js');
+    app.carregar();
+    expect(app.armazenamento.leitura).toBe(false);
+    expect(app.estado.equipamentos.length).toBeGreaterThan(0);
+  });
   it('abre rascunho antigo, sem campos novos, mantendo equipamentos e ajustes', async () => {
     const ajustes = { 'eq1|MOT-01': { ativa: false } };
     dados.set(CHAVE, JSON.stringify({ equipamentos: [equipamento], ajustes }));
