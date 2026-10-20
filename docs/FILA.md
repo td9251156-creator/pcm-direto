@@ -12,7 +12,7 @@ Uma implementação por vez. Um item só termina com evidência e revisão indep
 | F-004 | Média | Conferir leitor de tela, celular real e arquivos no Excel antigo. | Registrar aparelho/programa e versão, passos e resultado; corrigir problemas encontrados sem usar dados reais. | Aguardando acesso aos aparelhos/programas. |
 | F-005 | Média | Definir cálculo de MTBF, MTTR e disponibilidade, item 14 do diagnóstico. | Mantenedor define funcionamento, falha, reparo, período e tratamento de paradas planejadas; exemplos numéricos aprovados antes de implementar. | Aguardando definição técnica. |
 | F-006 | Média | Definir janelas e paradas programadas, item 15 do diagnóstico. | Mantenedor aprova exemplos e limites; nenhuma tarefa de segurança pode ser adiada fora da regra definida. | Aguardando definição técnica. |
-| F-007 | Média | Preservar o foco de teclado ao ajustar a capacidade por especialidade na Revisão. O redesenho do quadro remove o campo focado após a primeira seta. | Setas consecutivas continuam ajustando o mesmo campo; Tab segue a ordem normal sem recuperar foco indevidamente; capacidade, carga e salvamento permanecem corretos; regressão coberta por teste. | Pronta |
+| F-007 | Média | Preservar o foco de teclado ao ajustar a capacidade por especialidade na Revisão. O redesenho do quadro remove o campo focado após a primeira seta. | Setas consecutivas continuam ajustando o mesmo campo; Tab segue a ordem normal sem recuperar foco indevidamente; capacidade, carga e salvamento permanecem corretos; regressão coberta por teste. | Implementado e revisado; 150 testes e Chromium aprovados. |
 
 ## F-007 — primeira tarefa da execução por agentes
 
@@ -31,8 +31,12 @@ Uma implementação por vez. Um item só termina com evidência e revisão indep
   reiniciar a navegação. Conferir atualização da carga e persistência ao reabrir a tela. Um teste
   relevante deve reproduzir a perda de foco antes e passar depois; executar também as verificações
   completas e o roteiro de navegador existentes.
-- **Diagnóstico:** agente separado, somente leitura, com reprodução no Chromium. Implementação
-  e revisão da correção ainda não ocorreram; este registro prepara o trabalho, não declara entrega.
+- **Diagnóstico:** agente separado, somente leitura, com reprodução no Chromium. A proposta do executor recebeu correção complementar nesta sessão: aguardar a navegação do Tab
+  antes de redesenhar e preservar o destino escolhido pelo navegador. Foram acrescentados testes
+  de Tab e desmontagem da tela e uma regressão no roteiro real do Chromium. Os novos testes
+  falharam antes da correção. Lint, 150 testes, build e roteiro de navegador aprovados localmente,
+  com revisão independente. A entrega deve seguir por PR revisado e ter publicação conferida;
+  testes locais sozinhos não comprovam disponibilidade no site.
 
 ## Modelo para adicionar um item
 
@@ -61,7 +65,7 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
 - 141 testes de lógica e infraestrutura aprovados; roteiro completo no navegador aprovado com a ferramenta fixada.
 - Revisão independente dos workflows, prazos, fechamento de recursos e correção da espera entre rotas.
 - Dependabot já gerou propostas no repositório; nenhuma atualização é integrada sem a revisão aplicável.
-- Executor escolhido: GitHub Actions. Fluxo preparado com ativação explícita; credencial, modelo e primeira rodada real ainda precisam ser comprovados. Veja [AGENTES-GITHUB-ACTIONS.md](AGENTES-GITHUB-ACTIONS.md).
+- Modo escolhido: tarefas do Codex com login do ChatGPT Plus. O Actions continua com testes, auditorias e publicação; o fluxo de IA por API foi desativado no GitHub e fica sem agenda, com pausa explícita no código. Veja [AGENTES-GITHUB-ACTIONS.md](AGENTES-GITHUB-ACTIONS.md).
 - [Diagnóstico após cadastro da chave](https://github.com/td9251156-creator/pcm-direto/actions/runs/39499911020):
   o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
   portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
