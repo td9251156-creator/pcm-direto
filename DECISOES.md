@@ -33,6 +33,13 @@ MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação liv
 
 ## Riscos conhecidos
 
+### Recuperação de dados locais
+
+Ao abrir, validar biblioteca e estrutura do rascunho antes de usá-los. Rascunhos antigos válidos
+continuam aceitos, inclusive listas vazias. Não sobrescrever dados danificados sem guardar uma cópia
+com a chave e o conteúdo original. Avisar de forma permanente e oferecer download para recuperação.
+Se o navegador impedir a cópia, impedir também a substituição do original.
+
 ### Validação da biblioteca importada (20/10/2026)
 
 Arquivos JSON devem ser conferidos antes de substituir a biblioteca em uso: tipos e tarefas em listas,

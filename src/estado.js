@@ -6,9 +6,37 @@ import { siglasDaBiblioteca } from './logica/plano.js';
 import { novoId } from './logica/entrada.js';
 import { montarDados } from './logica/pacote.js';
 import { proximaSegunda, textoData } from './logica/cronograma.js';
+import { lerRascunho } from './logica/rascunho.js';
+import { verificarBibliotecaEditada } from './logica/edicao.js';
 
 const CHAVE = 'pcm-direto:rascunho:v1';
 const CHAVE_BIBLIOTECA = 'pcm-direto:biblioteca:v1';
+const originaisPendentes = new Map();
+export const recuperacao = [];
+
+function lerLocal(chave) {
+  let original;
+  try { original = localStorage.getItem(chave); } catch { return null; }
+  if (original === null) return null;
+  try { return { valor: JSON.parse(original), original }; }
+  catch { return { valor: null, original }; }
+}
+
+function preservar(chave, original) {
+  originaisPendentes.set(chave, original);
+  recuperacao.push({ chave, original });
+}
+
+/** Guarda os originais antes de permitir qualquer substituição dos dados locais. */
+function prepararGravacao() {
+  try {
+    for (const [chave, original] of originaisPendentes) {
+      localStorage.setItem(`pcm-direto:recuperacao:v1:${novoId()}`, JSON.stringify({ chave, original }));
+      originaisPendentes.delete(chave);
+    }
+    return true;
+  } catch { return false; }
+}
 
 /** Biblioteca que vem com o app (src/dados/biblioteca.json). Nunca é alterada. */
 export const BIBLIOTECA_PADRAO = padrao;
@@ -46,31 +74,39 @@ export function listaExemplo() {
 
 /** Lê o que está salvo. Na primeira abertura (nada salvo), carrega o exemplo. */
 export function carregar() {
-  let biblioteca;
-  try { biblioteca = JSON.parse(localStorage.getItem(CHAVE_BIBLIOTECA)); } catch { biblioteca = null; }
-  if (biblioteca && Array.isArray(biblioteca.tipos)) {
-    estado.biblioteca = biblioteca;
+  recuperacao.length = 0;
+  originaisPendentes.clear();
+  estado.biblioteca = copia(padrao);
+  estado.bibliotecaEditada = false;
+  const biblioteca = lerLocal(CHAVE_BIBLIOTECA);
+  if (biblioteca && verificarBibliotecaEditada(padrao, biblioteca.valor).length === 0) {
+    estado.biblioteca = biblioteca.valor;
     estado.bibliotecaEditada = true;
-  }
+  } else if (biblioteca) preservar(CHAVE_BIBLIOTECA, biblioteca.original);
 
-  let salvo;
-  try { salvo = JSON.parse(localStorage.getItem(CHAVE)); } catch { salvo = null; }
-  if (salvo && Array.isArray(salvo.equipamentos)) {
-    estado.equipamentos = salvo.equipamentos;
+  estado.inicio = textoData(proximaSegunda());
+  estado.capacidade = {};
+  const local = lerLocal(CHAVE);
+  const salvo = local && lerRascunho(local.valor);
+  if (salvo) {
+    estado.equipamentos = salvo.equipamentos.map((e) => ({ ...e }));
+    for (const e of estado.equipamentos) atualizarTag(e);
     estado.ajustes = salvo.ajustes ?? {};
     estado.exemplo = !!salvo.exemplo;
     if (salvo.inicio) estado.inicio = salvo.inicio;
     estado.capacidade = salvo.capacidade ?? {};
   } else {
-    estado.equipamentos = listaExemplo();
+    if (local) preservar(CHAVE, local.original);
+    estado.equipamentos = local ? [] : listaExemplo();
     estado.ajustes = {};
-    estado.exemplo = true;
+    estado.exemplo = !local;
   }
 }
 
 /** Salva a lista no navegador. Se o navegador bloquear, o app continua funcionando. */
 export function salvar() {
   try {
+    if (!prepararGravacao()) return false;
     localStorage.setItem(CHAVE, JSON.stringify({
       equipamentos: estado.equipamentos,
       ajustes: estado.ajustes,
@@ -90,7 +126,7 @@ export function usarBiblioteca(nova) {
   estado.biblioteca = nova;
   estado.bibliotecaEditada = true;
   for (const eq of estado.equipamentos) atualizarTag(eq); // a sigla de um tipo pode ter mudado
-  try { localStorage.setItem(CHAVE_BIBLIOTECA, JSON.stringify(nova)); } catch { /* segue sem salvar */ }
+  try { if (prepararGravacao()) localStorage.setItem(CHAVE_BIBLIOTECA, JSON.stringify(nova)); } catch { /* segue sem salvar */ }
   salvar();
 }
 
@@ -99,7 +135,7 @@ export function restaurarBiblioteca() {
   estado.biblioteca = copia(padrao);
   estado.bibliotecaEditada = false;
   for (const eq of estado.equipamentos) atualizarTag(eq);
-  try { localStorage.removeItem(CHAVE_BIBLIOTECA); } catch { /* nada a fazer */ }
+  try { if (prepararGravacao()) localStorage.removeItem(CHAVE_BIBLIOTECA); } catch { /* nada a fazer */ }
   salvar();
 }
 
