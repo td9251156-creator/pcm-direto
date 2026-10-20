@@ -12,7 +12,7 @@ export function conferirAlteracoes(raw, numstat) {
     const caminho = partes[i + 1];
     if (!registro || !caminho) throw new Error('Formato de alteração não permitido.');
     const [, antes, depois, estado] = registro;
-    const permitido = /^(src\/(?!dados\/)[a-zA-Z0-9_/-]+\.(js|css)|testes\/[a-zA-Z0-9_/-]+\.js|docs\/FILA\.md)$/.test(caminho);
+    const permitido = /^(src\/(?!dados\/)[a-zA-Z0-9_/-]+\.(js|css)|testes\/[a-zA-Z0-9_/-]+(?:\.(?:test|spec))?\.js|docs\/FILA\.md)$/.test(caminho);
     if (!permitido || caminho.split('/').some(p => p === '.' || p === '..') ||
         !['A', 'M'].includes(estado) || depois !== '100644' ||
         (estado === 'A' ? antes !== '000000' : antes !== '100644')) {
