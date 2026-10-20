@@ -159,6 +159,15 @@ Contagem de testes e quantidade de PRs, sozinhas, não demonstram qualidade.
 
 ## Próximas definições do produto
 
+Para iniciar outra rodada de desenvolvimento, use uma tarefa ativa no Codex com esta instrução:
+
+> Continue pela próxima tarefa pronta de docs/FILA.md. Siga AGENTS.md, delegue o diagnóstico quando
+> ajudar, faça uma implementação por vez e peça revisão independente a outro agente. Execute as
+> verificações necessárias, corrija os achados e entregue um PR pequeno com evidências em português.
+> Respeite as autorizações já existentes e registre decisões técnicas pendentes sem bloquear trabalho independente.
+
+Esse pedido inicia uma rodada na sessão disponível; não configura execução permanente.
+
 Os indicadores de falha e as janelas de parada continuam aguardando regras do mantenedor.
 Não invente como contar tempo de funcionamento, reparo ou paradas planejadas, nem adie tarefa
 de segurança para encaixá-la em uma janela. A biblioteca normativa só pode avançar com fonte
