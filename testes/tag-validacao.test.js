@@ -128,6 +128,26 @@ describe('arquivo CSV salvo pelo Excel', () => {
 });
 
 describe('importação com cabeçalho em outra ordem', () => {
+  it('ignora capa e escolhe a aba identificada em vez da primeira não vazia', async () => {
+    const ExcelJS = (await import('exceljs')).default;
+    const { lerXlsx } = await import('../src/logica/entrada.js');
+    const wb = new ExcelJS.Workbook();
+    wb.addWorksheet('Capa').addRow(['Lista fictícia de máquinas']);
+    const aba = wb.addWorksheet('Cadastro');
+    aba.addRow(['Setor', 'Tipo', 'Descrição']);
+    aba.addRow(['UTL', 'MOT', 'Motor fictício']);
+    expect(await lerXlsx(await wb.xlsx.writeBuffer(), tipos, ExcelJS)).toMatchObject([{ descricao: 'Motor fictício' }]);
+  });
+
+  it('aceita tabela sem cabeçalho, mas não importa uma capa isolada', async () => {
+    const ExcelJS = (await import('exceljs')).default;
+    const { lerXlsx } = await import('../src/logica/entrada.js');
+    const wb = new ExcelJS.Workbook();
+    wb.addWorksheet('Capa').addRow(['Exemplo fictício']);
+    expect(await lerXlsx(await wb.xlsx.writeBuffer(), tipos, ExcelJS)).toEqual([]);
+    wb.addWorksheet('Dados').addRow(['UTL', 'tipo_desconhecido', 'Equipamento fictício']);
+    expect(await lerXlsx(await wb.xlsx.writeBuffer(), tipos, ExcelJS)).toMatchObject([{ tipo: 'tipo_desconhecido', descricao: 'Equipamento fictício' }]);
+  });
   it('acha as colunas pelo nome e ignora linhas acima do cabeçalho', async () => {
     const { lerMatriz } = await import('../src/logica/entrada.js');
     const matriz = [
