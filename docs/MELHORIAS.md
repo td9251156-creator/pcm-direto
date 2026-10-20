@@ -62,5 +62,9 @@ por profissional habilitado. Não ampliar tarefas técnicas ou periodicidades se
 - Descrição, especialidade, origem e versão exigem texto; duração exige número positivo e finito.
 - Tipos novos sem tarefas e observação omitida continuam aceitos. As travas de segurança continuam ativas.
 - O rascunho, as chaves de armazenamento, as periodicidades e as tarefas padrão não mudam.
-- Publicação e link do PR: pendentes; a API do GitHub recusou acesso neste ambiente.
+- Validação final: `npm ci`, lint, 82 testes em 7 arquivos e build aprovados. Importação conferida
+  no Chromium em 390 × 844: recusas sem erro de JavaScript e biblioteca válida mantida após recarregar.
+- Ramo enviado: `correcao/validar-importacao-biblioteca`; a `main` não foi alterada.
+- PR ainda não aberto: a API do GitHub recusou acesso neste ambiente.
+  [Abrir o PR deste ramo](https://github.com/td9251156-creator/pcm-direto/pull/new/correcao/validar-importacao-biblioteca).
 - Próximo trabalho: item 02, em outro PR, com testes de compatibilidade e preservação dos dados locais.
