@@ -1,15 +1,13 @@
-# Revisões prontas para o mantenedor
+# Histórico das revisões
 
-Foram abertos 16 PRs pequenos, um assunto por revisão. Nada foi integrado à main nem publicado no site.
-A primeira versão dos checklists foi autorizada sem fotos e sem assinatura.
+As 16 revisões abaixo foram integradas à main em 20/10/2026, por solicitação do mantenedor.
+A publicação usa o fluxo automático do GitHub Pages. A primeira versão dos checklists foi
+autorizada sem fotos e sem assinatura.
 
-## Como revisar
+## Revisões integradas
 
-1. Comece pelo PR #1 e siga a tabela. Cada descrição explica Antes, Depois, Como testar e Riscos.
-2. Os ramos estão encadeados: o próximo usa o anterior como base para mostrar só a mudança daquele assunto.
-3. Depois de integrar um PR, use o botão para excluir seu ramo. Antes de integrar o próximo, confira
-   se o destino passou a ser main. Se necessário, ajuste o destino para main na edição do PR.
-4. A integração na main publica o site automaticamente pelo fluxo existente do projeto.
+Cada PR mantém a descrição do problema, a mudança, os passos para testar e os riscos.
+As mudanças foram integradas na ordem abaixo, após conferir os testes de cada revisão.
 
 | Ordem | Item | Revisão |
 |---|---|---|
