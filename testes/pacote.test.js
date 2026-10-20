@@ -12,6 +12,32 @@ import { montarDocx } from '../src/saida/docx.js';
 const equipamentos = atribuirTags(EXEMPLO.map((e, i) => ({ ...e, id: `e${i}` })), siglasDaBiblioteca(biblioteca));
 const dados = montarDados(equipamentos, biblioteca);
 
+describe('equipamentos com pendências', () => {
+  it('não entram no plano, nas horas, no resumo nem na lista para exportar', () => {
+    const invalido = { ...equipamentos[0], id: 'invalido', descricao: '' };
+    const esperado = montarDados([equipamentos[1]], biblioteca);
+    const obtido = montarDados([invalido, equipamentos[1]], biblioteca);
+    expect(obtido.equipamentos).toEqual([equipamentos[1]]);
+    expect(obtido.plano).toEqual(esperado.plano);
+    expect(obtido.carga).toEqual(esperado.carga);
+    expect(obtido.resumo.equipamentos).toBe(1);
+    expect(obtido.resumo.horasAno).toBe(esperado.resumo.horasAno);
+  });
+
+  it('lista sem equipamentos válidos gera resumo vazio sem horas', () => {
+    const d = montarDados([{ ...equipamentos[0], descricao: '' }], biblioteca);
+    expect(d.resumo.equipamentos).toBe(0);
+    expect(d.resumo.horasAno).toBe(0);
+    expect(d.cronograma).toEqual([]);
+  });
+
+  it('aceita nomes de especialidade que coincidam com propriedades de objetos', () => {
+    const bib = structuredClone(biblioteca);
+    for (const tipo of bib.tipos) for (const t of tipo.tarefas) t.especialidade = 'constructor';
+    expect(montarDados(equipamentos, bib).resumo.cargaPorEspecialidade.constructor.total).toBeGreaterThan(0);
+  });
+});
+
 describe('planilha .xlsx', async () => {
   const buffer = await gerarXlsx(dados, ExcelJS);
   const wb = new ExcelJS.Workbook();

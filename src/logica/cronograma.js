@@ -35,7 +35,7 @@ export function horasPorSemana(linha) {
  */
 export function montarCronograma(linhasPlano, capacidade = {}) {
   const carga = new Array(SEMANAS).fill(0);
-  const cargaPorEspecialidade = {};
+  const cargaPorEspecialidade = Object.create(null);
   // Horas que passariam do limite da especialidade em uma semana
   const excesso = (horas, limite) => (limite > 0 ? Math.max(0, horas - limite) : 0);
 
@@ -73,7 +73,7 @@ export function montarCronograma(linhasPlano, capacidade = {}) {
     itens.push({ ...linha, semanas: melhor.semanas.map((s) => s + 1) });
   }
 
-  const semanasAcima = {};
+  const semanasAcima = Object.create(null);
   for (const [esp, c] of Object.entries(cargaPorEspecialidade)) {
     const limite = Number(capacidade[esp]) || 0;
     semanasAcima[esp] = limite > 0 ? c.filter((x) => x > limite + 1e-9).length : 0;
