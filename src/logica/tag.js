@@ -11,15 +11,19 @@ export function normalizarSetor(texto) {
 
 /** Monta a TAG. O número sempre com 3 dígitos. */
 export function gerarTag(setor, sigla, numero) {
-  return `${setor}-${sigla}-${String(numero).padStart(3, '0')}`;
+  return `${setor}-${sigla}-${numero == null ? '???' : String(numero).padStart(3, '0')}`;
 }
 
 /** Próximo número livre para o mesmo setor e tipo. */
 export function proximoNumero(equipamentos, setor, tipo, ignorarId = null) {
-  const usados = equipamentos
+  const usados = new Set(equipamentos
     .filter((e) => e.id !== ignorarId && e.setor === setor && e.tipo === tipo)
-    .map((e) => Number(e.numero) || 0);
-  return usados.length ? Math.max(...usados) + 1 : 1;
+    .map((e) => Number(e.numero))
+    .filter((n) => Number.isInteger(n) && n >= 1 && n <= 999));
+  const seguinte = usados.size ? Math.max(...usados) + 1 : 1;
+  if (seguinte <= 999) return seguinte;
+  for (let n = 1; n <= 999; n++) if (!usados.has(n)) return n;
+  return null;
 }
 
 /**
