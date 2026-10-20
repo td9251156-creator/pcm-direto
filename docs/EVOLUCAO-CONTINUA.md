@@ -119,8 +119,8 @@ publicado apenas porque os testes passaram.
 
 ## Rotina semanal e seus limites
 
-A rotina semanal do GitHub Actions verifica o código e as dependências e deixa o resultado para
-consulta. Ela pode ser iniciada manualmente quando necessário. A rotina não escreve código,
+A rotina semanal do GitHub Actions verifica o código, os fluxos no navegador e as dependências,
+deixando o resultado para consulta. Ela pode ser iniciada manualmente quando necessário. A rotina não escreve código,
 não altera arquivos, não executa agentes de IA e não cria PRs de implementação.
 
 O Dependabot é uma rotina separada: propõe atualizações semanais de dependências e automações,
@@ -135,8 +135,19 @@ vez nem desativar verificações para fazer os testes passarem.
 
 Os agentes desta conversa trabalham enquanto existe uma tarefa ativa. Para desenvolver sem uma
 sessão ativa, seria necessário um executor persistente, acesso configurado e limites de execução.
-Esse executor não está incluído nesta estratégia. Uma agenda de testes não equivale a agentes
-programando continuamente.
+Esse executor ainda não foi conectado ou verificado neste ambiente. Uma agenda de testes não
+equivale a agentes programando continuamente. A integração atual não permite consultar os segredos
+e executores privados do repositório; isso não prova que uma conta externa não exista.
+
+Para completar essa parte, o mantenedor precisa identificar uma automação do Codex ou outro executor
+que já tenha disponível e conectá-lo por sua configuração segura. Não enviar chaves ou senhas pelo
+chat. Depois é necessário executar uma tarefa pequena, confirmar a revisão independente e conferir
+o PR gerado antes de considerar agentes de implementação realmente autônomos.
+
+O PR #18 foi integrado e a revisão semanal foi executada com sucesso em 20/10/2026.
+A rodada seguinte prepara o navegador fixado e protegido por limites de tempo para rodar nas mesmas
+rotinas, incluindo a validação anterior à publicação. Nenhuma dessas ativações configura uma
+credencial de IA ou autoriza despesas novas.
 
 Não será acrescentada API, assinatura ou serviço pago ao produto. Ferramentas de agentes e contas
 de execução têm seus próprios limites; não há promessa de uso ilimitado ou gratuito de IA. O app

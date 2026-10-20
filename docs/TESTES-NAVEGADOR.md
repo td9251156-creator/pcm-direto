@@ -1,21 +1,42 @@
 # Conferência no navegador
 
-Os testes de lógica continuam em `npm test`. O roteiro abaixo é complementar: usa uma cópia de
-teste do navegador, dados fictícios e um servidor local que encerra ao terminar. Não acessa os dados
-do navegador pessoal. Primeiro rode `npm run build`.
+Os testes de lógica continuam em `npm test`. O roteiro abaixo usa uma cópia de teste do navegador,
+dados fictícios e um servidor local que encerra ao terminar. Não acessa os dados do navegador pessoal.
 
-O script `scripts/verificar-navegador.mjs` usa Playwright e Chromium disponíveis na máquina de teste,
-sem adicionar bibliotecas ao aplicativo. Se necessário, instale a ferramenta em uma pasta separada:
+A ferramenta fica em `ferramentas/navegador`, com versão exata e arquivo de versões próprio.
+Não é carregada pelo aplicativo nem acrescenta dependências à versão publicada. Prepare e execute:
 
 ```bash
-npm install --prefix /tmp/pcm-ferramentas --no-save --package-lock=false playwright
-PCM_PLAYWRIGHT=/tmp/pcm-ferramentas/node_modules/playwright/index.mjs \
-PCM_CHROMIUM=/usr/bin/chromium node scripts/verificar-navegador.mjs
+npm ci
+npm ci --prefix ferramentas/navegador
+node ferramentas/navegador/node_modules/playwright/cli.js install chromium
+npm run verificar
+npm run test:navegador
 ```
 
-Informe em `PCM_CHROMIUM` o caminho do Chromium instalado. Em contêiner que já isola o processo e
-exige execução sem a sandbox interna do Chromium, acrescente `PCM_SEM_SANDBOX=1` ao comando.
-Não use essa opção para navegar em sites desconhecidos.
+No GitHub Actions, a instalação usa `install --with-deps chromium` para preparar também as bibliotecas
+do sistema. O roteiro roda em PRs, antes de publicar na main e na revisão semanal. Uma falha bloqueia
+a publicação. A instalação e a auditoria da ferramenta são separadas das dependências do app.
+
+Em máquina com outro Chromium, `PCM_CHROMIUM` permite selecionar seu caminho. `PCM_PLAYWRIGHT`
+permite selecionar outra instalação da ferramenta para diagnóstico; a CI usa sempre a versão fixada.
+Em contêiner que já isola o processo e exige execução sem a sandbox interna do Chromium, use
+`PCM_SEM_SANDBOX=1` apenas para estes testes locais. Não use essa opção para sites desconhecidos.
+
+Neste ambiente em nuvem, o cache do npm e o diretório de navegadores precisam ser graváveis:
+
+```bash
+npm ci --cache /workspace/.npm-cache
+npm ci --prefix ferramentas/navegador --cache /workspace/.npm-cache
+export PLAYWRIGHT_BROWSERS_PATH=/workspace/.cache/pcm-playwright
+node ferramentas/navegador/node_modules/playwright/cli.js install chromium
+npm run verificar
+npm run test:navegador
+```
+
+O servidor é criado pela API do Vite com porta exclusiva: se outro processo já ocupar a porta 4175,
+o roteiro falha, em vez de testar um servidor antigo. Navegação, prontidão do serviço offline e
+execução completa têm limites de tempo. O navegador e o servidor são fechados também após falhas.
 
 O roteiro confere navegação por teclado, largura de celular, importação inválida sem perda da
 biblioteca, abertura sem conexão, geração de XLSX e DOCX sem internet e preservação de rascunho
