@@ -23,22 +23,38 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            ferramentas/navegador/package-lock.json
       - name: Instalar dependências conforme o arquivo de versões
         id: instalacao
         run: npm ci
       - name: Conferir código, testes e versão final
         id: verificacao
         run: npm run verificar
+      - name: Instalar ferramenta de navegador com versão fixada
+        run: npm ci --prefix ferramentas/navegador
+      - name: Preparar Chromium e dependências do sistema
+        run: node ferramentas/navegador/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Conferir fluxos no navegador, inclusive sem internet
+        id: navegador
+        run: npm run test:navegador
       - name: Auditar dependências
         id: auditoria
         if: always() && steps.instalacao.outcome == 'success'
         run: npm audit --audit-level=moderate
+      - name: Auditar a ferramenta de teste
+        id: auditoria_ferramenta
+        if: always() && steps.instalacao.outcome == 'success'
+        run: npm audit --prefix ferramentas/navegador --audit-level=moderate
       - name: Registrar o resultado da rodada
         if: always()
         env:
           INSTALACAO: ${{ steps.instalacao.outcome }}
           VERIFICACAO: ${{ steps.verificacao.outcome }}
           AUDITORIA: ${{ steps.auditoria.outcome }}
+          NAVEGADOR: ${{ steps.navegador.outcome }}
+          AUDITORIA_FERRAMENTA: ${{ steps.auditoria_ferramenta.outcome }}
         run: |
           {
             echo '## Revisão semanal do PCM Direto'
@@ -48,6 +64,8 @@ jobs:
             printf '| Instalação | %s |\n' "$INSTALACAO"
             printf '| Código, testes e build | %s |\n' "$VERIFICACAO"
             printf '| Auditoria de dependências | %s |\n' "$AUDITORIA"
+            printf '| Navegador, celular e funcionamento offline | %s |\n' "$NAVEGADOR"
+            printf '| Auditoria da ferramenta de teste | %s |\n' "$AUDITORIA_FERRAMENTA"
             echo ''
             echo 'success = aprovado; failure = falhou; skipped = não executado.'
             echo 'Falha de auditoria pode indicar um alerta ou indisponibilidade do serviço. Confira a etapa antes de concluir.'

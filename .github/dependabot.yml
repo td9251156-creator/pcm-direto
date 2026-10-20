@@ -10,6 +10,16 @@ updates:
     open-pull-requests-limit: 2
     commit-message:
       prefix: Atualizar dependências
+  - package-ecosystem: npm
+    directory: /ferramentas/navegador
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:50'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: Atualizar ferramenta de teste
   - package-ecosystem: github-actions
     directory: /
     schedule:
