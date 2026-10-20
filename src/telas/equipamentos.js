@@ -246,7 +246,9 @@ export function telaEquipamentos(main, ir) {
   // ----- Colar do Excel -----
   main.querySelector('#adicionar-colado').addEventListener('click', () => {
     const campo = main.querySelector('#colar');
-    const novos = lerTabela(campo.value, tipos());
+    let novos;
+    try { novos = lerTabela(campo.value, tipos()); }
+    catch (erro) { avisar(erro.message); return; }
     if (!novos.length) { avisar('Nada para adicionar. Cole as linhas copiadas do Excel.'); return; }
     adicionar(novos);
     campo.value = '';
@@ -274,7 +276,8 @@ export function telaEquipamentos(main, ir) {
       let texto = new TextDecoder('utf-8').decode(bytes);
       // CSV salvo pelo Excel em português costuma vir em Windows-1252 (acentos quebram em UTF-8)
       if (texto.includes('\uFFFD')) texto = new TextDecoder('windows-1252').decode(bytes);
-      novos = lerTabela(texto, tipos());
+      try { novos = lerTabela(texto, tipos()); }
+      catch (erro) { avisar(erro.message); return; }
     }
     if (!novos.length) { avisar('O arquivo não tem linhas de equipamento.'); return; }
     adicionar(novos);
