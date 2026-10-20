@@ -16,6 +16,13 @@ describe('limites da implementação automática', () => {
     }
   });
 
+  it('aceita nomes convencionais de testes de regressão sem permitir travessia de diretórios', () => {
+    for (const nome of ['testes/revisao-foco.test.js', 'testes/revisao.spec.js', 'testes/interface/foco.test.js']) {
+      expect(conferirAlteracoes(raw(nome), `2\t1\t${nome}`)).toBe(true);
+    }
+    expect(() => conferirAlteracoes(raw('testes/../scripts/foco.test.js'), '1\t0\ttestes/../scripts/foco.test.js')).toThrow();
+  });
+
   it('recusa links, executáveis, remoções, binários e mudanças grandes', () => {
     for (const modo of ['120000', '100755', '160000']) {
       expect(() => conferirAlteracoes(raw('src/a.js', modo), '1\t0\tsrc/a.js')).toThrow();
