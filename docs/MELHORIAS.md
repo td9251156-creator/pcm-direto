@@ -40,7 +40,7 @@ revisa antes de publicar. Itens ainda não implementados não são promessas de 
 
 | Ordem | Proposta e problema atendido | Impacto para quem usa | Esforço | Risco da mudança | Situação |
 |---|---|---|---|---|---|
-| 13 | Etapa 2: checklist de execução por tarefa, começando por marcação e anotação de evidência fictícia, sem dados pessoais adicionais. | Registrar o que foi executado, além do planejamento. | Grande | Alto: definir armazenamento e limites; assinatura e fotos de pessoas exigem decisão do mantenedor diante da regra sobre dados pessoais. | Pendente de desenho e decisão sobre evidências. |
+| 13 | Etapa 2: checklist de execução por tarefa, começando por marcação e anotação de evidência fictícia, sem dados pessoais adicionais. | Registrar o que foi executado, além do planejamento. | Grande | Alto: definir armazenamento e limites; assinatura e fotos de pessoas exigem decisão do mantenedor diante da regra sobre dados pessoais. | Implementado; [abrir revisão](https://github.com/td9251156-creator/pcm-direto/compare/testes%2Fnavegador-celular...melhoria%2Fchecklist-execucao?expand=1). |
 | 14 | Etapa 4: registro de falhas e indicadores MTBF, MTTR e disponibilidade. | Acompanhar o histórico de manutenção. | Grande | Alto: validar com o mantenedor definições de tempo de operação, parada e período antes de calcular. | Pendente. |
 | 15 | Etapa 5: paradas programadas e agrupamento de tarefas por janela. | Preparar serviços em períodos disponíveis. | Grande | Alto: não adiar tarefas de segurança; confirmar regras de janela com o mantenedor. | Pendente. |
 

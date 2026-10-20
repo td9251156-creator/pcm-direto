@@ -23,6 +23,9 @@ Antes das funções novas, corrigir os erros e riscos e reforçar os testes na o
 [docs/MELHORIAS.md](docs/MELHORIAS.md). A primeira correção valida arquivos de biblioteca antes da importação.
 
 ### Etapa 2 — Checklists com evidência
+Primeira versão: marcação da última execução, data e observação técnica, sem dados pessoais,
+com download em JSON. Fotos, assinatura e histórico completo ainda não foram implementados.
+
 Checklists de execução por tarefa, com campo para registro de evidência (foto, medição, assinatura).
 
 ### Etapa 3 — Normas com fonte oficial

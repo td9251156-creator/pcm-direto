@@ -33,6 +33,13 @@ MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação liv
 
 ## Riscos conhecidos
 
+### Primeira versão do checklist
+
+Registrar somente a última marcação por equipamento e tarefa, com data até hoje e observação
+técnica sem dados pessoais. O mantenedor autorizou começar sem fotos e sem assinatura.
+Marcação de execução não altera frequência, tarefa de segurança nem cronograma. As chaves antigas
+do rascunho são mantidas; o novo campo opcional `execucoes` começa vazio nos rascunhos antigos.
+
 ### Recuperação de dados locais
 
 Ao abrir, validar biblioteca e estrutura do rascunho antes de usá-los. Rascunhos antigos válidos
