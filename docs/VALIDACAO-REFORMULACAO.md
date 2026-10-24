@@ -99,3 +99,17 @@ o cenário e confirmou a correção. Claude Code não foi utilizado.
 As verificações automatizadas usam respostas fictícias e não enviam e-mails ou conteúdo ao
 projeto real. O mantenedor escolheu entrar pessoalmente no site e avisar; o teste real do link
 e das operações autenticadas permanece pendente até esse aviso.
+
+## PDFs de máquinas e tarefas
+
+O mantenedor confirmou o funcionamento do acesso e pediu os dois fluxos de PDF. A primeira
+entrega disponibiliza as quatro fichas da biblioteca: motor elétrico (2 páginas), compressor
+de ar (3), bomba centrífuga (2) e ponte rolante (3). Os 38 itens, fontes, versões, observações,
+periodicidades, durações e marcações de segurança foram comparados com a biblioteca por pypdf.
+As dez páginas foram renderizadas com Poppler e conferidas visualmente; geração ReportLab 4.4.9.
+O teste de hash detecta mudança na biblioteca sem regeneração dos PDFs. Lint, 195 testes,
+build e roteiro completo de navegador aprovados, com os quatro downloads e um download offline.
+O JSON editável permanece em “Outros formatos”. Não houve alteração das regras técnicas.
+
+O envio de PDFs prontos pela comunidade constitui a segunda entrega; não está incluído nesta
+primeira alteração. Ela exige armazenamento privado, validação no servidor e moderação do arquivo.

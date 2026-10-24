@@ -34,7 +34,13 @@ await executarComRecursos({
   await page.locator('#explorar-modelos').click();assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
   await page.locator('#buscar-modelos').fill('criticidade');assert.equal(await page.locator('#banco-modelos article').count(),1);
   await page.locator('#buscar-modelos').fill('termo-sem-resultados');await page.locator('#limpar-busca').click();assert.equal(await page.locator('#banco-modelos article').count(),6);assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
-  await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),4);await page.locator('#categoria-documentos').click();
+  await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),4);
+  for(const tipo of biblioteca.tipos){
+    const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="./modelos/maquinas/pcm-modelo-${tipo.id}.pdf"]`).click()]);
+    assert.deepEqual(await readFile(await pdf.path()),await readFile(`public/modelos/maquinas/pcm-modelo-${tipo.id}.pdf`));
+    assert.equal((await readFile(await pdf.path())).subarray(0,5).toString(),'%PDF-');
+  }
+  await page.locator('#categoria-documentos').click();
   const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo',exact:true}).first().click()]);
   assert.deepEqual(await readFile(await modelo.path()),await readFile('public/modelos/PCMD-01-Controle-Documental.xlsx'));
   assert.equal((await rascunho()).equipamentos.length,0);
@@ -53,7 +59,11 @@ await executarComRecursos({
   page.once('dialog',d=>d.accept());await page.locator('[data-cancelar]').first().click();await page.waitForFunction(()=>document.querySelector('#mensagens').textContent.includes('cancelada'));assert.equal((await rascunho()).gestao.historico[0].cancelada,true);
   await ir('falhas');await page.locator('#falha-equipamento').selectOption({index:1});await page.locator('#g-sintoma').fill('Ruído fictício');await page.locator('#salvar-falha').click();await page.getByRole('button',{name:'Corrigir registro'}).waitFor();assert.equal((await rascunho()).gestao.falhas[0].horasParada,null);
   await ir('dados');const [backup]=await Promise.all([page.waitForEvent('download'),page.locator('#baixar-backup').click()]);const bytesBackup=await readFile(await backup.path());assert.equal(JSON.parse(bytesBackup).versao,3);
-  await aguardarOffline(page);await contexto.setOffline(true);await page.reload();await page.locator('#baixar-backup').waitFor();await ir('entrega');
+  await aguardarOffline(page);await contexto.setOffline(true);await page.reload();await page.locator('#baixar-backup').waitFor();
+  await ir('comunidade');await page.locator('#categoria-maquinas').click();
+  const [pdfOffline]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo em PDF',exact:true}).first().click()]);
+  assert.equal((await readFile(await pdfOffline.path())).subarray(0,5).toString(),'%PDF-');
+  await ir('entrega');
   console.log('Iniciando emissão:',await page.title(),await page.locator('#gerar-pcmd').count());
   const download=page.waitForEvent('download',{timeout:90000}).catch(async erro=>{throw new Error(erro.message+' · '+await page.locator('#conteudo').innerText());});
   await page.locator('#gerar-pcmd').click();const pacote=await download;const zip=await JSZip.loadAsync(await readFile(await pacote.path()));
