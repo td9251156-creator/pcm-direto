@@ -1,0 +1,17 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+# Planilhas e documentos gerados em testes manuais
+*.xlsx
+*.docx
+!public/modelos/*.xlsx
+!public/modelos/*.docx
+.env
+.env.local
+.env.*.local
+.claude/
+
+# Artefatos locais de verificações e propostas anteriores
+artifacts/

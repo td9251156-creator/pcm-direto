@@ -1,0 +1,226 @@
+/* PCM Direto — estilo mobile first, contraste alto */
+:root {
+  --fundo: #ffffff;
+  --texto: #111111;
+  --suave: #3a3a3a;
+  --primaria: #0b3d63; /* mesma cor de src/marca.js */
+  --primaria-texto: #ffffff;
+  --borda: #555555;
+  --aviso-fundo: #fff4c2;
+  --aviso-borda: #8a6d00;
+  --erro: #a00000;
+  --erro-fundo: #ffe5e5;
+  --ok: #0a5c1a;
+  --seguranca: #7a0019;
+  --destaque: #b85c00; /* contorno de foco e detalhes; mesma cor de src/marca.js */
+  --foco: var(--destaque);
+  --acento: var(--primaria); /* cor de links, botões secundários e marcas sobre o fundo */
+  --th-fundo: #e8eef4;
+  --botao: var(--primaria); /* fundo do botão principal */
+  --seguranca-texto: #7a0019;
+  color-scheme: light;
+}
+
+/* Modo escuro: segue o aparelho, ou a escolha no rodapé (data-tema no <html>) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fundo: #10161d; --texto: #e8edf2; --suave: #b3bec9; --borda: #6b7785;
+    --erro: #ff9a9a; --erro-fundo: #3a1717; --ok: #86dc98; --destaque: #ffb04d;
+    --acento: #8cc4ff; --th-fundo: #1d2a36; --botao: #1d5f96; --seguranca-texto: #ff8fa3; color-scheme: dark;
+  }
+}
+:root[data-tema="escuro"] {
+  --fundo: #10161d; --texto: #e8edf2; --suave: #b3bec9; --borda: #6b7785;
+  --erro: #ff9a9a; --erro-fundo: #3a1717; --ok: #86dc98; --destaque: #ffb04d;
+  --acento: #8cc4ff; --th-fundo: #1d2a36; --botao: #1d5f96; --seguranca-texto: #ff8fa3; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+/* Foco sempre visível para navegação por teclado */
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+/* Na barra escura do topo, o foco fica branco para aparecer bem */
+.topo :focus-visible { outline-color: var(--primaria-texto); }
+
+.pular { position: absolute; left: -9999px; }
+.pular:focus { left: 1rem; top: 1rem; background: var(--fundo); padding: .5rem; z-index: 10; }
+
+.topo { background: var(--primaria); color: var(--primaria-texto); padding: .75rem 1rem; }
+.topo h1 { margin: 0 0 .5rem; font-size: 1.4rem; }
+.marca { display: flex; align-items: center; gap: .6rem; }
+.marca img { border-radius: 4px; flex: none; }
+.etapas { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem; }
+.etapas a {
+  display: block; padding: .5rem .75rem; color: var(--primaria-texto);
+  text-decoration: none; border: 2px solid transparent; border-radius: 4px;
+}
+.etapas a[aria-current="page"] { background: var(--primaria-texto); color: var(--primaria); font-weight: 700; }
+
+
+main { padding: 1rem; max-width: 1100px; margin: 0 auto; }
+main:focus { outline: none; }
+
+.cartao { border: 1px solid var(--borda); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
+h2 { margin-top: 0; }
+
+button, .botao {
+  font: inherit; padding: .6rem 1rem; border-radius: 4px; cursor: pointer;
+  border: 2px solid var(--botao); background: var(--botao); color: var(--primaria-texto);
+  min-height: 44px; /* área de toque confortável no celular */
+}
+button.secundario { background: var(--fundo); color: var(--acento); border-color: var(--acento); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+label { display: block; font-weight: 600; margin-bottom: .25rem; }
+input, select, textarea {
+  font: inherit; width: 100%; padding: .5rem; border: 2px solid var(--borda);
+  border-radius: 4px; background: var(--fundo); color: var(--texto); min-height: 44px;
+}
+textarea { min-height: 8rem; }
+
+.grade { display: grid; gap: .75rem; }
+@media (min-width: 700px) { .grade.duas { grid-template-columns: 1fr 1fr; } .grade.tres { grid-template-columns: repeat(3, 1fr); } }
+
+.acoes { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+
+.tabela-rolagem { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { border: 1px solid var(--borda); padding: .4rem .5rem; text-align: left; vertical-align: top; }
+th { background: var(--th-fundo); }
+
+.erro { color: var(--erro); }
+.linha-erro { background: var(--erro-fundo); }
+.ok { color: var(--ok); }
+.selo-seguranca {
+  display: inline-block; padding: 0 .4rem; border-radius: 3px; font-size: .85rem;
+  background: var(--seguranca); color: #fff; font-weight: 700;
+}
+.origem { font-size: .85rem; color: var(--suave); }
+
+.aviso-rodape { font-size: .8rem; max-width: 70ch; margin: .5rem auto 0; }
+.rodape { padding: 1rem; text-align: center; font-size: .9rem; color: var(--suave); border-top: 1px solid var(--borda); }
+
+/* Texto só para leitores de tela */
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Mensagem curta no rodapé da tela */
+.mensagens {
+  position: sticky; bottom: 0; margin: 0; padding: .5rem 1rem; background: var(--primaria);
+  color: var(--primaria-texto); font-weight: 600; text-align: center;
+}
+.mensagens:empty { display: none; }
+
+/* Números de destaque */
+.numeros { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+
+/* Gráfico de carga semanal */
+.grafico {
+  display: flex; align-items: flex-end; gap: 1px; height: 120px;
+  border-bottom: 2px solid var(--borda); border-left: 2px solid var(--borda); padding-left: 2px;
+}
+.barra { flex: 1; background: var(--acento); min-width: 2px; }
+
+/* Lista de equipamentos */
+fieldset.equip legend { padding: 0 .4rem; font-size: 1.1rem; }
+.problemas ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+.problemas li { margin-bottom: .25rem; }
+button.sugestao { min-height: 36px; padding: .2rem .6rem; margin-left: .25rem; }
+
+/* Revisão */
+details > summary { cursor: pointer; padding: .25rem 0; }
+tr.retirada td { color: var(--suave); text-decoration: line-through; }
+tr.retirada td select, tr.retirada td input { text-decoration: none; }
+td input[type="checkbox"] { width: 24px; height: 24px; min-height: 0; }
+td select { min-width: 9rem; }
+a { color: var(--acento); }
+.erro a { color: var(--erro); font-weight: 700; }
+
+/* Menu de etapas: no celular, 4 abas lado a lado */
+@media (max-width: 599px) {
+  .etapas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .etapas a { padding: .45rem .15rem; font-size: .78rem; text-align: center; line-height: 1.2; }
+  .topo h1 { font-size: 1.2rem; }
+}
+
+/* Cartões que abrem e fecham */
+details.cartao > summary { cursor: pointer; list-style-position: outside; margin-left: 1rem; }
+details.cartao > summary h3 { display: inline; margin: 0; }
+details.cartao[open] > summary { margin-bottom: .75rem; }
+
+/* Linha resumida de cada equipamento */
+.equip > summary { display: flex; flex-wrap: wrap; gap: .25rem .75rem; align-items: baseline; margin-left: 0; }
+.equip .desc-eq { flex: 1; min-width: 10rem; }
+.equip { padding: .6rem 1rem; margin-bottom: .5rem; }
+.linha-erro { border-color: var(--erro); }
+.equip > summary::before { content: '▸'; color: var(--acento); }
+.equip[open] > summary::before { content: '▾'; }
+
+/* Edição da biblioteca */
+.tarefa-edicao { border: 1px solid var(--borda); border-radius: 6px; padding: .5rem .75rem .75rem; margin: 0 0 .75rem; }
+.tarefa-edicao legend { padding: 0 .3rem; }
+label.caixa { display: inline-flex; align-items: center; gap: .4rem; font-weight: 600; margin: 0; }
+label.caixa input { width: 22px; height: 22px; min-height: 0; }
+
+/* Links com cara de botão */
+a.botao { display: inline-flex; align-items: center; text-decoration: none; }
+a.botao.secundario { background: var(--fundo); color: var(--acento); border-color: var(--acento); }
+a.botao[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+
+/* Cronograma para imprimir */
+.folha { overflow-x: auto; }
+.cab-impressao { display: flex; gap: .75rem; align-items: center; margin-bottom: .5rem; font-size: .9rem; }
+.cronograma-impresso { font-size: .72rem; margin-bottom: 1rem; table-layout: fixed; min-width: 1000px; }
+.cronograma-impresso col.c-tag { width: 19mm; }
+.cronograma-impresso col.c-tarefa { width: 66mm; }
+.cronograma-impresso col.c-esp { width: 20mm; }
+.cronograma-impresso col.c-h { width: 9mm; }
+.cronograma-impresso th, .cronograma-impresso td { padding: .15rem .25rem; }
+.cronograma-impresso th.sem { text-align: center; font-size: .65rem; }
+.cronograma-impresso th.sem span { font-weight: 400; }
+.cronograma-impresso td.x { text-align: center; color: var(--acento); padding: 0; }
+.cronograma-impresso tr.seg td.x { color: var(--seguranca-texto); }
+.cronograma-impresso td.tag { white-space: nowrap; }
+.cronograma-impresso .num { text-align: right; white-space: nowrap; }
+.aviso-impresso { font-size: .7rem; color: var(--suave); }
+
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+  .topo, .rodape, .mensagens, .nao-imprimir, .pular { display: none !important; }
+  :root { --fundo: #fff; --texto: #000; --suave: #333; --borda: #555; --acento: #0b3d63; --th-fundo: #e8eef4; --seguranca-texto: #7a0019; }
+  body { background: #fff; color: #000; }
+  main { padding: 0; max-width: none; }
+  .folha { overflow: visible; }
+  .cronograma-impresso { font-size: 6.5pt; min-width: 0; width: 100%; }
+  .cronograma-impresso th.sem { font-size: 5.5pt; }
+  .cronograma-impresso thead { display: table-header-group; }
+  .cronograma-impresso tr { break-inside: avoid; }
+  .quebra { break-after: page; }
+  th { background: #e8eef4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* Botão de tema no rodapé */
+.tema { min-height: 36px; padding: .2rem .7rem; font-size: .85rem; margin-top: .5rem; }
+
+/* Gestão: atalhos e módulos locais, mantendo a marca e a navegação por teclado. */
+.atalhos { display: flex; flex-wrap: wrap; gap: .25rem .5rem; margin-top: .6rem; }
+.atalhos a { color: #fff; padding: .4rem .55rem; border-radius: 4px; text-decoration: none; }
+.atalhos a:hover, .atalhos a[aria-current="page"] { background: var(--primaria-texto); color: var(--primaria); }
+.painel-modulos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: .75rem; }
+.modulo { display: flex; flex-direction: column; gap: .35rem; padding: .85rem; border: 1px solid var(--borda); border-radius: 6px; text-decoration: none; }
+.modulo:hover { border-color: var(--acento); }
+.modulo span { color: var(--suave); font-size: .9rem; }
+.grade > div { min-width: 0; }
+.cartao { overflow-wrap: anywhere; }
+@media (max-width: 599px) {
+  .atalhos { gap: .1rem; }
+  .atalhos a { font-size: .85rem; padding: .4rem; }
+}
