@@ -24,6 +24,10 @@ Ferramenta aberta de Planejamento e Controle de Manutenção, em português, par
 5. Em Documentos, gere o pacote PCMD e confira no editor antes da aprovação.
 6. Baixe backups em Mais → Meus dados. Limpar o navegador, mudar a origem ou trocar de aparelho exige restauração de backup.
 
+Quando aparecer **Uma atualização está pronta**, termine seu trabalho e feche todas as abas
+do PCM Direto, incluindo a janela do aplicativo instalado. Abra novamente para usar a versão
+nova. A atualização não recarrega formulários em uso e não exige limpar os dados do navegador.
+
 Não publique TAGs, nomes ou registros privados na comunidade. A configuração de produção contém somente chave pública publishable/anon; nunca use chave secret/service_role no navegador.
 
 Reformulação em validação: veja [decisões atuais](docs/REFORMULACAO.md) e [evidências e limites](docs/VALIDACAO-REFORMULACAO.md). O plano completo depende de validação humana e documental.

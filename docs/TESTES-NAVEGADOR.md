@@ -38,14 +38,18 @@ O servidor é criado pela API do Vite com porta exclusiva: se outro processo já
 o roteiro falha, em vez de testar um servidor antigo. Navegação, prontidão do serviço offline e
 execução completa têm limites de tempo. O navegador e o servidor são fechados também após falhas.
 
-O roteiro confere navegação por teclado, largura de celular, importação inválida sem perda da
-biblioteca, abertura sem conexão, geração de XLSX e DOCX sem internet e preservação de rascunho
-danificado. Leitor de tela, aparelhos reais e Excel antigo ainda exigem conferência manual.
+O roteiro Gestão confere a comunidade inicial, tema claro, proporções da marca e ausência de
+rolagem horizontal em 320/390/820/1280 px, busca e teclado, cadastros, criticidade e capacidade.
+Inclui migração v1, exemplo isolado, revisões, execução/cancelamento, falha com parada desconhecida,
+backup v3 e restauração antiga sem herdar execuções, concorrência, corrupção e quota simulada.
+Gera os seis documentos PCMD sem rede e compara imagens e desenhos com os modelos originais.
 
-O roteiro também confere checklist após recarregar, download e restauração do backup, recuperação
-da última máquina removida, filtros de impressão e aviso visível após falha simulada de gravação.
+Em seguida, `scripts/verificar-atualizacao.mjs` cria servidor próprio na porta 4176 e testa
+duas versões do worker com duas abas abertas. A versão em uso mantém HTML, recursos offline
+e texto de formulário; a nova só ativa depois de fechar as abas. Confere ainda uma instalação
+incompleta, o isolamento das propostas, caches de outro aplicativo e a transição do worker
+anterior publicado. As páginas são fictícias; não escreve na base pessoal nem usa Supabase.
+O snapshot histórico em `testes/fixtures/sw-71e0b87.txt` é usado somente no teste.
 
-O roteiro também cobre cadastros e edição de pessoas, metas e referências, rascunhos de
-formulários independentes, notas de criticidade, responsável por tarefa, registro/correção de
-falhas, vínculo de execução ao mensal, cancelamento preservado e backup completo versão 2.
-A Entrega lista modelos pendentes sem criar download de template novo.
+Leitor de tela, aparelhos reais, conteúdo e impressão no Excel/LibreOffice continuam exigindo
+conferência manual. O cenário especializado de atualização não testa migrações de esquema.

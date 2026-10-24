@@ -9,7 +9,7 @@ aprovação dos documentos ou conclusão dos testes humanos listados abaixo.
 ## Executado
 
 - `npm ci` e instalação do Chromium fixado da ferramenta de navegador.
-- `npm run verificar`: lint, **188 testes** e build aprovados no Windows/Node 26.
+- Verificação anterior: lint, **188 testes** e build aprovados no Windows/Node 26.
 - Cenário de lógica: 100 ativos, 31.200 ocorrências diárias/semanais em um ano, duas revisões,
   histórico semestral preservado e realizado mensal sem duplicações aprovado.
 - Revisão complementar somente leitura de Codex: preservação, transação concorrente real no
@@ -34,12 +34,13 @@ Não houve erro de página no contexto principal.
 
 - Revisão de Claude Code, teste com três técnicos e celular real não executados.
 - Figma bloqueou chamadas pelo limite da conta; arquivo criado ainda não contém propostas editáveis.
-- Publicação de protótipo Sites e liberação do GitHub Pages ainda não verificadas.
+- Protótipo Sites ainda não publicado. A versão de teste no GitHub Pages foi publicada e
+  conferida em `https://pcmdireto.me/`, incluindo a identidade horizontal do PR 6.
 - Conferência visual no Excel/LibreOffice e impressão ainda pendentes. ZIP válido, fórmulas
   preservadas e imagens idênticas não substituem abertura e conferência nesses programas.
   `render_docx.py` foi executado e informou ausência de `soffice.exe` no ambiente.
-- Cenário de uso completo de 100 ativos na interface, histórico anual e atualização da PWA
-  com aba antiga ainda exige evidência específica; o teste de lógica não substitui esse uso real.
+- Cenário de uso completo de 100 ativos na interface e histórico anual ainda exige evidência
+  específica; o teste de lógica não substitui esse uso real.
 - Fluxo autenticado de publicação/interações entre aparelhos precisa teste com contas de teste
   autorizadas; não usar a conta nem o conteúdo real do mantenedor para simular interações.
 - Auditor do Supabase aponta funções SECURITY DEFINER acessíveis por papéis autorizados:
@@ -52,3 +53,30 @@ Não houve erro de página no contexto principal.
 
 Referências do auditor: [funções autenticadas](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable),
 [senhas](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
+
+## Atualização offline com abas abertas
+
+Verificação desta correção: lint, **190 testes**, build e roteiro Gestão aprovados.
+
+Testes novos reproduziram três falhas: ativação forçada, HTML trocado enquanto o worker
+antigo permanecia em uso e navegação nas propostas substituindo a página principal offline.
+A atualização agora espera o fechamento de todas as abas e mantém HTML e arquivos da versão
+ativa juntos. O aplicativo informa quando há atualização pronta, com acesso ao backup.
+
+`scripts/verificar-atualizacao.mjs` usa servidor local e Chromium isolado. Publica A, B e uma
+C incompleta: duas abas A continuam operando offline com arquivos removidos do servidor,
+texto ainda não enviado fica intacto e B só assume depois que ambas fecham. Conteúdo local
+fictício é preservado, caches de outros aplicativos permanecem e C não substitui B.
+Abrir propostas não troca o HTML principal. Há também transição a partir de uma cópia do
+worker efetivamente publicado no commit 71e0b87, sem forçar a aba antiga a recarregar.
+
+O teste especializado valida o ciclo do worker real e do aviso em uma página fictícia.
+Não simula migração de esquema entre versões nem substitui testes em aparelhos reais.
+Na primeira transição do worker antigo, fechar todas as abas e abrir novamente aplica
+o novo protocolo; não é necessário limpar dados nem desinstalar a PWA.
+Limite da primeira transição: recarregar ou abrir outra aba enquanto o worker antigo ainda
+controla o site pode trazer HTML novo pelo comportamento antigo. A correção não modifica
+retroativamente esse worker. O teste legado preserva a aba que já estava aberta e verifica
+a ativação depois de fechá-la; não comprova coerência de uma nova aba nessa janela.
+O aviso novo não existe na versão antiga, por isso a orientação de fechar as abas também
+deve acompanhar a publicação desta correção.

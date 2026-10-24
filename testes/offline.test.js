@@ -17,7 +17,7 @@ function worker() {
   const fetch = vi.fn(async () => ({ ok: true, clone: () => 'página nova' }));
   const codigo = readFileSync('src/sw.js', 'utf8').replace('[/*ARQUIVOS*/]', JSON.stringify(['./index.html', './assets/app.js']));
   runInNewContext(codigo, { self, caches, fetch, URL, encodeURIComponent });
-  return { scope, prefixo, eventos, cache, caches, fetch };
+  return { scope, prefixo, eventos, cache, caches, fetch, self };
 }
 
 describe('cache do aplicativo', () => {
@@ -43,18 +43,27 @@ describe('cache do aplicativo', () => {
     expect(w.fetch).toHaveBeenCalledWith(req);
   });
 
-  it('entrega página online mesmo quando a atualização do cache falha', async () => {
+  it('mantém HTML da versão ativa mesmo quando a rede oferece outra versão', async () => {
     const w = worker();
-    w.cache.put.mockRejectedValue(new Error('Sem espaço'));
     let resposta;
-    let gravacao;
     w.eventos.fetch({
       request: { method: 'GET', url: w.scope, mode: 'navigate' },
-      respondWith: (p) => { resposta = p; }, waitUntil: (p) => { gravacao = p; },
+      respondWith: (p) => { resposta = p; }, waitUntil: () => {},
     });
-    expect((await resposta).ok).toBe(true);
-    await gravacao;
-    expect(w.cache.put).toHaveBeenCalledWith('./', 'página nova');
+    expect(await resposta).toBe('página offline');
+    expect(w.fetch).not.toHaveBeenCalled();
+    expect(w.cache.put).not.toHaveBeenCalled();
+  });
+  it('não força uma atualização a tomar as abas abertas', async () => {
+    const w = worker();let pronto;
+    w.eventos.install({ waitUntil: p => { pronto=p; } });await pronto;
+    expect(w.self.skipWaiting).not.toHaveBeenCalled();
+  });
+  it('consulta propostas pelo próprio endereço sem substituir a página principal', async () => {
+    const w=worker();let resposta;const req={method:'GET',url:w.scope+'propostas/index.html',mode:'navigate'};
+    w.eventos.fetch({request:req,respondWith:p=>{resposta=p;},waitUntil:()=>{}});await resposta;
+    expect(w.cache.match).toHaveBeenCalledWith(req,{ignoreSearch:true,ignoreVary:true});
+    expect(w.cache.put).not.toHaveBeenCalled();
   });
   it('muda de versão quando manifesto, ícone ou worker muda sem trocar o nome', () => {
     const base = [['manifest.webmanifest', 'primeiro'], ['icone.png', 'imagem'], ['sw.js', 'worker']];
