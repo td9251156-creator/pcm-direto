@@ -18,6 +18,11 @@ navegador com banco isolado/API simulada; revisão independente confirmou as cor
 permissões e retomada. Backend implantado com JWT obrigatório e bloqueios anônimos conferidos.
 O upload real autenticado de um arquivo escolhido pelo mantenedor ainda requer conferência.
 
+Complemento: gerar ficha local pelos campos do formulário/catálogo e por tipo da Biblioteca
+técnica. Abre prévia em outra aba e usa Imprimir / salvar PDF, sem enviar dados. Marca funciona
+offline; textos e títulos longos são preservados. Verificação: 203 testes, navegador e revisão
+independente, com correções de marca offline e título sem espaços.
+
 ## Sessão da comunidade entre abas (24/10/2026)
 
 Correção delimitada: o catálogo consulta a sessão somente ao abrir, deixando a tela antiga

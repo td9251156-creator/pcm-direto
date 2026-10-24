@@ -7,6 +7,7 @@ import {
   verificarBibliotecaEditada, tarefaPadrao, podeApagarTarefa, podeApagarTipo, novaTarefa, novoTipo,
 } from '../logica/edicao.js';
 import { esc, baixar, avisar } from '../ui.js';
+import { abrirFichaModelo } from '../saida/ficha-pdf.js';
 
 const ESPECIALIDADES = ['Mecânica', 'Elétrica', 'Lubrificação', 'Preditiva', 'Operação', 'Instrumentação'];
 const copia = (obj) => JSON.parse(JSON.stringify(obj));
@@ -54,6 +55,7 @@ function htmlTipo(tipo) {
       <summary><h3>${esc(tipo.nome)} (${esc(tipo.sigla)}) — ${tipo.tarefas.length} tarefas</h3></summary>
       ${tipo.tarefas.map((t) => htmlTarefa(tipo, t)).join('')}
       <div class="acoes">
+        <button type="button" class="secundario ficha-tipo" data-tipo="${tipo.id}">Gerar ficha em PDF</button>
         <button type="button" class="nova-tarefa" data-tipo="${tipo.id}">Adicionar tarefa</button>
         ${apagar.ok ? `<button type="button" class="secundario apagar-tipo" data-tipo="${tipo.id}">Apagar o tipo ${esc(tipo.nome)}</button>` : ''}
       </div>
@@ -125,7 +127,11 @@ export function telaBiblioteca(main) {
 
   main.querySelector('#tipos').addEventListener('click', async (e) => {
     const alvo = e.target;
-    if (alvo.classList.contains('nova-tarefa')) {
+    if (alvo.classList.contains('ficha-tipo')) {
+      const tipo = estado.biblioteca.tipos.find(t => t.id === alvo.dataset.tipo);
+      try { abrirFichaModelo({ titulo: tipo.nome, tarefas: tipo.tarefas, aviso: estado.biblioteca.aviso }, `Biblioteca deste aparelho · versão ${estado.biblioteca.versao}`); }
+      catch (erro) { avisar(erro.message); }
+    } else if (alvo.classList.contains('nova-tarefa')) {
       (await aplicar((b) => {
         const tipo = b.tipos.find((x) => x.id === alvo.dataset.tipo);
         tipo.tarefas.push(novaTarefa(b, tipo));

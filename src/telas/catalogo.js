@@ -7,6 +7,7 @@ import { TIPOS_CATALOGO, modeloVazio, tarefaCatalogoVazia, validarModeloCatalogo
 import { configuracao, observarSessaoCatalogo, entrarCatalogo, sairCatalogo, listarCatalogo, moderadorCatalogo, salvarModelo, enviarModelo, retirarModelo, decidirModelo, conferirArquivoPdf, anexarPdfModelo, baixarPdfModelo } from '../servicos/catalogo.js';
 import { esc, avisar, baixar } from '../ui.js';
 import { mostrarInteracoes,mostrarDenuncias } from './interacoes.js';
+import { abrirFichaModelo } from '../saida/ficha-pdf.js';
 
 const SITUACOES = { rascunho: 'Rascunho privado', pendente: 'Aguardando revisão', aprovado: 'Publicado após revisão', rejeitado: 'Revisão solicitou ajustes', arquivado: 'Arquivado' };
 const campo = (nome, rotulo, valor, atributos = '') => `<div><label for="c-${nome}">${rotulo}</label><input id="c-${nome}" name="${nome}" value="${esc(valor)}" ${atributos}></div>`;
@@ -105,9 +106,14 @@ export function telaCatalogo(main, ir) {
         ${r.pdf_caminho ? `<p><strong>Modelo em PDF</strong> · ${Math.ceil(r.pdf_tamanho/1000)} kB · arquivo enviado pelo colaborador.</p><button class="secundario" data-baixar-pdf="${esc(r.id)}">Baixar PDF${r.situacao==='aprovado'?'':' para conferir'}</button>` : ''}
         ${moderador && r.situacao === 'pendente' ? `<form data-parecer="${esc(r.id)}">${texto('parecer-' + r.id, 'Motivo da rejeição (obrigatório ao rejeitar)', '', 'maxlength="2000"')}${r.pdf_caminho?'<p><label><input type="checkbox" name="pdf-conferido"> Conferi o PDF, sua origem e a ausência de dados privados antes de aprovar.</label></p>':''}<div class="acoes"><button type="submit" value="aprovar">Aprovar publicação</button><button type="submit" value="rejeitar" class="secundario">Solicitar ajustes</button></div></form>` : ''}
         ${r.situacao==='aprovado'?`<div class="acoes"><button class="secundario" data-download-modelo="${esc(r.id)}">Baixar modelo (.json)</button><button class="secundario" data-interacoes="${esc(r.id)}">Curtir e comentar</button></div><div data-social="${esc(r.id)}"></div>`:''}
-        <div data-importacao="${esc(r.id)}"></div></article>`;
+        <button type="button" class="secundario" data-gerar-ficha="${esc(r.id)}">Gerar ficha dos campos em PDF</button><div data-importacao="${esc(r.id)}"></div></article>`;
     }).join('') + `<section class="cartao"><div class="acoes"><button type="button" class="secundario" data-anterior ${pagina === 0 ? 'disabled' : ''}>Página anterior</button><button type="button" class="secundario" data-proxima ${registros.length < 20 ? 'disabled' : ''}>Próxima página</button></div></section>`;
     const registro = id => registros.find(r => r.id === id);
+    lista.querySelectorAll('[data-gerar-ficha]').forEach(b => b.onclick = () => {
+      const r = registro(b.dataset.gerarFicha);
+      try { abrirFichaModelo(r.dados, `Catálogo PCM Direto · versão ${r.conteudo_versao} · ${SITUACOES[r.situacao]}`); }
+      catch (e) { avisar(e.message); }
+    });
     lista.querySelectorAll('[data-baixar-pdf]').forEach(b => b.onclick = () => {
       const r = registro(b.dataset.baixarPdf);
       atuar(async atual => { const arquivo = await baixarPdfModelo(r.pdf_caminho); if (atual()) baixar(arquivo, 'pcm-modelo-' + r.id + '.pdf', 'application/pdf'); });
@@ -189,8 +195,15 @@ export function telaCatalogo(main, ir) {
         <button type="button" class="secundario" data-remover-tarefa="${i}">Remover esta tarefa de referência</button></fieldset>`).join('')}
       <div class="acoes"><button type="button" class="secundario" data-adicionar-tarefa ${d.tarefas.length >= 50 ? 'disabled' : ''}>Adicionar tarefa de referência</button></div>
       <p><label><input type="checkbox" name="consentimento"> Confirmo que posso compartilhar este conteúdo, retirei dados privados e aceito submetê-lo à revisão para publicação pública.</label></p>
-      <div class="acoes"><button type="submit" value="salvar">Salvar rascunho online</button><button type="submit" value="enviar">Salvar e enviar para revisão</button><button type="button" class="secundario" data-fechar-editor>Fechar formulário</button></div></form></section>`;
+      <div class="acoes"><button type="button" class="secundario" data-ficha-editor>Gerar ficha em PDF sem enviar</button><button type="submit" value="salvar">Salvar rascunho online</button><button type="submit" value="enviar">Salvar e enviar para revisão</button><button type="button" class="secundario" data-fechar-editor>Fechar formulário</button></div></form></section>`;
     const form = areaEditor.querySelector('form');
+    form.querySelector('[data-ficha-editor]').onclick = () => {
+      if (ocupado) return;
+      lerEditor(); const problemas = validarModeloCatalogo(editor.dados);
+      if (problemas.length) { avisar(problemas.join(' ')); return; }
+      try { abrirFichaModelo(editor.dados, 'Formulário em edição · não publicado'); }
+      catch (e) { avisar(e.message); }
+    };
     form.querySelector('#c-pdf')?.addEventListener('change', e => { editor.arquivo = e.target.files[0] || null; });
     areaEditor.querySelector('[data-adicionar-tarefa]').addEventListener('click', () => {
       if (ocupado || editor.dados.tarefas.length >= 50) return;

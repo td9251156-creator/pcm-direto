@@ -144,3 +144,21 @@ A validação abre estrutura, limita tamanho/páginas e calcula SHA256; não faz
 Não foi criado conteúdo fictício no projeto real. O mantenedor informou que o acesso funcionou;
 upload e moderação reais de um PDF escolhido por ele ainda precisam de conferência. Claude Code
 não foi utilizado. A publicação continua sendo versão de teste.
+
+## Gerar a própria ficha dos campos
+
+Formulários e registros do catálogo, inclusive sem PDF anexo, podem abrir ficha local para
+Imprimir / salvar PDF. A Biblioteca técnica também gera a ficha do tipo editado neste aparelho,
+com suas tarefas e aviso. Escolher Salvar como PDF é uma ação do usuário no diálogo de impressão;
+não há upload automático nem conversão em servidor.
+
+Lint, 203 testes e build aprovados. O roteiro completo passou com geração offline, marca
+incorporada e tarefas completas. PDF local de motor foi aberto por pypdf e renderizado por
+Poppler: oito tarefas e fontes/observações preservadas, com conferência visual das páginas.
+O fluxo de formulário confirma que gerar a ficha não chama salvamento nem upload, testa
+impressão/fechamento e exige nova aba sem opener. Textos são escapados; não viram HTML.
+
+O teste reproduziu falha de logo offline na aba nova, corrigida incorporando o SVG original.
+A revisão independente achou título longo sem espaços fora da área de impressão; quebra
+foi corrigida e o revisor confirmou título com 120 caracteres e logo sem rede no Chromium.
+O roteiro contém essa regressão. Paginação e diálogo em aparelhos reais continuam pendentes.

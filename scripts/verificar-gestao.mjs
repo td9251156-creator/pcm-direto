@@ -63,6 +63,14 @@ await executarComRecursos({
   await ir('comunidade');await page.locator('#categoria-maquinas').click();
   const [pdfOffline]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo em PDF',exact:true}).first().click()]);
   assert.equal((await readFile(await pdfOffline.path())).subarray(0,5).toString(),'%PDF-');
+  await ir('biblioteca');await page.locator('#tipos > details').first().locator('summary').click();
+  const [fichaLocal]=await Promise.all([page.waitForEvent('popup'),page.locator('.ficha-tipo').first().click()]);
+  await fichaLocal.getByRole('heading',{name:'Motor elétrico',exact:true}).waitFor();
+  await fichaLocal.locator('img').evaluate(img=>img.decode());
+  assert.ok((await fichaLocal.locator('body').innerText()).includes('MOT-08'));
+  const fichaLocalPdf=await fichaLocal.pdf({path:'artifacts/ficha-local.pdf',format:'A4',printBackground:true});
+  assert.equal(fichaLocalPdf.subarray(0,5).toString(),'%PDF-');
+  await fichaLocal.close();
   await ir('entrega');
   console.log('Iniciando emissão:',await page.title(),await page.locator('#gerar-pcmd').count());
   const download=page.waitForEvent('download',{timeout:90000}).catch(async erro=>{throw new Error(erro.message+' · '+await page.locator('#conteudo').innerText());});
