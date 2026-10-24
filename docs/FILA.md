@@ -2,6 +2,15 @@
 
 # Fila de evolução
 
+## Sessão da comunidade entre abas (24/10/2026)
+
+Correção delimitada: o catálogo consulta a sessão somente ao abrir, deixando a tela antiga
+desconectada após login em outra aba. Observar eventos do SDK, preservar formulário durante
+renovação da mesma conta, invalidar respostas anteriores e remover a assinatura ao sair da tela.
+Testes com API simulada cobrem entrada/saída, salvamento e permissão atrasados e troca de conta
+durante uma saída pendente. Login real por link aguarda o mantenedor entrar e avisar; não enviar
+e-mail ou criar conteúdo real para simular a validação.
+
 ## Atualização offline segura (24/10/2026)
 
 Pendência do plano aprovado: publicar uma versão nova com aba antiga aberta, sem interromper

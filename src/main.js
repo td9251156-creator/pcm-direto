@@ -55,6 +55,8 @@ function ir(nome) {
   else location.hash = nome;
 }
 
+let encerrarTela;
+
 /** Desenha a tela indicada no endereço. */
 function mostrar() {
   const nome = location.hash.slice(1);
@@ -65,7 +67,8 @@ function mostrar() {
     else a.removeAttribute('aria-current');
   });
   document.title = `${tela.titulo} · PCM Direto`;
-  tela.desenhar(main, ir);
+  encerrarTela?.();
+  encerrarTela = tela.desenhar(main, ir);
   document.getElementById('lembrete-backup')?.remove();
   const { ultimoBackup, alteradoEm } = estado.metadados;
   if (!estado.exemplo && alteradoEm && (!ultimoBackup ||

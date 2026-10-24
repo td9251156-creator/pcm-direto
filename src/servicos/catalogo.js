@@ -38,6 +38,25 @@ async function conferir(operacao) {
   }
 }
 export async function sessaoCatalogo() { const c = await clienteCatalogo(); return (await conferir(c.auth.getSession()))?.session || null; }
+// Consultas dentro do callback do Auth podem bloquear o SDK; reagimos fora dele.
+export async function observarSessaoCatalogo(aoMudar) {
+  const c = await clienteCatalogo();
+  let ativo = true;
+  const pendentes = new Set();
+  const { data: { subscription } } = c.auth.onAuthStateChange((evento, sessao) => {
+    const prazo = setTimeout(() => {
+      pendentes.delete(prazo);
+      if (ativo) aoMudar(sessao, evento);
+    }, 0);
+    pendentes.add(prazo);
+  });
+  return () => {
+    ativo = false;
+    for (const prazo of pendentes) clearTimeout(prazo);
+    pendentes.clear();
+    subscription.unsubscribe();
+  };
+}
 export async function entrarCatalogo(email) {
   const c = await clienteCatalogo();
   await conferir(c.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname + '#catalogo' } }));

@@ -4,7 +4,7 @@ import { proximoNumero } from '../logica/tag.js';
 import { novoId } from '../logica/entrada.js';
 import { PERIODICIDADES } from '../logica/plano.js';
 import { TIPOS_CATALOGO, modeloVazio, tarefaCatalogoVazia, validarModeloCatalogo, dadosEquipamentoDoModelo } from '../logica/catalogo.js';
-import { configuracao, sessaoCatalogo, entrarCatalogo, sairCatalogo, listarCatalogo, moderadorCatalogo, salvarModelo, enviarModelo, retirarModelo, decidirModelo } from '../servicos/catalogo.js';
+import { configuracao, observarSessaoCatalogo, entrarCatalogo, sairCatalogo, listarCatalogo, moderadorCatalogo, salvarModelo, enviarModelo, retirarModelo, decidirModelo } from '../servicos/catalogo.js';
 import { esc, avisar, baixar } from '../ui.js';
 import { mostrarInteracoes,mostrarDenuncias } from './interacoes.js';
 
@@ -16,7 +16,8 @@ const opcoes = (itens, atual) => itens.map(([id, nome]) => `<option value="${esc
 export function telaCatalogo(main, ir) {
   const raiz = document.createElement('div');
   main.replaceChildren(raiz);
-  const vivo = () => raiz.isConnected && main.contains(raiz);
+  let encerrado = false;
+  const vivo = () => !encerrado && raiz.isConnected && main.contains(raiz);
   raiz.innerHTML = `<section class="cartao"><h2>Catálogo colaborativo de máquinas</h2>
     <p>Consulte modelos reutilizáveis e contribua com novos cadastros. A publicação passa pela revisão do mantenedor.</p>
     <p>Seu inventário, TAGs, pessoas, execuções e falhas continuam neste aparelho. Somente os campos preenchidos no formulário de contribuição são enviados ao catálogo.</p>
@@ -28,6 +29,7 @@ export function telaCatalogo(main, ir) {
     return;
   }
   let sessao = null; let moderador = false; let vista = 'publicos'; let pagina = 0; let busca = ''; let registros = []; let pedido = 0; let ocupado = false; let editor = null;
+  let versaoSessao = 0; let iniciou = false; let pararSessao;
   const conta = raiz.querySelector('[data-conta]');
   const controles = raiz.querySelector('[data-controles]');
   const areaEditor = raiz.querySelector('[data-editor]');
@@ -38,8 +40,10 @@ export function telaCatalogo(main, ir) {
     ocupado = true;
     const botoes = [...raiz.querySelectorAll('button, input, select, textarea')].map(b => [b, b.disabled]);
     botoes.forEach(([b]) => { b.disabled = true; });
-    try { await acao(); }
-    catch (e) { if (vivo()) avisar(e.message || 'Não foi possível concluir a operação. Tente novamente.'); }
+    const versao = versaoSessao;
+    const atual = () => vivo() && versao === versaoSessao;
+    try { await acao(atual); }
+    catch (e) { if (atual()) avisar(e.message || 'Não foi possível concluir a operação. Tente novamente.'); }
     finally { ocupado = false; botoes.forEach(([b, desativado]) => { b.disabled = desativado; }); }
   }
 
@@ -48,11 +52,11 @@ export function telaCatalogo(main, ir) {
       `<section class="cartao"><h3>Entrar para contribuir</h3><p>A consulta pública dispensa conta. Para criar modelos, receba um link de acesso por e-mail e abra-o neste mesmo navegador.</p><form data-login>${campo('email', 'E-mail de acesso', '', 'type="email" autocomplete="email" required maxlength="254"')}<button type="submit">Enviar link de acesso</button></form></section>`;
     conta.querySelector('[data-login]')?.addEventListener('submit', e => {
       e.preventDefault(); const email = new FormData(e.currentTarget).get('email').trim();
-      atuar(async () => { await entrarCatalogo(email); if (vivo()) avisar('Se o envio foi autorizado, o link chegará ao seu e-mail. Abra-o neste navegador. Confira também a pasta de spam.'); });
+      atuar(async atual => { await entrarCatalogo(email); if (atual()) avisar('Se o envio foi autorizado, o link chegará ao seu e-mail. Abra-o neste navegador. Confira também a pasta de spam.'); });
     });
     conta.querySelector('[data-sair]')?.addEventListener('click', () => {
       if (editor && !confirm('Sair e descartar os campos de contribuição ainda não salvos? Os modelos já salvos online serão mantidos.')) return;
-      atuar(async () => { await sairCatalogo(); if (!vivo()) return; sessao = null; moderador = false; editor = null; vista = 'publicos'; pagina = 0; desenharConta(); desenharControles(); desenharEditor(); await atualizar(); avisar('Sessão encerrada neste aparelho. Seus planos locais foram mantidos.'); });
+      atuar(async atual => { await sairCatalogo(); if (atual()) await aplicarSessao(null); if (vivo() && !sessao) avisar('Sessão encerrada neste aparelho. Seus planos locais foram mantidos.'); });
     });
   }
 
@@ -110,13 +114,13 @@ export function telaCatalogo(main, ir) {
     lista.querySelectorAll('[data-usar]').forEach(b => b.addEventListener('click', () => desenharImportacao(registro(b.dataset.usar))));
     lista.querySelectorAll('[data-retirar]').forEach(b => b.addEventListener('click', () => {
       if (!confirm('Retirar este modelo? A retirada não apaga cadastros já copiados para outros aparelhos.')) return;
-      atuar(async () => { await retirarModelo(b.dataset.retirar); if (!vivo()) return; if (editor?.id === b.dataset.retirar) { editor = null; desenharEditor(); } await atualizar(); avisar('Situação do modelo atualizada.'); });
+      atuar(async atual => { await retirarModelo(b.dataset.retirar); if (!atual()) return; if (editor?.id === b.dataset.retirar) { editor = null; desenharEditor(); } await atualizar(); if (atual()) avisar('Situação do modelo atualizada.'); });
     }));
     lista.querySelectorAll('[data-parecer]').forEach(f => f.addEventListener('submit', e => {
       e.preventDefault(); const aprovar = e.submitter?.value === 'aprovar'; const motivo = new FormData(f).get('parecer-' + f.dataset.parecer).trim();
       if (!aprovar && !motivo) { avisar('Explique quais ajustes o autor deve fazer.'); f.querySelector('textarea').focus(); return; }
       if (aprovar && !confirm('Publicar este modelo para consulta pública após conferir conteúdo, origem, versão e ausência de dados privados? Isso não certifica conformidade.')) return;
-      atuar(async () => { await decidirModelo(f.dataset.parecer, aprovar, motivo); if (!vivo()) return; await atualizar(); avisar(aprovar ? 'Modelo publicado após revisão.' : 'Proposta devolvida ao autor com o parecer.'); });
+      atuar(async atual => { await decidirModelo(f.dataset.parecer, aprovar, motivo); if (!atual()) return; await atualizar(); if (atual()) avisar(aprovar ? 'Modelo publicado após revisão.' : 'Proposta devolvida ao autor com o parecer.'); });
     }));
     lista.querySelector('[data-anterior]').addEventListener('click', () => { if (ocupado || !pagina) return; pagina--; atualizar(); });
     lista.querySelector('[data-proxima]').addEventListener('click', () => { if (ocupado) return; pagina++; atualizar(); });
@@ -197,30 +201,62 @@ export function telaCatalogo(main, ir) {
       if (problemas.length) { avisar(problemas.join(' ')); return; }
       if (enviar && !new FormData(form).has('consentimento')) { avisar('Confirme a autorização para compartilhar antes de enviar para revisão.'); form.elements.consentimento.focus(); return; }
       const atual = editor; const dados = structuredClone(editor.dados);
-      atuar(async () => {
+      atuar(async vigente => {
         const id = await salvarModelo(dados, atual.id, atual.originalId);
+        if (!vigente()) return;
         atual.id = id;
         if (enviar) await enviarModelo(id);
-        if (!vivo()) return;
+        if (!vigente()) return;
         if (enviar) { editor = null; } else { editor = { ...atual, dados }; }
         vista = 'meus'; pagina = 0; desenharEditor(); desenharControles(); await atualizar();
-        avisar(enviar ? 'Modelo enviado para revisão. Ainda não está publicado.' : 'Rascunho salvo na sua conta, sem publicação.');
+        if (vigente()) avisar(enviar ? 'Modelo enviado para revisão. Ainda não está publicado.' : 'Rascunho salvo na sua conta, sem publicação.');
       });
     });
+  }
+
+  async function aplicarSessao(nova, evento) {
+    if (!vivo()) return;
+    const mesmoUsuario = iniciou && (sessao?.user.id || null) === (nova?.user.id || null);
+    sessao = nova;
+    if (mesmoUsuario) {
+      // SIGNED_IN também ocorre ao voltar à aba: preserve os campos em edição.
+      if (evento === 'USER_UPDATED') desenharConta();
+      return;
+    }
+    iniciou = true;
+    const versao = ++versaoSessao;
+    const atual = () => vivo() && versao === versaoSessao;
+    ++pedido;
+    const tinhaEditor = !!editor;
+    moderador = false; editor = null; vista = 'publicos'; pagina = 0; registros = [];
+    desenharConta(); desenharControles(); desenharEditor();
+    const denuncias = document.createElement('div');
+    raiz.querySelector('[data-denuncias]').replaceChildren(denuncias);
+    lista.innerHTML = '<section class="cartao"><p role="status">Atualizando acesso ao catálogo…</p></section>';
+    if (tinhaEditor) avisar('A conta mudou ou a sessão foi encerrada. O formulário foi fechado. Rascunhos já salvos online continuam na conta de origem.');
+    if (sessao) {
+      try {
+        const permitido = await moderadorCatalogo();
+        if (!atual()) return;
+        moderador = permitido;
+      } catch { if (atual()) avisar('Não foi possível verificar o acesso à revisão. A consulta pública continua disponível.'); }
+    }
+    if (!atual()) return;
+    desenharControles(); await atualizar();
+    if (atual() && moderador) await mostrarDenuncias(denuncias);
   }
 
   conta.innerHTML = '<section class="cartao"><p role="status">Verificando sessão de acesso…</p></section>';
   async function iniciar() {
     try {
-      sessao = await sessaoCatalogo();
-      if (!vivo()) return;
-      if (sessao) {
-        try { moderador = await moderadorCatalogo(); }
-        catch { if (vivo()) avisar('Não foi possível verificar o acesso à revisão. A consulta pública continua disponível.'); }
-      }
-      if (!vivo()) return;
-      desenharConta(); desenharControles(); await atualizar();
-      if(moderador)await mostrarDenuncias(raiz.querySelector('[data-denuncias]'));
+      pararSessao?.();
+      const parar = await observarSessaoCatalogo((nova, evento) => {
+        aplicarSessao(nova, evento).catch(() => {
+          if (vivo()) avisar('Não foi possível atualizar o acesso. Abra o catálogo novamente.');
+        });
+      });
+      if (!vivo()) parar();
+      else pararSessao = parar;
     } catch (e) {
       if (!vivo()) return;
       conta.innerHTML = `<section class="cartao erro"><p>${esc(e.message)}</p><button type="button" data-reiniciar>Tentar conectar novamente</button></section>`;
@@ -228,4 +264,5 @@ export function telaCatalogo(main, ir) {
     }
   }
   iniciar();
+  return () => { encerrado = true; ++pedido; ++versaoSessao; pararSessao?.(); };
 }

@@ -8,6 +8,29 @@ beforeEach(() => {
   vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'sb_publishable_1234567890abcdefghijkl');
 });
 describe('Cliente do catálogo e permissões solicitadas', () => {
+  it('reage fora do callback do Auth e cancela eventos pendentes ao sair da tela', async () => {
+    vi.useFakeTimers();
+    try {
+      let evento;
+      const unsubscribe = vi.fn();
+      mock.cliente = { auth: { onAuthStateChange: vi.fn(cb => {
+        evento = cb; return { data: { subscription: { unsubscribe } } };
+      }) } };
+      const { observarSessaoCatalogo } = await import('../src/servicos/catalogo.js');
+      const reagir = vi.fn();
+      const parar = await observarSessaoCatalogo(reagir);
+      const sessao = { user: { id: 'colaborador-ficticio' } };
+      expect(evento('SIGNED_IN', sessao)).toBeUndefined();
+      expect(reagir).not.toHaveBeenCalled();
+      await vi.runAllTimersAsync();
+      expect(reagir).toHaveBeenCalledWith(sessao, 'SIGNED_IN');
+      evento('SIGNED_OUT', null);
+      parar();
+      await vi.runAllTimersAsync();
+      expect(reagir).toHaveBeenCalledTimes(1);
+      expect(unsubscribe).toHaveBeenCalledOnce();
+    } finally { vi.useRealTimers(); }
+  });
   it('consulta somente aprovados por padrão e pagina sem escrever dados locais', async () => {
     const q = {}; for (const m of ['select', 'order', 'eq', 'ilike']) q[m] = vi.fn(() => q);
     q.range = vi.fn(async () => ({ data: [], error: null }));

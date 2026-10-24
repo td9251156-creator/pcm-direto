@@ -80,3 +80,22 @@ retroativamente esse worker. O teste legado preserva a aba que já estava aberta
 a ativação depois de fechá-la; não comprova coerência de uma nova aba nessa janela.
 O aviso novo não existe na versão antiga, por isso a orientação de fechar as abas também
 deve acompanhar a publicação desta correção.
+
+## Sessão da comunidade
+
+Lint, 191 testes, build e roteiro completo de navegador aprovados. O cenário adicional de
+saída pendente foi incorporado ao roteiro e executado novamente, com lint aprovado.
+
+O teste novo reproduziu a falta de atualização ao entrar em outra aba. A tela observa os
+eventos de autenticação e encerra a assinatura ao navegar. Renovar a mesma sessão não redesenha
+o formulário em edição. Trocar de conta ou sair fecha o formulário e avisa; rascunhos já salvos
+online continuam na conta de origem. Respostas antigas não podem reaparecer ou iniciar o envio
+de uma contribuição após a troca de sessão.
+
+A revisão independente de Codex reproduziu uma corrida adicional: uma saída pendente de A
+sobrescrevia a entrada de B. A continuação agora confere a versão da sessão; o revisor repetiu
+o cenário e confirmou a correção. Claude Code não foi utilizado.
+
+As verificações automatizadas usam respostas fictícias e não enviam e-mails ou conteúdo ao
+projeto real. O mantenedor escolheu entrar pessoalmente no site e avisar; o teste real do link
+e das operações autenticadas permanece pendente até esse aviso.
