@@ -132,7 +132,9 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
 ## Evidência da primeira rodada com agentes
 
 - Coordenação e implementação delimitada, com um agente preparando as instruções e outro fazendo revisão independente somente leitura.
-- Instalação, `npm run verificar`, 133 testes e roteiro `npm run test:navegador` aprovados.
+- Instalação, 
+pm run verificar`, 133 testes e roteiro 
+pm run test:navegador` aprovados.
 - Auditoria de dependências em 20/10/2026: nenhum alerta informado pelo serviço.
 - [Execução manual fora da main](https://github.com/td9251156-creator/pcm-direto/actions/runs/39420496553): verificação aprovada e publicação pulada.
 - A revisão semanal e as propostas do Dependabot estão configuradas na main. [Primeira revisão semanal](https://github.com/td9251156-creator/pcm-direto/actions/runs/39421631200) executada com sucesso; as próximas agendas dependem das condições do GitHub.
@@ -148,4 +150,6 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
   o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
   portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
   as duas variáveis pela integração retornaram HTTP 403; precisam ser cadastradas nas configurações do GitHub.
-`nVerificação: lint, 203 testes, build e roteiro completo no Chromium aprovados; revisão independente`nsomente leitura aprovada. Envio e moderação com conta real continuam como validação manual.
+
+Verificação: lint, 203 testes, build e roteiro completo no Chromium aprovados; revisão independente
+somente leitura aprovada. Envio e moderação com conta real continuam como validação manual.
