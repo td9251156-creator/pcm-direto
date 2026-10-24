@@ -51,5 +51,12 @@ incompleta, o isolamento das propostas, caches de outro aplicativo e a transiç�
 anterior publicado. As páginas são fictícias; não escreve na base pessoal nem usa Supabase.
 O snapshot histórico em `testes/fixtures/sw-71e0b87.txt` é usado somente no teste.
 
+Por último, `scripts/verificar-sessao.mjs` usa a porta 4177, bloqueia service workers e
+intercepta as chamadas Supabase com respostas fictícias. O SDK recebe eventos por seu canal
+entre duas abas: entrada, renovação sem perder campos e saída. Respostas atrasadas de salvar
+e conferir moderação não devem reabrir conteúdo da sessão anterior. Um caso isolado da tela
+confere que concluir uma saída antiga não substitui a conta que entrou depois. Não envia
+e-mails, não acessa contas reais e não comprova a entrega do link de autenticação.
+
 Leitor de tela, aparelhos reais, conteúdo e impressão no Excel/LibreOffice continuam exigindo
 conferência manual. O cenário especializado de atualização não testa migrações de esquema.
