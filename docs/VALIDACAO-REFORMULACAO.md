@@ -2,6 +2,10 @@
 
 Registro de 24/10/2026. Somente testes realmente executados são evidências de entrega.
 
+O mantenedor autorizou publicar uma **versão de teste** no domínio atual antes da liberação
+final. O aplicativo exibe esse estado e orienta backup. Essa autorização não representa
+aprovação dos documentos ou conclusão dos testes humanos listados abaixo.
+
 ## Executado
 
 - `npm ci` e instalação do Chromium fixado da ferramenta de navegador.

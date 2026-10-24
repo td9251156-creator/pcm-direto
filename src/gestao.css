@@ -1,4 +1,5 @@
 /* Direção B · Gestão. Complementa os componentes existentes sem mudar a impressão. */
+.aviso-teste{padding:12px 24px;background:#fff4c2;color:#402d00;font-size:14px;line-height:1.6}.aviso-teste a{color:#0b3d63;text-decoration:underline}
 .vitrine{display:flex;align-items:center;justify-content:space-between;gap:32px;background:#eaf1f6!important}.vitrine h3{font-size:25px;margin:10px 0}.numero-modelos{font-size:64px;color:#0b3d63;text-align:center;min-width:160px}.numero-modelos small{display:block;font-size:13px;font-weight:500}.modelo-publico h3{font-size:22px;margin:12px 0}.categorias{margin:24px 0}.modelo-publico .botao{font-size:14px}
 @media screen{
   body{background:color-mix(in srgb,var(--fundo) 95%,var(--primaria));font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
