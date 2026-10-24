@@ -2,6 +2,18 @@
 
 # Fila de evolução
 
+## Interface — logo horizontal e comunidade (24/10/2026)
+
+Solicitação do mantenedor: assinatura horizontal com slogan e melhor experiência de uso.
+Usar os vetores originais do kit; no celular, separar o slogan em texto de 12 px para preservar
+a leitura. Cabeçalho com retorno à comunidade e acessos ao PCM/apoio, mantendo menu lateral
+no computador e inferior no celular. Entrada com caminhos distintos para modelos e fábrica,
+busca com contagem e recuperação de resultado vazio.
+
+Conferir em 320, 390, 820 e 1280 px: proporção da marca, ausência de rolagem horizontal,
+busca/categorias, foco por teclado, áreas de toque e download. Testes e screenshots constam
+do roteiro de navegador; publicar pelo PR após revisão e verificações.
+
 Esta é a fila atual. [MELHORIAS.md](MELHORIAS.md) guarda o diagnóstico e as entregas anteriores.
 O processo de trabalho está em [EVOLUCAO-CONTINUA.md](EVOLUCAO-CONTINUA.md).
 Uma implementação por vez. Um item só termina com evidência e revisão independente.

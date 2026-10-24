@@ -4,7 +4,10 @@
 @media screen{
   body{background:color-mix(in srgb,var(--fundo) 95%,var(--primaria));font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
   .topo{background:var(--fundo);color:var(--texto);border-bottom:1px solid color-mix(in srgb,var(--borda) 35%,transparent);padding:20px 24px}
-  .marca{font-size:20px!important;color:var(--texto);gap:12px}.marca img{width:48px;height:48px;object-fit:contain}
+  .topo{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+  .topo .marca{margin:0;min-width:0;flex:0 1 480px}.marca a{display:block;width:100%;line-height:0}.topo .marca img{display:block;width:100%;height:auto;max-width:480px;object-fit:contain;border-radius:0}
+  .acoes-cabecalho{display:flex;align-items:center;gap:12px;margin-left:auto}.topo>nav:not([hidden]){flex-basis:100%}
+  .marca-slogan{display:none}
   .etapas{gap:6px}.etapas a{color:var(--texto);font-size:14px;border-radius:9px;padding:12px 16px}
   .etapas a[aria-current=page]{background:var(--th-fundo);border-color:transparent;color:var(--acento);box-shadow:inset 3px 0 var(--primaria);font-weight:700}
   .topo :focus-visible{outline-color:var(--destaque)}
@@ -18,7 +21,26 @@
   meter{width:100%;height:18px}.modulo{border-radius:10px}.boas-vindas{padding:36px}.aviso-demo{border-left:5px solid var(--destaque)}.pendencia{color:var(--destaque);font-weight:700}
   [hidden]{display:none!important}
 }
-@media screen and (min-width:1100px){.topo{position:fixed;inset:0 auto 0 0;width:230px;border-right:1px solid color-mix(in srgb,var(--borda) 30%,transparent);border-bottom:0;padding:28px 20px;z-index:3}.etapas{display:grid;margin-top:42px}.etapas li{width:100%}.marca{flex-wrap:wrap}body{padding-left:230px}.rodape{margin-left:auto;margin-right:auto;max-width:1360px;padding:24px 32px}#aviso-armazenamento{margin:20px 32px}}
+@media screen and (min-width:1100px){html{scroll-padding-top:190px}.topo{position:fixed;inset:0 0 auto 0;height:170px;padding:14px 32px;z-index:4;flex-wrap:nowrap}.topo>nav:not([hidden]){position:fixed;left:0;top:170px;bottom:0;width:220px;padding:24px 12px;overflow-y:auto;background:var(--fundo);border-right:1px solid var(--th-fundo)}.etapas{display:grid;margin:0}.etapas li{width:100%}body{padding:170px 0 0 220px}.rodape{margin-left:auto;margin-right:auto;max-width:1360px;padding:24px 32px}#aviso-armazenamento{margin:20px 32px}}
 @media screen and (max-width:750px){main{padding:20px 16px!important}.indicadores{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.indicador{padding:16px}.indicador strong{font-size:26px}.grade.duas{grid-template-columns:1fr}.cabecalho-tela h2{font-size:28px}.cartao{padding:18px}.ocorrencia{align-items:flex-start;flex-wrap:wrap}.ocorrencia>button{width:100%}.ocorrencia>div{width:100%}.etapas{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 3px;margin:0;background:var(--fundo);border-top:1px solid var(--borda);z-index:5;gap:0}.etapas a{font-size:11px;text-align:center;padding:12px 3px;min-height:48px}.etapas a[aria-current=page]{box-shadow:inset 0 3px var(--primaria)}body{padding-bottom:80px}.topo{padding:16px}.topo .marca{margin:0}.mensagens{bottom:80px}.passos{font-size:13px;gap:12px 24px}.tabela-rolagem{max-width:100%}.rodape{padding:16px}table{font-size:13px}}
 @media screen and (max-width:750px){.etapas{grid-template-columns:repeat(6,minmax(0,1fr))}.etapas a{font-size:10px}.vitrine{align-items:flex-start;gap:12px}.numero-modelos{font-size:40px;min-width:90px}.numero-modelos small{font-size:11px}}
+@media screen{
+  .comunidade-abertura{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:32px;align-items:center;margin-bottom:32px}
+  .comunidade-abertura .cabecalho-tela{margin:0}.comunidade-abertura .cabecalho-tela h2{font-size:clamp(28px,2.8vw,40px);line-height:1.2}.comunidade-abertura .nota-acesso{font-size:13px;margin-bottom:0}
+  .acesso-pcm{background:var(--th-fundo);box-shadow:none;margin:0}.acesso-pcm h3{font-size:22px;margin:8px 0}.acesso-pcm .origem{font-size:13px;margin-bottom:0}
+  .banco-cabecalho{border-top:1px solid var(--th-fundo);padding-top:28px}.banco-cabecalho h3{font-size:26px;margin:8px 0}.banco-cabecalho p{margin-top:8px}
+  .filtros-modelos{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin:24px 0 12px}.categorias{display:flex;gap:8px;flex-wrap:wrap;margin:0}.busca-modelos{flex:0 1 340px}.busca-modelos input{width:100%}
+  .modelo-publico{display:flex;flex-direction:column}.modelo-publico .acoes{margin-top:auto;padding-top:12px}.convite-comunidade{display:flex;align-items:center;gap:32px;margin-top:12px}.convite-comunidade>div{flex:1}.convite-comunidade>.botao{flex-shrink:0}.estado-vazio{grid-column:1/-1;text-align:center;padding:32px}
+  .modelo-publico .acoes>a{display:inline-flex;align-items:center;min-height:44px}
+  .etapas a,.categorias button{min-height:48px}
+}
+@media screen and (min-width:751px) and (max-width:1099px){.topo .marca{flex-basis:400px}.acoes-cabecalho .secundario{display:none}}
+@media screen and (max-width:750px){
+  .topo{padding:12px 20px;justify-content:center}.topo .marca{flex:0 1 360px}.acoes-cabecalho{display:none}.topo>nav:not([hidden]){flex-basis:0}
+  html{scroll-padding-bottom:calc(100px + env(safe-area-inset-bottom))}.marca-slogan{display:block;margin-top:10px;padding-top:8px;border-top:2px solid #d97030;color:var(--primaria);font-size:12px;font-weight:700;line-height:1.5;text-align:center}
+  .comunidade-abertura{grid-template-columns:1fr;gap:20px;margin-bottom:24px}.comunidade-abertura .cabecalho-tela h2{font-size:30px}.acesso-pcm{padding:20px}.acesso-pcm h3{font-size:20px}
+  .filtros-modelos{align-items:stretch;flex-direction:column;gap:18px}.busca-modelos{flex:auto}.categorias button{flex:1;padding:10px;font-size:13px}.convite-comunidade{display:block}.convite-comunidade>.botao{margin-top:12px}
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}.etapas{padding-bottom:calc(8px + env(safe-area-inset-bottom))}.mensagens{bottom:calc(84px + env(safe-area-inset-bottom))}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media screen and (max-width:750px){#tarefas table,#tarefas tbody,#tarefas tr,#tarefas td{display:block;width:100%;min-width:0}#tarefas thead{display:none}#tarefas tr{border:1px solid var(--borda);border-radius:10px;padding:14px;margin:12px 0}#tarefas td{border:0;text-align:left;padding:5px 0}#tarefas td:nth-child(3)::before{content:'Especialidade: ';font-weight:600}#tarefas td:nth-child(4)::before{content:'Duração estimada: ';font-weight:600}#tarefas td:nth-child(5) label{position:static!important;width:auto;height:auto;clip-path:none;overflow:visible}#tarefas .tabela-rolagem{overflow:visible}}
