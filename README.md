@@ -5,6 +5,7 @@
 Ferramenta aberta de Planejamento e Controle de Manutenção, em português, para uma fábrica com até 100 ativos. Interface Gestão, com comunidade na abertura e tema claro.
 
 - **Comunidade:** modelos PCMD, exemplos e biblioteca técnica para download; catálogo online com publicações, curtidas, comentários, denúncias e moderação no Supabase.
+- **Máquinas e tarefas:** fichas PDF da biblioteca para baixar offline. Na comunidade, é possível anexar PDF pronto de até 5 MB e 200 páginas; fica privado até a aprovação do modelo. JSON continua em Outros formatos.
 - **Fábrica privada:** cadastros, planos, criticidade, execuções e falhas ficam no IndexedDB deste navegador, sem sincronização da base operacional.
 - **Planejar:** equipamentos por cadastro, colagem, CSV ou XLSX, criticidade com cinco notas, capacidade e revisões com vigência e prévia do impacto.
 - **Executar:** ocorrências previstas, registro rápido, cancelamento preservado e histórico. Execuções antigas permanecem como legado sem vínculo presumido.

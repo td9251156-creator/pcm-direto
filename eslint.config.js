@@ -5,6 +5,10 @@ export default [
   { ignores: ['dist/', 'node_modules/'] },
   js.configs.recommended,
   {
+    files: ['supabase/functions/**/index.js'],
+    languageOptions: { globals: { Deno: 'readonly' } },
+  },
+  {
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',

@@ -8,6 +8,29 @@ beforeEach(() => {
   vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'sb_publishable_1234567890abcdefghijkl');
 });
 describe('Cliente do catálogo e permissões solicitadas', () => {
+  it('retoma PDF validado após resposta perdida sem tentar sobrescrever o objeto', async () => {
+    const arquivo = new Blob(['%PDF-1.7\nficticio\n%%EOF'], { type: 'application/pdf' });
+    const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', await arquivo.arrayBuffer()))].map(n => n.toString(16).padStart(2, '0')).join('');
+    mock.cliente = { rpc: vi.fn(async () => ({ data: { validado: true, caminho: 'reservado.pdf', sha256: hash } })), storage: { from: vi.fn() } };
+    const { anexarPdfModelo } = await import('../src/servicos/catalogo.js');
+    expect((await anexarPdfModelo('modelo-ficticio', arquivo)).caminho).toBe('reservado.pdf');
+    expect(mock.cliente.storage.from).not.toHaveBeenCalled();
+    mock.cliente.rpc.mockResolvedValue({ data: { validado: true, caminho: 'reservado.pdf', sha256: 'a'.repeat(64) } });
+    await expect(anexarPdfModelo('modelo-ficticio', arquivo)).rejects.toThrow('outro PDF');
+  });
+  it('retoma upload HTTP 409 do SDK, valida no servidor e interrompe se a sessão mudou', async () => {
+    const arquivo = new Blob(['%PDF-1.7\nficticio\n%%EOF']);
+    const upload = vi.fn(async () => ({ error: { status: 409, statusCode: 'ResourceAlreadyExists' } }));
+    mock.cliente = { rpc: vi.fn(async () => ({ data: { caminho: 'reservado.pdf' } })), storage: { from: () => ({ upload }) }, functions: { invoke: vi.fn(async () => ({ data: { pdf: { caminho: 'reservado.pdf' } } })) } };
+    const { anexarPdfModelo, conferirArquivoPdf } = await import('../src/servicos/catalogo.js');
+    expect((await anexarPdfModelo('modelo-ficticio', arquivo)).caminho).toBe('reservado.pdf');
+    expect(upload.mock.calls[0][2].upsert).toBe(false);
+    expect(mock.cliente.functions.invoke).toHaveBeenCalledOnce();
+    await expect(anexarPdfModelo('modelo-ficticio', arquivo, () => false)).rejects.toThrow('sessão mudou');
+    expect(mock.cliente.functions.invoke).toHaveBeenCalledOnce();
+    await expect(conferirArquivoPdf(new Blob(['<html>falso</html>']))).rejects.toThrow('formato PDF');
+    await expect(conferirArquivoPdf(new Blob([new Uint8Array(5000001)]))).rejects.toThrow('5 MB');
+  });
   it('reage fora do callback do Auth e cancela eventos pendentes ao sair da tela', async () => {
     vi.useFakeTimers();
     try {

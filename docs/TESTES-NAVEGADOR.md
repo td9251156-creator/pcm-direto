@@ -60,3 +60,10 @@ e-mails, não acessa contas reais e não comprova a entrega do link de autentica
 
 Leitor de tela, aparelhos reais, conteúdo e impressão no Excel/LibreOffice continuam exigindo
 conferência manual. O cenário especializado de atualização não testa migrações de esquema.
+
+O roteiro também executa `verificar-pdfs-banco.mjs`, com PostgreSQL em memória (PGlite) e
+substitutos de auth/storage sem rede, e `verificar-pdfs-comunidade.mjs`, com API simulada
+no servidor local 4178. Este último usa tela de 390 px, SDK real e eventos fictícios de sessão:
+seleção sem envio automático, arquivo falso recusado antes de salvar, upload sem upsert,
+validação, download e confirmação de revisão com a versão lida. Não escreve no Supabase real.
+O pacote isolado de ferramentas inclui PGlite e pdf-lib; eles não entram no site publicado.
