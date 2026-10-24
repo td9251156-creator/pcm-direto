@@ -16,6 +16,7 @@ import { telaBoasVindas,telaAssistente,telaPlanejar,telaSemana,telaOcorrencias,t
 import { telaApoio } from './telas/apoio.js';
 import { telaComunidade } from './telas/comunidade.js';
 import { telaCatalogo } from './telas/catalogo.js';
+import { registrarAtualizacao } from './servicos/atualizacao.js';
 
 const TELAS = {
   comunidade: { titulo: 'Comunidade e modelos', desenhar: telaComunidade },
@@ -102,7 +103,7 @@ mostrar();
 
 // Service worker só na versão publicada (no modo de desenvolvimento ele atrapalharia)
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  const registrar = () => navigator.serviceWorker.register('./sw.js').catch(() => {});
+  const registrar = () => registrarAtualizacao().catch(() => {});
   if (document.readyState === 'complete') registrar();
   else window.addEventListener('load', registrar, { once: true });
 }

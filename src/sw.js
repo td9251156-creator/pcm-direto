@@ -5,10 +5,12 @@ const PREFIXO = 'pcm-direto-' + encodeURIComponent(self.registration.scope) + '-
 const CACHE = PREFIXO + '/*VERSAO*/';
 
 self.addEventListener('install', (evento) => {
-  evento.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', ...ARQUIVOS])).then(() => self.skipWaiting()));
+  // Não forçar ativação: a versão nova espera todas as abas da anterior fecharem.
+  evento.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', ...ARQUIVOS])));
 });
 
-// Apaga caches de versões anteriores
+// Sem skipWaiting, o navegador só ativa a atualização após liberar os clientes antigos.
+// Nesse momento os caches anteriores do mesmo endereço podem ser removidos.
 self.addEventListener('activate', (evento) => {
   evento.waitUntil(
     caches.keys()
@@ -21,19 +23,15 @@ self.addEventListener('fetch', (evento) => {
   const req = evento.request;
   if (req.method !== 'GET' || !req.url.startsWith(self.registration.scope)) return;
 
-  // Página: primeiro a internet (para pegar a versão nova); sem internet, a guardada
+  // HTML e arquivos pertencem à mesma versão. Uma aba aberta não troca de versão
+  // por receber HTML novo da rede enquanto ainda está no worker antigo.
   if (req.mode === 'navigate') {
-    evento.respondWith(
-      fetch(req)
-        .then((resp) => {
-          if (resp.ok) {
-            const copia = resp.clone();
-            evento.waitUntil(caches.open(CACHE).then((c) => c.put('./', copia)).catch(() => {}));
-          }
-          return resp;
-        })
-        .catch(() => caches.open(CACHE).then((c) => c.match('./'))),
-    );
+    const url = new URL(req.url);
+    const inicio = new URL(self.registration.scope);
+    const principal = url.pathname === inicio.pathname || url.pathname === inicio.pathname + 'index.html';
+    evento.respondWith(caches.open(CACHE)
+      .then((c) => c.match(principal ? './' : req, { ignoreSearch: true, ignoreVary: true }))
+      .then((guardado) => guardado || fetch(req)));
     return;
   }
 

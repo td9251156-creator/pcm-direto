@@ -2,6 +2,17 @@
 
 # Fila de evolução
 
+## Atualização offline segura (24/10/2026)
+
+Pendência do plano aprovado: publicar uma versão nova com aba antiga aberta, sem interromper
+o trabalho. Três falhas foram reproduzidas antes da correção: ativação forçada, mistura de
+HTML/arquivos e propostas substituindo o HTML principal offline.
+
+Critérios: nova versão espera todas as abas; aviso com orientação de backup; rascunho de
+formulário e recursos antigos continuam disponíveis; versão incompleta não substitui a ativa;
+dados fictícios persistem e caches de outros apps não são removidos. Conferência por testes
+unitários e `scripts/verificar-atualizacao.mjs`, inclusive transição do worker publicado.
+
 ## Interface — logo horizontal e comunidade (24/10/2026)
 
 Solicitação do mantenedor: assinatura horizontal com slogan e melhor experiência de uso.
