@@ -19,11 +19,19 @@ await executarComRecursos({
       const Canal = window.BroadcastChannel;
       window.BroadcastChannel = class extends Canal { constructor(nome) { super(nome); window.canalPdfTeste = nome; } };
     });
+    let comentario = { id: 'comentario-ficticio', apelido: 'Técnico fictício', texto: 'Comentário técnico publicado', situacao: 'aprovado' };
+    let ocultacoes = 0;
     let modelo; let moderador = false; let uploads = 0; let salvamentos = 0; let decisoes = 0;
     await contexto.route('https://*.supabase.co/**', async route => {
       const req = route.request(); const url = new URL(req.url());
       const responder = dados => route.fulfill({ contentType: 'application/json', body: JSON.stringify(dados) });
       if (req.method() === 'OPTIONS') return route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' } });
+      if (url.pathname.endsWith('/catalogo_comentarios')) return responder([comentario]);
+      if (url.pathname.endsWith('/catalogo_interacoes')) return responder({ curtidas: 0, comentarios: comentario.situacao === 'aprovado' ? 1 : 0 });
+      if (url.pathname.includes('/rpc/catalogo_moderar_comentario')) {
+        assert.deepEqual(req.postDataJSON(), { p_id: comentario.id, p_aprovar: false });
+        ocultacoes++; comentario = { ...comentario, situacao: 'oculto' }; return responder(null);
+      }
       if (url.pathname.includes('/rpc/catalogo_e_moderador')) return responder(moderador);
       if (url.pathname.includes('/rpc/catalogo_salvar')) {
         salvamentos++;
@@ -118,6 +126,12 @@ await executarComRecursos({
     assert.equal(decisoes, 1);
     await pagina.locator('[data-vista="publicos"]').click();
     await pagina.locator('[data-baixar-pdf]').waitFor();
+    await pagina.locator('[data-interacoes]').click();
+    await pagina.getByRole('button', { name: 'Ocultar comentário', exact: true }).click();
+    await pagina.getByText('Oculto pela moderação', { exact: true }).waitFor();
+    assert.equal(ocultacoes, 1);
+    assert.equal(await pagina.locator('[data-ocultar-comentario]').count(), 0);
+    assert.equal(await pagina.locator('[data-aprovar-comentario]').count(), 0);
     assert.deepEqual(erros, []);
     await contexto.close();
     console.log('Comunidade PDF: seleção sem envio automático, recusa de arquivo falso, upload privado, validação, download e decisão com versão aprovados (rede simulada).');

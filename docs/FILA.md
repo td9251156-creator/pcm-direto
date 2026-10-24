@@ -2,6 +2,14 @@
 
 # Fila de evolução
 
+## Moderação de comentários publicados (24/10/2026)
+
+Correção delimitada: o botão de ocultar desaparecia após a aprovação. A moderação agora
+pode ocultar comentários pendentes ou já publicados, usando a mesma permissão do servidor.
+O registro permanece com situação “oculto”; comentários ocultos não recebem novos botões.
+Regressão no Chromium usa conta e respostas fictícias e confere a decisão enviada e o estado
+após a atualização. Nenhuma interação foi criada ou alterada no projeto real.
+
 ## Modelos de máquinas e tarefas em PDF (24/10/2026)
 
 O mantenedor confirmou dois fluxos: baixar fichas em PDF e publicar PDFs prontos na comunidade.
@@ -140,3 +148,4 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
   o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
   portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
   as duas variáveis pela integração retornaram HTTP 403; precisam ser cadastradas nas configurações do GitHub.
+`nVerificação: lint, 203 testes, build e roteiro completo no Chromium aprovados; revisão independente`nsomente leitura aprovada. Envio e moderação com conta real continuam como validação manual.
