@@ -28,3 +28,11 @@ export function distancia(a, b) {
   }
   return linha[b.length];
 }
+
+/** Busca por palavras sem alterar os rótulos ou identificadores originais. */
+export function correspondeBusca(texto, busca) {
+  const normalizar = valor => semAcento(valor).toLocaleLowerCase('pt-BR');
+  const termos = normalizar(busca).trim().split(/\s+/).filter(Boolean);
+  const conteudo = normalizar(texto);
+  return termos.every(termo => conteudo.includes(termo));
+}

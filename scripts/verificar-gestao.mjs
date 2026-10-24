@@ -35,6 +35,18 @@ await executarComRecursos({
   await page.locator('#buscar-modelos').fill('criticidade');assert.equal(await page.locator('#banco-modelos article').count(),1);
   await page.locator('#buscar-modelos').fill('termo-sem-resultados');await page.locator('#limpar-busca').click();assert.equal(await page.locator('#banco-modelos article').count(),6);assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
   await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),4);
+  await page.locator('#buscar-modelos').fill('  ELETRICO rolamentos ');
+  assert.equal(await page.locator('#banco-modelos article').count(),1);
+  await page.locator('.previa-tarefas summary').focus();
+  await page.locator('.previa-tarefas summary').press('Enter');
+  assert.equal(await page.locator('.previa-tarefas li').count(),biblioteca.tipos[0].tarefas.length);
+  assert.ok(await page.locator('.previa-tarefas').innerText().then(t=>t.includes('MOT-08')));
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Prévia cabe no celular');
+  await page.screenshot({path:'artifacts/previa-tarefas-celular.png',fullPage:true});
+  await page.locator('#buscar-modelos').fill('bomba');
+  await page.locator('.previa-tarefas summary').click();
+  assert.ok((await page.locator('.previa-tarefas').innerText()).includes('0,25 h por execução'),'Prévia preserva quartos de hora');
+  await page.locator('#buscar-modelos').fill('');
   for(const tipo of biblioteca.tipos){
     const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="./modelos/maquinas/pcm-modelo-${tipo.id}.pdf"]`).click()]);
     assert.deepEqual(await readFile(await pdf.path()),await readFile(`public/modelos/maquinas/pcm-modelo-${tipo.id}.pdf`));

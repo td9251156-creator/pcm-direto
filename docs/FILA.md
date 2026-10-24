@@ -2,6 +2,18 @@
 
 # Fila de evolução
 
+## Encontrar e conferir tarefas antes do PDF (24/10/2026)
+
+A busca da comunidade passa a consultar nomes e códigos das máquinas, descrição/ID das tarefas,
+especialidade e periodicidade. Aceita palavras em qualquer ordem e termos sem acentos; não altera
+rótulos, IDs ou dados. Documentos PCMD usam a mesma comparação por palavras.
+Cada máquina oferece uma prévia expansível com todas as tarefas, duração, origem, versão,
+observações e identificação de segurança. O PDF continua sendo o download principal.
+Escopo restrito ao banco de modelos da página inicial; catálogo colaborativo não foi alterado.
+Validação inclui busca por tarefa no celular, abertura pelo teclado e preservação de 0,25 hora.
+Lint, 205 testes e build aprovados. Roteiro completo no Chromium aprovado e fluxo afetado repetido
+após a correção de precisão. Revisão independente aprovada após a correção.
+
 ## Moderação de comentários publicados (24/10/2026)
 
 O botão de ocultar desaparecia após a aprovação. A moderação agora pode ocultar comentários
