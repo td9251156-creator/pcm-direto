@@ -2,6 +2,16 @@
 
 # Fila de evolução
 
+## Moderação de comentários publicados (24/10/2026)
+
+O botão de ocultar desaparecia após a aprovação. A moderação agora pode ocultar comentários
+pendentes ou já publicados, usando a mesma permissão do servidor e preservando o registro.
+Comentários ocultos não recebem novos botões. Regressão no Chromium com conta e respostas
+fictícias confere a decisão enviada e o estado após a atualização. Nenhuma interação real alterada.
+
+Verificação: lint, 203 testes, build e roteiro completo no Chromium aprovados; revisão independente
+somente leitura aprovada. Envio e moderação com conta real continuam como validação manual.
+
 ## Modelos de máquinas e tarefas em PDF (24/10/2026)
 
 O mantenedor confirmou dois fluxos: baixar fichas em PDF e publicar PDFs prontos na comunidade.
