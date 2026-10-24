@@ -113,3 +113,34 @@ O JSON editável permanece em “Outros formatos”. Não houve alteração das 
 
 O envio de PDFs prontos pela comunidade constitui a segunda entrega; não está incluído nesta
 primeira alteração. Ela exige armazenamento privado, validação no servidor e moderação do arquivo.
+
+## Envio de PDFs prontos pela comunidade
+
+A segunda entrega acrescenta PDF opcional ao formulário, de até 5.000.000 bytes e 200 páginas.
+Escolher o arquivo não inicia envio automático. Salvar rascunho envia os campos e o PDF
+escolhidos; publicar exige consentimento e aprovação. O arquivo fica privado para autor e
+moderação; após aprovação, a consulta pública pode baixá-lo. Arquivar bloqueia novas leituras
+públicas, preservando o arquivo e as cópias já baixadas. Trocar PDF exige nova versão.
+
+Verificações locais: lint, 201 testes e build aprovados; roteiro de navegador completo aprovado,
+incluindo formulário de PDF em 390 px, download e decisão com versão. `verificar-pdfs-banco.mjs`
+executa as funções SQL reais em PGlite isolado, com substitutos de auth/storage: autoria,
+permissões, escrita sem sobrescrita, limite, anexo completo, retomada idempotente, decisão
+antiga recusada e arquivo preservado ao arquivar. O parser pdf-lib 1.17.1 abriu as quatro
+fichas e recusou um arquivo falso com cabeçalho/EOF PDF. O roteiro não equivale à API Storage.
+
+Revisão independente de Codex identificou e confirmou correções em três casos: policy
+permitia operações além de GET; resposta perdida após vincular bloqueava retomada; o erro
+moderno HTTP 409 do SDK não era reconhecido. Não usou contas nem arquivos reais.
+
+Backend implantado: migração `20261024145808_pdfs_catalogo.sql`, bucket privado e finalizador
+versão 1 com `verify_jwt=true`. Conferência real: anônimo recebe 401 no finalizador e na RPC
+administrativa; preflight retorna 200; rota pública do bucket não oferece leitura; somente
+service_role pode executar o vínculo. A assinatura antiga de aprovação foi removida. O auditor
+retornou avisos das RPCs SECURITY DEFINER deliberadas e proteção de senha preexistente,
+sem novo erro: a reserva exige usuário/autoria e o vínculo exige papel administrativo.
+
+A validação abre estrutura, limita tamanho/páginas e calcula SHA256; não faz análise antivírus.
+Não foi criado conteúdo fictício no projeto real. O mantenedor informou que o acesso funcionou;
+upload e moderação reais de um PDF escolhido por ele ainda precisam de conferência. Claude Code
+não foi utilizado. A publicação continua sendo versão de teste.

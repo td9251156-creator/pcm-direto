@@ -28,6 +28,7 @@ async function conferir(operacao) {
         '42501': 'Sua conta não tem permissão para esta operação ou o modelo mudou de situação. Atualize a lista.',
         '22023': 'Confira os campos do modelo, a origem das tarefas e o motivo do parecer.',
         '54000': 'O limite de modelos ativos ou propostas pendentes foi atingido. Retire propostas antes de enviar novas.',
+        '40001': 'O modelo mudou em outra aba. Atualize a lista e confira o conteúdo novamente.',
       };
       throw new Error(mensagens[r.error.code] || 'Não foi possível concluir a operação online. Confira sua conexão e tente novamente.');
     }
@@ -62,7 +63,7 @@ export async function entrarCatalogo(email) {
   await conferir(c.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname + '#catalogo' } }));
 }
 export async function sairCatalogo() { const c = await clienteCatalogo(); await conferir(c.auth.signOut({ scope: 'local' })); }
-const COLUNAS = 'id,autor_id,original_id,dados,situacao,motivo,criado_em,atualizado_em';
+const COLUNAS = 'id,autor_id,original_id,dados,situacao,motivo,criado_em,atualizado_em,conteudo_versao,pdf_reserva,pdf_caminho,pdf_sha256,pdf_tamanho';
 export async function listarCatalogo({ busca = '', pagina = 0, meus = false, moderacao = false, usuarioId = '' } = {}) {
   const c = await clienteCatalogo(); let q = c.from('catalogo_modelos').select(COLUNAS).order('atualizado_em', { ascending: false });
   if (meus) { if (!usuarioId) throw new Error('Entre na sua conta para consultar seus modelos.'); q = q.eq('autor_id', usuarioId); }
@@ -78,7 +79,47 @@ export async function salvarModelo(dados, id = null, originalId = null) {
 }
 export async function enviarModelo(id) { const c = await clienteCatalogo(); await conferir(c.rpc('catalogo_enviar', { p_id: id })); }
 export async function retirarModelo(id) { const c = await clienteCatalogo(); await conferir(c.rpc('catalogo_retirar', { p_id: id })); }
-export async function decidirModelo(id, aprovar, motivo = '') { const c = await clienteCatalogo(); await conferir(c.rpc('catalogo_decidir', { p_id: id, p_aprovar: aprovar, p_motivo: motivo })); }
+export async function decidirModelo(id, aprovar, motivo = '', versao = null) { const c = await clienteCatalogo(); await conferir(c.rpc('catalogo_decidir', { p_id: id, p_aprovar: aprovar, p_motivo: motivo, p_versao: versao })); }
+
+export async function conferirArquivoPdf(arquivo) {
+  if (!arquivo || arquivo.size < 1 || arquivo.size > 5000000) throw new Error('Escolha um PDF de até 5 MB.');
+  const cabecalho = await arquivo.slice(0, 8).text();
+  if (!/^%PDF-(1\.[0-7]|2\.0)/.test(cabecalho)) throw new Error('O arquivo escolhido não tem formato PDF.');
+  return arquivo;
+}
+export async function anexarPdfModelo(id, arquivo, vigente = () => true) {
+  await conferirArquivoPdf(arquivo);
+  const bytes = await arquivo.arrayBuffer();
+  const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(n => n.toString(16).padStart(2, '0')).join('');
+  const c = await clienteCatalogo();
+  const conferirSessao = () => { if (!vigente()) throw new Error('A sessão mudou. Abra o rascunho novamente.'); };
+  conferirSessao();
+  const reserva = await conferir(c.rpc('catalogo_reservar_pdf', { p_id: id }));
+  conferirSessao();
+  if (reserva.validado) {
+    if (reserva.sha256 !== hash) throw new Error('Já existe outro PDF neste modelo. Arquive-o e crie uma nova versão para trocar o arquivo.');
+    return reserva;
+  }
+  const envio = await c.storage.from('catalogo-pdfs').upload(reserva.caminho, arquivo, { contentType: 'application/pdf', cacheControl: '0', upsert: false });
+  // Uma resposta perdida pode deixar o objeto enviado; o servidor compara o hash antes de vinculá-lo.
+  const duplicado = envio.error && (envio.error.status === 409 ||
+    ['409', 'Duplicate', 'ResourceAlreadyExists', 'KeyAlreadyExists'].includes(String(envio.error.statusCode || envio.error.error)));
+  if (envio.error && !duplicado) await conferir(Promise.resolve(envio));
+  conferirSessao();
+  const resultado = await c.functions.invoke('catalogo-finalizar-pdf', { body: { id, sha256: hash } });
+  if (resultado.error) {
+    let mensagem;
+    try { mensagem = (await resultado.error.context?.json())?.erro; } catch { /* Sem corpo de erro legível. */ }
+    throw new Error(mensagem || 'O PDF não foi validado. O rascunho foi mantido; tente anexar novamente.');
+  }
+  conferirSessao();
+  if (!resultado.data?.pdf?.caminho) throw new Error('O PDF não foi vinculado. Abra o rascunho novamente.');
+  return resultado.data.pdf;
+}
+export async function baixarPdfModelo(caminho) {
+  const c = await clienteCatalogo();
+  return conferir(c.storage.from('catalogo-pdfs').download(caminho, {}, { cache: 'no-store' }));
+}
 export async function interacoesModelo(id) { const c=await clienteCatalogo(); return await conferir(c.from('catalogo_interacoes').select('curtidas,comentarios').eq('modelo_id',id).maybeSingle())??{curtidas:0,comentarios:0}; }
 export async function minhaCurtida(id,autorId) { const c=await clienteCatalogo();return !!(await conferir(c.from('catalogo_curtidas').select('modelo_id').eq('modelo_id',id).eq('autor_id',autorId).maybeSingle())); }
 export async function curtirModelo(id,curtir) {const c=await clienteCatalogo();await conferir(c.rpc('catalogo_curtir',{p_id:id,p_curtir:curtir}));}

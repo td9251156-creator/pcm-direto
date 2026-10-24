@@ -11,6 +11,13 @@ Segunda entrega: anexo PDF privado durante revisão e download após aprovação
 no servidor e proteção contra troca do arquivo após a conferência do moderador. Não confundir
 os PDFs da biblioteca com o upload comunitário, que exige validação própria.
 
+As quatro fichas foram publicadas no PR 10. O mantenedor confirmou que o acesso funcionou.
+O envio comunitário foi implementado com bucket privado, parser no servidor, limite de 5 MB/
+200 páginas, arquivo imutável e decisão por versão. Validação local: 201 testes e roteiro de
+navegador com banco isolado/API simulada; revisão independente confirmou as correções de
+permissões e retomada. Backend implantado com JWT obrigatório e bloqueios anônimos conferidos.
+O upload real autenticado de um arquivo escolhido pelo mantenedor ainda requer conferência.
+
 ## Sessão da comunidade entre abas (24/10/2026)
 
 Correção delimitada: o catálogo consulta a sessão somente ao abrir, deixando a tela antiga

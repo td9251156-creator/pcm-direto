@@ -22,3 +22,10 @@ A comunidade usa Supabase para conta e conteúdo explicitamente publicado. TAGs,
 falhas e histórico operacional não são enviados automaticamente. O cliente usa apenas chave pública;
 a autorização depende de RLS e funções que conferem auth.uid(). Comentários aguardam moderação;
 denúncias são privadas. Dependências também fazem parte do escopo.
+
+PDFs escolhidos no formulário são enviados ao armazenamento privado. O finalizador autentica
+o autor, abre a estrutura do arquivo e confere tamanho, páginas e hash antes de vinculá-lo.
+Isso não é antivírus nem garantia de segurança do conteúdo. A publicação exige moderação.
+Arquivos são imutáveis por modelo; a troca exige nova versão. Arquivar bloqueia novos downloads
+públicos, mas não apaga cópias já baixadas. URLs assinadas e sobrescritas não são permitidas.
+Chaves administrativas existem somente no ambiente da Edge Function, nunca no cliente.

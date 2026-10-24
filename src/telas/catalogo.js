@@ -4,7 +4,7 @@ import { proximoNumero } from '../logica/tag.js';
 import { novoId } from '../logica/entrada.js';
 import { PERIODICIDADES } from '../logica/plano.js';
 import { TIPOS_CATALOGO, modeloVazio, tarefaCatalogoVazia, validarModeloCatalogo, dadosEquipamentoDoModelo } from '../logica/catalogo.js';
-import { configuracao, observarSessaoCatalogo, entrarCatalogo, sairCatalogo, listarCatalogo, moderadorCatalogo, salvarModelo, enviarModelo, retirarModelo, decidirModelo } from '../servicos/catalogo.js';
+import { configuracao, observarSessaoCatalogo, entrarCatalogo, sairCatalogo, listarCatalogo, moderadorCatalogo, salvarModelo, enviarModelo, retirarModelo, decidirModelo, conferirArquivoPdf, anexarPdfModelo, baixarPdfModelo } from '../servicos/catalogo.js';
 import { esc, avisar, baixar } from '../ui.js';
 import { mostrarInteracoes,mostrarDenuncias } from './interacoes.js';
 
@@ -20,7 +20,7 @@ export function telaCatalogo(main, ir) {
   const vivo = () => !encerrado && raiz.isConnected && main.contains(raiz);
   raiz.innerHTML = `<section class="cartao"><h2>Catálogo colaborativo de máquinas</h2>
     <p>Consulte modelos reutilizáveis e contribua com novos cadastros. A publicação passa pela revisão do mantenedor.</p>
-    <p>Seu inventário, TAGs, pessoas, execuções e falhas continuam neste aparelho. Somente os campos preenchidos no formulário de contribuição são enviados ao catálogo.</p>
+    <p>Seu inventário, TAGs, pessoas, execuções e falhas continuam neste aparelho. Somente os campos preenchidos e o PDF escolhido no formulário de contribuição são enviados ao catálogo.</p>
     <p>Revisão editorial não certifica conformidade. Confirme tarefas e periodicidades com o manual do fabricante.</p>
     </section><div data-conta></div><div data-controles></div><div data-editor></div><div data-denuncias></div><div data-lista aria-live="polite"></div>`;
   const c = configuracao();
@@ -102,11 +102,16 @@ export function telaCatalogo(main, ir) {
         ${proprio && ['rascunho', 'rejeitado'].includes(r.situacao) ? `<button type="button" data-editar="${esc(r.id)}">Editar e enviar para revisão</button>` : ''}
         ${proprio && r.situacao !== 'arquivado' ? `<button type="button" class="secundario" data-retirar="${esc(r.id)}">${r.situacao === 'pendente' ? 'Retirar da revisão' : 'Arquivar modelo'}</button>` : ''}
         ${proprio && r.situacao === 'arquivado' ? `<button type="button" class="secundario" data-versao="${esc(r.id)}">Criar nova versão</button>` : ''}</div>
-        ${moderador && r.situacao === 'pendente' ? `<form data-parecer="${esc(r.id)}">${texto('parecer-' + r.id, 'Motivo da rejeição (obrigatório ao rejeitar)', '', 'maxlength="2000"')}<div class="acoes"><button type="submit" value="aprovar">Aprovar publicação</button><button type="submit" value="rejeitar" class="secundario">Solicitar ajustes</button></div></form>` : ''}
+        ${r.pdf_caminho ? `<p><strong>Modelo em PDF</strong> · ${Math.ceil(r.pdf_tamanho/1000)} kB · arquivo enviado pelo colaborador.</p><button class="secundario" data-baixar-pdf="${esc(r.id)}">Baixar PDF${r.situacao==='aprovado'?'':' para conferir'}</button>` : ''}
+        ${moderador && r.situacao === 'pendente' ? `<form data-parecer="${esc(r.id)}">${texto('parecer-' + r.id, 'Motivo da rejeição (obrigatório ao rejeitar)', '', 'maxlength="2000"')}${r.pdf_caminho?'<p><label><input type="checkbox" name="pdf-conferido"> Conferi o PDF, sua origem e a ausência de dados privados antes de aprovar.</label></p>':''}<div class="acoes"><button type="submit" value="aprovar">Aprovar publicação</button><button type="submit" value="rejeitar" class="secundario">Solicitar ajustes</button></div></form>` : ''}
         ${r.situacao==='aprovado'?`<div class="acoes"><button class="secundario" data-download-modelo="${esc(r.id)}">Baixar modelo (.json)</button><button class="secundario" data-interacoes="${esc(r.id)}">Curtir e comentar</button></div><div data-social="${esc(r.id)}"></div>`:''}
         <div data-importacao="${esc(r.id)}"></div></article>`;
     }).join('') + `<section class="cartao"><div class="acoes"><button type="button" class="secundario" data-anterior ${pagina === 0 ? 'disabled' : ''}>Página anterior</button><button type="button" class="secundario" data-proxima ${registros.length < 20 ? 'disabled' : ''}>Próxima página</button></div></section>`;
     const registro = id => registros.find(r => r.id === id);
+    lista.querySelectorAll('[data-baixar-pdf]').forEach(b => b.onclick = () => {
+      const r = registro(b.dataset.baixarPdf);
+      atuar(async atual => { const arquivo = await baixarPdfModelo(r.pdf_caminho); if (atual()) baixar(arquivo, 'pcm-modelo-' + r.id + '.pdf', 'application/pdf'); });
+    });
     lista.querySelectorAll('[data-download-modelo]').forEach(b=>b.onclick=()=>{const r=registro(b.dataset.downloadModelo);baixar(JSON.stringify({aplicativo:'PCM Direto',tipo:'modelo-publico',versao:1,id:r.id,dados:r.dados},null,2),'pcm-modelo-publico.json','application/json');});
     lista.querySelectorAll('[data-interacoes]').forEach(b=>b.onclick=()=>{const area=[...lista.querySelectorAll('[data-social]')].find(a=>a.dataset.social===b.dataset.interacoes);mostrarInteracoes(area,b.dataset.interacoes,sessao,moderador);});
     lista.querySelectorAll('[data-editar]').forEach(b => b.addEventListener('click', () => abrirEditor(registro(b.dataset.editar))));
@@ -119,8 +124,10 @@ export function telaCatalogo(main, ir) {
     lista.querySelectorAll('[data-parecer]').forEach(f => f.addEventListener('submit', e => {
       e.preventDefault(); const aprovar = e.submitter?.value === 'aprovar'; const motivo = new FormData(f).get('parecer-' + f.dataset.parecer).trim();
       if (!aprovar && !motivo) { avisar('Explique quais ajustes o autor deve fazer.'); f.querySelector('textarea').focus(); return; }
+      const r = registro(f.dataset.parecer);
+      if (aprovar && r.pdf_caminho && !new FormData(f).has('pdf-conferido')) { avisar('Baixe e confira o PDF antes de confirmar sua aprovação.'); f.elements['pdf-conferido'].focus(); return; }
       if (aprovar && !confirm('Publicar este modelo para consulta pública após conferir conteúdo, origem, versão e ausência de dados privados? Isso não certifica conformidade.')) return;
-      atuar(async atual => { await decidirModelo(f.dataset.parecer, aprovar, motivo); if (!atual()) return; await atualizar(); if (atual()) avisar(aprovar ? 'Modelo publicado após revisão.' : 'Proposta devolvida ao autor com o parecer.'); });
+      atuar(async atual => { await decidirModelo(f.dataset.parecer, aprovar, motivo, r.conteudo_versao); if (!atual()) return; await atualizar(); if (atual()) avisar(aprovar ? 'Modelo publicado após revisão.' : 'Proposta devolvida ao autor com o parecer.'); });
     }));
     lista.querySelector('[data-anterior]').addEventListener('click', () => { if (ocupado || !pagina) return; pagina--; atualizar(); });
     lista.querySelector('[data-proxima]').addEventListener('click', () => { if (ocupado) return; pagina++; atualizar(); });
@@ -150,7 +157,7 @@ export function telaCatalogo(main, ir) {
   function abrirEditor(registro, novaVersao = false) {
     if (ocupado || !sessao) return;
     if (editor && !confirm('Trocar o formulário? Campos ainda não salvos serão descartados.')) return;
-    editor = { id: novaVersao ? null : registro?.id || null, originalId: novaVersao ? registro.id : null, dados: registro ? structuredClone(registro.dados) : modeloVazio() };
+    editor = { id: novaVersao ? null : registro?.id || null, originalId: novaVersao ? registro.id : null, pdf: novaVersao ? null : registro?.pdf_caminho ? { caminho: registro.pdf_caminho } : null, arquivo: null, dados: registro ? structuredClone(registro.dados) : modeloVazio() };
     desenharEditor(); areaEditor.querySelector('input')?.focus();
   }
 
@@ -172,6 +179,7 @@ export function telaCatalogo(main, ir) {
       <div><label for="c-tipo_base">Categoria da máquina</label><select id="c-tipo_base" name="tipo_base">${opcoes(Object.entries(TIPOS_CATALOGO), d.tipo_base)}</select></div>
       ${campo('fabricante', 'Fabricante (opcional)', d.fabricante, 'maxlength="120"')}${campo('modelo', 'Modelo do fabricante (opcional)', d.modelo, 'maxlength="120"')}
       ${texto('descricao', 'Descrição pública', d.descricao, 'required maxlength="2000"')}${texto('caracteristicas', 'Características técnicas (opcional)', d.caracteristicas, 'maxlength="4000"')}${campo('apelido', 'Apelido público (opcional; não use seu e-mail)', d.apelido, 'maxlength="60"')}
+      <fieldset><legend>Modelo pronto em PDF (opcional)</legend>${editor.pdf?'<p>PDF validado e anexado ao rascunho. Para trocar o arquivo, arquive este modelo e crie uma nova versão.</p>':`<label for="c-pdf">Selecionar PDF · até 5 MB e 200 páginas</label><input id="c-pdf" type="file" accept="application/pdf,.pdf"><p class="origem">${editor.arquivo?'Selecionado: '+esc(editor.arquivo.name):'O arquivo fica privado até a aprovação. Não envie documentos com senha, dados de fábrica ou conteúdo sem autorização.'}</p>`}</fieldset>
       <h4>Tarefas de referência opcionais</h4><p>Não alteram automaticamente os planos locais. Informe origem e versão de cada tarefa. Use “base genérica a validar com manual do fabricante” quando não houver fonte específica.</p>
       ${d.tarefas.map((t, i) => `<fieldset><legend>Tarefa ${i + 1}</legend>${texto(`t${i}-descricao`, 'Atividade', t.descricao, 'required maxlength="2000"')}
         <div><label for="c-t${i}-periodicidade">Periodicidade</label><select id="c-t${i}-periodicidade" name="t${i}-periodicidade">${opcoes(PERIODICIDADES.map(p => [p.nome, p.nome]), t.periodicidade)}</select></div>
@@ -183,6 +191,7 @@ export function telaCatalogo(main, ir) {
       <p><label><input type="checkbox" name="consentimento"> Confirmo que posso compartilhar este conteúdo, retirei dados privados e aceito submetê-lo à revisão para publicação pública.</label></p>
       <div class="acoes"><button type="submit" value="salvar">Salvar rascunho online</button><button type="submit" value="enviar">Salvar e enviar para revisão</button><button type="button" class="secundario" data-fechar-editor>Fechar formulário</button></div></form></section>`;
     const form = areaEditor.querySelector('form');
+    form.querySelector('#c-pdf')?.addEventListener('change', e => { editor.arquivo = e.target.files[0] || null; });
     areaEditor.querySelector('[data-adicionar-tarefa]').addEventListener('click', () => {
       if (ocupado || editor.dados.tarefas.length >= 50) return;
       lerEditor(); editor.dados.tarefas.push(tarefaCatalogoVazia()); desenharEditor();
@@ -202,9 +211,18 @@ export function telaCatalogo(main, ir) {
       if (enviar && !new FormData(form).has('consentimento')) { avisar('Confirme a autorização para compartilhar antes de enviar para revisão.'); form.elements.consentimento.focus(); return; }
       const atual = editor; const dados = structuredClone(editor.dados);
       atuar(async vigente => {
+        const arquivo = atual.arquivo;
+        if (arquivo) await conferirArquivoPdf(arquivo);
+        if (!vigente()) return;
         const id = await salvarModelo(dados, atual.id, atual.originalId);
         if (!vigente()) return;
         atual.id = id;
+        if (arquivo) {
+          atual.pdf = await anexarPdfModelo(id, arquivo, vigente);
+          if (!vigente()) return;
+          atual.arquivo = null;
+          desenharEditor();
+        }
         if (enviar) await enviarModelo(id);
         if (!vigente()) return;
         if (enviar) { editor = null; } else { editor = { ...atual, dados }; }
