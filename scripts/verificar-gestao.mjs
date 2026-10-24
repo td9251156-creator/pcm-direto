@@ -21,6 +21,20 @@ await executarComRecursos({
   const ir=async rota=>{await page.goto('http://127.0.0.1:4175/#'+rota);await page.waitForFunction(r=>location.hash==='#'+r && document.querySelector('#conteudo h2'),rota);await page.waitForTimeout(100);};
   await page.goto('http://127.0.0.1:4175/');await page.getByRole('heading',{name:'Conhecimento aberto. Manutenção melhor organizada.'}).waitFor();
   assert.equal(await page.locator('html').getAttribute('data-tema'),'claro');assert.equal(await page.locator('#tema').count(),0);
+  const logo=page.locator('.marca img');await logo.evaluate(img=>img.decode());
+  assert.ok((await logo.getAttribute('src')).includes('logo-horizontal-slogan.svg'));
+  for(const largura of [320,390,820,1280]){
+    await page.setViewportSize({width:largura,height:900});
+    await logo.evaluate(img=>img.decode());const proporcao=await logo.evaluate(img=>img.naturalWidth/img.naturalHeight);
+    const medidas=await logo.boundingBox();assert.ok(Math.abs(medidas.width/medidas.height-proporcao)<0.01,'Logo mantém proporção');
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Layout não cria rolagem horizontal');
+    await page.screenshot({path:`artifacts/comunidade-${largura}.png`,fullPage:true});
+  }
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('#explorar-modelos').click();assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
+  await page.locator('#buscar-modelos').fill('criticidade');assert.equal(await page.locator('#banco-modelos article').count(),1);
+  await page.locator('#buscar-modelos').fill('termo-sem-resultados');await page.locator('#limpar-busca').click();assert.equal(await page.locator('#banco-modelos article').count(),6);assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
+  await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),4);await page.locator('#categoria-documentos').click();
   const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo',exact:true}).first().click()]);
   assert.deepEqual(await readFile(await modelo.path()),await readFile('public/modelos/PCMD-01-Controle-Documental.xlsx'));
   assert.equal((await rascunho()).equipamentos.length,0);
