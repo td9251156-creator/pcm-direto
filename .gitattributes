@@ -1,0 +1,2 @@
+# PDFs contêm offsets em bytes; conversão de LF/CRLF pode invalidar o arquivo.
+*.pdf binary

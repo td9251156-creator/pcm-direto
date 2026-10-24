@@ -2,6 +2,15 @@
 
 # Fila de evolução
 
+## Modelos de máquinas e tarefas em PDF (24/10/2026)
+
+O mantenedor confirmou dois fluxos: baixar fichas em PDF e publicar PDFs prontos na comunidade.
+Primeira entrega: quatro fichas públicas geradas da biblioteca, com tarefas, periodicidades,
+origem/versão, duração e segurança preservadas; JSON secundário e download offline.
+Segunda entrega: anexo PDF privado durante revisão e download após aprovação, com verificação
+no servidor e proteção contra troca do arquivo após a conferência do moderador. Não confundir
+os PDFs da biblioteca com o upload comunitário, que exige validação própria.
+
 ## Sessão da comunidade entre abas (24/10/2026)
 
 Correção delimitada: o catálogo consulta a sessão somente ao abrir, deixando a tela antiga

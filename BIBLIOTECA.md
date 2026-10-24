@@ -1,6 +1,12 @@
 # Biblioteca técnica
 
 Todas as tarefas de manutenção ficam em **um único arquivo**: [`src/dados/biblioteca.json`](src/dados/biblioteca.json).
+
+Na comunidade, “Máquinas e tarefas” oferece fichas em PDF para leitura e impressão.
+Os dados JSON continuam em “Outros formatos”. Os quatro PDFs são gerados diretamente da
+biblioteca, sem mudar tarefas, periodicidades ou avisos, por `scripts/gerar-modelos-pdf.py`
+(Python 3 e ReportLab 4.4.9). Depois de editar a biblioteca, regenere os PDFs e confira
+todas as páginas. Os testes detectam PDFs cuja fonte não corresponde à biblioteca atual.
 Você pode editar esse arquivo no VS Code (ou no próprio site do GitHub) sem programar.
 
 Outra forma: no app, abra **Biblioteca técnica** (link na tela Início). Lá dá para editar tarefas, criar
