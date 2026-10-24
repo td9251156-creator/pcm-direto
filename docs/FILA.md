@@ -4,11 +4,13 @@
 
 ## Moderação de comentários publicados (24/10/2026)
 
-Correção delimitada: o botão de ocultar desaparecia após a aprovação. A moderação agora
-pode ocultar comentários pendentes ou já publicados, usando a mesma permissão do servidor.
-O registro permanece com situação “oculto”; comentários ocultos não recebem novos botões.
-Regressão no Chromium usa conta e respostas fictícias e confere a decisão enviada e o estado
-após a atualização. Nenhuma interação foi criada ou alterada no projeto real.
+O botão de ocultar desaparecia após a aprovação. A moderação agora pode ocultar comentários
+pendentes ou já publicados, usando a mesma permissão do servidor e preservando o registro.
+Comentários ocultos não recebem novos botões. Regressão no Chromium com conta e respostas
+fictícias confere a decisão enviada e o estado após a atualização. Nenhuma interação real alterada.
+
+Verificação: lint, 203 testes, build e roteiro completo no Chromium aprovados; revisão independente
+somente leitura aprovada. Envio e moderação com conta real continuam como validação manual.
 
 ## Modelos de máquinas e tarefas em PDF (24/10/2026)
 
@@ -132,9 +134,7 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
 ## Evidência da primeira rodada com agentes
 
 - Coordenação e implementação delimitada, com um agente preparando as instruções e outro fazendo revisão independente somente leitura.
-- Instalação, 
-pm run verificar`, 133 testes e roteiro 
-pm run test:navegador` aprovados.
+- Instalação, `npm run verificar`, 133 testes e roteiro `npm run test:navegador` aprovados.
 - Auditoria de dependências em 20/10/2026: nenhum alerta informado pelo serviço.
 - [Execução manual fora da main](https://github.com/td9251156-creator/pcm-direto/actions/runs/39420496553): verificação aprovada e publicação pulada.
 - A revisão semanal e as propostas do Dependabot estão configuradas na main. [Primeira revisão semanal](https://github.com/td9251156-creator/pcm-direto/actions/runs/39421631200) executada com sucesso; as próximas agendas dependem das condições do GitHub.
@@ -150,6 +150,3 @@ pm run test:navegador` aprovados.
   o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
   portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
   as duas variáveis pela integração retornaram HTTP 403; precisam ser cadastradas nas configurações do GitHub.
-
-Verificação: lint, 203 testes, build e roteiro completo no Chromium aprovados; revisão independente
-somente leitura aprovada. Envio e moderação com conta real continuam como validação manual.
