@@ -1,6 +1,6 @@
 // Fluxo da interface com SDK real e respostas de rede fictícias, sem conta ou upload real.
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { iniciarServidor, executarComRecursos } from './navegador.mjs';
 const ferramenta = process.env.PCM_PLAYWRIGHT || new URL('../ferramentas/navegador/node_modules/playwright/index.mjs', import.meta.url).href;
@@ -70,6 +70,27 @@ await executarComRecursos({
     }
     await entrar(autor); await pagina.locator('[data-novo]').click();
     await pagina.locator('#c-titulo').fill('Motor fictício com PDF'); await pagina.locator('#c-descricao').fill('Contribuição fictícia sem dados privados.');
+    const [ficha] = await Promise.all([pagina.waitForEvent('popup'), pagina.locator('[data-ficha-editor]').click()]);
+    await ficha.getByRole('heading', { name: 'Motor fictício com PDF', exact: true }).waitFor();
+    assert.equal(salvamentos, 0); assert.equal(uploads, 0, 'Gerar ficha não envia dados');
+    assert.equal(await ficha.evaluate(() => window.opener), null);
+    await ficha.locator('img').evaluate(img => img.decode());
+    await ficha.emulateMedia({ media: 'print' });
+    assert.ok(await ficha.evaluate(() => {
+      const titulo = document.querySelector('h1'); const original = titulo.textContent;
+      titulo.textContent = 'W'.repeat(120);
+      const cabe = document.documentElement.scrollWidth <= innerWidth;
+      titulo.textContent = original; return cabe;
+    }), 'Título sem espaços não sai da área de impressão');
+    await ficha.emulateMedia({ media: 'screen' });
+    await mkdir('artifacts', { recursive: true });
+    const fichaPdf = await ficha.pdf({ path: 'artifacts/ficha-campos.pdf', format: 'A4', printBackground: true });
+    assert.equal(fichaPdf.subarray(0,5).toString(), '%PDF-');
+    await ficha.screenshot({ path: 'artifacts/ficha-campos-preview.png', fullPage: true });
+    await ficha.evaluate(() => { window.print = () => { window.imprimiuTeste = true; }; });
+    await ficha.locator('#imprimir-ficha').click();
+    assert.equal(await ficha.evaluate(() => window.imprimiuTeste), true);
+    await ficha.locator('#fechar-ficha').click();
     await pagina.locator('#c-pdf').setInputFiles({ name: 'falso.pdf', mimeType: 'application/pdf', buffer: Buffer.from('arquivo inválido') });
     await pagina.getByRole('button', { name: 'Salvar rascunho online', exact: true }).click();
     await pagina.locator('#mensagens').getByText('O arquivo escolhido não tem formato PDF.').waitFor();
