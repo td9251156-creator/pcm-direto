@@ -1,0 +1,62 @@
+<!doctype html>
+  <html lang="pt-BR" data-tema="claro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PCM Direto</title>
+    <meta name="description" content="Gerador de PCM aberto: lista de equipamentos entra, plano de manutenção sai em planilha e documento." />
+    <meta name="theme-color" content="#0b3d63" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icones/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icones/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./src/estilo.css" />
+    <link rel="stylesheet" href="./src/gestao.css" />
+    <!-- Aplica o tema escolhido antes de desenhar a página (evita piscar) -->
+    <script>document.documentElement.dataset.tema = 'claro';</script>
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="topo">
+      <h1 class="marca"><img src="./icones/logo.svg" alt="" width="44" height="44"> PCM Direto</h1>
+      <nav aria-label="Etapas">
+        <ol class="etapas">
+          <li><a href="#comunidade" data-tela="comunidade">Comunidade</a></li>
+          <li><a href="#semana" data-tela="semana">Visão geral</a></li>
+          <li><a href="#planejar" data-tela="planejar">Planejar</a></li>
+          <li><a href="#executar" data-tela="executar">Executar</a></li>
+          <li><a href="#entrega" data-tela="entrega">Documentos</a></li>
+          <li><a href="#mais" data-tela="mais">Mais</a></li>
+        </ol>
+      </nav>
+      <nav aria-label="Gestão do PCM" class="atalhos" hidden>
+        <a href="#cadastros" data-tela="cadastros">Cadastros</a>
+        <a href="#criticidade" data-tela="criticidade">Criticidade</a>
+        <a href="#plano" data-tela="plano">Plano Mestre</a>
+        <a href="#mensal" data-tela="mensal">Mensal</a>
+        <a href="#execucao" data-tela="execucao">Execuções</a>
+        <a href="#falhas" data-tela="falhas">Falhas</a>
+      </nav>
+    </header>
+
+    <aside class="cartao erro" id="aviso-armazenamento" role="alert" hidden>
+      O navegador não conseguiu ler ou guardar todos os dados. As alterações desta sessão podem ser perdidas
+      ao fechar a página. Baixe os arquivos e a biblioteca antes de sair.
+    </aside>
+    <main id="conteudo" tabindex="-1"></main>
+
+    <!-- Mensagens curtas (ex.: "Ajuste salvo"), lidas também por leitores de tela -->
+    <p id="mensagens" class="mensagens" role="status" aria-live="polite"></p>
+
+    <footer class="rodape">
+      <p>PCM Direto · <a href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Código aberto · MIT</a> · dados da fábrica somente neste aparelho.</p>
+      <!-- Aviso: discreto no rodapé de todas as telas; completo na planilha, no Word e no README -->
+      <p class="aviso-rodape" id="aviso-permanente">
+        O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o
+        texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante.
+      </p>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

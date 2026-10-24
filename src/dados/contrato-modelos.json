@@ -1,0 +1,494 @@
+{
+  "versao": "1.0.0",
+  "modelos": {
+    "PCMD-05-Ficha-Falha.xlsx": {
+      "partes": null,
+      "abas": [
+        {
+          "arquivo": "xl/worksheets/sheet1.xml",
+          "nome": "Ficha de Falha",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet2.xml",
+          "nome": "Revisões",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet3.xml",
+          "nome": "Config",
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": {
+        "fa_id": "'Ficha de Falha'!$A$7:$A$1006",
+        "fa_parada": "'Ficha de Falha'!$L$7:$L$1006",
+        "rv_revisao": "'Revisões'!$A$7:$A$36",
+        "rv_data": "'Revisões'!$B$7:$B$36",
+        "cfg_elaborado": "'Config'!$C$17",
+        "cfg_aprovado": "'Config'!$C$18",
+        "cfg_revisao": "'Config'!$C$19",
+        "cfg_data_revisao": "'Config'!$C$20",
+        "pcmd_origem": "'Config'!$C$21",
+        "pcmd_emissao": "'Config'!$C$22",
+        "_xlnm._FilterDatabase": "'Revisões'!$A$6:$E$36",
+        "_xlnm.Print_Titles": "'Revisões'!$1:$6",
+        "_xlnm.Print_Area": "'Config'!$A$1:$F$28"
+      }
+    },
+    "PCMD-01-Controle-Documental.xlsx": {
+      "partes": null,
+      "abas": [
+        {
+          "arquivo": "xl/worksheets/sheet1.xml",
+          "nome": "Lista Mestra",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet2.xml",
+          "nome": "Revisões",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet3.xml",
+          "nome": "Organização",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet4.xml",
+          "nome": "Pessoas",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet5.xml",
+          "nome": "Requisitos",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet6.xml",
+          "nome": "Config",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet7.xml",
+          "nome": "Listas",
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": {
+        "cad_org_nome": "'Organização'!$B$7",
+        "cad_referencial": "'Organização'!$B$8",
+        "cad_prefixo": "'Organização'!$B$9",
+        "cad_meta_disponibilidade": "'Organização'!$B$12",
+        "cad_pessoa_id": "'Pessoas'!$A$7:$A$66",
+        "cad_pessoa_nome": "'Pessoas'!$B$7:$B$66",
+        "cfg_elaborado": "'Config'!$C$21",
+        "cfg_aprovado": "'Config'!$C$22",
+        "cfg_revisao": "'Config'!$C$23",
+        "cfg_data_revisao": "'Config'!$C$24",
+        "pcmd_origem": "'Config'!$C$25",
+        "pcmd_emissao": "'Config'!$C$26",
+        "lst_tipo_documento": "'Listas'!$A$7:$A$16",
+        "lst_situacao_documento": "'Listas'!$C$7:$C$16",
+        "lst_sim_nao": "'Listas'!$E$7:$E$8",
+        "lst_status_requisito": "'Listas'!$G$7:$G$8",
+        "_xlnm._FilterDatabase": "'Requisitos'!$A$6:$G$66",
+        "_xlnm.Print_Titles": "'Listas'!$1:$6",
+        "_xlnm.Print_Area": "'Listas'!$A$1:$J$10"
+      }
+    },
+    "PCMD-W2-Manual-Estrategia-Manutencao.docx": {
+      "partes": {
+        "word/document.xml": {
+          "marcadores": [
+            "{{documento.aprovador}}",
+            "{{documento.elaborador}}",
+            "{{documento.proxima_revisao}}",
+            "{{documento.situacao}}",
+            "{{emissao.data}}",
+            "{{estrategia.classe_a.estrategia}}",
+            "{{estrategia.classe_a.prazo}}",
+            "{{estrategia.classe_a.revisao}}",
+            "{{estrategia.classe_b.estrategia}}",
+            "{{estrategia.classe_b.prazo}}",
+            "{{estrategia.classe_b.revisao}}",
+            "{{estrategia.classe_c.estrategia}}",
+            "{{estrategia.classe_c.prazo}}",
+            "{{estrategia.classe_c.revisao}}",
+            "{{estrategia.periodicidade_revisao}}",
+            "{{estrategia.responsavel}}",
+            "{{metas.aderencia}}",
+            "{{metas.disponibilidade}}",
+            "{{organizacao.nome}}",
+            "{{organizacao.referencial}}",
+            "{{origem.dados}}",
+            "{{pessoa.especialidade}}",
+            "{{pessoa.funcao}}",
+            "{{pessoa.nome}}",
+            "{{pessoa.responsabilidade}}",
+            "{{requisito.data}}",
+            "{{requisito.fonte}}",
+            "{{requisito.referencia}}",
+            "{{requisito.status}}",
+            "{{requisito.versao}}",
+            "{{revisao.data}}",
+            "{{revisao.descricao}}",
+            "{{revisao.numero}}",
+            "{{revisao.responsavel}}",
+            "{{tarefa.atividade}}",
+            "{{tarefa.duracao_horas}}",
+            "{{tarefa.especialidade}}",
+            "{{tarefa.frequencia_vigente}}",
+            "{{tarefa.id}}",
+            "{{tarefa.origem_versao}}",
+            "{{tarefa.responsavel_nome}}",
+            "{{tarefa.seguranca}}",
+            "{{tarefa.tag}}"
+          ],
+          "paragrafos": [
+            "Este manual descreve como {{organizacao.nome}} escolhe e revisa estratégias de manutenção, planeja, registra execuções e trata falhas, com os registros do PCM Direto e os modelos PCMD.",
+            "Referencial adotado: {{organizacao.referencial}} (o inicial do PCM Direto é GERAL (sem norma)).",
+            "Referências registradas (PCMD-01, aba Requisitos) · região repetível «requisitos»: repita a linha modelo para cada registro.",
+            "{{requisito.referencia}}",
+            "{{requisito.versao}}",
+            "{{requisito.data}}",
+            "{{requisito.fonte}}",
+            "{{requisito.status}}",
+            "{{documento.elaborador}}",
+            "{{documento.aprovador}}",
+            "{{estrategia.responsavel}}",
+            "Pessoas ativas (PCMD-01, aba Pessoas) · região repetível «pessoas»: repita a linha modelo para cada registro.",
+            "{{pessoa.nome}}",
+            "{{pessoa.funcao}}",
+            "{{pessoa.especialidade}}",
+            "{{pessoa.responsabilidade}}",
+            "Definição do profissional responsável ({{estrategia.responsavel}})",
+            "{{estrategia.classe_a.estrategia}}",
+            "{{estrategia.classe_a.prazo}}",
+            "{{estrategia.classe_a.revisao}}",
+            "{{estrategia.classe_b.estrategia}}",
+            "{{estrategia.classe_b.prazo}}",
+            "{{estrategia.classe_b.revisao}}",
+            "{{estrategia.classe_c.estrategia}}",
+            "{{estrategia.classe_c.prazo}}",
+            "{{estrategia.classe_c.revisao}}",
+            "Periodicidade de revisão da estratégia: {{estrategia.periodicidade_revisao}}. A classe não altera automaticamente nenhuma frequência.",
+            "Ver o % realizado por mês da data prevista e comparar com a meta {{metas.aderencia}}.",
+            "{{metas.aderencia}}",
+            "{{metas.disponibilidade}}",
+            "A estratégia é revisada na periodicidade {{estrategia.periodicidade_revisao}} e sempre que mudarem o ativo, a criticidade, o histórico de falhas ou as referências. Cada revisão entra no histórico abaixo e na lista mestra (PCMD-01).",
+            "{{documento.situacao}}",
+            "{{documento.proxima_revisao}}",
+            "{{origem.dados}}",
+            "{{emissao.data}}",
+            "Revisões deste documento (PCMD-01, aba Revisões) · região repetível «revisoes»: repita a linha modelo para cada registro.",
+            "{{revisao.numero}}",
+            "{{revisao.data}}",
+            "{{revisao.descricao}}",
+            "{{revisao.responsavel}}",
+            "Tarefas do plano · região repetível «tarefas»: repita a linha modelo para cada registro.",
+            "{{tarefa.tag}}",
+            "{{tarefa.id}}",
+            "{{tarefa.atividade}}",
+            "{{tarefa.frequencia_vigente}}",
+            "{{tarefa.especialidade}}",
+            "{{tarefa.duracao_horas}}",
+            "{{tarefa.seguranca}}",
+            "{{tarefa.origem_versao}}",
+            "{{tarefa.responsavel_nome}}"
+          ]
+        },
+        "word/header1.xml": {
+          "marcadores": [
+            "{{documento.aprovador}}",
+            "{{documento.data}}",
+            "{{documento.elaborador}}",
+            "{{documento.revisao}}",
+            "{{organizacao.nome}}"
+          ],
+          "paragrafos": [
+            "Rev. {{documento.revisao}} · {{documento.data}}",
+            "Elaborado: {{documento.elaborador}} · Aprovado: {{documento.aprovador}}",
+            "MANUAL · {{organizacao.nome}}"
+          ]
+        },
+        "word/footer1.xml": {
+          "marcadores": [
+            "{{documento.revisao}}"
+          ],
+          "paragrafos": [
+            "PCM Direto · PCMD-W2 · Rev. {{documento.revisao}} · Licença MITPág. 1 de 1"
+          ]
+        }
+      },
+      "abas": [
+        {
+          "arquivo": null,
+          "nome": null,
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": null
+    },
+    "PCMD-W1-Manual-Gestao-Ativos.docx": {
+      "partes": {
+        "word/document.xml": {
+          "marcadores": [
+            "{{ativo.descricao}}",
+            "{{ativo.setor}}",
+            "{{ativo.tag}}",
+            "{{ativo.tipo_nome}}",
+            "{{criticidade.classe}}",
+            "{{criticidade.limite_a}}",
+            "{{criticidade.limite_b}}",
+            "{{criticidade.nota_custo_reparo}}",
+            "{{criticidade.nota_frequencia_falha}}",
+            "{{criticidade.nota_producao}}",
+            "{{criticidade.nota_qualidade}}",
+            "{{criticidade.nota_seguranca}}",
+            "{{criticidade.pontuacao}}",
+            "{{documento.aprovador}}",
+            "{{documento.elaborador}}",
+            "{{documento.proxima_revisao}}",
+            "{{documento.situacao}}",
+            "{{emissao.data}}",
+            "{{metas.disponibilidade}}",
+            "{{organizacao.nome}}",
+            "{{organizacao.referencial}}",
+            "{{origem.dados}}",
+            "{{pessoa.especialidade}}",
+            "{{pessoa.funcao}}",
+            "{{pessoa.nome}}",
+            "{{pessoa.responsabilidade}}",
+            "{{requisito.data}}",
+            "{{requisito.fonte}}",
+            "{{requisito.referencia}}",
+            "{{requisito.status}}",
+            "{{requisito.versao}}",
+            "{{revisao.data}}",
+            "{{revisao.descricao}}",
+            "{{revisao.numero}}",
+            "{{revisao.responsavel}}",
+            "{{setor.descricao}}",
+            "{{setor.sigla}}"
+          ],
+          "paragrafos": [
+            "Este manual descreve como {{organizacao.nome}} cadastra, identifica, classifica e mantém o histórico dos seus ativos de manutenção, com os registros do PCM Direto e os modelos PCMD.",
+            "Referencial adotado: {{organizacao.referencial}} (o inicial do PCM Direto é GERAL (sem norma)).",
+            "Referências registradas (PCMD-01, aba Requisitos) · região repetível «requisitos»: repita a linha modelo para cada registro.",
+            "{{requisito.referencia}}",
+            "{{requisito.versao}}",
+            "{{requisito.data}}",
+            "{{requisito.fonte}}",
+            "{{requisito.status}}",
+            "{{documento.elaborador}}",
+            "{{documento.aprovador}}",
+            "Pessoas ativas (PCMD-01, aba Pessoas) · região repetível «pessoas»: repita a linha modelo para cada registro.",
+            "{{pessoa.nome}}",
+            "{{pessoa.funcao}}",
+            "{{pessoa.especialidade}}",
+            "{{pessoa.responsabilidade}}",
+            "Setores cadastrados (PCMD-02, aba Setores) · região repetível «setores»: repita a linha modelo para cada registro.",
+            "{{setor.sigla}}",
+            "{{setor.descricao}}",
+            "Soma ≥ limite A ({{criticidade.limite_a}})",
+            "Soma ≥ limite B ({{criticidade.limite_b}})",
+            "{{metas.disponibilidade}}",
+            "Todo ativo tem ID, TAG no formato SETOR-SIGLA-NNN, setor e tipo; não há IDs repetidos.",
+            "{{documento.situacao}}",
+            "{{documento.proxima_revisao}}",
+            "{{origem.dados}}",
+            "{{emissao.data}}",
+            "Revisões deste documento (PCMD-01, aba Revisões) · região repetível «revisoes»: repita a linha modelo para cada registro.",
+            "{{revisao.numero}}",
+            "{{revisao.data}}",
+            "{{revisao.descricao}}",
+            "{{revisao.responsavel}}",
+            "Ativos e criticidade · região repetível «ativos»: repita a linha modelo para cada registro.",
+            "{{ativo.tag}}",
+            "{{ativo.descricao}}",
+            "{{ativo.setor}}",
+            "{{ativo.tipo_nome}}",
+            "{{criticidade.nota_seguranca}}",
+            "{{criticidade.nota_qualidade}}",
+            "{{criticidade.nota_producao}}",
+            "{{criticidade.nota_frequencia_falha}}",
+            "{{criticidade.nota_custo_reparo}}",
+            "{{criticidade.pontuacao}}",
+            "{{criticidade.classe}}"
+          ]
+        },
+        "word/header1.xml": {
+          "marcadores": [
+            "{{documento.aprovador}}",
+            "{{documento.data}}",
+            "{{documento.elaborador}}",
+            "{{documento.revisao}}",
+            "{{organizacao.nome}}"
+          ],
+          "paragrafos": [
+            "Rev. {{documento.revisao}} · {{documento.data}}",
+            "Elaborado: {{documento.elaborador}} · Aprovado: {{documento.aprovador}}",
+            "MANUAL · {{organizacao.nome}}"
+          ]
+        },
+        "word/footer1.xml": {
+          "marcadores": [
+            "{{documento.revisao}}"
+          ],
+          "paragrafos": [
+            "PCM Direto · PCMD-W1 · Rev. {{documento.revisao}} · Licença MITPág. 1 de 1"
+          ]
+        }
+      },
+      "abas": [
+        {
+          "arquivo": null,
+          "nome": null,
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": null
+    },
+    "PCMD-02-Ativos-Criticidade.xlsx": {
+      "partes": null,
+      "abas": [
+        {
+          "arquivo": "xl/worksheets/sheet1.xml",
+          "nome": "Ativos",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet2.xml",
+          "nome": "Critérios",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet3.xml",
+          "nome": "Setores",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet4.xml",
+          "nome": "Revisões",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet5.xml",
+          "nome": "Config",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet6.xml",
+          "nome": "Listas",
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": {
+        "at_id": "'Ativos'!$A$7:$A$306",
+        "at_tag": "'Ativos'!$B$7:$B$306",
+        "at_descricao": "'Ativos'!$C$7:$C$306",
+        "cad_limite_a": "'Critérios'!$B$7",
+        "cad_limite_b": "'Critérios'!$B$8",
+        "cad_limites_ok": "'Critérios'!$B$9",
+        "cad_setor": "'Setores'!$A$7:$A$36",
+        "rv_revisao": "'Revisões'!$A$7:$A$36",
+        "rv_data": "'Revisões'!$B$7:$B$36",
+        "cfg_elaborado": "'Config'!$C$20",
+        "cfg_aprovado": "'Config'!$C$21",
+        "cfg_revisao": "'Config'!$C$22",
+        "cfg_data_revisao": "'Config'!$C$23",
+        "pcmd_origem": "'Config'!$C$24",
+        "pcmd_emissao": "'Config'!$C$25",
+        "lst_tipo_id": "'Listas'!$A$7:$A$36",
+        "lst_tipo_nome": "'Listas'!$B$7:$B$36",
+        "lst_tipo_sigla": "'Listas'!$C$7:$C$36",
+        "_xlnm._FilterDatabase": "'Revisões'!$A$6:$E$36",
+        "_xlnm.Print_Titles": "'Listas'!$1:$6",
+        "_xlnm.Print_Area": "'Listas'!$A$1:$F$10"
+      }
+    },
+    "PCMD-03-04-Plano-Cronograma.xlsx": {
+      "partes": null,
+      "abas": [
+        {
+          "arquivo": "xl/worksheets/sheet1.xml",
+          "nome": "Plano Mestre",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet2.xml",
+          "nome": "Cronograma",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet3.xml",
+          "nome": "Ocorrências",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet4.xml",
+          "nome": "Execuções",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet5.xml",
+          "nome": "Revisões",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet6.xml",
+          "nome": "Config",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet7.xml",
+          "nome": "Listas",
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": {
+        "pl_chave": "'Plano Mestre'!$C$7:$C$2006",
+        "pl_tag": "'Plano Mestre'!$D$7:$D$2006",
+        "pl_atividade": "'Plano Mestre'!$E$7:$E$2006",
+        "pl_seguranca": "'Plano Mestre'!$I$7:$I$2006",
+        "pl_vezes": "'Plano Mestre'!$K$7:$K$2006",
+        "pl_especialidade": "'Plano Mestre'!$L$7:$L$2006",
+        "pl_duracao": "'Plano Mestre'!$M$7:$M$2006",
+        "pl_ativa": "'Plano Mestre'!$O$7:$O$2006",
+        "crono_ano": "'Cronograma'!$C$7",
+        "crono_inicio": "'Cronograma'!$C$8",
+        "crono_meta_aderencia": "'Cronograma'!$C$11",
+        "oc_chave": "'Ocorrências'!$F$7:$F$5006",
+        "oc_horas": "'Ocorrências'!$K$7:$K$5006",
+        "oc_ano": "'Ocorrências'!$L$7:$L$5006",
+        "oc_mes": "'Ocorrências'!$M$7:$M$5006",
+        "oc_posicao": "'Ocorrências'!$N$7:$N$5006",
+        "oc_conta": "'Ocorrências'!$P$7:$P$5006",
+        "oc_concluida": "'Ocorrências'!$R$7:$R$5006",
+        "oc_conferencia": "'Ocorrências'!$S$7:$S$5006",
+        "ex_id": "'Execuções'!$A$7:$A$3006",
+        "ex_chave_oc": "'Execuções'!$I$7:$I$3006",
+        "ex_cancelada": "'Execuções'!$N$7:$N$3006",
+        "ex_vinculo": "'Execuções'!$O$7:$O$3006",
+        "ex_ano": "'Execuções'!$P$7:$P$3006",
+        "rv_revisao": "'Revisões'!$A$7:$A$36",
+        "rv_data": "'Revisões'!$B$7:$B$36",
+        "cfg_elaborado": "'Config'!$C$21",
+        "cfg_aprovado": "'Config'!$C$22",
+        "cfg_revisao": "'Config'!$C$23",
+        "cfg_data_revisao": "'Config'!$C$24",
+        "pcmd_origem": "'Config'!$C$25",
+        "pcmd_emissao": "'Config'!$C$26",
+        "lst_frequencias": "'Listas'!$A$7:$A$14",
+        "lst_frequencias_vezes": "'Listas'!$B$7:$B$14",
+        "lst_especialidades": "'Listas'!$E$7:$E$36",
+        "lst_sim_nao": "'Listas'!$G$7:$G$8",
+        "lst_origem_execucao": "'Listas'!$I$7:$I$8",
+        "_xlnm._FilterDatabase": "'Revisões'!$A$6:$E$36",
+        "_xlnm.Print_Titles": "'Listas'!$1:$6",
+        "_xlnm.Print_Area": "'Listas'!$A$1:$K$14"
+      }
+    }
+  }
+}
