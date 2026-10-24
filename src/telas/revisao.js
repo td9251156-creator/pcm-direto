@@ -70,7 +70,9 @@ function htmlLinha(l) {
 }
 
 function redesenharCarga(main, especialidadeFocada = null) {
-  main.querySelector('#carga').innerHTML = htmlCarga(dadosAtuais());
+  const painel = main.querySelector('#carga');
+  if (!painel) return;
+  painel.innerHTML = htmlCarga(dadosAtuais());
   if (!especialidadeFocada) return;
   const seletor = globalThis.CSS?.escape ? CSS.escape(especialidadeFocada) : especialidadeFocada;
   main.querySelector(`#cap-${seletor}`)?.focus();
@@ -149,15 +151,15 @@ export function telaRevisao(main, ir) {
   // Capacidade por especialidade (o quadro é redesenhado, então o evento fica no contêiner)
   main.querySelector('#carga').addEventListener('change', async (e) => {
     if (!e.target.classList.contains('capacidade')) return;
+    const painel = e.currentTarget;
     const valor = Number(e.target.value);
     if (e.target.value === '' || !(valor > 0)) delete estado.capacidade[e.target.dataset.especialidade];
     else estado.capacidade[e.target.dataset.especialidade] = valor;
     (await salvar());
-    const painel = main.querySelector('#carga');
     // O change ocorre antes de o Tab concluir a troca de foco. Preserve o destino
     // escolhido pelo navegador, depois dessa navegação, ao substituir os campos.
     requestAnimationFrame(() => {
-      if (main.querySelector('#carga') !== painel) return;
+      if (!painel.isConnected || main.querySelector('#carga') !== painel) return;
       const foco = document.activeElement;
       const especialidade = foco?.classList?.contains('capacidade') ? foco.dataset.especialidade : null;
       redesenharCarga(main, especialidade);
