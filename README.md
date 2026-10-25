@@ -70,7 +70,8 @@ setor;tipo;descricao;fabricante;modelo
 UTL;compressor_ar;Compressor da linha de ar;Fabricante Exemplo;CX-100
 ```
 
-Tipos aceitos na biblioteca inicial: `motor_eletrico`, `compressor_ar`, `bomba_centrifuga`, `ponte_rolante`.
+Tipos aceitos na biblioteca: `motor_eletrico`, `compressor_ar`, `bomba_centrifuga`, `ponte_rolante`,
+`transportador_correia`, `ventilador_exaustor` e `unidade_hidraulica`.
 O separador pode ser ponto e vírgula, vírgula ou tabulação (o padrão ao copiar do Excel).
 
 ## Interface de gestão

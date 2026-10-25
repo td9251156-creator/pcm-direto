@@ -98,11 +98,11 @@ try {
   // A combinação parcial de campos não pode passar pelo CHECK com resultado NULL.
   await recusa(() => db.query('update catalogo_modelos set pdf_sha256=null where id=$1', [id]), '23514');
 
-  for (const tipo of ['motor_eletrico', 'compressor_ar', 'bomba_centrifuga', 'ponte_rolante']) {
+  for (const tipo of ['motor_eletrico', 'compressor_ar', 'bomba_centrifuga', 'ponte_rolante', 'transportador_correia', 'ventilador_exaustor', 'unidade_hidraulica']) {
     const bytes = new Uint8Array(await readFile(new URL(`../public/modelos/maquinas/pcm-modelo-${tipo}.pdf`, import.meta.url)));
     assert.match(await conferirPdf(bytes, PDFDocument), /^[a-f0-9]{64}$/);
   }
   await assert.rejects(() => conferirPdf(new TextEncoder().encode('%PDF-1.7\nlixo\n%%EOF'), PDFDocument), /não pôde ser aberto/);
   await assert.rejects(() => conferirPdf(new Uint8Array(5000001), PDFDocument), /5 MB/);
-  console.log('PDFs: PostgreSQL em memória aprovou autoria, RLS, imutabilidade, limites, validação, aprovação por versão e arquivo preservado ao arquivar. Parser abriu as quatro fichas e recusou PDF falso.');
+  console.log('PDFs: PostgreSQL em memória aprovou autoria, RLS, imutabilidade, limites, validação, aprovação por versão e arquivo preservado ao arquivar. Parser abriu as sete fichas e recusou PDF falso.');
 } finally { await db.close(); }

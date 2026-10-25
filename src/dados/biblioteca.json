@@ -1,7 +1,7 @@
 {
   "nome": "Biblioteca técnica PCM Direto",
-  "versao": "0.1.0",
-  "data": "2026-10-18",
+  "versao": "0.2.0",
+  "data": "2026-10-25",
   "aviso": "Base genérica para iniciar o plano. Toda periodicidade e tarefa deve ser confirmada com o manual do fabricante e com a avaliação de profissional habilitado. Não substitui o texto oficial das normas.",
   "tipos": [
     {
@@ -447,6 +447,313 @@
           "origem": "base genérica a validar com manual do fabricante",
           "versao": "0.1.0",
           "observacao": "Exigências legais de inspeção periódica e teste de carga: verificar na fonte oficial."
+        }
+      ]
+    },
+    {
+      "id": "transportador_correia",
+      "nome": "Transportador de correia",
+      "sigla": "TRC",
+      "tarefas": [
+        {
+          "id": "TRC-01",
+          "descricao": "Testar os dispositivos de parada de emergência (botoeiras e cabo de emergência)",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Testar sem carga e com a área isolada."
+        },
+        {
+          "id": "TRC-02",
+          "descricao": "Verificar alinhamento da correia (desvio lateral) e estado dos raspadores",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "TRC-03",
+          "descricao": "Inspecionar fixação e estado das proteções de polias, tambores e pontos de agarramento",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "TRC-04",
+          "descricao": "Verificar tensão e desgaste da correia e das emendas",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "TRC-05",
+          "descricao": "Verificar rolos de carga e de retorno: giro livre, ruído e desgaste",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "TRC-06",
+          "descricao": "Verificar nível de óleo e vazamentos do redutor de acionamento",
+          "periodicidade": "Mensal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "TRC-07",
+          "descricao": "Lubrificar mancais dos tambores com o tipo e a quantidade de graxa indicados pelo fabricante",
+          "periodicidade": "Trimestral",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "TRC-08",
+          "descricao": "Verificar ruído, vibração e temperatura do conjunto motor e redutor",
+          "periodicidade": "Trimestral",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "TRC-09",
+          "descricao": "Trocar o óleo do redutor de acionamento",
+          "periodicidade": "Anual",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "O intervalo depende do tipo de óleo e das horas de operação. Confirmar no manual."
+        }
+      ]
+    },
+    {
+      "id": "ventilador_exaustor",
+      "nome": "Ventilador ou exaustor industrial",
+      "sigla": "VEN",
+      "tarefas": [
+        {
+          "id": "VEN-01",
+          "descricao": "Verificar ruído e vibração anormal",
+          "periodicidade": "Mensal",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "VEN-02",
+          "descricao": "Inspecionar fixação e estado das proteções e telas na entrada e na saída de ar",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.25,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "VEN-03",
+          "descricao": "Inspecionar correias (tensão e desgaste) e polias",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Somente em acionamento por correia. Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "VEN-04",
+          "descricao": "Limpar rotor e carcaça, removendo acúmulo de pó ou gordura",
+          "periodicidade": "Trimestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Acúmulo no rotor causa desbalanceamento. Executar com o equipamento desenergizado e bloqueado."
+        },
+        {
+          "id": "VEN-05",
+          "descricao": "Lubrificar mancais com o tipo e a quantidade de graxa indicados pelo fabricante",
+          "periodicidade": "Trimestral",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "VEN-06",
+          "descricao": "Medir a temperatura dos mancais",
+          "periodicidade": "Trimestral",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "VEN-07",
+          "descricao": "Verificar fixação da base, chumbadores e amortecedores",
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "VEN-08",
+          "descricao": "Verificar estado de dutos, juntas flexíveis e dampers",
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        }
+      ]
+    },
+    {
+      "id": "unidade_hidraulica",
+      "nome": "Unidade hidráulica",
+      "sigla": "UHD",
+      "tarefas": [
+        {
+          "id": "UHD-01",
+          "descricao": "Verificar nível e aspecto do óleo no reservatório",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "UHD-02",
+          "descricao": "Verificar vazamentos em mangueiras, conexões e cilindros",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Procurar vazamento com papel ou papelão, nunca com a mão."
+        },
+        {
+          "id": "UHD-03",
+          "descricao": "Registrar pressão de trabalho e temperatura do óleo e comparar com os valores de referência",
+          "periodicidade": "Semanal",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "UHD-04",
+          "descricao": "Verificar o indicador de saturação do filtro de retorno",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Trocar o elemento quando o indicador sinalizar, mesmo antes do prazo."
+        },
+        {
+          "id": "UHD-05",
+          "descricao": "Inspecionar mangueiras: ressecamento, abrasão, dobras e fixação",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Mangueira rompida sob pressão pode causar ferimentos graves. Despressurizar antes de intervir."
+        },
+        {
+          "id": "UHD-06",
+          "descricao": "Verificar funcionamento da válvula de alívio e dos manômetros",
+          "periodicidade": "Trimestral",
+          "especialidade": "Instrumentação",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Ajuste conforme o fabricante e o projeto do equipamento."
+        },
+        {
+          "id": "UHD-07",
+          "descricao": "Limpar o trocador de calor (radiador ou resfriador de óleo)",
+          "periodicidade": "Trimestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
+        },
+        {
+          "id": "UHD-08",
+          "descricao": "Trocar os elementos filtrantes de retorno e de respiro",
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Ou antes, se o indicador de saturação sinalizar."
+        },
+        {
+          "id": "UHD-09",
+          "descricao": "Coletar amostra de óleo para análise ou trocar o óleo conforme o fabricante",
+          "periodicidade": "Anual",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 2,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": ""
         }
       ]
     }
