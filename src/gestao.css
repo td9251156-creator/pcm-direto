@@ -86,5 +86,5 @@
   .topo .marca{display:flex;flex-direction:column;align-items:stretch;gap:0}
   .topo .marca a{display:block;line-height:0;text-decoration:none}
   .topo .marca img{display:block;width:100%;height:auto;aspect-ratio:1140 / 235;object-fit:contain}
-  .topo .marca .marca-slogan{display:block;margin:6px 0 0;padding:0;border-top:0;color:#0b3d63;font-size:12px;font-weight:600;line-height:1.5;letter-spacing:normal;text-align:center;text-decoration:none;white-space:normal;overflow-wrap:normal}
+  .topo .marca .marca-slogan{display:block;margin:6px 0 0;padding:0;border-top:0;color:#0b3d63;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;line-height:1.5;letter-spacing:.015em;text-align:center;text-decoration:none;white-space:normal;overflow-wrap:normal}
 }
