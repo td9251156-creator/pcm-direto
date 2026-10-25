@@ -2,6 +2,22 @@
 
 # Fila de evolução
 
+## Conferência da revisão antes de ativar (25/10/2026)
+
+Editar vigência, elaborador ou resumo invalida a prévia. A confirmação também verifica o
+rascunho, biblioteca, responsáveis/pessoas, capacidade, histórico, programação e data local.
+Mudança nesses dados exige conferir novamente; não ativa um impacto diferente do apresentado.
+Comparação por IDs entre tarefas ativas da última revisão e do rascunho, com antes/depois,
+horas afetadas por especialidade, capacidade semanal separada e lista expansível das previsões
+substituídas. Prévia sem novas ocorrências avisa para conferir o início do ciclo.
+
+A revisão preparada só chega ao estado operacional após salvar. Durante a gravação, outras
+execuções/cancelamentos aguardam nova tentativa; demonstração e restauração esperam o término.
+Emissões documentais concorrentes permanecem na cópia gravada e na memória. Trocar de tela
+durante a ativação não causa navegação posterior inesperada. Sem mudança de formato ou regras técnicas.
+Regressões reproduziram prévia antiga, programação provisória sob quota e emissão concorrente.
+Revisão independente somente leitura confirmou as correções com provas isoladas.
+
 ## Execução e histórico consultáveis (24/10/2026)
 
 Busca por TAG/tarefa/responsável nas ocorrências, datas brasileiras e Concluídas pela data

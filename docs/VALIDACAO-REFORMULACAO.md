@@ -178,3 +178,19 @@ clone concorrente e entrada na demonstração restaurando uma flag anterior. Rev
 somente leitura confirmou as correções e executou gravação concorrente com IndexedDB real e
 quota síncrona isolada. Não houve alteração de esquema, envio de dados operacionais ou uso de
 contas reais. Claude Code não participou; conferências humanas e documentais seguem pendentes.
+
+## Prévia e ativação de revisões — 25/10/2026
+
+Lint, 221 testes e build aprovados; roteiro completo de navegador aprovado, incluindo prévia
+com 100 ativos e invalidação de vigência, elaborador e resumo. Confere foco, retorno ao rascunho,
+ativação e preservação dos fluxos anteriores. A primeira verificação teve timeout de importação
+XLSX; uma execução do navegador concluiu os cenários, mas excedeu o prazo de fechamento de um
+recurso. Repetições completas terminaram com sucesso, sem alterar limites nem desativar testes.
+
+Novas regressões cobrem comparação por IDs, carga recortada, assinatura vencida após alteração
+de dados/data, execução e cancelamento, quota durante ativação, espera da demonstração e emissão
+documental concorrente. A revisão independente reproduziu os problemas antes e confirmou depois
+que a base/backup permanecem válidos, a emissão é preservada e uma resposta tardia não muda outra
+tela. Também conferiu metadados alterados sem evento de input e texto escapado no Chromium.
+Não repetiu todo o roteiro grande; essa execução foi feita pelo implementador. Sem Claude Code,
+contas reais ou mudança de esquema. Validações humanas e documentais continuam pendentes.
