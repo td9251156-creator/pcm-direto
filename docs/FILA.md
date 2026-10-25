@@ -2,6 +2,25 @@
 
 # Fila de evolução
 
+## Troca dos modelos pelo novo pacote do mantenedor (25/10/2026)
+
+PCMD-Modelos.zip substitui os seis editáveis e seis exemplos, preservados byte a byte. As 12
+prévias PDF e COMO-USAR acompanham o pacote; manifesto SHA256 em public/modelos/manifesto.json.
+Versão de integração 2.0.0 identifica novas emissões; histórico de emissões anteriores permanece.
+Downloads do Banco de modelos incluem as prévias estáticas, inclusive offline.
+
+Contrato remapeado para dados na linha 4 e cadastros consolidados. Pessoas/requisitos do PCMD-01
+e setores do PCMD-02 usam seus blocos próprios. Expansão realoca blocos inferiores, fórmulas,
+validações, formatação condicional, nomes definidos e referências entre abas. Área impressa cobre
+o último registro preenchido. Fórmula do nome do tipo do ativo preservada. Na cópia gerada,
+ConfigD29 verifica o total exportado de pessoas, sem contar requisitos como excesso de pessoas.
+Os originais recebidos não foram corrigidos nem regravados.
+
+Hashes dos modelos são conferidos antes do preenchimento para recusar arquivo antigo em cache.
+Regressão de exportação: 41 pessoas, 42 referências, 60 setores, 100 ativos, tarefas diárias,
+3.101 execuções e 1.101 falhas, sem sobreposição ou truncamento. Revisão independente confirmou
+os ajustes. Conferência final de recálculo e impressão no Excel/LibreOffice continua pendente.
+
 ## Conferência da revisão antes de ativar (25/10/2026)
 
 Editar vigência, elaborador ou resumo invalida a prévia. A confirmação também verifica o

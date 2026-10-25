@@ -1,6 +1,280 @@
 {
-  "versao": "1.0.0",
+  "versao": "2.0.0",
+  "recebidoEm": "2026-10-25",
   "modelos": {
+    "PCMD-03-04-Plano-Cronograma.xlsx": {
+      "partes": null,
+      "abas": [
+        {
+          "arquivo": "xl/worksheets/sheet1.xml",
+          "nome": "Plano Mestre",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet2.xml",
+          "nome": "Cronograma",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet3.xml",
+          "nome": "Ocorrências",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet4.xml",
+          "nome": "Execuções",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet5.xml",
+          "nome": "Revisões",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet6.xml",
+          "nome": "Config",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet7.xml",
+          "nome": "Listas",
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": {
+        "pl_chave": "'Plano Mestre'!$C$4:$C$2003",
+        "pl_tag": "'Plano Mestre'!$D$4:$D$2003",
+        "pl_atividade": "'Plano Mestre'!$E$4:$E$2003",
+        "pl_seguranca": "'Plano Mestre'!$I$4:$I$2003",
+        "pl_vezes": "'Plano Mestre'!$K$4:$K$2003",
+        "pl_especialidade": "'Plano Mestre'!$L$4:$L$2003",
+        "pl_duracao": "'Plano Mestre'!$M$4:$M$2003",
+        "pl_ativa": "'Plano Mestre'!$O$4:$O$2003",
+        "crono_ano": "'Cronograma'!$C$7",
+        "crono_inicio": "'Cronograma'!$C$8",
+        "crono_meta_aderencia": "'Cronograma'!$C$11",
+        "oc_chave": "'Ocorrências'!$F$4:$F$5003",
+        "oc_horas": "'Ocorrências'!$K$4:$K$5003",
+        "oc_ano": "'Ocorrências'!$L$4:$L$5003",
+        "oc_mes": "'Ocorrências'!$M$4:$M$5003",
+        "oc_posicao": "'Ocorrências'!$N$4:$N$5003",
+        "oc_conta": "'Ocorrências'!$P$4:$P$5003",
+        "oc_concluida": "'Ocorrências'!$R$4:$R$5003",
+        "oc_conferencia": "'Ocorrências'!$S$4:$S$5003",
+        "ex_id": "'Execuções'!$A$4:$A$3003",
+        "ex_chave_oc": "'Execuções'!$I$4:$I$3003",
+        "ex_cancelada": "'Execuções'!$N$4:$N$3003",
+        "ex_vinculo": "'Execuções'!$O$4:$O$3003",
+        "ex_ano": "'Execuções'!$P$4:$P$3003",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Config'!$C$21",
+        "cfg_aprovado": "'Config'!$C$22",
+        "cfg_revisao": "'Config'!$C$23",
+        "cfg_data_revisao": "'Config'!$C$24",
+        "pcmd_origem": "'Config'!$C$25",
+        "pcmd_emissao": "'Config'!$C$26",
+        "lst_frequencias": "'Listas'!$A$4:$A$11",
+        "lst_frequencias_vezes": "'Listas'!$B$4:$B$11",
+        "lst_especialidades": "'Listas'!$E$4:$E$33",
+        "lst_sim_nao": "'Listas'!$G$4:$G$5",
+        "lst_origem_execucao": "'Listas'!$I$4:$I$5"
+      },
+      "sha256": "d23e59c458e64c2e41d728b0aee80a7c62cb5efeb669e6a6cb3385ff220a2280",
+      "nomesLocais": [
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 0,
+          "referencia": "'Plano Mestre'!$A$3:$S$2003"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 0,
+          "referencia": "'Plano Mestre'!$1:$3,'Plano Mestre'!$A:$D"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 0,
+          "referencia": "'Plano Mestre'!$A$1:$S$33"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 1,
+          "referencia": "'Cronograma'!$1:$2"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 1,
+          "referencia": "'Cronograma'!$A$1:$G$62"
+        },
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 2,
+          "referencia": "'Ocorrências'!$A$3:$S$5003"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 2,
+          "referencia": "'Ocorrências'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 2,
+          "referencia": "'Ocorrências'!$A$1:$S$33"
+        },
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 3,
+          "referencia": "'Execuções'!$A$3:$S$3003"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 3,
+          "referencia": "'Execuções'!$1:$3,'Execuções'!$A:$C"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 3,
+          "referencia": "'Execuções'!$A$1:$S$33"
+        },
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 4,
+          "referencia": "'Revisões'!$A$3:$E$33"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 4,
+          "referencia": "'Revisões'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 4,
+          "referencia": "'Revisões'!$A$1:$E$18"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 5,
+          "referencia": "'Config'!$A$1:$F$34"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 6,
+          "referencia": "'Listas'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 6,
+          "referencia": "'Listas'!$A$1:$K$11"
+        }
+      ]
+    },
+    "PCMD-01-Controle-Documental.xlsx": {
+      "partes": null,
+      "abas": [
+        {
+          "arquivo": "xl/worksheets/sheet1.xml",
+          "nome": "Lista Mestra",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet2.xml",
+          "nome": "Revisões",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet3.xml",
+          "nome": "Cadastros",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet4.xml",
+          "nome": "Config",
+          "cabecalhos": {}
+        },
+        {
+          "arquivo": "xl/worksheets/sheet5.xml",
+          "nome": "Listas",
+          "cabecalhos": {}
+        }
+      ],
+      "nomes": {
+        "cad_org_nome": "'Cadastros'!$B$7",
+        "cad_referencial": "'Cadastros'!$B$8",
+        "cad_prefixo": "'Cadastros'!$B$9",
+        "cad_meta_disponibilidade": "'Cadastros'!$B$12",
+        "cad_pessoa_id": "'Cadastros'!$A$16:$A$35",
+        "cad_pessoa_nome": "'Cadastros'!$B$16:$B$35",
+        "cfg_elaborado": "'Config'!$C$19",
+        "cfg_aprovado": "'Config'!$C$20",
+        "cfg_revisao": "'Config'!$C$21",
+        "cfg_data_revisao": "'Config'!$C$22",
+        "pcmd_origem": "'Config'!$C$23",
+        "pcmd_emissao": "'Config'!$C$24",
+        "lst_tipo_documento": "'Listas'!$A$4:$A$13",
+        "lst_situacao_documento": "'Listas'!$C$4:$C$13",
+        "lst_sim_nao": "'Listas'!$E$4:$E$5",
+        "lst_status_requisito": "'Listas'!$G$4:$G$5"
+      },
+      "sha256": "be219bcc7d02e6b1ed05efce6241e54cc192423fc3cc6bc39a9e1be928316fac",
+      "nomesLocais": [
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 0,
+          "referencia": "'Lista Mestra'!$A$3:$K$53"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 0,
+          "referencia": "'Lista Mestra'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 0,
+          "referencia": "'Lista Mestra'!$A$1:$K$10"
+        },
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 1,
+          "referencia": "'Revisões'!$A$3:$E$103"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 1,
+          "referencia": "'Revisões'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 1,
+          "referencia": "'Revisões'!$A$1:$E$23"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 2,
+          "referencia": "'Cadastros'!$1:$2"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 2,
+          "referencia": "'Cadastros'!$A$1:$G$50"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 3,
+          "referencia": "'Config'!$A$1:$F$32"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 4,
+          "referencia": "'Listas'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 4,
+          "referencia": "'Listas'!$A$1:$J$7"
+        }
+      ]
+    },
     "PCMD-05-Ficha-Falha.xlsx": {
       "partes": null,
       "abas": [
@@ -21,81 +295,163 @@
         }
       ],
       "nomes": {
-        "fa_id": "'Ficha de Falha'!$A$7:$A$1006",
-        "fa_parada": "'Ficha de Falha'!$L$7:$L$1006",
-        "rv_revisao": "'Revisões'!$A$7:$A$36",
-        "rv_data": "'Revisões'!$B$7:$B$36",
+        "fa_id": "'Ficha de Falha'!$A$4:$A$1003",
+        "fa_parada": "'Ficha de Falha'!$L$4:$L$1003",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
         "cfg_elaborado": "'Config'!$C$17",
         "cfg_aprovado": "'Config'!$C$18",
         "cfg_revisao": "'Config'!$C$19",
         "cfg_data_revisao": "'Config'!$C$20",
         "pcmd_origem": "'Config'!$C$21",
-        "pcmd_emissao": "'Config'!$C$22",
-        "_xlnm._FilterDatabase": "'Revisões'!$A$6:$E$36",
-        "_xlnm.Print_Titles": "'Revisões'!$1:$6",
-        "_xlnm.Print_Area": "'Config'!$A$1:$F$28"
-      }
+        "pcmd_emissao": "'Config'!$C$22"
+      },
+      "sha256": "e8a7d3d3b825c9720babb773ada799349e71949c5f0ad049cfb4fe4d09e9db2d",
+      "nomesLocais": [
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 0,
+          "referencia": "'Ficha de Falha'!$A$3:$M$1003"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 0,
+          "referencia": "'Ficha de Falha'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 0,
+          "referencia": "'Ficha de Falha'!$A$1:$M$33"
+        },
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 1,
+          "referencia": "'Revisões'!$A$3:$E$33"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 1,
+          "referencia": "'Revisões'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 1,
+          "referencia": "'Revisões'!$A$1:$E$18"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 2,
+          "referencia": "'Config'!$A$1:$F$28"
+        }
+      ]
     },
-    "PCMD-01-Controle-Documental.xlsx": {
+    "PCMD-02-Ativos-Criticidade.xlsx": {
       "partes": null,
       "abas": [
         {
           "arquivo": "xl/worksheets/sheet1.xml",
-          "nome": "Lista Mestra",
+          "nome": "Ativos",
           "cabecalhos": {}
         },
         {
           "arquivo": "xl/worksheets/sheet2.xml",
-          "nome": "Revisões",
+          "nome": "Cadastros",
           "cabecalhos": {}
         },
         {
           "arquivo": "xl/worksheets/sheet3.xml",
-          "nome": "Organização",
+          "nome": "Revisões",
           "cabecalhos": {}
         },
         {
           "arquivo": "xl/worksheets/sheet4.xml",
-          "nome": "Pessoas",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet5.xml",
-          "nome": "Requisitos",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet6.xml",
           "nome": "Config",
           "cabecalhos": {}
         },
         {
-          "arquivo": "xl/worksheets/sheet7.xml",
+          "arquivo": "xl/worksheets/sheet5.xml",
           "nome": "Listas",
           "cabecalhos": {}
         }
       ],
       "nomes": {
-        "cad_org_nome": "'Organização'!$B$7",
-        "cad_referencial": "'Organização'!$B$8",
-        "cad_prefixo": "'Organização'!$B$9",
-        "cad_meta_disponibilidade": "'Organização'!$B$12",
-        "cad_pessoa_id": "'Pessoas'!$A$7:$A$66",
-        "cad_pessoa_nome": "'Pessoas'!$B$7:$B$66",
-        "cfg_elaborado": "'Config'!$C$21",
-        "cfg_aprovado": "'Config'!$C$22",
-        "cfg_revisao": "'Config'!$C$23",
-        "cfg_data_revisao": "'Config'!$C$24",
-        "pcmd_origem": "'Config'!$C$25",
-        "pcmd_emissao": "'Config'!$C$26",
-        "lst_tipo_documento": "'Listas'!$A$7:$A$16",
-        "lst_situacao_documento": "'Listas'!$C$7:$C$16",
-        "lst_sim_nao": "'Listas'!$E$7:$E$8",
-        "lst_status_requisito": "'Listas'!$G$7:$G$8",
-        "_xlnm._FilterDatabase": "'Requisitos'!$A$6:$G$66",
-        "_xlnm.Print_Titles": "'Listas'!$1:$6",
-        "_xlnm.Print_Area": "'Listas'!$A$1:$J$10"
-      }
+        "at_id": "'Ativos'!$A$4:$A$303",
+        "at_tag": "'Ativos'!$B$4:$B$303",
+        "at_descricao": "'Ativos'!$C$4:$C$303",
+        "cad_limite_a": "'Cadastros'!$B$7",
+        "cad_limite_b": "'Cadastros'!$B$8",
+        "cad_limites_ok": "'Cadastros'!$B$9",
+        "cad_setor": "'Cadastros'!$A$23:$A$52",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Config'!$C$19",
+        "cfg_aprovado": "'Config'!$C$20",
+        "cfg_revisao": "'Config'!$C$21",
+        "cfg_data_revisao": "'Config'!$C$22",
+        "pcmd_origem": "'Config'!$C$23",
+        "pcmd_emissao": "'Config'!$C$24",
+        "lst_tipo_id": "'Listas'!$A$4:$A$33",
+        "lst_tipo_nome": "'Listas'!$B$4:$B$33",
+        "lst_tipo_sigla": "'Listas'!$C$4:$C$33"
+      },
+      "sha256": "cb3276a222cd40696b52863f65a82b02fc2974ae02861ad41112fa1ff1c84c69",
+      "nomesLocais": [
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 0,
+          "referencia": "'Ativos'!$A$3:$S$303"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 0,
+          "referencia": "'Ativos'!$1:$3,'Ativos'!$A:$B"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 0,
+          "referencia": "'Ativos'!$A$1:$S$33"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 1,
+          "referencia": "'Cadastros'!$1:$2"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 1,
+          "referencia": "'Cadastros'!$A$1:$E$34"
+        },
+        {
+          "nome": "_xlnm._FilterDatabase",
+          "aba": 2,
+          "referencia": "'Revisões'!$A$3:$E$33"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 2,
+          "referencia": "'Revisões'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 2,
+          "referencia": "'Revisões'!$A$1:$E$18"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 3,
+          "referencia": "'Config'!$A$1:$F$31"
+        },
+        {
+          "nome": "_xlnm.Print_Titles",
+          "aba": 4,
+          "referencia": "'Listas'!$1:$3"
+        },
+        {
+          "nome": "_xlnm.Print_Area",
+          "aba": 4,
+          "referencia": "'Listas'!$A$1:$F$7"
+        }
+      ]
     },
     "PCMD-W2-Manual-Estrategia-Manutencao.docx": {
       "partes": {
@@ -148,7 +504,6 @@
           "paragrafos": [
             "Este manual descreve como {{organizacao.nome}} escolhe e revisa estratégias de manutenção, planeja, registra execuções e trata falhas, com os registros do PCM Direto e os modelos PCMD.",
             "Referencial adotado: {{organizacao.referencial}} (o inicial do PCM Direto é GERAL (sem norma)).",
-            "Referências registradas (PCMD-01, aba Requisitos) · região repetível «requisitos»: repita a linha modelo para cada registro.",
             "{{requisito.referencia}}",
             "{{requisito.versao}}",
             "{{requisito.data}}",
@@ -157,7 +512,6 @@
             "{{documento.elaborador}}",
             "{{documento.aprovador}}",
             "{{estrategia.responsavel}}",
-            "Pessoas ativas (PCMD-01, aba Pessoas) · região repetível «pessoas»: repita a linha modelo para cada registro.",
             "{{pessoa.nome}}",
             "{{pessoa.funcao}}",
             "{{pessoa.especialidade}}",
@@ -181,12 +535,10 @@
             "{{documento.proxima_revisao}}",
             "{{origem.dados}}",
             "{{emissao.data}}",
-            "Revisões deste documento (PCMD-01, aba Revisões) · região repetível «revisoes»: repita a linha modelo para cada registro.",
             "{{revisao.numero}}",
             "{{revisao.data}}",
             "{{revisao.descricao}}",
             "{{revisao.responsavel}}",
-            "Tarefas do plano · região repetível «tarefas»: repita a linha modelo para cada registro.",
             "{{tarefa.tag}}",
             "{{tarefa.id}}",
             "{{tarefa.atividade}}",
@@ -221,14 +573,7 @@
           ]
         }
       },
-      "abas": [
-        {
-          "arquivo": null,
-          "nome": null,
-          "cabecalhos": {}
-        }
-      ],
-      "nomes": null
+      "sha256": "d80e414065e717c825451ca95ccf19c669e67360dd9498b97846f613a93e1018"
     },
     "PCMD-W1-Manual-Gestao-Ativos.docx": {
       "partes": {
@@ -275,7 +620,6 @@
           "paragrafos": [
             "Este manual descreve como {{organizacao.nome}} cadastra, identifica, classifica e mantém o histórico dos seus ativos de manutenção, com os registros do PCM Direto e os modelos PCMD.",
             "Referencial adotado: {{organizacao.referencial}} (o inicial do PCM Direto é GERAL (sem norma)).",
-            "Referências registradas (PCMD-01, aba Requisitos) · região repetível «requisitos»: repita a linha modelo para cada registro.",
             "{{requisito.referencia}}",
             "{{requisito.versao}}",
             "{{requisito.data}}",
@@ -283,28 +627,23 @@
             "{{requisito.status}}",
             "{{documento.elaborador}}",
             "{{documento.aprovador}}",
-            "Pessoas ativas (PCMD-01, aba Pessoas) · região repetível «pessoas»: repita a linha modelo para cada registro.",
             "{{pessoa.nome}}",
             "{{pessoa.funcao}}",
             "{{pessoa.especialidade}}",
             "{{pessoa.responsabilidade}}",
-            "Setores cadastrados (PCMD-02, aba Setores) · região repetível «setores»: repita a linha modelo para cada registro.",
             "{{setor.sigla}}",
             "{{setor.descricao}}",
             "Soma ≥ limite A ({{criticidade.limite_a}})",
             "Soma ≥ limite B ({{criticidade.limite_b}})",
             "{{metas.disponibilidade}}",
-            "Todo ativo tem ID, TAG no formato SETOR-SIGLA-NNN, setor e tipo; não há IDs repetidos.",
             "{{documento.situacao}}",
             "{{documento.proxima_revisao}}",
             "{{origem.dados}}",
             "{{emissao.data}}",
-            "Revisões deste documento (PCMD-01, aba Revisões) · região repetível «revisoes»: repita a linha modelo para cada registro.",
             "{{revisao.numero}}",
             "{{revisao.data}}",
             "{{revisao.descricao}}",
             "{{revisao.responsavel}}",
-            "Ativos e criticidade · região repetível «ativos»: repita a linha modelo para cada registro.",
             "{{ativo.tag}}",
             "{{ativo.descricao}}",
             "{{ativo.setor}}",
@@ -341,154 +680,7 @@
           ]
         }
       },
-      "abas": [
-        {
-          "arquivo": null,
-          "nome": null,
-          "cabecalhos": {}
-        }
-      ],
-      "nomes": null
-    },
-    "PCMD-02-Ativos-Criticidade.xlsx": {
-      "partes": null,
-      "abas": [
-        {
-          "arquivo": "xl/worksheets/sheet1.xml",
-          "nome": "Ativos",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet2.xml",
-          "nome": "Critérios",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet3.xml",
-          "nome": "Setores",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet4.xml",
-          "nome": "Revisões",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet5.xml",
-          "nome": "Config",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet6.xml",
-          "nome": "Listas",
-          "cabecalhos": {}
-        }
-      ],
-      "nomes": {
-        "at_id": "'Ativos'!$A$7:$A$306",
-        "at_tag": "'Ativos'!$B$7:$B$306",
-        "at_descricao": "'Ativos'!$C$7:$C$306",
-        "cad_limite_a": "'Critérios'!$B$7",
-        "cad_limite_b": "'Critérios'!$B$8",
-        "cad_limites_ok": "'Critérios'!$B$9",
-        "cad_setor": "'Setores'!$A$7:$A$36",
-        "rv_revisao": "'Revisões'!$A$7:$A$36",
-        "rv_data": "'Revisões'!$B$7:$B$36",
-        "cfg_elaborado": "'Config'!$C$20",
-        "cfg_aprovado": "'Config'!$C$21",
-        "cfg_revisao": "'Config'!$C$22",
-        "cfg_data_revisao": "'Config'!$C$23",
-        "pcmd_origem": "'Config'!$C$24",
-        "pcmd_emissao": "'Config'!$C$25",
-        "lst_tipo_id": "'Listas'!$A$7:$A$36",
-        "lst_tipo_nome": "'Listas'!$B$7:$B$36",
-        "lst_tipo_sigla": "'Listas'!$C$7:$C$36",
-        "_xlnm._FilterDatabase": "'Revisões'!$A$6:$E$36",
-        "_xlnm.Print_Titles": "'Listas'!$1:$6",
-        "_xlnm.Print_Area": "'Listas'!$A$1:$F$10"
-      }
-    },
-    "PCMD-03-04-Plano-Cronograma.xlsx": {
-      "partes": null,
-      "abas": [
-        {
-          "arquivo": "xl/worksheets/sheet1.xml",
-          "nome": "Plano Mestre",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet2.xml",
-          "nome": "Cronograma",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet3.xml",
-          "nome": "Ocorrências",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet4.xml",
-          "nome": "Execuções",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet5.xml",
-          "nome": "Revisões",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet6.xml",
-          "nome": "Config",
-          "cabecalhos": {}
-        },
-        {
-          "arquivo": "xl/worksheets/sheet7.xml",
-          "nome": "Listas",
-          "cabecalhos": {}
-        }
-      ],
-      "nomes": {
-        "pl_chave": "'Plano Mestre'!$C$7:$C$2006",
-        "pl_tag": "'Plano Mestre'!$D$7:$D$2006",
-        "pl_atividade": "'Plano Mestre'!$E$7:$E$2006",
-        "pl_seguranca": "'Plano Mestre'!$I$7:$I$2006",
-        "pl_vezes": "'Plano Mestre'!$K$7:$K$2006",
-        "pl_especialidade": "'Plano Mestre'!$L$7:$L$2006",
-        "pl_duracao": "'Plano Mestre'!$M$7:$M$2006",
-        "pl_ativa": "'Plano Mestre'!$O$7:$O$2006",
-        "crono_ano": "'Cronograma'!$C$7",
-        "crono_inicio": "'Cronograma'!$C$8",
-        "crono_meta_aderencia": "'Cronograma'!$C$11",
-        "oc_chave": "'Ocorrências'!$F$7:$F$5006",
-        "oc_horas": "'Ocorrências'!$K$7:$K$5006",
-        "oc_ano": "'Ocorrências'!$L$7:$L$5006",
-        "oc_mes": "'Ocorrências'!$M$7:$M$5006",
-        "oc_posicao": "'Ocorrências'!$N$7:$N$5006",
-        "oc_conta": "'Ocorrências'!$P$7:$P$5006",
-        "oc_concluida": "'Ocorrências'!$R$7:$R$5006",
-        "oc_conferencia": "'Ocorrências'!$S$7:$S$5006",
-        "ex_id": "'Execuções'!$A$7:$A$3006",
-        "ex_chave_oc": "'Execuções'!$I$7:$I$3006",
-        "ex_cancelada": "'Execuções'!$N$7:$N$3006",
-        "ex_vinculo": "'Execuções'!$O$7:$O$3006",
-        "ex_ano": "'Execuções'!$P$7:$P$3006",
-        "rv_revisao": "'Revisões'!$A$7:$A$36",
-        "rv_data": "'Revisões'!$B$7:$B$36",
-        "cfg_elaborado": "'Config'!$C$21",
-        "cfg_aprovado": "'Config'!$C$22",
-        "cfg_revisao": "'Config'!$C$23",
-        "cfg_data_revisao": "'Config'!$C$24",
-        "pcmd_origem": "'Config'!$C$25",
-        "pcmd_emissao": "'Config'!$C$26",
-        "lst_frequencias": "'Listas'!$A$7:$A$14",
-        "lst_frequencias_vezes": "'Listas'!$B$7:$B$14",
-        "lst_especialidades": "'Listas'!$E$7:$E$36",
-        "lst_sim_nao": "'Listas'!$G$7:$G$8",
-        "lst_origem_execucao": "'Listas'!$I$7:$I$8",
-        "_xlnm._FilterDatabase": "'Revisões'!$A$6:$E$36",
-        "_xlnm.Print_Titles": "'Listas'!$1:$6",
-        "_xlnm.Print_Area": "'Listas'!$A$1:$K$14"
-      }
+      "sha256": "e03bec31aebfaa6a8eba36c1a093a13ed3ce3958e75eca122606f7d258427444"
     }
   }
 }

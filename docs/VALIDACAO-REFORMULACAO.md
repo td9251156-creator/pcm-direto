@@ -179,6 +179,28 @@ somente leitura confirmou as correções e executou gravação concorrente com I
 quota síncrona isolada. Não houve alteração de esquema, envio de dados operacionais ou uso de
 contas reais. Claude Code não participou; conferências humanas e documentais seguem pendentes.
 
+## Novos modelos recebidos — pacote 2.0.0
+
+Os 12 editáveis, 12 PDFs e COMO-USAR do ZIP recebido em 25/10/2026 foram copiados sem regravação.
+Manifesto registra hashes e tamanhos dos 25 arquivos; teste de integridade compara todos.
+Contrato remapeia abas/nomes e mantém escopo dos nomes locais de impressão. Emissões novas usam
+versão de integração 2.0.0; o conteúdo dos originais e as emissões anteriores são preservados.
+
+Lint, 223 testes e build aprovados. Roteiro completo de navegador aprovado, incluindo os seis
+documentos preenchidos offline e os 12 downloads de prévias PDF idênticos aos recebidos.
+Exportação grande no Chromium aprovada: 41 pessoas, 42
+referências, 60 setores, 100 ativos, ocorrências anuais acima de 5.000, 3.101 execuções e 1.101
+falhas. Verifica deslocamento de requisitos, fórmulas/validações/referências, área impressa e
+imagens/desenhos preservados, modelo incompatível recusado e parada vazia diferente de zero.
+Revisão independente reproduziu referências antigas após deslocar e falso alerta de excesso de
+pessoas; confirmou as correções na saída. Não utilizou contas reais nem alterou os originais.
+
+Os 12 PDFs fornecidos abriram no pypdf; primeiras páginas de PCMD-01 e W1 foram renderizadas
+com Poppler e conferidas. Isso não equivale a renderizar as cópias preenchidas. render_docx.py
+foi tentado e falhou por ausência de soffice.exe no runtime. Recálculo, paginação e impressão
+dos editáveis no Excel/LibreOffice permanecem pendentes. ExcelJS também não abriu o original
+com drawing Target absoluto; o roteiro usa leitura XML nativa, sem modificar esse relacionamento.
+
 ## Prévia e ativação de revisões — 25/10/2026
 
 Lint, 221 testes e build aprovados; roteiro completo de navegador aprovado, incluindo prévia

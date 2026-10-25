@@ -65,6 +65,11 @@ await executarComRecursos({
   await page.locator('#categoria-documentos').click();
   const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo',exact:true}).first().click()]);
   assert.deepEqual(await readFile(await modelo.path()),await readFile('public/modelos/PCMD-01-Controle-Documental.xlsx'));
+  for(const card of await page.locator('#banco-modelos article').all())await card.locator('summary').click();
+  const previas=await page.locator('a[href^="./modelos/previas/"]').evaluateAll(es=>es.map(e=>e.getAttribute('href')));assert.equal(previas.length,12);
+  await contexto.setOffline(true);
+  for(const href of previas){const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="${href}"]`).click()]);assert.deepEqual(await readFile(await pdf.path()),await readFile('public/'+href.slice(2)));}
+  await contexto.setOffline(false);
   assert.equal((await rascunho()).equipamentos.length,0);
   await ir('inicio');await page.locator('#demonstrar').click();await page.locator('#sair-demo').waitFor();assert.equal((await rascunho()).equipamentos.length,0,'Exemplo não pode substituir base local');await page.locator('#sair-demo').click();
   await ir('dados');await page.locator('#restaurar-backup').setInputFiles({name:'antigo.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(v1))});await page.locator('#confirmar-backup').click();await page.waitForURL('**/#semana');assert.equal((await rascunho()).equipamentos.length,equipamentos.length);
