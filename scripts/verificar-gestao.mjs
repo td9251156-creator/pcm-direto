@@ -22,12 +22,19 @@ await executarComRecursos({
   await page.goto('http://127.0.0.1:4175/');await page.getByRole('heading',{name:'Conhecimento aberto. Manutenção melhor organizada.'}).waitFor();
   assert.equal(await page.locator('html').getAttribute('data-tema'),'claro');assert.equal(await page.locator('#tema').count(),0);
   const logo=page.locator('.marca img');await logo.evaluate(img=>img.decode());
-  assert.ok((await logo.getAttribute('src')).includes('logo-horizontal-slogan.svg'));
+  assert.ok((await logo.getAttribute('src')).endsWith('/logo-horizontal.svg'));
   for(const largura of [320,390,820,1280]){
     await page.setViewportSize({width:largura,height:900});
     await logo.evaluate(img=>img.decode());const proporcao=await logo.evaluate(img=>img.naturalWidth/img.naturalHeight);
     const medidas=await logo.boundingBox();assert.ok(Math.abs(medidas.width/medidas.height-proporcao)<0.01,'Logo mantém proporção');
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Layout não cria rolagem horizontal');
+    assert.equal(await page.locator('.marca-slogan').count(),1,'Slogan aparece uma única vez');
+    assert.equal(await page.locator('.marca a .marca-slogan').count(),0,'Slogan não herda sublinhado do link');
+    const assinatura=await page.locator('.marca-slogan').boundingBox();
+    const imagem=await logo.boundingBox();
+    assert.ok(assinatura.y>=imagem.y+imagem.height,'Slogan fica abaixo do logo sem sobreposição');
+    assert.ok(assinatura.height>=18,'Slogan mantém tamanho legível');
+    await page.locator('.marca').screenshot({path:`artifacts/marca-corrigida-${largura}.png`});
     await page.screenshot({path:`artifacts/comunidade-${largura}.png`,fullPage:true});
   }
   await page.setViewportSize({width:390,height:844});

@@ -80,3 +80,11 @@
 @media screen and (max-width:1023px){.execucao-paineis{grid-template-columns:1fr}.periodos button{font-size:12px;padding:8px 4px}.filtros-execucao{margin-left:-16px;margin-right:-16px;border-radius:0}.grupo-ocorrencias h3{display:block}.grupo-ocorrencias h3 small{display:block;margin-top:6px}}
 
 @media screen and (max-width:1023px){#tela-falhas table,#tela-falhas tbody,#tela-falhas tr,#tela-falhas td{display:block;width:100%;min-width:0}#tela-falhas thead{display:none}#tela-falhas tr{border:1px solid #dfe4e9;border-radius:12px;padding:14px;margin:12px 0}#tela-falhas td{border:0;padding:7px 0;text-align:left;overflow-wrap:anywhere}#tela-falhas td:nth-child(2)::before{content:'Sintoma / causa provável: ';font-weight:700}#tela-falhas td:nth-child(3)::before{content:'Ação / peça: ';font-weight:700}#tela-falhas td:nth-child(4)::before{content:'Parada / responsável: ';font-weight:700}#tela-falhas .tabela-rolagem{overflow:visible}}
+
+/* Assinatura única: proporção do SVG horizontal e slogan fora do link. */
+@media screen{
+  .topo .marca{display:flex;flex-direction:column;align-items:stretch;gap:0}
+  .topo .marca a{display:block;line-height:0;text-decoration:none}
+  .topo .marca img{display:block;width:100%;height:auto;aspect-ratio:1140 / 235;object-fit:contain}
+  .topo .marca .marca-slogan{display:block;margin:6px 0 0;padding:0;border-top:0;color:#0b3d63;font-size:12px;font-weight:600;line-height:1.5;letter-spacing:normal;text-align:center;text-decoration:none;white-space:normal;overflow-wrap:normal}
+}
