@@ -74,7 +74,7 @@ function mostrar() {
   const nome = location.hash.slice(1).split('?')[0];
   document.body.dataset.tela = nome;
   main.classList.remove('ativo-aberto');
-  document.querySelectorAll('dialog.painel-execucao').forEach(d=>d.close());
+  document.querySelectorAll('dialog.painel-execucao, dialog[data-dialogo-app]').forEach(d=>d.close());
   const tela = TELAS[nome] ?? TELAS.comunidade;
   const atual = TELAS[nome] ? nome : 'comunidade';
   marcarNavegacao(atual);

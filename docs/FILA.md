@@ -2,6 +2,24 @@
 
 # Fila de evolução
 
+## Execução e histórico consultáveis (24/10/2026)
+
+Busca por TAG/tarefa/responsável nas ocorrências, datas brasileiras e Concluídas pela data
+realizada. Listas começam com 20 ocorrências e permitem carregar mais. Histórico com busca,
+intervalo da realização, situação, paginação e JSON de todos os resultados filtrados; o arquivo
+de consulta não substitui o backup completo. Registros legados e de ativos removidos permanecem.
+
+Cancelar agora usa diálogo com foco inicial em Voltar e só confirma após a transação terminar.
+Falha de gravação mantém a execução anterior; bloqueia refazer o vínculo enquanto cancela e
+aguarda pendências antes de entrar na demonstração ou restaurar outra base. Revisão independente
+reproduziu os casos de clone concorrente e demonstração; regressões cobrem as correções.
+Erro síncrono de escrita no IndexedDB também aborta a transação e chega à interface.
+
+Critérios: verificações completas, consulta/restauração com 100 ativos, plano anual e duas revisões,
+quota, cancelamento por teclado e mudança de tela, sem contas ou dados reais. Conferência manual
+em celular, leitor de tela, Office e com três técnicos continua pendente. Próximo item: validar
+esses fluxos de uso com o mantenedor e os técnicos antes da liberação final.
+
 ## HTML offline da mesma publicação (24/10/2026)
 
 Uma atualização guardou HTML HTTP anterior junto de arquivos do build novo, deixando uma

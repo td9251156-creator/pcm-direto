@@ -39,8 +39,8 @@ Não houve erro de página no contexto principal.
 - Conferência visual no Excel/LibreOffice e impressão ainda pendentes. ZIP válido, fórmulas
   preservadas e imagens idênticas não substituem abertura e conferência nesses programas.
   `render_docx.py` foi executado e informou ausência de `soffice.exe` no ambiente.
-- Cenário de uso completo de 100 ativos na interface e histórico anual ainda exige evidência
-  específica; o teste de lógica não substitui esse uso real.
+- Cenário automatizado de restauração e consulta com 100 ativos, plano anual, duas revisões e
+  histórico foi acrescentado ao roteiro. Validação do ciclo completo por técnicos continua pendente.
 - Fluxo autenticado de publicação/interações entre aparelhos precisa teste com contas de teste
   autorizadas; não usar a conta nem o conteúdo real do mantenedor para simular interações.
 - Auditor do Supabase aponta funções SECURITY DEFINER acessíveis por papéis autorizados:
@@ -162,3 +162,19 @@ O teste reproduziu falha de logo offline na aba nova, corrigida incorporando o S
 A revisão independente achou título longo sem espaços fora da área de impressão; quebra
 foi corrigida e o revisor confirmou título com 120 caracteres e logo sem rede no Chromium.
 O roteiro contém essa regressão. Paginação e diálogo em aparelhos reais continuam pendentes.
+
+## Execução e consulta do histórico
+
+Verificação atual: lint, **216 testes** e build aprovados. Roteiro completo de navegador aprovado,
+incluindo 100 motores fictícios restaurados pela interface, plano anual com duas revisões e
+76 registros. Confere busca, data realizada, conclusões recentes, todas as páginas no download,
+legado fora do cadastro, texto escapado, intervalo inválido e cancelamento por teclado.
+Quota de escrita mantém o registro ativo em memória e no IndexedDB, sem exceção global.
+A primeira execução aprovou os cenários de atualização, mas excedeu o prazo ao fechar um recurso
+do teste; a repetição completa encerrou normalmente e aprovou todos os cenários.
+
+Regressões de estado reproduziram antes da correção: cancelamento anunciado apesar de falha,
+clone concorrente e entrada na demonstração restaurando uma flag anterior. Revisão independente
+somente leitura confirmou as correções e executou gravação concorrente com IndexedDB real e
+quota síncrona isolada. Não houve alteração de esquema, envio de dados operacionais ou uso de
+contas reais. Claude Code não participou; conferências humanas e documentais seguem pendentes.

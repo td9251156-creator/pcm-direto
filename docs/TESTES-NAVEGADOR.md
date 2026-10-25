@@ -67,3 +67,9 @@ no servidor local 4178. Este último usa tela de 390 px, SDK real e eventos fict
 seleção sem envio automático, arquivo falso recusado antes de salvar, upload sem upsert,
 validação, download e confirmação de revisão com a versão lida. Não escreve no Supabase real.
 O pacote isolado de ferramentas inclui PGlite e pdf-lib; eles não entram no site publicado.
+
+`verificar-historico.mjs` usa a porta 4181 e uma base fictícia de 100 motores, plano anual,
+duas revisões e 76 registros. Restaura pela interface e confere IndexedDB, busca, datas,
+ordenação por realização, filtros, paginação e download de todas as páginas. Inclui legado de
+ativo removido, texto escapado, intervalo inválido, Escape/foco na confirmação, troca de tela
+e quota simulada sem alterar o registro persistido nem gerar exceção não tratada.

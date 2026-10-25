@@ -115,3 +115,42 @@ describe('gestão e preservação dos dados', () => {
     expect((await app.registrarExecucao(app.dadosAtuais().plano[0], { data: '2026-10-22', observacao: '' })).ok).toBe(true);
   });
 });
+
+it('mantém a execução e a cópia persistida quando cancelar falha ao gravar', async () => {
+  const app=await abrir();const linha=app.dadosAtuais().plano[0];
+  expect((await app.registrarExecucao(linha,{data:'2026-10-20',observacao:'Execução fictícia',responsavelId:''})).ok).toBe(true);
+  const antes=structuredClone(app.estado.gestao.historico);const execucoes=structuredClone(app.estado.execucoes);const salvo=dados.get(CHAVE);
+  localStorage.setItem=()=>{throw new DOMException('Quota de teste','QuotaExceededError');};
+  const r=await app.cancelarExecucao(antes[0].id);
+  expect(r.ok).toBe(false);expect(r.guardado).toBe(false);
+  expect(app.estado.gestao.historico).toEqual(antes);expect(app.estado.execucoes).toEqual(execucoes);expect(dados.get(CHAVE)).toBe(salvo);
+});
+
+it('impede refazer o mesmo vínculo antes de concluir o cancelamento',async()=>{
+  const app=await abrir();const linha=app.dadosAtuais().plano[0];const registro={data:'2026-10-20',observacao:'Teste',responsavelId:''};
+  await app.registrarExecucao(linha,registro);const id=app.estado.gestao.historico[0].id;
+  localStorage.setItem=()=>{throw new DOMException('Quota de teste','QuotaExceededError');};
+  const cancelando=app.cancelarExecucao(id);
+  expect((await app.registrarExecucao(linha,registro)).ok).toBe(false);
+  expect((await cancelando).ok).toBe(false);
+  expect(app.estado.gestao.historico.filter(h=>!h.cancelada)).toHaveLength(1);
+});
+
+it('preserva clone concorrente e execução original quando cancelar não pode ser guardado',async()=>{
+  const app=await abrir();const linha=app.dadosAtuais().plano[0];
+  await app.registrarExecucao(linha,{data:'2026-10-20',observacao:'Teste',responsavelId:''});const id=app.estado.gestao.historico[0].id;
+  localStorage.setItem=()=>{throw new DOMException('Quota de teste','QuotaExceededError');};
+  const cancelando=app.cancelarExecucao(id);
+  const copia=structuredClone(app.estado.gestao);copia.organizacao.nome='Nome concorrente preservado';app.estado.gestao=copia;
+  expect((await cancelando).ok).toBe(false);
+  expect(app.estado.gestao.historico[0].cancelada).toBe(false);expect(app.estado.gestao.organizacao.nome).toBe('Nome concorrente preservado');
+});
+
+it('aguarda cancelamento antes da demonstração e não o desfaz ao voltar para a base',async()=>{
+  const app=await abrir();const linha=app.dadosAtuais().plano[0];
+  await app.registrarExecucao(linha,{data:'2026-10-20',observacao:'Teste',responsavelId:''});const id=app.estado.gestao.historico[0].id;
+  const cancelando=app.cancelarExecucao(id);const demo=app.demonstrar();
+  expect((await cancelando).ok).toBe(true);await demo;app.sairDaDemonstracao();
+  expect(app.estado.gestao.historico.find(h=>h.id===id).cancelada).toBe(true);
+  await app.salvar();app.carregar();expect(app.estado.gestao.historico.find(h=>h.id===id).cancelada).toBe(true);
+});

@@ -9,7 +9,7 @@ Ferramenta aberta de Planejamento e Controle de Manutenção, em português, par
 - **Gerar minha ficha:** no formulário do catálogo ou em um tipo da Biblioteca técnica, use Gerar ficha em PDF. A prévia abre em outra aba; escolha Imprimir / salvar PDF e selecione Salvar como PDF. A geração funciona localmente e não envia os campos ao servidor.
 - **Fábrica privada:** cadastros, planos, criticidade, execuções e falhas ficam no IndexedDB deste navegador, sem sincronização da base operacional.
 - **Planejar:** equipamentos por cadastro, colagem, CSV ou XLSX, criticidade com cinco notas, capacidade e revisões com vigência e prévia do impacto.
-- **Executar:** ocorrências previstas, registro rápido, cancelamento preservado e histórico. Execuções antigas permanecem como legado sem vínculo presumido.
+- **Executar:** busca por TAG, tarefa ou responsável, datas legíveis e conclusões mais recentes primeiro. Histórico com filtros por data realizada e situação, páginas e download da consulta. Cancelar exige confirmação e mantém o registro anterior se a gravação falhar. Execuções antigas permanecem como legado sem vínculo presumido.
 - **Documentos:** cópias preenchidas dos seis modelos originais PCMD com uma data de corte comum; exportações anteriores em Outros formatos.
 - **Meus dados:** backup JSON versão 3 e restauração com prévia; aceita versões 1 e 2 e preserva os originais locais na migração.
 - PWA para computador e celular; operação local e documentos offline após carregamento. Comunidade entre aparelhos exige internet.
@@ -60,10 +60,10 @@ não apaga os registros anteriores: eles ficam identificados como fora da lista 
 Metas não definidas permanecem vazias. O app não calcula MTBF, MTTR ou disponibilidade sem regras
 técnicas aprovadas. Referências começam não verificadas; nenhuma conformidade é certificada.
 
-**Você fornecerá os modelos Excel e Word.** Esta entrega não cria templates PCMD. A Entrega informa
-quais modelos ainda faltam, mantendo a planilha e o resumo anteriores. Esses arquivos antigos ainda
-não contêm os cadastros novos; use o backup completo para guardar tudo. O
-[guia para criar seus modelos](docs/INTERFACE-E-MODELOS.md) descreve campos e vínculos de cada documento.
+Os seis modelos Excel e Word recebidos estão em `public/modelos`. Documentos preenche cópias
+com os dados da revisão; a conferência no Excel/LibreOffice continua pendente. Exportações
+anteriores ficam em Outros formatos. Para guardar toda a base, use o backup completo em Meus dados;
+o download filtrado do histórico serve apenas para consulta.
 
 ## Como rodar no seu computador
 
