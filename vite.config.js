@@ -33,6 +33,11 @@ function serviceWorker() {
         ? (pacote[nome].type === 'chunk' ? pacote[nome].code : pacote[nome].source)
         : readFileSync(path.join('public', nome))]);
       const versao = versaoDoCache([...conteudos, ['src/sw.js', worker]]);
+      if (entradaAtual) {
+        const entrada = `abrir-${versao}.html`;
+        this.emitFile({ type: 'asset', fileName: entrada, source: entradaAtual.source });
+        this.emitFile({ type: 'asset', fileName: 'versao-atual.json', source: JSON.stringify({ entrada, versao }) });
+      }
       const codigo = worker
         .replace('[/*ARQUIVOS*/]', JSON.stringify(arquivos.map((f) => './' + f)))
         .replace('/*VERSAO*/', versao)
