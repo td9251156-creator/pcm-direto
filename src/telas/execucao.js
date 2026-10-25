@@ -5,6 +5,7 @@ import { ocorrenciasPlanejadas } from '../logica/gestao.js';
 import { pessoasOpcoes, pessoaNome, tabela } from './gestao-ui.js';
 import { textoData } from '../logica/cronograma.js';
 import { esc, avisar, baixar } from '../ui.js';
+import { dataExibida } from '../logica/consulta-execucao.js';
 
 export function telaExecucao(main) {
   const dados = dadosAtuais();
@@ -68,8 +69,8 @@ export function telaExecucao(main) {
     if (botao) { botao.closest('details').open = true; botao.focus(); }
     avisar(r.guardado ? 'Execução atualizada no histórico deste aparelho.' : 'Alteração aplicada nesta sessão; baixe um backup antes de sair.');
   });
-  const secao = document.createElement('section'); secao.className = 'cartao';
-  secao.innerHTML = '<h3>Histórico completo de execuções</h3>' + tabela(['Data / ativo', 'Tarefa', 'Ocorrência / responsável', 'Observação / origem', 'Situação'], estado.gestao.historico.slice().reverse().map(h => `<tr><td>${esc(h.data)}<br>${esc(h.tag || h.equipamentoId)}${!estado.equipamentos.some(e => e.id === h.equipamentoId) ? '<br>Ativo fora da lista atual' : ''}</td><td>${esc(h.tarefaId)}<br>${esc(h.descricao)}</td><td>${esc(h.dataPrevista || 'Sem vínculo')}<br>${esc(pessoaNome(h.responsavelId))}</td><td>${esc(h.observacao)}<br><span class="origem">${h.origem === 'legado' ? 'Marcação antiga preservada' : 'Registro no app'}</span></td><td>${h.cancelada ? 'Cancelada' : `<button type="button" class="secundario" data-cancelar="${h.id}">Cancelar registro de ${esc(h.tag || h.tarefaId)}</button>`}</td></tr>`)) + '<p class="origem">Registros antigos não possuem vínculo presumido. Cancelar não apaga o histórico nem altera tarefas de segurança.</p>';
+  const secao = document.createElement('section'); secao.className = 'cartao'; secao.id = 'historico-execucoes';
+  secao.innerHTML = '<h3>Histórico completo de execuções</h3>' + tabela(['Data / ativo', 'Tarefa', 'Ocorrência / responsável', 'Observação / origem', 'Situação'], estado.gestao.historico.slice().reverse().map(h => `<tr><td>${dataExibida(h.data)}<br>${esc(h.tag || h.equipamentoId)}${!estado.equipamentos.some(e => e.id === h.equipamentoId) ? '<br>Ativo fora da lista atual' : ''}</td><td>${esc(h.tarefaId)}<br>${esc(h.descricao)}</td><td>${h.dataPrevista ? 'Prevista ' + dataExibida(h.dataPrevista) : 'Sem vínculo'}<br>${esc(pessoaNome(h.responsavelId))}</td><td>${h.observacao ? esc(h.observacao) + "<br>" : ""}<span class="origem">${h.origem === 'legado' ? 'Marcação antiga preservada' : 'Registro no app'}</span></td><td>${h.cancelada ? 'Cancelada' : `<button type="button" class="secundario" data-cancelar="${h.id}">Cancelar registro de ${esc(h.tag || h.tarefaId)}</button>`}</td></tr>`)) + '<p class="origem">Registros antigos não possuem vínculo presumido. Cancelar não apaga o histórico nem altera tarefas de segurança.</p>';
   main.append(secao);
   secao.addEventListener('click', async e => {
     const id = e.target.closest('[data-cancelar]')?.dataset.cancelar;

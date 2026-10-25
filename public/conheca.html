@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conheça o PCM Direto · Planejamento de Manutenção gratuito e aberto</title>
+  <meta name="description" content="O PCM Direto monta o plano de manutenção preventiva da sua fábrica a partir da lista de máquinas, de graça, em português e com os dados guardados só no seu aparelho." />
+  <meta name="theme-color" content="#0b3d63" />
+  <link rel="canonical" href="https://pcmdireto.me/conheca.html" />
+  <link rel="icon" href="./icones/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="PCM Direto" />
+  <meta property="og:title" content="PCM Direto · Planejamento de Manutenção simples, aberto e eficiente" />
+  <meta property="og:description" content="Plano preventivo, cronograma, execuções, falhas e documentos PCMD. Gratuito, código aberto e com os dados só no seu aparelho." />
+  <meta property="og:url" content="https://pcmdireto.me/conheca.html" />
+  <meta property="og:image" content="https://pcmdireto.me/apresentacao/compartilhar.jpg" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="640" />
+  <meta property="og:image:alt" content="Logo do PCM Direto, slogan e a tela Executar no celular com dados fictícios" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    :root {
+      --azul: #0b3d63; --azul-claro: #dce6f5; --laranja: #d97030; --laranja-texto: #b85c00;
+      --cinza: #64717d; --texto: #1d252c; --fundo: #f4f6f8; --borda: #d5dbe1; --branco: #fff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: var(--texto); background: var(--branco); line-height: 1.55; }
+    a { color: var(--azul); }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--laranja-texto); outline-offset: 2px; }
+    img { max-width: 100%; height: auto; display: block; }
+    .visualmente-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .pular { position: absolute; left: -9999px; }
+    .pular:focus { left: 1rem; top: 1rem; background: var(--branco); padding: .5rem 1rem; z-index: 10; }
+    .largura { max-width: 1120px; margin: 0 auto; padding: 0 1rem; }
+    header.topo { border-bottom: 3px solid var(--laranja); background: var(--branco); }
+    header.topo .largura { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: .75rem; padding-bottom: .75rem; flex-wrap: wrap; }
+    header.topo img { width: 180px; }
+    header.topo nav { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .botao { display: inline-block; padding: .7rem 1.2rem; border-radius: 8px; background: var(--azul); color: var(--branco); text-decoration: none; font-weight: 700; border: 2px solid var(--azul); }
+    .botao.secundario { background: var(--branco); color: var(--azul); }
+    .botao:hover { filter: brightness(1.12); }
+    .sobretitulo { color: var(--laranja-texto); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .8rem; margin: 0 0 .5rem; }
+    h1, h2, h3 { line-height: 1.2; color: var(--texto); }
+    h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); margin: 0 0 1rem; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin: 0 0 1rem; }
+    h3 { font-size: 1.15rem; margin: 0 0 .4rem; }
+    section { padding: 3.5rem 0; }
+    section.cinza { background: var(--fundo); }
+    .heroi { padding-top: 3rem; }
+    .heroi .grade { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.5rem; align-items: center; }
+    .heroi p.lead { font-size: 1.15rem; color: #3a4650; margin: 0 0 1.5rem; }
+    .acoes { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .selo-teste { display: inline-block; background: #fff4c2; border: 1px solid #8a6d00; color: #5c4600; padding: .35rem .7rem; border-radius: 6px; font-size: .9rem; }
+    .moldura { border: 1px solid var(--borda); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(11, 61, 99, .12); background: var(--branco); }
+    .cartoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .cartao { background: var(--branco); border: 1px solid var(--borda); border-radius: 10px; padding: 1.25rem; }
+    .cartao p { margin: 0; color: #3a4650; }
+    .cartao.destaque { border-top: 4px solid var(--azul); }
+    ol.passos { list-style: none; counter-reset: passo; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+    ol.passos li { counter-increment: passo; background: var(--branco); border: 1px solid var(--borda); border-radius: 10px; padding: 1rem; }
+    ol.passos li::before { content: counter(passo); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--laranja); color: var(--branco); font-weight: 700; margin-bottom: .5rem; }
+    ol.passos strong { display: block; margin-bottom: .25rem; }
+    .recurso { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+    .recurso + .recurso { margin-top: 3.5rem; }
+    .recurso.invertido .texto { order: 2; }
+    .recurso .celular { max-width: 300px; margin: 0 auto; border-radius: 22px; border: 8px solid #1d252c; }
+    .recurso ul { padding-left: 1.2rem; margin: .5rem 0 0; }
+    .modelos { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; margin: 1.25rem 0; padding: 0; list-style: none; }
+    .modelos li { background: var(--branco); border: 1px solid var(--borda); border-radius: 8px; padding: .8rem 1rem; }
+    .modelos .codigo { color: var(--laranja-texto); font-weight: 700; font-size: .85rem; letter-spacing: .06em; }
+    .modelos a { margin-right: .75rem; }
+    details { background: var(--branco); border: 1px solid var(--borda); border-radius: 8px; padding: .9rem 1rem; margin-bottom: .6rem; }
+    summary { font-weight: 700; cursor: pointer; }
+    details p { margin: .6rem 0 0; color: #3a4650; }
+    .chamada { background: var(--azul); color: var(--branco); text-align: center; }
+    .chamada h2, .chamada p { color: var(--branco); }
+    .chamada .botao { background: var(--branco); color: var(--azul); border-color: var(--branco); }
+    .chamada .botao.secundario { background: transparent; color: var(--branco); }
+    .chamada a { color: var(--branco); }
+    footer { padding: 2rem 0; font-size: .9rem; color: var(--cinza); border-top: 1px solid var(--borda); }
+    footer p { margin: .3rem 0; }
+    @media (max-width: 900px) {
+      .heroi .grade, .recurso { grid-template-columns: 1fr; }
+      .recurso.invertido .texto { order: 0; }
+      .cartoes { grid-template-columns: 1fr; }
+      ol.passos { grid-template-columns: 1fr 1fr; }
+      .modelos { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      ol.passos { grid-template-columns: 1fr; }
+      header.topo img { width: 150px; }
+      .acoes .botao { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <header class="topo">
+    <div class="largura">
+      <a href="./conheca.html" aria-label="PCM Direto — página de apresentação"><img src="./icones/logo-horizontal.svg" alt="PCM Direto" width="1140" height="235"></a>
+      <nav aria-label="Atalhos">
+        <a class="botao secundario" href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Código aberto</a>
+        <a class="botao" href="./#inicio">Abrir o app</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="heroi">
+      <div class="largura grade">
+        <div>
+          <p class="sobretitulo">Planejamento de Manutenção simples, aberto e eficiente</p>
+          <h1>Do Excel ao plano preventivo da sua fábrica, em minutos.</h1>
+          <p class="lead">O PCM Direto monta o plano de manutenção preventiva a partir da lista de máquinas, de graça, em português e com os dados guardados só no seu aparelho.</p>
+          <div class="acoes">
+            <a class="botao" href="./#inicio">Começar meu PCM</a>
+            <a class="botao secundario" href="./#comunidade">Baixar modelos PCMD</a>
+          </div>
+          <p class="selo-teste"><strong>Versão de teste aberta.</strong> Use, teste e conte o que achou.</p>
+        </div>
+        <div class="moldura">
+          <img src="./apresentacao/semana-pc.webp" width="1280" height="800" alt="Visão geral da manutenção com o realizado da semana, as tarefas vencidas, a carga em horas e as prioridades, usando dados fictícios.">
+        </div>
+      </div>
+    </section>
+
+    <section class="cinza" aria-labelledby="para-quem">
+      <div class="largura">
+        <p class="sobretitulo">Para quem é</p>
+        <h2 id="para-quem">Feito para quem cuida da manutenção no dia a dia</h2>
+        <div class="cartoes">
+          <article class="cartao destaque">
+            <h3>Técnico ou líder de manutenção</h3>
+            <p>Saia da planilha solta e do caderno. Veja em uma tela o que vence na semana e registre cada execução com um toque.</p>
+          </article>
+          <article class="cartao destaque">
+            <h3>Gestor de fábrica pequena</h3>
+            <p>Até 100 ativos, sem assinatura e sem equipe de TI. Documentos padronizados para apresentar à diretoria.</p>
+          </article>
+          <article class="cartao destaque">
+            <h3>Estudante e professor</h3>
+            <p>Um PCM completo para praticar, com uma indústria de exemplo e modelos prontos para estudar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="como-funciona">
+      <div class="largura">
+        <p class="sobretitulo">Como funciona</p>
+        <h2 id="como-funciona">Cinco passos, do cadastro aos documentos</h2>
+        <ol class="passos">
+          <li><strong>Organizar</strong>Cadastre setores e máquinas, ou cole a lista do Excel.</li>
+          <li><strong>Avaliar</strong>Defina a criticidade A, B ou C com cinco notas.</li>
+          <li><strong>Planejar</strong>Confira tarefas, periodicidades e a capacidade da equipe.</li>
+          <li><strong>Executar</strong>Marque o que foi feito e registre as falhas.</li>
+          <li><strong>Documentar</strong>Gere os modelos PCMD preenchidos para revisar e aprovar.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="cinza" aria-labelledby="recursos">
+      <div class="largura">
+        <p class="sobretitulo">No chão de fábrica</p>
+        <h2 id="recursos" class="visualmente-oculto">Recursos</h2>
+        <div class="recurso">
+          <div class="texto">
+            <h3>Abra no celular e marque “Feito hoje”</h3>
+            <p>A lista começa pelo que está vencido e pelo que vence na semana. Busque por TAG, tarefa ou responsável e registre a execução no momento do serviço.</p>
+            <ul>
+              <li>Funciona offline depois de aberto.</li>
+              <li>Pode ser instalado como aplicativo no celular e no computador.</li>
+              <li>Tarefas de segurança aparecem destacadas e não podem ficar menos frequentes.</li>
+            </ul>
+          </div>
+          <img class="celular" src="./apresentacao/executar-cel.webp" width="390" height="844" loading="lazy" alt="Tela Executar no celular com tarefas vencidas, o selo de segurança e o botão Feito hoje.">
+        </div>
+        <div class="recurso invertido">
+          <div class="texto">
+            <h3>Criticidade sem complicação</h3>
+            <p>Cinco critérios de 1 a 3: segurança, qualidade, produção, frequência de falha e custo de reparo. Segurança com nota 3 já define a classe A. Os limites podem ser ajustados por você.</p>
+          </div>
+          <div class="moldura"><img src="./apresentacao/criticidade-pc.webp" width="1280" height="800" loading="lazy" alt="Tela de criticidade com os limites das classes A e B e a avaliação de um compressor."></div>
+        </div>
+        <div class="recurso">
+          <div class="texto">
+            <h3>Documentos PCMD preenchidos</h3>
+            <p>Gere de uma vez as planilhas de controle documental, ativos e criticidade, plano e cronograma e ficha de falha, além dos manuais de gestão de ativos e estratégia de manutenção, com a mesma data de corte.</p>
+          </div>
+          <div class="moldura"><img src="./apresentacao/entrega-pc.webp" width="1280" height="800" loading="lazy" alt="Tela Documentos PCMD para preparar a emissão do pacote completo."></div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="principios">
+      <div class="largura">
+        <p class="sobretitulo">Compromissos</p>
+        <h2 id="principios">Gratuito, aberto e seus dados com você</h2>
+        <div class="cartoes">
+          <article class="cartao">
+            <h3>Gratuito e de código aberto</h3>
+            <p>Licença MIT. Qualquer pessoa ou empresa pode usar, conferir e adaptar, sem assinatura e sem depender de fornecedor.</p>
+          </article>
+          <article class="cartao">
+            <h3>Dados só no seu aparelho</h3>
+            <p>Máquinas, pessoas, execuções e falhas ficam no navegador. Não há login, rastreamento nem envio da base da fábrica para servidor.</p>
+          </article>
+          <article class="cartao">
+            <h3>Honesto com os limites</h3>
+            <p>As periodicidades são uma base genérica a validar com o manual do fabricante. O app organiza o PCM; não certifica conformidade com norma.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cinza" aria-labelledby="modelos">
+      <div class="largura">
+        <p class="sobretitulo">Para baixar</p>
+        <h2 id="modelos">Modelos PCMD gratuitos</h2>
+        <p>Cada modelo tem uma versão em branco e uma preenchida com a Indústria Exemplo. Use sozinhos ou deixe o app preencher.</p>
+        <ul class="modelos">
+          <li><span class="codigo">PCMD-01 · Excel</span><h3>Controle documental</h3><a href="./modelos/PCMD-01-Controle-Documental.xlsx" download>Em branco</a><a href="./modelos/PCMD-01-Controle-Documental-Exemplo.xlsx" download>Exemplo</a></li>
+          <li><span class="codigo">PCMD-02 · Excel</span><h3>Ativos e criticidade</h3><a href="./modelos/PCMD-02-Ativos-Criticidade.xlsx" download>Em branco</a><a href="./modelos/PCMD-02-Ativos-Criticidade-Exemplo.xlsx" download>Exemplo</a></li>
+          <li><span class="codigo">PCMD-03-04 · Excel</span><h3>Plano e cronograma</h3><a href="./modelos/PCMD-03-04-Plano-Cronograma.xlsx" download>Em branco</a><a href="./modelos/PCMD-03-04-Plano-Cronograma-Exemplo.xlsx" download>Exemplo</a></li>
+          <li><span class="codigo">PCMD-05 · Excel</span><h3>Ficha de falha</h3><a href="./modelos/PCMD-05-Ficha-Falha.xlsx" download>Em branco</a><a href="./modelos/PCMD-05-Ficha-Falha-Exemplo.xlsx" download>Exemplo</a></li>
+          <li><span class="codigo">PCMD-W1 · Word</span><h3>Manual de gestão de ativos</h3><a href="./modelos/PCMD-W1-Manual-Gestao-Ativos.docx" download>Em branco</a><a href="./modelos/PCMD-W1-Manual-Gestao-Ativos-Exemplo.docx" download>Exemplo</a></li>
+          <li><span class="codigo">PCMD-W2 · Word</span><h3>Manual de estratégia de manutenção</h3><a href="./modelos/PCMD-W2-Manual-Estrategia-Manutencao.docx" download>Em branco</a><a href="./modelos/PCMD-W2-Manual-Estrategia-Manutencao-Exemplo.docx" download>Exemplo</a></li>
+        </ul>
+        <a class="botao secundario" href="./#comunidade">Ver todos os modelos na comunidade</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="perguntas">
+      <div class="largura">
+        <p class="sobretitulo">Dúvidas</p>
+        <h2 id="perguntas">Perguntas frequentes</h2>
+        <details><summary>Quanto custa?</summary><p>Nada. O PCM Direto é gratuito e de código aberto, sob licença MIT, inclusive para uso em empresas.</p></details>
+        <details><summary>Preciso criar conta ou instalar alguma coisa?</summary><p>Não. Basta abrir no navegador. Se quiser, você pode instalar como aplicativo no celular ou no computador. Conta só é necessária para publicar modelos na comunidade.</p></details>
+        <details><summary>Meus dados vão para algum servidor?</summary><p>Não. Os dados da fábrica ficam no navegador do seu aparelho. Por isso, faça backup em Meus dados antes de limpar o navegador ou trocar de aparelho.</p></details>
+        <details><summary>Funciona sem internet?</summary><p>Sim. Depois de aberto uma vez, o planejamento, a execução e os documentos funcionam offline. Só a comunidade precisa de internet.</p></details>
+        <details><summary>Quantas máquinas cabem?</summary><p>O app foi pensado para uma fábrica com até 100 ativos.</p></details>
+        <details><summary>O plano atende a norma da minha empresa?</summary><p>O app ajuda a organizar o PCM, mas não substitui a avaliação de profissional habilitado nem o texto oficial das normas. As periodicidades são uma base genérica a confirmar com o manual do fabricante.</p></details>
+        <details><summary>Como posso ajudar?</summary><p>Teste e conte o que achou pelo e-mail <a href="mailto:pcmdireto@gmail.com">pcmdireto@gmail.com</a>, proponha modelos na comunidade ou contribua no <a href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">GitHub</a>. Não precisa programar: conferir as tarefas de uma máquina com o manual já ajuda muito. Veja <a href="https://github.com/td9251156-creator/pcm-direto/blob/main/CONTRIBUTING.md#sem-programar" target="_blank" rel="noopener noreferrer">as formas de ajudar</a>; quem contribui entra nos <a href="https://github.com/td9251156-creator/pcm-direto/blob/main/CREDITOS.md" target="_blank" rel="noopener noreferrer">créditos</a>.</p></details>
+      </div>
+    </section>
+
+    <section class="chamada">
+      <div class="largura">
+        <h2>Monte o PCM da sua fábrica hoje</h2>
+        <p>Comece com a Indústria Exemplo e veja o resultado antes de cadastrar suas máquinas.</p>
+        <div class="acoes" style="justify-content:center">
+          <a class="botao" href="./#inicio">Começar meu PCM</a>
+          <a class="botao secundario" href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Ver o código</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="largura">
+      <p>PCM Direto · <a href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Código aberto · MIT</a> · Thiago Oliveira Lima · <a href="mailto:pcmdireto@gmail.com">pcmdireto@gmail.com</a></p>
+      <p>O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante. Imagens com dados fictícios.</p>
+    </div>
+  </footer>
+</body>
+</html>

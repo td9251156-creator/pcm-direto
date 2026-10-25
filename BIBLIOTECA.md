@@ -86,7 +86,7 @@ Para cada tarefa, confira com o manual do fabricante e a sua experiência de PCM
 7. Atualize `origem` e `versao` da tarefa depois de revisar.
 
 Marque `[x]` na coluna OK quando a tarefa estiver revisada.
-<!-- Checklist gerado a partir da biblioteca versão 0.1.0 -->
+<!-- Checklist gerado a partir da biblioteca versão 0.2.0 -->
 
 ### Motor elétrico (MOT)
 
@@ -145,3 +145,44 @@ Marque `[x]` na coluna OK quando a tarefa estiver revisada.
 | [ ] | PRL-08 | Inspecionar barramento ou festoon, coletores de corrente e painel elétrico | Trimestral | Elétrica | 1 | **Sim** |  |
 | [ ] | PRL-09 | Inspecionar trilhos, rodas, batentes e para-choques | Semestral | Mecânica | 3 | **Sim** |  |
 | [ ] | PRL-10 | Inspeção geral da estrutura, fixações e placa de capacidade, por profissional habilitado | Anual | Mecânica | 4 | **Sim** |  |
+
+### Transportador de correia (TRC)
+
+| OK | ID | Tarefa | Periodicidade | Especialidade | Horas | Segurança | Ajuste proposto / fonte consultada |
+|---|---|---|---|---|---|---|---|
+| [ ] | TRC-01 | Testar os dispositivos de parada de emergência (botoeiras e cabo de emergência) | Semanal | Operação | 0.25 | **Sim** |  |
+| [ ] | TRC-02 | Verificar alinhamento da correia (desvio lateral) e estado dos raspadores | Semanal | Operação | 0.25 | Não |  |
+| [ ] | TRC-03 | Inspecionar fixação e estado das proteções de polias, tambores e pontos de agarramento | Mensal | Mecânica | 0.5 | **Sim** |  |
+| [ ] | TRC-04 | Verificar tensão e desgaste da correia e das emendas | Mensal | Mecânica | 0.5 | Não |  |
+| [ ] | TRC-05 | Verificar rolos de carga e de retorno: giro livre, ruído e desgaste | Mensal | Mecânica | 0.5 | Não |  |
+| [ ] | TRC-06 | Verificar nível de óleo e vazamentos do redutor de acionamento | Mensal | Lubrificação | 0.25 | Não |  |
+| [ ] | TRC-07 | Lubrificar mancais dos tambores com o tipo e a quantidade de graxa indicados pelo fabricante | Trimestral | Lubrificação | 0.5 | Não |  |
+| [ ] | TRC-08 | Verificar ruído, vibração e temperatura do conjunto motor e redutor | Trimestral | Preditiva | 0.5 | Não |  |
+| [ ] | TRC-09 | Trocar o óleo do redutor de acionamento | Anual | Lubrificação | 1 | Não |  |
+
+### Ventilador ou exaustor industrial (VEN)
+
+| OK | ID | Tarefa | Periodicidade | Especialidade | Horas | Segurança | Ajuste proposto / fonte consultada |
+|---|---|---|---|---|---|---|---|
+| [ ] | VEN-01 | Verificar ruído e vibração anormal | Mensal | Preditiva | 0.25 | Não |  |
+| [ ] | VEN-02 | Inspecionar fixação e estado das proteções e telas na entrada e na saída de ar | Mensal | Mecânica | 0.25 | **Sim** |  |
+| [ ] | VEN-03 | Inspecionar correias (tensão e desgaste) e polias | Mensal | Mecânica | 0.5 | Não |  |
+| [ ] | VEN-04 | Limpar rotor e carcaça, removendo acúmulo de pó ou gordura | Trimestral | Mecânica | 1 | Não |  |
+| [ ] | VEN-05 | Lubrificar mancais com o tipo e a quantidade de graxa indicados pelo fabricante | Trimestral | Lubrificação | 0.5 | Não |  |
+| [ ] | VEN-06 | Medir a temperatura dos mancais | Trimestral | Preditiva | 0.25 | Não |  |
+| [ ] | VEN-07 | Verificar fixação da base, chumbadores e amortecedores | Semestral | Mecânica | 0.5 | Não |  |
+| [ ] | VEN-08 | Verificar estado de dutos, juntas flexíveis e dampers | Semestral | Mecânica | 1 | Não |  |
+
+### Unidade hidráulica (UHD)
+
+| OK | ID | Tarefa | Periodicidade | Especialidade | Horas | Segurança | Ajuste proposto / fonte consultada |
+|---|---|---|---|---|---|---|---|
+| [ ] | UHD-01 | Verificar nível e aspecto do óleo no reservatório | Semanal | Operação | 0.25 | Não |  |
+| [ ] | UHD-02 | Verificar vazamentos em mangueiras, conexões e cilindros | Semanal | Operação | 0.25 | Não |  |
+| [ ] | UHD-03 | Registrar pressão de trabalho e temperatura do óleo e comparar com os valores de referência | Semanal | Operação | 0.25 | Não |  |
+| [ ] | UHD-04 | Verificar o indicador de saturação do filtro de retorno | Mensal | Mecânica | 0.25 | Não |  |
+| [ ] | UHD-05 | Inspecionar mangueiras: ressecamento, abrasão, dobras e fixação | Mensal | Mecânica | 0.5 | **Sim** |  |
+| [ ] | UHD-06 | Verificar funcionamento da válvula de alívio e dos manômetros | Trimestral | Instrumentação | 0.5 | **Sim** |  |
+| [ ] | UHD-07 | Limpar o trocador de calor (radiador ou resfriador de óleo) | Trimestral | Mecânica | 0.5 | Não |  |
+| [ ] | UHD-08 | Trocar os elementos filtrantes de retorno e de respiro | Semestral | Mecânica | 1 | Não |  |
+| [ ] | UHD-09 | Coletar amostra de óleo para análise ou trocar o óleo conforme o fabricante | Anual | Lubrificação | 2 | Não |  |

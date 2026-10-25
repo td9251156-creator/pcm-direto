@@ -4,6 +4,7 @@ import { identificacaoDaFalha } from '../logica/falha.js';
 import { textoData } from '../logica/cronograma.js';
 import { esc, avisar, baixar, num } from '../ui.js';
 import { campo, selecionarPessoa, tabela, copiaGestao, guardar, valorOpcional, pessoaNome } from './gestao-ui.js';
+import { dataExibida } from '../logica/consulta-execucao.js';
 
 export function telaFalhas(main) {
   const equipamentos = dadosAtuais().equipamentos; const hoje = textoData(new Date());
@@ -12,7 +13,7 @@ export function telaFalhas(main) {
     ${campo('data-falha', 'Data da falha', hoje, 'date', `min="1900-01-01" max="${hoje}" required`)}${campo('sintoma', 'Sintoma observado', '', 'text', 'maxlength="2000" required')}${campo('causa', 'Causa provável (opcional)', '', 'text', 'maxlength="2000"')}${campo('acao', 'Ação tomada (opcional)', '', 'text', 'maxlength="2000"')}${campo('horasParada', 'Horas de parada (opcional)', '', 'number', 'min="0" step="0.01"')}${campo('peca', 'Peça trocada (opcional)', '', 'text', 'maxlength="120"')}${selecionarPessoa('responsavelId', 'Responsável')}
     </div><div class="acoes"><button id="salvar-falha" ${!equipamentos.length ? 'disabled' : ''}>Registrar falha</button><button type="reset" class="secundario">Limpar edição</button></div></form>${!equipamentos.length ? '<p><a href="#equipamentos">Cadastre um equipamento válido para registrar uma falha.</a></p>' : ''}</section>
     <section class="cartao"><h3>Histórico de falhas</h3><button type="button" class="secundario" id="baixar-falhas">Baixar registros (.json)</button>
-    ${tabela(['Data / ativo', 'Sintoma / causa provável', 'Ação / peça', 'Parada / responsável', 'Ações'], estado.gestao.falhas.slice().reverse().map(f => `<tr><td>${esc(f.data)}<br>${esc(f.tag)}${!equipamentos.some(e => e.id === f.equipamentoId) ? '<br>Ativo fora da lista atual' : ''}</td><td>${esc(f.sintoma)}<br><span class="origem">${esc(f.causa || 'Causa não informada')}</span></td><td>${esc(f.acao || 'Não informada')}<br>${esc(f.peca)}</td><td>${f.horasParada === null ? 'Parada não informada' : num(f.horasParada, 2) + ' h'}<br>${esc(pessoaNome(f.responsavelId))}</td><td><button type="button" class="secundario" data-editar-falha="${f.id}">Corrigir registro</button></td></tr>`))}</section></div>`;
+    ${tabela(['Data / ativo', 'Sintoma / causa provável', 'Ação / peça', 'Parada / responsável', 'Ações'], estado.gestao.falhas.slice().reverse().map(f => `<tr><td>${dataExibida(f.data)}<br>${esc(f.tag)}${!equipamentos.some(e => e.id === f.equipamentoId) ? '<br>Ativo fora da lista atual' : ''}</td><td>${esc(f.sintoma)}<br><span class="origem">${esc(f.causa || 'Causa não informada')}</span></td><td>${esc(f.acao || 'Não informada')}<br>${esc(f.peca)}</td><td>${f.horasParada === null ? 'Parada não informada' : num(f.horasParada, 2) + ' h'}<br>${esc(pessoaNome(f.responsavelId))}</td><td><button type="button" class="secundario" data-editar-falha="${f.id}">Corrigir registro</button></td></tr>`))}</section></div>`;
   const form = main.querySelector('#form-falha');
   const ativo = new URLSearchParams(location.hash.split('?')[1]||'').get('ativo');
   if(equipamentos.some(e=>e.id===ativo)){form.elements.equipamentoId.value=ativo;form.elements.sintoma.focus();}

@@ -44,7 +44,7 @@ await executarComRecursos({
   await page.locator('#explorar-modelos').click();assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
   await page.locator('#buscar-modelos').fill('criticidade');assert.equal(await page.locator('#banco-modelos article').count(),1);
   await page.locator('#buscar-modelos').fill('termo-sem-resultados');await page.locator('#limpar-busca').click();assert.equal(await page.locator('#banco-modelos article').count(),6);assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
-  await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),4);
+  await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),biblioteca.tipos.length);
   await page.locator('#buscar-modelos').fill('  ELETRICO rolamentos ');
   assert.equal(await page.locator('#banco-modelos article').count(),1);
   await page.locator('.previa-tarefas summary').focus();
@@ -82,7 +82,7 @@ await executarComRecursos({
   // Atrasa a confirmação da próxima escrita para sair da tela durante o salvamento.
   await page.evaluate(()=>{const prototipo=IDBTransaction.prototype;const original=Object.getOwnPropertyDescriptor(prototipo,'oncomplete');Object.defineProperty(prototipo,'oncomplete',{...original,set(callback){if(this.mode==='readwrite'){Object.defineProperty(prototipo,'oncomplete',original);original.set.call(this,event=>setTimeout(()=>callback.call(this,event),300));}else original.set.call(this,callback);}});});
   await cap.fill('2');await cap.press('Tab');
-  await ir('biblioteca');await page.locator('#importar-json').setInputFiles({name:'invalido.json',mimeType:'application/json',buffer:Buffer.from('null')});await page.waitForFunction(()=>document.querySelector('#mensagens').textContent.includes('Biblioteca não importada'));assert.equal(await page.locator('#tipos > details').count(),4);
+  await ir('biblioteca');await page.locator('#importar-json').setInputFiles({name:'invalido.json',mimeType:'application/json',buffer:Buffer.from('null')});await page.waitForFunction(()=>document.querySelector('#mensagens').textContent.includes('Biblioteca não importada'));assert.equal(await page.locator('#tipos > details').count(),biblioteca.tipos.length);
   await ir('planejar');await page.locator('#rev-elaborador').fill('Pessoa A');await page.locator('#rev-resumo').fill('Plano inicial fictício');await page.locator('#form-revisao button').click();
   assert.equal(await page.locator('#titulo-impacto').evaluate(e=>document.activeElement===e),true);
   await page.locator('#rev-resumo').fill('Plano inicial conferido novamente');assert.equal(await page.locator('#confirmar-revisao').count(),0);await page.locator('#aviso-previa').filter({hasText:'Os campos mudaram'}).waitFor();

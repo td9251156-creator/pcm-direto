@@ -1,6 +1,33 @@
 <p align="center"><img src="public/icones/logo.svg" alt="PCM Direto" width="160"></p>
 
-# PCM Direto
+<h1 align="center">PCM Direto</h1>
+
+<p align="center"><strong>Planejamento de Manutenção simples, aberto e eficiente.</strong></p>
+
+<p align="center">
+  <a href="https://pcmdireto.me/"><strong>Abrir o app</strong></a> ·
+  <a href="https://pcmdireto.me/conheca.html">Conheça o projeto</a> ·
+  <a href="https://pcmdireto.me/#comunidade">Modelos PCMD gratuitos</a> ·
+  <a href="#como-contribuir">Como contribuir</a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-0B3D63" alt="Licença MIT"></a>
+  <img src="https://img.shields.io/badge/dados-s%C3%B3%20no%20aparelho-0B3D63" alt="Dados só no aparelho">
+  <img src="https://img.shields.io/badge/funciona-offline-D97030" alt="Funciona offline">
+  <img src="https://img.shields.io/badge/vers%C3%A3o-de%20teste-B85C00" alt="Versão de teste">
+</p>
+
+O PCM Direto monta o plano de manutenção preventiva da sua fábrica a partir da lista de máquinas,
+de graça, em português e com os dados guardados só no seu aparelho. Para fábricas com até 100 ativos.
+
+<p align="center"><img src="public/apresentacao/semana-pc.webp" alt="Visão geral da manutenção com realizado da semana, vencidas, carga e prioridades, usando dados fictícios" width="820"></p>
+
+| Executar no celular | Criticidade A/B/C | Documentos PCMD |
+|---|---|---|
+| <img src="public/apresentacao/executar-cel.webp" alt="Tela Executar no celular com o botão Feito hoje" width="220"> | <img src="public/apresentacao/criticidade-pc.webp" alt="Tela de criticidade com cinco critérios" width="300"> | <img src="public/apresentacao/entrega-pc.webp" alt="Tela de emissão do pacote PCMD" width="300"> |
+
+## O que o app faz
 
 Ferramenta aberta de Planejamento e Controle de Manutenção, em português, para uma fábrica com até 100 ativos. Interface Gestão, com comunidade na abertura e tema claro.
 
@@ -43,7 +70,8 @@ setor;tipo;descricao;fabricante;modelo
 UTL;compressor_ar;Compressor da linha de ar;Fabricante Exemplo;CX-100
 ```
 
-Tipos aceitos na biblioteca inicial: `motor_eletrico`, `compressor_ar`, `bomba_centrifuga`, `ponte_rolante`.
+Tipos aceitos na biblioteca: `motor_eletrico`, `compressor_ar`, `bomba_centrifuga`, `ponte_rolante`,
+`transportador_correia`, `ventilador_exaustor` e `unidade_hidraulica`.
 O separador pode ser ponto e vírgula, vírgula ou tabulação (o padrão ao copiar do Excel).
 
 ## Interface de gestão
@@ -93,6 +121,22 @@ Para trocar o logo, substitua esses quatro arquivos mantendo os nomes.
 As letras do logo usam a fonte DejaVu Sans Bold (licença livre do projeto DejaVu), convertidas em desenho
 para aparecerem iguais em qualquer aparelho.
 
+## Como contribuir
+
+Não é preciso saber programar. Quem trabalha com manutenção já pode ajudar muito:
+
+- **Testar e contar o que achou:** abra o app, explore o exemplo e escreva para pcmdireto@gmail.com
+  ou [abra uma sugestão](https://github.com/td9251156-creator/pcm-direto/issues/new/choose).
+- **Sugerir uma tarefa ou máquina para a biblioteca:** use o formulário "Sugerir tarefa de manutenção",
+  sempre informando a origem (manual do fabricante, experiência ou norma com versão e data).
+- **Sugerir um artigo para a Central de apoio:** use o formulário "Sugerir artigo".
+- **Relatar um erro:** use o formulário "Relatar um erro", com passos para repetir e dados fictícios.
+- **Compartilhar modelos:** publique modelos técnicos na comunidade do app, sem TAGs ou dados da sua fábrica.
+- **Conversar com a comunidade:** tire dúvidas e troque experiências nas [Discussões](https://github.com/td9251156-creator/pcm-direto/discussions).
+- **Código:** veja [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Quem contribui entra nos [créditos](CREDITOS.md).
+
 ## Biblioteca técnica
 
 As tarefas de manutenção ficam em um único arquivo: [`src/dados/biblioteca.json`](src/dados/biblioteca.json).
@@ -101,7 +145,7 @@ Veja [BIBLIOTECA.md](BIBLIOTECA.md) para entender o formato e o checklist de rev
 ## Documentos do projeto
 
 [ROADMAP.md](ROADMAP.md) · [DECISOES.md](DECISOES.md) · [CONTRIBUTING.md](CONTRIBUTING.md) ·
-[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [LICENSE](LICENSE)
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [CREDITOS.md](CREDITOS.md) · [LICENSE](LICENSE)
 
 [Lista priorizada de melhorias](docs/MELHORIAS.md), com problemas encontrados e próximas rodadas.
 [Histórico das revisões e melhorias](docs/REVISOES.md).

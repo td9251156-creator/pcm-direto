@@ -168,7 +168,8 @@ details.cartao[open] > summary { margin-bottom: .75rem; }
 .tarefa-edicao { border: 1px solid var(--borda); border-radius: 6px; padding: .5rem .75rem .75rem; margin: 0 0 .75rem; }
 .tarefa-edicao legend { padding: 0 .3rem; }
 label.caixa { display: inline-flex; align-items: center; gap: .4rem; font-weight: 600; margin: 0; }
-label.caixa input { width: 22px; height: 22px; min-height: 0; }
+label.caixa input { width: 22px; height: 22px; min-height: 0; flex-shrink: 0; }
+label.caixa.caixa-bloco { display: flex; margin: .9rem 0 .4rem; }
 
 /* Links com cara de botão */
 a.botao { display: inline-flex; align-items: center; text-decoration: none; }

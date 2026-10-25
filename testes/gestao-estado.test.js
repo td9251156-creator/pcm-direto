@@ -192,3 +192,20 @@ it('preserva emissão documental concluída enquanto uma revisão aguarda grava�
   expect((await ativando).ok).toBe(true);expect(await gravando).toBe(true);
   expect(app.estado.programacao.emissoes).toEqual([emissao]);app.carregar();expect(app.estado.programacao.emissoes).toEqual([emissao]);
 });
+
+it('exemplo abre com revisão ativa e tarefas na semana atual, sem alterar a base ao sair',async()=>{
+  const app=await abrir();const { painelDaSemana }=await import('../src/logica/programacao.js');
+  expect(app.estado.programacao.revisoes).toHaveLength(0);
+  await app.demonstrar();
+  expect(app.estado.programacao.revisoes).toHaveLength(1);
+  expect(app.estado.inicio).toBe('2026-10-19');
+  const semana=painelDaSemana(app.estado.programacao,app.estado.gestao.historico,'2026-10-22');
+  expect(semana.vencidas.length+semana.nestaSemana.length).toBeGreaterThan(0);
+  const hoje=painelDaSemana(app.estado.programacao,app.estado.gestao.historico);
+  expect(hoje.vencidas).toHaveLength(3);expect(hoje.concluidas).toBeGreaterThan(0);
+  expect(app.estado.gestao.historico.every(h=>h.data===h.dataPrevista)).toBe(true);
+  app.sairDaDemonstracao();
+  expect(app.estado.programacao.revisoes).toHaveLength(0);
+  expect(app.estado.gestao.historico).toHaveLength(0);
+  expect(app.estado.equipamentos.map(e=>e.id)).toEqual(['eq1']);
+});

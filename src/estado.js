@@ -407,10 +407,10 @@ export function referenciaRevisao(){
     programacao:estado.programacao,historico:estado.gestao.historico});
 }
 
-export async function ativarRevisao(meta,referencia=null) {
+export async function ativarRevisao(meta,referencia=null,hoje=textoData(new Date())) {
   if(revisaoPendente||cancelamentosPendentes.size)return {ok:false,motivo:'Aguarde a gravação pendente e confira o impacto novamente.'};
   if(referencia!==null&&referencia!==referenciaRevisao())return {ok:false,motivo:'O plano ou o histórico mudou. Confira o impacto novamente antes de ativar.'};
-  const r = prepararRevisao(estado.programacao, dadosAtuais(), estado.gestao, { ...meta, capacidade: estado.capacidade });
+  const r = prepararRevisao(estado.programacao, dadosAtuais(), estado.gestao, { ...meta, capacidade: estado.capacidade }, hoje);
   if (!r.ok) return r;
   let concluir;const concluido=new Promise(resolve=>{concluir=resolve;});const geracao=geracaoBase;
   revisaoPendente={programacao:r.programacao,geracao,concluido};
@@ -439,6 +439,15 @@ export async function demonstrar() {
   estado.metadados = { ultimoBackup: '', alteradoEm: '', passo: 1 };
   estado.gestao.organizacao.nome = 'Indústria Exemplo';
   await carregarExemplo();
+  // O exemplo já abre com o plano ativo desde a segunda-feira desta semana, para a Visão geral
+  // e Executar mostrarem tarefas. Fica só na demonstração; a base de trabalho não muda.
+  const segunda = new Date(); segunda.setDate(segunda.getDate() - ((segunda.getDay() + 6) % 7));
+  estado.inicio = textoData(segunda);
+  await ativarRevisao({ id: novoId(), vigencia: estado.inicio, elaborador: 'Técnico Exemplo', resumo: 'Plano preventivo inicial do exemplo' }, null, estado.inicio);
+  // Ocorrências de dias anteriores aparecem feitas na data prevista; três ficam vencidas para mostrar o alerta.
+  const hoje = textoData(new Date());
+  const passadas = ocorrenciasVigentes(estado.programacao).filter(o => o.dataPrevista < hoje);
+  for (const o of passadas.slice(0, Math.max(0, passadas.length - 3))) await registrarOcorrencia(o.id, { data: o.dataPrevista });
 }
 export function sairDaDemonstracao() {
   if (antesDaDemonstracao) aplicarDados(verificarBackup(antesDaDemonstracao, padrao));

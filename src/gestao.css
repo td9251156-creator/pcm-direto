@@ -108,3 +108,13 @@
   #aviso-previa:not(:empty){padding:12px 0;font-weight:700}
   #titulo-impacto:focus{outline:2px solid #d97030;outline-offset:4px}
 }
+/* Texto no lugar do número (ex.: Sem previsão) não deve quebrar no meio da palavra. */
+.indicador strong.indicador-texto{font-size:22px;overflow-wrap:normal}
+/* Tabelas largas no computador: quebrar entre palavras, não dentro delas. */
+@media screen and (min-width:1024px){.cartao th,.cartao td{overflow-wrap:break-word}}
+
+/* Plano Mestre no celular: cada tarefa vira um cartão, sem colunas espremidas. */
+@media screen and (max-width:750px){#lista-plano table,#lista-plano tbody,#lista-plano tr,#lista-plano td{display:block;width:100%;min-width:0}#lista-plano thead{display:none}#lista-plano tr{border:1px solid var(--borda);border-radius:10px;padding:14px;margin:12px 0}#lista-plano td{border:0;text-align:left;padding:5px 0}#lista-plano td:nth-child(2)::before{content:'Frequência: ';font-weight:600}#lista-plano td:nth-child(3)::before{content:'Especialidade: ';font-weight:600}#lista-plano td:nth-child(4) label{position:static!important;width:auto;height:auto;clip-path:none;overflow:visible;display:block;font-weight:600;margin-bottom:4px}#lista-plano td:nth-child(5)::before{content:'Próxima ocorrência: ';font-weight:600}#lista-plano .tabela-rolagem{overflow:visible}}
+@media screen and (max-width:750px){#historico-execucoes table,#historico-execucoes tbody,#historico-execucoes tr,#historico-execucoes td{display:block;width:100%;min-width:0}#historico-execucoes thead{display:none}#historico-execucoes tr{border:1px solid var(--borda);border-radius:10px;padding:14px;margin:12px 0}#historico-execucoes td{border:0;text-align:left;padding:5px 0;overflow-wrap:anywhere}#historico-execucoes td:first-child{font-weight:600}#historico-execucoes td:nth-child(5) button{width:100%}#historico-execucoes .tabela-rolagem{overflow:visible}}
+/* Planejamento mensal: meses e cabeçalhos quebram só entre palavras; a tabela rola se precisar. */
+#resumo-mensal th,#resumo-mensal td{overflow-wrap:normal}#resumo-mensal td:first-child{white-space:nowrap}
