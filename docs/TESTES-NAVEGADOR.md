@@ -85,4 +85,4 @@ fórmulas, validações, impressão, primeiro/último registro e diferença entr
 Compara imagens/desenhos com os originais e recusa modelo de outra versão pelo hash.
 ExcelJS não abre nem o original fornecido com drawing Target absoluto; isso não foi tratado como
 prova de arquivo inválido nem motivou regravação dos originais. XML válido não prova recálculo.
-O roteiro Gestão também baixa as 12 prévias PDF sem internet e compara os bytes com os fornecidos.
+O roteiro Gestão lê as 12 prévias PDF sem internet, compara os bytes com os fornecidos e confere um download por clique. Evita uma rajada artificial de downloads automáticos.

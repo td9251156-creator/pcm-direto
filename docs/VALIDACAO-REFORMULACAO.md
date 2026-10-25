@@ -187,7 +187,7 @@ Contrato remapeia abas/nomes e mantém escopo dos nomes locais de impressão. Em
 versão de integração 2.0.0; o conteúdo dos originais e as emissões anteriores são preservados.
 
 Lint, 223 testes e build aprovados. Roteiro completo de navegador aprovado, incluindo os seis
-documentos preenchidos offline e os 12 downloads de prévias PDF idênticos aos recebidos.
+documentos preenchidos offline e as 12 prévias PDF disponíveis offline idênticas às recebidas e um download por clique.
 Exportação grande no Chromium aprovada: 41 pessoas, 42
 referências, 60 setores, 100 ativos, ocorrências anuais acima de 5.000, 3.101 execuções e 1.101
 falhas. Verifica deslocamento de requisitos, fórmulas/validações/referências, área impressa e
@@ -216,3 +216,8 @@ que a base/backup permanecem válidos, a emissão é preservada e uma resposta t
 tela. Também conferiu metadados alterados sem evento de input e texto escapado no Chromium.
 Não repetiu todo o roteiro grande; essa execução foi feita pelo implementador. Sem Claude Code,
 contas reais ou mudança de esquema. Validações humanas e documentais continuam pendentes.
+
+A primeira CI do pacote passou código/testes/build e falhou esperando um evento de download na
+rajada de PDFs do roteiro no Linux. A conferência passou a ler todos os 12 arquivos pelo worker
+offline e testar um download por clique, preservando a comparação de bytes e sem desativar testes
+ou proteções do navegador. A publicação permanece condicionada à CI completa aprovada.

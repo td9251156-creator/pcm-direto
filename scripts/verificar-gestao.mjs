@@ -68,7 +68,9 @@ await executarComRecursos({
   for(const card of await page.locator('#banco-modelos article').all())await card.locator('summary').click();
   const previas=await page.locator('a[href^="./modelos/previas/"]').evaluateAll(es=>es.map(e=>e.getAttribute('href')));assert.equal(previas.length,12);
   await contexto.setOffline(true);
-  for(const href of previas){const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="${href}"]`).click()]);assert.deepEqual(await readFile(await pdf.path()),await readFile('public/'+href.slice(2)));}
+  // Confere todos os arquivos offline sem simular uma rajada de downloads automáticos.
+  for(const href of previas){const bytes=await page.evaluate(async href=>{const r=await fetch(href);if(!r.ok)throw new Error('Prévia indisponível: '+href);return Array.from(new Uint8Array(await r.arrayBuffer()));},href);assert.deepEqual(Buffer.from(bytes),await readFile('public/'+href.slice(2)),href);}
+  const href=previas[0];const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="${href}"]`).click()]);assert.deepEqual(await readFile(await pdf.path()),await readFile('public/'+href.slice(2)));
   await contexto.setOffline(false);
   assert.equal((await rascunho()).equipamentos.length,0);
   await ir('inicio');await page.locator('#demonstrar').click();await page.locator('#sair-demo').waitFor();assert.equal((await rascunho()).equipamentos.length,0,'Exemplo não pode substituir base local');await page.locator('#sair-demo').click();
