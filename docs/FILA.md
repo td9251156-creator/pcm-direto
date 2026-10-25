@@ -2,6 +2,12 @@
 
 # Fila de evolução
 
+## Tipografia do slogan (24/10/2026)
+
+Ajuste solicitado pelo mantenedor: slogan sem serifa em Arial/Helvetica, peso 700 e espaçamento
+leve entre letras, para aproximar o texto da assinatura visual do logo. Mantidos texto, cor,
+proporção do SVG e linha laranja única. Sem fontes externas ou dependências.
+
 ## Recuperação de uma aba com versão antiga (24/10/2026)
 
 A aba do mantenedor continuava no HTML antigo, com atualização pendente. Reabrir ativou uma
