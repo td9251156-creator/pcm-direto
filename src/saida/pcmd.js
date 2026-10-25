@@ -12,6 +12,11 @@ const data=v=>v?{data:v}:null;
 const sim=v=>v?'Sim':'Não';
 const formatar=v=>v===null||v===undefined||v===''?'A definir':String(v);
 const linhaPlano=t=>`${t.equipamentoId}|${t.tarefaId}`;
+async function conferirModelo(bytes,arquivo){
+  const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(n=>n.toString(16).padStart(2,'0')).join('');
+  const aceitos=arquivo?[contrato.modelos[arquivo]]:Object.entries(contrato.modelos).filter(([n])=>n.endsWith('.docx')).map(([,m])=>m);
+  if(!aceitos.some(m=>m?.sha256===hash))throw new Error('Modelo incompatível com esta versão do app. Termine seu trabalho, feche as abas do PCM Direto e abra novamente. Não limpe seus dados.');
+}
 
 /** Retrato fechado no início da emissão; nenhum await lê o estado vivo depois disso. */
 export function prepararEmissao(estado,metadados){
@@ -28,19 +33,18 @@ function datasets(emissao){
   const {estado:e,revisao:r,meta:m,ocorrencias,historico,falhas}=emissao;
   const nomePessoa=id=>e.gestao.pessoas.find(p=>p.id===id)?.nome??'';
   const o=e.gestao.organizacao;
-  const tipos=new Map(e.biblioteca.tipos.map(t=>[t.id,t]));
-  const tarefas=e.programacao.revisoes.flatMap(rev=>rev.plano.map(t=>({...t,revisaoId:rev.id,responsavelId:rev.responsaveis?.[linhaPlano(t)]??''}))).filter(t=>ocorrencias.some(oc=>oc.revisaoId===t.revisaoId&&oc.equipamentoId===t.equipamentoId&&oc.tarefaId===t.tarefaId)||t.revisaoId===r.id);
+    const tarefas=e.programacao.revisoes.flatMap(rev=>rev.plano.map(t=>({...t,revisaoId:rev.id,responsavelId:rev.responsaveis?.[linhaPlano(t)]??''}))).filter(t=>ocorrencias.some(oc=>oc.revisaoId===t.revisaoId&&oc.equipamentoId===t.equipamentoId&&oc.tarefaId===t.tarefaId)||t.revisaoId===r.id);
   const revisoes=e.programacao.revisoes.map(rev=>({A:String(rev.numero).padStart(2,'0'),B:data(rev.criadaEm),C:rev.resumo,D:rev.elaborador,E:''}));
   const mapas={
     'PCMD-01-Controle-Documental.xlsx':{
       'Lista Mestra':{limite:50,linhas:['01','02','03','04','05','W1','W2'].map((cod,i)=>({A:'PCMD-'+cod,D:m.revisao,E:data(m.dataCorte),F:m.elaborador,G:m.aprovador,I:m.situacao,K:`Revisão de plano ${r.numero}; emissão ${m.dataCorte}`,B:['Lista mestra de documentos','Ativos e criticidade','Plano mestre de manutenção','Cronograma e acompanhamento mensal','Ficha de falha','Manual de Gestão de Ativos','Manual de Estratégia de Manutenção'][i],C:i<5?'Planilha (XLSX)':'Manual (DOCX)'}))},
       'Revisões':{limite:100,linhas:e.programacao.revisoes.flatMap(rev=>['01','02','03','04','05','W1','W2'].map(c=>({A:'PCMD-'+c,B:String(rev.numero).padStart(2,'0'),C:data(rev.criadaEm),D:rev.resumo,E:rev.elaborador})))},
-      'Pessoas':{limite:60,linhas:e.gestao.pessoas.map(p=>({A:p.id,B:p.nome,C:p.funcao,D:p.especialidade,E:sim(p.ativo)}))},
-      'Requisitos':{limite:60,linhas:e.gestao.requisitos.map(q=>({A:q.id,B:q.referencia,C:q.versao,D:data(q.data),E:q.fonte,F:q.status==='verificado'?'Verificado':'Não verificado'}))},
+      'Pessoas':{aba:'Cadastros',inicio:16,limite:20,inserir:true,linhas:e.gestao.pessoas.map(p=>({A:p.id,B:p.nome,C:p.funcao,D:p.especialidade,E:sim(p.ativo)}))},
+      'Requisitos':{aba:'Cadastros',inicio:39,limite:30,linhas:e.gestao.requisitos.map(q=>({A:q.id,B:q.referencia,C:q.versao,D:data(q.data),E:q.fonte,F:q.status==='verificado'?'Verificado':'Não verificado'}))},
     },
     'PCMD-02-Ativos-Criticidade.xlsx':{
-      'Ativos':{limite:300,linhas:r.equipamentos.map(a=>{const notas=e.gestao.criticidade.notas[a.id]??[];return {A:a.id,B:a.tag,C:a.descricao,D:a.tipo,E:tipos.get(a.tipo)?.nome??a.tipo,F:a.fabricante??'',G:a.modelo??'',H:a.setor,I:Number(a.numero),K:notas[0],L:notas[1],M:notas[2],N:notas[3],O:notas[4]};})},
-      'Setores':{limite:30,linhas:[...new Set([...o.setores,...r.equipamentos.map(a=>a.setor)])].map(s=>({A:s,B:s}))},
+      'Ativos':{limite:300,linhas:r.equipamentos.map(a=>{const notas=e.gestao.criticidade.notas[a.id]??[];return {A:a.id,B:a.tag,C:a.descricao,D:a.tipo,F:a.fabricante??'',G:a.modelo??'',H:a.setor,I:Number(a.numero),K:notas[0],L:notas[1],M:notas[2],N:notas[3],O:notas[4]};})},
+      'Setores':{aba:'Cadastros',inicio:23,limite:30,linhas:[...new Set([...o.setores,...r.equipamentos.map(a=>a.setor)])].map(s=>({A:s,B:s}))},
       'Listas':{limite:30,linhas:e.biblioteca.tipos.map(t=>({A:t.id,B:t.nome,C:t.sigla}))},
       'Revisões':{limite:30,linhas:revisoes},
     },
@@ -61,6 +65,7 @@ function datasets(emissao){
 function deslocarFormula(formula,delta){return formula.split(/("(?:[^"]|"")*")/).map((p,i)=>i%2?p:p.replace(/(\$?[A-Z]{1,3})(\$?)(\d+)/g,(_,c,f,n)=>c+f+(f?n:Number(n)+delta))).join('');}
 
 export async function preencherXlsx(bytes,arquivo,emissao){
+  await conferirModelo(bytes,arquivo);
   const info=contrato.modelos[arquivo];if(!info?.abas)throw new Error('Modelo não mapeado.');
   const zip=await JSZip.loadAsync(bytes);const wb=xml(await zip.file('xl/workbook.xml').async('string'));const docs=new Map();
   for(const aba of info.abas)docs.set(aba.nome,xml(await zip.file(aba.arquivo).async('string')));
@@ -79,20 +84,43 @@ export async function preencherXlsx(bytes,arquivo,emissao){
   }
   function formula(doc,ref,texto){escrever(doc,ref,null);const c=indice(doc).cells.get(ref);const f=doc.createElementNS(S,'f');f.textContent=texto;c.appendChild(f);}
   const {mapas}=datasets(emissao);const grupos=mapas[arquivo];
-  for(const [nome,g]of Object.entries(grupos)){
-    const doc=docs.get(nome);const sheetData=todos(doc,S,'sheetData')[0];const fimAntigo=g.limite+6;const fimNovo=Math.max(fimAntigo,g.linhas.length+6);
+  function referenciasExternas(nome,transformar){
+    const seguro=nome.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const padrao=new RegExp("('"+seguro+"'|"+seguro+")!(\\$?[A-Z]{1,3}\\$?\\d+(?::\\$?[A-Z]{1,3}\\$?\\d+)?)",'g');
+    for(const [aba,doc] of docs)if(aba!==nome)for(const f of ['f','formula','formula1','formula2'].flatMap(n=>todos(doc,S,n)))f.textContent=f.textContent.split(/("(?:[^"]|"")*")/).map((p,i)=>i%2?p:p.replace(padrao,(_,prefixo,ref)=>prefixo+'!'+transformar(ref))).join('');
+  }
+  for(const [grupo,g]of Object.entries(grupos)){
+    const nome=g.aba??grupo;const inicio=g.inicio??4;
+    const doc=docs.get(nome);if(!doc)throw new Error('A aba '+nome+' não foi encontrada no modelo.');
+    const sheetData=todos(doc,S,'sheetData')[0];const fimAntigo=inicio+g.limite-1;const fimNovo=Math.max(fimAntigo,g.linhas.length+inicio-1);
     if(fimNovo>1048576)throw new Error('O número de registros excede a capacidade do Excel. Nenhum dado foi truncado.');
     const ultima=[...sheetData.children].find(row=>Number(row.getAttribute('r'))===fimAntigo);
     if(fimNovo>fimAntigo){
       if(!ultima)throw new Error('A linha modelo para ampliação não foi encontrada.');
+      if(g.inserir){
+        const delta=fimNovo-fimAntigo;const mover=ref=>ref.replace(/(\$?[A-Z]{1,3}\$?)(\d+)/g,(_,c,n)=>c+(Number(n)>fimAntigo?Number(n)+delta:n));
+        for(const row of [...sheetData.children])if(Number(row.getAttribute('r'))>fimAntigo){row.setAttribute('r',Number(row.getAttribute('r'))+delta);for(const c of [...row.children])c.setAttribute('r',mover(c.getAttribute('r')));}
+        for(const f of ['f','formula','formula1','formula2'].flatMap(n=>todos(doc,S,n)))f.textContent=f.textContent.split(/("(?:[^"]|"")*")/).map((p,i)=>i%2?p:mover(p)).join('');
+        referenciasExternas(nome,mover);
+        for(const no of todos(wb,S,'definedName'))if(no.textContent.startsWith(`'${nome}'!`))no.textContent=mover(no.textContent);
+        for(const no of [...todos(doc,S,'dataValidation'),...todos(doc,S,'conditionalFormatting'),...todos(doc,S,'autoFilter'),...todos(doc,S,'dimension'),...todos(doc,S,'mergeCell')])for(const attr of ['sqref','ref'])if(no.hasAttribute(attr))no.setAttribute(attr,mover(no.getAttribute(attr)));
+        for(const outro of Object.values(grupos))if(outro!==g&&outro.aba===nome&&outro.inicio>fimAntigo)outro.inicio+=delta;
+      }
+      for(const f of ['f','formula','formula1','formula2'].flatMap(n=>todos(doc,S,n)))f.textContent=f.textContent.replace(new RegExp('(:\\$?[A-Z]{1,3}\\$?)'+fimAntigo+'(?!\\d)','g'),'$1'+fimNovo);
+      referenciasExternas(nome,ref=>ref.replace(new RegExp('(:\\$?[A-Z]{1,3}\\$?)'+fimAntigo+'(?!\\d)','g'),'$1'+fimNovo));
       for(let n=fimAntigo+1;n<=fimNovo;n++){const row=ultima.cloneNode(true);row.setAttribute('r',n);for(const c of [...row.children]){c.setAttribute('r',c.getAttribute('r').replace(/\d+$/,String(n)));const f=todos(c,S,'f')[0];if(f)f.textContent=deslocarFormula(f.textContent,n-fimAntigo);for(const v of todos(c,S,'v'))v.remove();}sheetData.appendChild(row);}
+      for(const row of [...sheetData.children].sort((a,b)=>Number(a.getAttribute('r'))-Number(b.getAttribute('r'))))sheetData.appendChild(row);
+      indices.delete(doc);
       for(const no of todos(wb,S,'definedName'))if(no.textContent.startsWith(`'${nome}'!`))no.textContent=no.textContent.replace(new RegExp('\\$'+fimAntigo+'(?!\\d)','g'),'$'+fimNovo);
       for(const no of [...todos(doc,S,'dataValidation'),...todos(doc,S,'conditionalFormatting'),...todos(doc,S,'autoFilter'),...todos(doc,S,'dimension')])for(const attr of ['sqref','ref'])if(no.hasAttribute(attr))no.setAttribute(attr,no.getAttribute(attr).replace(new RegExp('(?<=\\D)'+fimAntigo+'(?!\\d)','g'),String(fimNovo)));
     }
-    g.linhas.forEach((valores,i)=>Object.entries(valores).forEach(([c,v])=>escrever(doc,c+(i+7),v)));
+    for(const no of todos(wb,S,'definedName'))if(no.getAttribute('name')==='_xlnm.Print_Area'&&no.textContent.startsWith(`'${nome}'!`))no.textContent=no.textContent.replace(/(:\$[A-Z]+\$)(\d+)/g,(_,c,n)=>c+Math.max(Number(n),inicio+g.linhas.length-1));
+    g.linhas.forEach((valores,i)=>Object.entries(valores).forEach(([c,v])=>escrever(doc,c+(i+inicio),v)));
+    // Abaixo de Pessoas há outro cadastro; não o conte como excesso de pessoas.
+    if(arquivo==='PCMD-01-Controle-Documental.xlsx'&&grupo==='Pessoas')formula(docs.get('Config'),'D29',`IF(COUNTA(cad_pessoa_id)=${g.linhas.length},"OK","Verificar: quantidade de pessoas alterada")`);
     if(g.revisao){
-      escrever(doc,'T6','Revisão do plano (ID)');let cols=todos(doc,S,'cols')[0];if(cols){const col=doc.createElementNS(S,'col');col.setAttribute('min','20');col.setAttribute('max','20');col.setAttribute('hidden','1');col.setAttribute('width','24');cols.appendChild(col);}
-      for(let i=7;i<=fimNovo;i++){
+      escrever(doc,'T'+(inicio-1),'Revisão do plano (ID)');let cols=todos(doc,S,'cols')[0];if(cols){const col=doc.createElementNS(S,'col');col.setAttribute('min','20');col.setAttribute('max','20');col.setAttribute('hidden','1');col.setAttribute('width','24');cols.appendChild(col);}
+      for(let i=inicio;i<=fimNovo;i++){
         if(nome==='Plano Mestre')formula(doc,`C${i}`,`IF(OR(A${i}="",B${i}=""),"",T${i}&"|"&A${i}&"|"&B${i})`);
         if(nome==='Ocorrências')formula(doc,`E${i}`,`IF(OR(A${i}="",B${i}=""),"",T${i}&"|"&A${i}&"|"&B${i})`);
         if(nome==='Execuções')formula(doc,`D${i}`,`IF(OR(B${i}="",C${i}=""),"",T${i}&"|"&B${i}&"|"&C${i})`);
@@ -117,7 +145,8 @@ function substituirParagrafos(raiz,valores){
   }
 }
 
-export async function preencherDocx(bytes,emissao){
+export async function preencherDocx(bytes,emissao,arquivo){
+  await conferirModelo(bytes,arquivo);
   const zip=await JSZip.loadAsync(bytes);const {estado:e,revisao:r,meta:m}=emissao;const {tarefas,nomePessoa}=datasets(emissao);const o=e.gestao.organizacao;
   const valores={'organizacao.nome':o.nome,'organizacao.referencial':o.referencial,'documento.revisao':m.revisao,'documento.data':m.dataCorte,'documento.elaborador':m.elaborador,'documento.aprovador':m.aprovador,'documento.situacao':m.situacao,'emissao.data':m.dataCorte,'origem.dados':`PCM Direto · revisão ${r.numero}`,'criticidade.limite_a':e.gestao.criticidade.limites.a,'criticidade.limite_b':e.gestao.criticidade.limites.b,'metas.aderencia':e.gestao.metas.aderencia===null?'A definir':e.gestao.metas.aderencia+'%','metas.disponibilidade':e.gestao.metas.disponibilidade===null?'A definir':e.gestao.metas.disponibilidade+'%'};
   const linhas={

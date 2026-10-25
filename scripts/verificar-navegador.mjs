@@ -5,3 +5,4 @@ await import('./verificar-sessao.mjs');
 await import('./verificar-pdfs-banco.mjs');
 await import('./verificar-pdfs-comunidade.mjs');
 await import('./verificar-historico.mjs');
+await import('./verificar-modelos.mjs');
