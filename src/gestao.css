@@ -100,3 +100,7 @@
   #resumo-ocorrencias:focus,#resumo-historico:focus{outline:2px solid #d97030;outline-offset:4px}
 }
 @media screen and (max-width:1023px){.historico-campo .acoes>button{width:100%}.confirmacao-acao{padding:20px}.confirmacao-acao .acoes>button{flex:1}.filtros-execucao{position:static}}
+/* Texto no lugar do número (ex.: Sem previsão) não deve quebrar no meio da palavra. */
+.indicador strong.indicador-texto{font-size:22px;overflow-wrap:normal}
+/* Tabelas largas no computador: quebrar entre palavras, não dentro delas. */
+@media screen and (min-width:1024px){.cartao th,.cartao td{overflow-wrap:break-word}}
