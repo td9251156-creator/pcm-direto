@@ -155,6 +155,44 @@ it('aguarda cancelamento antes da demonstração e não o desfaz ao voltar para 
   await app.salvar();app.carregar();expect(app.estado.gestao.historico.find(h=>h.id===id).cancelada).toBe(true);
 });
 
+it('recusa ativar com prévia de uma base que mudou e mantém o plano quando a gravação falha',async()=>{
+  const app=await abrir();const referencia=app.referenciaRevisao();
+  app.estado.capacidade.Mecânica=1;
+  const meta={id:'rev-nova',vigencia:'2026-10-22',elaborador:'Pessoa fictícia',resumo:'Teste'};
+  expect((await app.ativarRevisao(meta,referencia)).ok).toBe(false);expect(app.estado.programacao.revisoes).toHaveLength(0);
+  localStorage.setItem=()=>{throw new DOMException('Quota','QuotaExceededError');};
+  const ativando=app.ativarRevisao(meta,app.referenciaRevisao());
+  expect(app.estado.programacao.revisoes).toHaveLength(0);
+  expect((await app.registrarExecucao(app.dadosAtuais().plano[0],{data:'2026-10-20',observacao:''})).ok).toBe(false);
+  expect((await ativando).ok).toBe(false);expect(app.estado.programacao.revisoes).toHaveLength(0);
+  expect(verificarBackup(criarBackup(app.estado),padrao).ok).toBe(true);
+});
+
+it('prévia vence com responsáveis, histórico, biblioteca e virada do dia; demonstração aguarda ativação',async()=>{
+  const app=await abrir();const meta={id:'r1',vigencia:'2026-10-22',elaborador:'Pessoa',resumo:'Teste'};
+  for(const alterar of [()=>{app.estado.gestao.responsaveis['eq1|MOT-01']='p1';},()=>{app.estado.biblioteca.versao+='x';},()=>{app.estado.ajustes['eq1|MOT-01']={ativa:true};},()=>{vi.setSystemTime(new Date('2026-10-23T12:00:00'));}]){
+    const referencia=app.referenciaRevisao();alterar();expect((await app.ativarRevisao(meta,referencia)).ok).toBe(false);
+  }
+  vi.setSystemTime(new Date('2026-10-22T12:00:00'));app.estado.gestao.responsaveis={};
+  const ativando=app.ativarRevisao(meta);const demo=app.demonstrar();expect((await ativando).ok).toBe(true);await demo;app.sairDaDemonstracao();
+  expect(app.estado.programacao.revisoes).toHaveLength(1);expect(verificarBackup(criarBackup(app.estado),padrao).ok).toBe(true);
+  const antesDaExecucao=app.referenciaRevisao();const proxima={...meta,id:'r2'};
+  expect((await app.registrarOcorrencia(app.estado.programacao.ocorrencias[0].id)).ok).toBe(true);
+  expect((await app.ativarRevisao(proxima,antesDaExecucao)).ok).toBe(false);
+  const antesDoCancelamento=app.referenciaRevisao();const cancelando=app.cancelarExecucao(app.estado.gestao.historico[0].id);
+  expect((await app.ativarRevisao(proxima,antesDoCancelamento)).ok).toBe(false);await cancelando;
+  expect((await app.ativarRevisao(proxima,antesDoCancelamento)).ok).toBe(false);
+});
+
+it('preserva emissão documental concluída enquanto uma revisão aguarda gravação',async()=>{
+  const app=await abrir();const meta={id:'r1',vigencia:'2026-10-22',elaborador:'Pessoa',resumo:'Teste'};
+  await app.ativarRevisao(meta);const ativando=app.ativarRevisao({...meta,id:'r2'});
+  const emissao={id:'emissao1',revisaoId:'r1',dataCorte:'2026-10-22',modelo:'PCMD-01',versaoModelo:'1'};
+  app.estado.programacao.emissoes.push(emissao);const gravando=app.salvar();
+  expect((await ativando).ok).toBe(true);expect(await gravando).toBe(true);
+  expect(app.estado.programacao.emissoes).toEqual([emissao]);app.carregar();expect(app.estado.programacao.emissoes).toEqual([emissao]);
+});
+
 it('exemplo abre com revisão ativa e tarefas na semana atual, sem alterar a base ao sair',async()=>{
   const app=await abrir();const { painelDaSemana }=await import('../src/logica/programacao.js');
   expect(app.estado.programacao.revisoes).toHaveLength(0);

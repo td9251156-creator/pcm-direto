@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import { estado,salvar } from '../estado.js';
 import { prepararEmissao,preencherXlsx,preencherDocx } from '../saida/pcmd.js';
-import { MODELOS_DOCUMENTAIS } from './comunidade.js';
+import { MODELOS_DOCUMENTAIS,VERSAO_MODELOS } from './comunidade.js';
 import { telaEntrega } from './entrega.js';
 import { novoId } from '../logica/entrada.js';
 import { textoData } from '../logica/cronograma.js';
@@ -20,13 +20,13 @@ export function telaDocumentos(main){
       const [codigo,,,arquivo,ext]=MODELOS_DOCUMENTAIS[i];progresso.textContent=`Gerando ${codigo} · ${i+1} de 6…`;
       await new Promise(resolve=>requestAnimationFrame(resolve));
       const resposta=await fetch(`./modelos/${arquivo}.${ext}`);if(!resposta.ok)throw new Error(`Modelo ${codigo} indisponível. Aguarde o carregamento offline ou tente conectado.`);
-      const bytes=await resposta.arrayBuffer();const saida=ext==='xlsx'?await preencherXlsx(bytes,`${arquivo}.${ext}`,emissao):await preencherDocx(bytes,emissao);
+      const bytes=await resposta.arrayBuffer();const saida=ext==='xlsx'?await preencherXlsx(bytes,`${arquivo}.${ext}`,emissao):await preencherDocx(bytes,emissao,`${arquivo}.${ext}`);
       zip.file(`${arquivo}-Preenchido.${ext}`,saida);
     }
-    zip.file('LEIA-ME.txt',`PCM Direto · modelos 1.0.0\nPlano revisão ${emissao.revisao.numero}\nData de corte: ${emissao.meta.dataCorte}\nSituação: ${emissao.meta.situacao}\nRecalcule as fórmulas no Excel (Ctrl+Alt+F9) ou LibreOffice (Ctrl+Shift+F9). Confira os campos A definir, a impressão e as pendências.\nAs periodicidades são base genérica a validar com manual do fabricante.\nAs chaves técnicas do PCMD-03/04 incluem revisão para preservar diferentes versões da mesma tarefa.\n`);
+    zip.file('LEIA-ME.txt',`PCM Direto · modelos ${VERSAO_MODELOS}\nPlano revisão ${emissao.revisao.numero}\nData de corte: ${emissao.meta.dataCorte}\nSituação: ${emissao.meta.situacao}\nRecalcule as fórmulas no Excel (Ctrl+Alt+F9) ou LibreOffice (Ctrl+Shift+F9). Confira os campos A definir, a impressão e as pendências.\nAs periodicidades são base genérica a validar com manual do fabricante.\nAs chaves técnicas do PCMD-03/04 incluem revisão para preservar diferentes versões da mesma tarefa.\n`);
     const conteudo=await zip.generateAsync({type:'blob',compression:'DEFLATE'});
     if(estado.programacao.revisoes.some(r=>r.id===emissao.revisao.id)){
-      estado.programacao.emissoes.push(...MODELOS_DOCUMENTAIS.map(([modelo])=>({id:novoId(),modelo,versaoModelo:'1.0.0',revisaoId:emissao.revisao.id,dataCorte:emissao.meta.dataCorte})));
+      estado.programacao.emissoes.push(...MODELOS_DOCUMENTAIS.map(([modelo])=>({id:novoId(),modelo,versaoModelo:VERSAO_MODELOS,revisaoId:emissao.revisao.id,dataCorte:emissao.meta.dataCorte})));
       await salvar();
     }
     baixar(conteudo,`pcm-direto-pacote-${emissao.meta.dataCorte}.zip`,'application/zip');progresso.textContent='Pacote gerado. Confira os arquivos e recalcule as fórmulas antes de usar.';avisar('Pacote PCMD preparado para download.');

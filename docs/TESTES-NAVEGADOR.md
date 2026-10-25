@@ -73,3 +73,16 @@ duas revisões e 76 registros. Restaura pela interface e confere IndexedDB, busc
 ordenação por realização, filtros, paginação e download de todas as páginas. Inclui legado de
 ativo removido, texto escapado, intervalo inválido, Escape/foco na confirmação, troca de tela
 e quota simulada sem alterar o registro persistido nem gerar exceção não tratada.
+O cenário grande também confere a prévia de revisão com 100 ativos, invalidação por edição de
+vigência/elaborador/resumo e retorno ao rascunho sem ativação. O roteiro Gestão ativa a primeira
+revisão após reconferir os campos, verifica foco e testa Voltar ao rascunho.
+
+`verificar-modelos.mjs` usa Vite na porta 4182 e Chromium isolado, sem chamadas externas.
+Executa o gerador real em cópias dos modelos recebidos em 25/10/2026. Confere expansão de blocos
+consolidados, 41 pessoas, 42 referências, 60 setores, 100 ativos com tarefa diária, mais de 5.000
+ocorrências, 3.101 execuções e 1.101 falhas. Os arquivos baixados são lidos como XML no navegador:
+fórmulas, validações, impressão, primeiro/último registro e diferença entre parada vazia e zero.
+Compara imagens/desenhos com os originais e recusa modelo de outra versão pelo hash.
+ExcelJS não abre nem o original fornecido com drawing Target absoluto; isso não foi tratado como
+prova de arquivo inválido nem motivou regravação dos originais. XML válido não prova recálculo.
+O roteiro Gestão lê as 12 prévias PDF sem internet, compara os bytes com os fornecidos e confere um download por clique. Evita uma rajada artificial de downloads automáticos.

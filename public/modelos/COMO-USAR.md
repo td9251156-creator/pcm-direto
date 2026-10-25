@@ -11,8 +11,8 @@ Cada arquivo é independente: baixe só o que for usar. Todos têm uma versão *
 
 | Arquivo | O que tem | Abas |
 |---|---|---|
-| `planilhas/PCMD-01-Controle-Documental.xlsx` | Lista mestra, revisões, organização, pessoas e requisitos | Lista Mestra, Revisões, Organização, Pessoas, Requisitos, Config, Listas |
-| `planilhas/PCMD-02-Ativos-Criticidade.xlsx` | Inventário de ativos e classe A/B/C/Pendente | Ativos, Critérios, Setores, Revisões, Config, Listas |
+| `planilhas/PCMD-01-Controle-Documental.xlsx` | Lista mestra, revisões, organização, pessoas e requisitos | Lista Mestra, Revisões, Cadastros (organização, pessoas e requisitos), Config, Listas |
+| `planilhas/PCMD-02-Ativos-Criticidade.xlsx` | Inventário de ativos e classe A/B/C/Pendente | Ativos, Cadastros (critérios e setores), Revisões, Config, Listas |
 | `planilhas/PCMD-03-04-Plano-Cronograma.xlsx` | Plano mestre, ocorrências, execuções e resumo mensal com gráfico | Plano Mestre, Cronograma, Ocorrências, Execuções, Revisões, Config, Listas |
 | `planilhas/PCMD-05-Ficha-Falha.xlsx` | Registro de falhas | Ficha de Falha, Revisões, Config |
 | `manuais/PCMD-W1-Manual-Gestao-Ativos.docx` | Manual de Gestão de Ativos, com marcadores `{{...}}` | — |
@@ -25,13 +25,13 @@ Nada aqui altera o app, seus dados, exportações, backups ou workflows. O PCM D
 
 ## Planilhas: o básico
 
-- Abra no Excel 2010 ou posterior (ou LibreOffice Calc). Todas as abas seguem o **modelo padrão PCM Direto**: no topo, logo,
-  título, e à direita a revisão, a data e "Elaborado / Aprovado"; abaixo, a faixa azul com os grupos de colunas.
+- Abra no Excel 2010 ou posterior (ou LibreOffice Calc). Todas as abas têm o mesmo cabeçalho do **modelo padrão PCM Direto**
+  (logo, título, revisão e "Elaborado / Aprovado", lidos da aba Config). Um só azul (#0B2A5B) nas planilhas e nos manuais; tabelas com fundo branco.
 - A aba **Config** traz o "como usar", os parâmetros do documento (Elaborado por, Aprovado por, origem dos dados e data de emissão) e as
   conferências (linhas preenchidas, linhas com ERRO e capacidade). O cabeçalho de todas as abas lê esses valores; vazio aparece como *A definir*.
 - A revisão e a data do cabeçalho vêm sozinhas da última linha da aba **Revisões** (no PCMD-01, da linha PCMD-01 da Lista Mestra).
   Registre ali cada revisão do arquivo.
-- Cabeçalho **azul** = preencher; cabeçalho **cinza** = automático (fórmula, não digite). No Plano Mestre, as colunas de referência da
+- Texto **preto** = preencher; texto **cinza** = automático (fórmula, não digite). No Plano Mestre, as colunas de referência da
   biblioteca ficam bloqueadas.
 - Colunas técnicas (chaves, ano, mês, contadores) ficam **ocultas**: continuam calculando e podem ser reexibidas, mas não devem ser
   editadas. A lista completa está no `DICIONARIO-DE-DADOS.md` (campo `coluna_oculta` no contrato).
@@ -46,7 +46,7 @@ Cada execução e falha tem ID próprio. TAG e descrição do histórico ficam c
 
 **Criticidade (PCMD-02).** Cinco notas inteiras de 1 a 3 (Segurança, Qualidade, Produção, Frequência de falha, Custo/tempo de reparo).
 Faltando nota, nota inválida ou limites inválidos → Pendente. Com as cinco: Segurança = 3 → A; senão soma ≥ limite A → A; senão soma ≥ limite B → B;
-senão C. Limites iniciais A = 12 e B = 9 (inteiros, 5 ≤ B < A ≤ 15), na aba Critérios. A classe nunca altera frequências.
+senão C. Limites iniciais A = 12 e B = 9 (inteiros, 5 ≤ B < A ≤ 15), na aba Cadastros. A classe nunca altera frequências.
 
 **Cronograma (PCMD-03/04).** O plano vigente é a fonte; 52 semanas a partir do início, sem calendário ISO. Diária = cinco dias úteis por semana,
 sem feriados, cada dia uma ocorrência com a duração de um dia. Concluída = ao menos uma execução não cancelada vinculada; duplicadas contam uma vez;
@@ -67,13 +67,13 @@ HTTPS e não certifica conformidade. Metas vazias ficam A definir. Não há cál
 
 | Arquivo · aba | Linhas com fórmulas e validações |
 |---|---|
-| PCMD-01 · Lista Mestra / Revisões / Pessoas / Requisitos | 50 / 100 / 60 / 60 |
+| PCMD-01 · Lista Mestra / Revisões / Pessoas / Requisitos | 50 / 100 / 20 / 30 |
 | PCMD-02 · Ativos / Setores | 300 / 30 |
 | PCMD-03/04 · Plano Mestre / Ocorrências / Execuções | 2.000 / 5.000 / 3.000 |
 | PCMD-05 · Ficha de Falha | 1.000 |
 
-Todas as tabelas começam na linha 7. A linha 4 fica vazia enquanto está tudo certo; ela mostra **ATENÇÃO** se houver dados abaixo da
-capacidade e avisa quantas linhas têm `ERRO`. O quadro Conferências do Cronograma também confere Ocorrências e Execuções. Para ampliar:
+Em todas as tabelas o cabeçalho fica na linha 3 e os dados começam na linha 4. O quadro **Conferências** da aba Config mostra
+**ATENÇÃO** se houver dados abaixo da capacidade e quantas linhas têm `ERRO`. O quadro Conferências do Cronograma também confere Ocorrências e Execuções. Para ampliar:
 
 1. No Plano Mestre, desproteja a aba.
 2. Copie a última linha da tabela inteira e cole nas linhas de baixo: fórmulas, formatos e validações vão juntos.

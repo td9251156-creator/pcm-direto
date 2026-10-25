@@ -65,6 +65,13 @@ await executarComRecursos({
   await page.locator('#categoria-documentos').click();
   const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo',exact:true}).first().click()]);
   assert.deepEqual(await readFile(await modelo.path()),await readFile('public/modelos/PCMD-01-Controle-Documental.xlsx'));
+  for(const card of await page.locator('#banco-modelos article').all())await card.locator('summary').click();
+  const previas=await page.locator('a[href^="./modelos/previas/"]').evaluateAll(es=>es.map(e=>e.getAttribute('href')));assert.equal(previas.length,12);
+  await contexto.setOffline(true);
+  // Confere todos os arquivos offline sem simular uma rajada de downloads automáticos.
+  for(const href of previas){const bytes=await page.evaluate(async href=>{const r=await fetch(href);if(!r.ok)throw new Error('Prévia indisponível: '+href);return Array.from(new Uint8Array(await r.arrayBuffer()));},href);assert.deepEqual(Buffer.from(bytes),await readFile('public/'+href.slice(2)),href);}
+  const href=previas[0];const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="${href}"]`).click()]);assert.deepEqual(await readFile(await pdf.path()),await readFile('public/'+href.slice(2)));
+  await contexto.setOffline(false);
   assert.equal((await rascunho()).equipamentos.length,0);
   await ir('inicio');await page.locator('#demonstrar').click();await page.locator('#sair-demo').waitFor();assert.equal((await rascunho()).equipamentos.length,0,'Exemplo não pode substituir base local');await page.locator('#sair-demo').click();
   await ir('dados');await page.locator('#restaurar-backup').setInputFiles({name:'antigo.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(v1))});await page.locator('#confirmar-backup').click();await page.waitForURL('**/#semana');assert.equal((await rascunho()).equipamentos.length,equipamentos.length);
@@ -76,7 +83,11 @@ await executarComRecursos({
   await page.evaluate(()=>{const prototipo=IDBTransaction.prototype;const original=Object.getOwnPropertyDescriptor(prototipo,'oncomplete');Object.defineProperty(prototipo,'oncomplete',{...original,set(callback){if(this.mode==='readwrite'){Object.defineProperty(prototipo,'oncomplete',original);original.set.call(this,event=>setTimeout(()=>callback.call(this,event),300));}else original.set.call(this,callback);}});});
   await cap.fill('2');await cap.press('Tab');
   await ir('biblioteca');await page.locator('#importar-json').setInputFiles({name:'invalido.json',mimeType:'application/json',buffer:Buffer.from('null')});await page.waitForFunction(()=>document.querySelector('#mensagens').textContent.includes('Biblioteca não importada'));assert.equal(await page.locator('#tipos > details').count(),biblioteca.tipos.length);
-  await ir('planejar');await page.locator('#rev-elaborador').fill('Pessoa A');await page.locator('#rev-resumo').fill('Plano inicial fictício');await page.locator('#form-revisao button').click();await page.locator('#confirmar-revisao').click();await page.waitForURL('**/#semana');const inicial=await rascunho();assert.equal(inicial.programacao.revisoes.length,1);assert.ok(inicial.programacao.ocorrencias.length>0);
+  await ir('planejar');await page.locator('#rev-elaborador').fill('Pessoa A');await page.locator('#rev-resumo').fill('Plano inicial fictício');await page.locator('#form-revisao button').click();
+  assert.equal(await page.locator('#titulo-impacto').evaluate(e=>document.activeElement===e),true);
+  await page.locator('#rev-resumo').fill('Plano inicial conferido novamente');assert.equal(await page.locator('#confirmar-revisao').count(),0);await page.locator('#aviso-previa').filter({hasText:'Os campos mudaram'}).waitFor();
+  await page.locator('#form-revisao button').click();await page.locator('#voltar-rascunho').click();assert.equal(await page.locator('#confirmar-revisao').count(),0);
+  await page.locator('#form-revisao button').click();await page.locator('#confirmar-revisao').click();await page.waitForURL('**/#semana');const inicial=await rascunho();assert.equal(inicial.programacao.revisoes.length,1);assert.ok(inicial.programacao.ocorrencias.length>0);
   await ir('executar');await page.locator('#chips-especialidade button').first().focus();await page.locator('#chips-especialidade button').first().press('Enter');assert.equal(await page.evaluate(()=>document.activeElement?.dataset.especialidade),'','Filtro mantém foco após redesenhar');await page.locator('[data-periodo="todas"]').click();await page.locator('[data-feito]').first().click();await page.waitForFunction(()=>document.querySelector('#mensagens').textContent.includes('registrada'));const apos=await rascunho();assert.equal(apos.gestao.historico.length,1);assert.ok(apos.gestao.historico[0].ocorrenciaId);assert.equal(apos.programacao.ocorrencias.length,inicial.programacao.ocorrencias.length);
   await page.locator('[data-cancelar]').first().click();await page.getByRole('alertdialog').getByRole('button',{name:'Cancelar execução',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#mensagens').textContent.includes('cancelada'));assert.equal((await rascunho()).gestao.historico[0].cancelada,true);
   await page.locator('[data-detalhes]').first().click();
