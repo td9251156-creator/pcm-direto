@@ -5,6 +5,7 @@ import { chaveAjuste } from '../logica/plano.js';
 import { textoData } from '../logica/cronograma.js';
 import { esc, num } from '../ui.js';
 import { copiaGestao, guardar, pessoasOpcoes, tabela } from './gestao-ui.js';
+import { dataExibida } from '../logica/consulta-execucao.js';
 
 export function telaPlano(main) {
   const dados = dadosAtuais(); const hoje = textoData(new Date());
@@ -17,7 +18,7 @@ export function telaPlano(main) {
     lista.innerHTML = tabela(['Ativo / atividade', 'Frequência / horas', 'Especialidade', 'Responsável', 'Próxima ocorrência'], dados.plano.filter(l => l.ativa && `${l.tag} ${l.descricao} ${l.especialidade}`.toLocaleLowerCase('pt-BR').includes(busca)).map(l => {
       const chave = chaveAjuste(l.equipamentoId, l.tarefaId);
       const proxima = previstas.find(o => o.equipamentoId === l.equipamentoId && o.tarefaId === l.tarefaId && o.dataPrevista >= hoje && !concluidas.has(o.chave));
-      return `<tr><td><strong>${esc(l.tag)}</strong> · ${esc(l.tarefaId)}<br>${esc(l.descricao)}${l.seguranca ? ' <span class="selo-seguranca">SEGURANÇA</span>' : ''}<div class="origem">${esc(l.origem)} · versão ${esc(l.versao)}</div></td><td>${esc(l.periodicidade)}<br>${num(l.duracaoHoras, 2)} h por execução</td><td>${esc(l.especialidade)}</td><td><label class="oculto" for="resp-${l.equipamentoId}-${l.tarefaId}">Responsável por ${esc(l.tag)} ${esc(l.tarefaId)}</label><select id="resp-${l.equipamentoId}-${l.tarefaId}" data-chave="${esc(chave)}">${pessoasOpcoes(estado.gestao.responsaveis[chave])}</select></td><td>${proxima?.dataPrevista || 'Sem ocorrência futura neste ciclo'}</td></tr>`;
+      return `<tr><td><strong>${esc(l.tag)}</strong> · ${esc(l.tarefaId)}<br>${esc(l.descricao)}${l.seguranca ? ' <span class="selo-seguranca">SEGURANÇA</span>' : ''}<div class="origem">${esc(l.origem)} · versão ${esc(l.versao)}</div></td><td>${esc(l.periodicidade)}<br>${num(l.duracaoHoras, 2)} h por execução</td><td>${esc(l.especialidade)}</td><td><label class="oculto" for="resp-${l.equipamentoId}-${l.tarefaId}">Responsável por ${esc(l.tag)} ${esc(l.tarefaId)}</label><select id="resp-${l.equipamentoId}-${l.tarefaId}" data-chave="${esc(chave)}">${pessoasOpcoes(estado.gestao.responsaveis[chave])}</select></td><td>${proxima ? dataExibida(proxima.dataPrevista) : 'Sem ocorrência futura neste ciclo'}</td></tr>`;
     }), 'Nenhuma tarefa ativa com esses filtros.');
   }
   mostrar();
