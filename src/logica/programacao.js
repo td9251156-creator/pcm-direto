@@ -45,21 +45,24 @@ export function validarProgramacao(p) {
   return true;
 }
 
-export function idsConcluidos(programacao, historico) {
-  const resultado = new Set();
+export function conclusoesPorOcorrencia(programacao, historico) {
+  const resultado = new Map();
+  function incluir(id,h){if(!resultado.has(id)||h.data>=resultado.get(id).data)resultado.set(id,h);}
   const porId = new Map(programacao.ocorrencias.map(o => [o.id, o]));
   const porChave = new Map(programacao.ocorrencias.filter(o => o.situacao === 'prevista').map(o => [chave(o), o.id]));
   for (const h of historico) {
     if (h.cancelada) continue;
     if (h.ocorrenciaId) {
       const o = porId.get(h.ocorrenciaId);
-      if (o && o.equipamentoId === h.equipamentoId && o.tarefaId === h.tarefaId && o.dataPrevista === h.dataPrevista) resultado.add(h.ocorrenciaId);
+      if (o && o.equipamentoId === h.equipamentoId && o.tarefaId === h.tarefaId && o.dataPrevista === h.dataPrevista) incluir(h.ocorrenciaId,h);
     }
     // Só o vínculo explícito anterior é aceito; nunca inferir da data realizada.
-    else if (h.dataPrevista && porChave.has(chave(h))) resultado.add(porChave.get(chave(h)));
+    else if (h.dataPrevista && porChave.has(chave(h))) incluir(porChave.get(chave(h)),h);
   }
   return resultado;
 }
+
+export function idsConcluidos(programacao,historico){return new Set(conclusoesPorOcorrencia(programacao,historico).keys());}
 
 /** Prévia pura; não muda rascunho, revisão nem histórico. */
 export function prepararRevisao(programacao, dados, gestao, metadados, hoje = textoData(new Date())) {

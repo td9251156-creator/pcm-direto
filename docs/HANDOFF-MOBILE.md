@@ -27,9 +27,11 @@ Tarefas e PDFs não foram modificados. Edição e importação continuam em Cada
 
 ## Limites e continuidade
 
-A referência foi adaptada aos fluxos existentes. Confirmações destrutivas continuam nativas;
-não há novo comando Desfazer. Biblioteca continua editável, sem substituir os campos por tabela de consulta.
-A lista Concluídas mantém a ordenação por previsão; a data realizada permanece no histórico.
+A referência foi adaptada aos fluxos existentes. Cancelar execução usa um diálogo do app baseado
+no elemento nativo dialog, com Voltar em foco e registro preservado. Não há novo comando Desfazer.
+Biblioteca continua editável, sem substituir os campos por tabela de consulta.
+A lista Concluídas agora ordena pela data realizada e a exibe também no painel de detalhes.
+Ocorrências têm busca e carregamento progressivo; histórico oferece filtros, páginas e consulta JSON.
 A barra inferior reserva comunidade em Mais para manter cinco acessos da rotina.
 Validação em aparelho físico, leitor de tela e documentos em Office continua pendente.
 
@@ -40,3 +42,7 @@ Novos cenários: expansão pelo teclado, painel/data rápida/Escape/retorno de f
 cancelamento preservado, resposta atrasada após troca de tela, busca de ativos, falha com ativo
 preenchido e layouts de celular/computador. Revisão independente reproduziu e confirmou correções
 de foco e de alteração de filtros durante uma gravação. Dados e contas reais não foram usados.
+
+Complemento de execução/histórico: 216 testes, lint, build e roteiro completo aprovados.
+Cenário de interface com 100 ativos, plano anual, duas revisões, filtros, paginação e quota.
+Revisão independente confirmou a preservação ao cancelar, editar outro cadastro e usar o exemplo.

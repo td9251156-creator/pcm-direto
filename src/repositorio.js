@@ -39,9 +39,15 @@ export function abrirRepositorio({ indexedDB = globalThis.indexedDB, nome = 'pcm
               if ((anterior?.sequencia ?? 0) !== sequenciaEsperada) {
                 motivo = new Error('Outra aba alterou os dados. Baixe suas alterações e reabra o aplicativo antes de continuar.'); tx.abort(); return;
               }
-              if (anterior && recuperarAnterior) store.put(anterior, `recuperacao:${anterior.sequencia}`);
-              novaSequencia = sequenciaEsperada + 1;
-              store.put({ formato: FORMATO_BASE, sequencia: novaSequencia, dados: structuredClone(dados) }, 'principal');
+              try {
+                if (anterior && recuperarAnterior) store.put(anterior, `recuperacao:${anterior.sequencia}`);
+                novaSequencia = sequenciaEsperada + 1;
+                store.put({ formato: FORMATO_BASE, sequencia: novaSequencia, dados: structuredClone(dados) }, 'principal');
+              } catch (erro) {
+                motivo = erro;
+                // Um erro síncrono no callback também precisa abortar toda a transação.
+                try { tx.abort(); } catch { /* Já abortada; onabort informa a falha. */ }
+              }
             };
             tx.oncomplete = () => ok(novaSequencia);
             tx.onabort = () => falha(motivo ?? tx.error ?? new Error('A gravação foi interrompida. Os dados anteriores foram mantidos.'));

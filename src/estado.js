@@ -26,6 +26,12 @@ let ultimaRemocao = null;
 let repositorio = null;
 let sequencia = 0;
 let fila = Promise.resolve();
+const cancelamentosPendentes = new Map();
+async function esperarCancelamentos() {
+  while(cancelamentosPendentes.size)await Promise.all([...cancelamentosPendentes.values()].map(p=>p.concluido));
+}
+let geracaoBase=0;
+const vinculoExecucao=(e,previsao)=>`${e.equipamentoId}|${e.tarefaId}|${previsao||''}`;
 let persistenciaBloqueada = false;
 let antesDaDemonstracao = null;
 export let motivoArmazenamento = '';
@@ -96,6 +102,7 @@ export function listaExemplo() {
 
 /** Lê o que está salvo. Na primeira abertura (nada salvo), carrega o exemplo. */
 export function carregar() {
+  geracaoBase++;
   ultimaRemocao = null;
   Object.assign(armazenamento, { rascunho: true, biblioteca: true, leitura: true });
   if (!recuperarTransacao()) armazenamento.leitura = false;
@@ -139,6 +146,7 @@ export function carregar() {
 export async function restaurarBackup(arquivo) {
   const r = verificarBackup(arquivo, padrao);
   if (!r.ok) return r;
+  await esperarCancelamentos();
   if (repositorio) {
     const anterior = criarBackup(estado);
     aplicarDados(r);
@@ -159,8 +167,14 @@ export async function salvar(opcoes = {}) {
   if (antesDaDemonstracao) return true; // O exemplo nunca substitui a base de trabalho.
   if (!opcoes.semAlteracao) estado.metadados.alteradoEm = new Date().toISOString();
   if (persistenciaBloqueada) { armazenamento.rascunho = false; return false; }
+  const dados = criarBackup(estado);
+  // Todas as cópias enfileiradas incluem o cancelamento; a tela só o recebe após gravar.
+  const pendentes=new Set([...cancelamentosPendentes].filter(([,p])=>p.geracao===geracaoBase).map(([id])=>id));
+  if(pendentes.size){
+    dados.rascunho.gestao.historico=dados.rascunho.gestao.historico.map(h=>pendentes.has(h.id)?{...h,cancelada:true}:h);
+    dados.rascunho.execucoes=ultimasExecucoes(dados.rascunho.gestao.historico,dados.rascunho.equipamentos);
+  }
   if (repositorio) {
-    const dados = criarBackup(estado);
     const tarefa = fila.then(async () => {
       if (persistenciaBloqueada) return false;
       try {
@@ -178,18 +192,7 @@ export async function salvar(opcoes = {}) {
   }
   try {
     if (!prepararGravacao()) { armazenamento.rascunho = false; return false; }
-    localStorage.setItem(CHAVE, JSON.stringify({
-      equipamentos: estado.equipamentos,
-      ajustes: estado.ajustes,
-      execucoes: estado.execucoes,
-      exemplo: estado.exemplo,
-      inicio: estado.inicio,
-      capacidade: estado.capacidade,
-      gestao: estado.gestao,
-      programacao: estado.programacao,
-      metadados: estado.metadados,
-      salvoEm: new Date().toISOString(),
-    }));
+    localStorage.setItem(CHAVE, JSON.stringify({...dados.rascunho,salvoEm:new Date().toISOString()}));
     armazenamento.rascunho = true;
     return true;
   } catch {
@@ -304,6 +307,7 @@ export async function atualizarGestao(nova) {
 
 /** Registra cada execução sem alterar frequência ou planejamento. */
 export async function registrarExecucao(linha, alteracao) {
+  if([...cancelamentosPendentes.values()].some(p=>p.geracao===geracaoBase&&p.vinculo===vinculoExecucao(linha,alteracao.dataPrevista)))return {ok:false,motivo:'Aguarde o cancelamento desta ocorrência terminar antes de registrar novamente.'};
   const r = marcarExecucao(estado.execucoes, linha, { ...alteracao, concluida: true });
   if (!r.ok) return r;
   const dataPrevista = alteracao.dataPrevista || '';
@@ -327,25 +331,39 @@ export async function registrarExecucao(linha, alteracao) {
   return { ok: true, guardado: await salvar() };
 }
 
-function atualizarUltimasExecucoes() {
+function ultimasExecucoes(historico,equipamentos) {
   const ultimas = {};
-  const ativos = new Set(estado.equipamentos.map(e => e.id));
-  for (const h of estado.gestao.historico) {
+  const ativos = new Set(equipamentos.map(e => e.id));
+  for (const h of historico) {
     if (h.cancelada || !ativos.has(h.equipamentoId)) continue;
     const chave = chaveAjuste(h.equipamentoId, h.tarefaId);
     if (!ultimas[chave] || h.data >= ultimas[chave].data) ultimas[chave] = { data: h.data, observacao: h.observacao };
   }
-  estado.execucoes = ultimas;
+  return ultimas;
 }
+function atualizarUltimasExecucoes(){estado.execucoes=ultimasExecucoes(estado.gestao.historico,estado.equipamentos);}
 
 export async function cancelarExecucao(id) {
-  if (!estado.gestao.historico.some(h => h.id === id && !h.cancelada)) return { ok: false, motivo: 'Registro não encontrado ou já cancelado.' };
-  estado.gestao = { ...estado.gestao, historico: estado.gestao.historico.map(h => h.id === id ? { ...h, cancelada: true } : h) };
-  atualizarUltimasExecucoes();
-  return { ok: true, guardado: await salvar() };
+  const anterior=estado.gestao.historico.find(h=>h.id===id&&!h.cancelada);
+  if(!anterior||cancelamentosPendentes.has(id))return {ok:false,motivo:'Registro não encontrado, já cancelado ou aguardando gravação.'};
+  const geracao=geracaoBase;
+  let concluir;
+  const concluido=new Promise(resolve=>{concluir=resolve;});
+  cancelamentosPendentes.set(id,{vinculo:vinculoExecucao(anterior,anterior.dataPrevista),geracao,concluido});
+  try{
+    const guardado=await salvar();
+    if(!guardado)return {ok:false,guardado:false,motivo:'Cancelamento não guardado. O registro anterior foi mantido. Baixe um backup antes de sair.'};
+    if(geracaoBase===geracao){
+      estado.gestao={...estado.gestao,historico:estado.gestao.historico.map(h=>h.id===id?{...h,cancelada:true}:h)};
+      atualizarUltimasExecucoes();
+    }
+    return {ok:true,guardado:true};
+  }catch{return {ok:false,guardado:false,motivo:'Não foi possível guardar o cancelamento. O registro anterior foi mantido.'};}
+  finally{cancelamentosPendentes.delete(id);concluir();}
 }
 
 function aplicarDados(r) {
+  geracaoBase++;
   Object.assign(estado, copia(r.rascunho), { biblioteca: copia(r.biblioteca),
     execucoes: copia(r.rascunho.execucoes ?? {}),
     bibliotecaEditada: true, programacao: copia(r.rascunho.programacao ?? criarProgramacao()),
@@ -397,6 +415,8 @@ export async function registrarOcorrencia(id, alteracao = {}) {
 }
 
 export async function demonstrar() {
+  await esperarCancelamentos();
+  geracaoBase++;
   if (!antesDaDemonstracao) antesDaDemonstracao = criarBackup(estado);
   estado.gestao = criarGestao(); estado.programacao = criarProgramacao();
   estado.biblioteca = copia(padrao); estado.inicio = textoData(proximaSegunda()); estado.capacidade = {};

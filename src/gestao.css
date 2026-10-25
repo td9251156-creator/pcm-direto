@@ -88,3 +88,15 @@
   .topo .marca img{display:block;width:100%;height:auto;aspect-ratio:1140 / 235;object-fit:contain}
   .topo .marca .marca-slogan{display:block;margin:6px 0 0;padding:0;border-top:0;color:#0b3d63;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;line-height:1.5;letter-spacing:.015em;text-align:center;text-decoration:none;white-space:normal;overflow-wrap:normal}
 }
+
+@media screen{
+  #buscar-ocorrencias,.historico-campo input,.historico-campo select{width:100%;box-sizing:border-box}
+  .historico-campo label{display:block;margin-top:12px}.historico-campo .grade.duas{gap:12px;margin-top:0}
+  .historico-campo .grade.duas>div{min-width:0}.historico-campo .acoes{margin-top:12px}
+  .filtros-execucao .periodos{margin-top:12px}.paginacao{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;font-size:13px}
+  .confirmacao-acao{width:min(440px,calc(100% - 32px));max-height:85dvh;overflow:auto;box-sizing:border-box;border:0;border-radius:16px;padding:24px;background:#fff;color:#111;box-shadow:0 12px 36px #0003}
+  .confirmacao-acao::backdrop{background:#1117}.confirmacao-acao h2{font-size:22px;margin:0 0 16px}.confirmacao-acao .acoes{justify-content:flex-end;flex-wrap:wrap}
+  button.perigo{background:#a00000;border-color:#a00000;color:white}.confirmacao-acao p{overflow-wrap:anywhere}#erro-painel{color:#a00000}
+  #resumo-ocorrencias:focus,#resumo-historico:focus{outline:2px solid #d97030;outline-offset:4px}
+}
+@media screen and (max-width:1023px){.historico-campo .acoes>button{width:100%}.confirmacao-acao{padding:20px}.confirmacao-acao .acoes>button{flex:1}.filtros-execucao{position:static}}
