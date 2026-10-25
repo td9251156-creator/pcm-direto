@@ -397,8 +397,8 @@ export async function inicializarPersistencia() {
   }
 }
 
-export async function ativarRevisao(meta) {
-  const r = prepararRevisao(estado.programacao, dadosAtuais(), estado.gestao, { ...meta, capacidade: estado.capacidade });
+export async function ativarRevisao(meta, hoje = textoData(new Date())) {
+  const r = prepararRevisao(estado.programacao, dadosAtuais(), estado.gestao, { ...meta, capacidade: estado.capacidade }, hoje);
   if (!r.ok) return r;
   const anterior = estado.programacao; estado.programacao = r.programacao;
   const guardado = await salvar();
@@ -423,6 +423,15 @@ export async function demonstrar() {
   estado.metadados = { ultimoBackup: '', alteradoEm: '', passo: 1 };
   estado.gestao.organizacao.nome = 'Indústria Exemplo';
   await carregarExemplo();
+  // O exemplo já abre com o plano ativo desde a segunda-feira desta semana, para a Visão geral
+  // e Executar mostrarem tarefas. Fica só na demonstração; a base de trabalho não muda.
+  const segunda = new Date(); segunda.setDate(segunda.getDate() - ((segunda.getDay() + 6) % 7));
+  estado.inicio = textoData(segunda);
+  await ativarRevisao({ id: novoId(), vigencia: estado.inicio, elaborador: 'Técnico Exemplo', resumo: 'Plano preventivo inicial do exemplo' }, estado.inicio);
+  // Ocorrências de dias anteriores aparecem feitas na data prevista; três ficam vencidas para mostrar o alerta.
+  const hoje = textoData(new Date());
+  const passadas = ocorrenciasVigentes(estado.programacao).filter(o => o.dataPrevista < hoje);
+  for (const o of passadas.slice(0, Math.max(0, passadas.length - 3))) await registrarOcorrencia(o.id, { data: o.dataPrevista });
 }
 export function sairDaDemonstracao() {
   if (antesDaDemonstracao) aplicarDados(verificarBackup(antesDaDemonstracao, padrao));

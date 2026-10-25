@@ -16,7 +16,7 @@ function demo(main,ir){if(emDemonstracao()){const faixa=document.createElement('
 export function telaBoasVindas(main,ir){
   main.innerHTML=titulo('PCM Direto','Manutenção planejada, do começo ao acompanhamento.','Organize sua fábrica, prepare o plano e acompanhe cada execução. Seus dados ficam neste aparelho.')+`<section class="cartao boas-vindas"><h3>${estado.equipamentos.length?'Seu trabalho está aqui':'Comece pela sua fábrica'}</h3><p>Cadastro, plano, execução, falhas e documentos em um só lugar.</p><div class="acoes"><button id="comecar">${estado.programacao.revisoes.length?'Abrir visão geral':estado.equipamentos.length?'Continuar meu PCM':'Começar meu PCM'}</button><button id="demonstrar" class="secundario">Explorar o exemplo</button><a href="#dados">Meus dados e backup</a></div></section><section class="grade tres"><article class="cartao"><h3>1. Organizar</h3><p>Setores, ativos, criticidade e responsáveis.</p></article><article class="cartao"><h3>2. Planejar</h3><p>Tarefas e capacidade, com revisões preservadas.</p></article><article class="cartao"><h3>3. Acompanhar</h3><p>Execuções, falhas e documentos PCMD.</p></article></section>`;
   main.querySelector('#comecar').onclick=()=>ir(estado.programacao.revisoes.length?'semana':'assistente');
-  main.querySelector('#demonstrar').onclick=async()=>{await demonstrar();ir('assistente');};demo(main,ir);
+  main.querySelector('#demonstrar').onclick=async()=>{await demonstrar();ir('semana');};demo(main,ir);
 }
 
 export function telaAssistente(main,ir){
