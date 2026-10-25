@@ -28,6 +28,13 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:fileURLToPath
   const persistido=()=>p.evaluate(()=>new Promise((resolve,reject)=>{const a=indexedDB.open('pcm-direto:base:v3',1);a.onerror=()=>reject(a.error);a.onsuccess=()=>{const db=a.result;const t=db.transaction('base');const q=t.objectStore('base').get('principal');t.oncomplete=()=>{db.close();resolve(q.result.dados.rascunho);};};}));
   await p.goto('http://127.0.0.1:4181/#dados');await p.locator('#restaurar-backup').setInputFiles({name:'fabrica-ficticia-100.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});await p.locator('#confirmar-backup').click();await p.waitForURL('**/#semana');
   const salvo=await persistido();assert.equal(salvo.equipamentos.length,100);assert.equal(salvo.programacao.revisoes.length,2);assert.equal(salvo.gestao.historico.length,76);
+  await p.evaluate(()=>{location.hash='planejar';});await p.locator('#rev-elaborador').fill('Pessoa fictícia');await p.locator('#rev-resumo').fill('Conferência anual fictícia');
+  for(const [id,valor] of [['rev-vigencia','2027-01-03'],['rev-elaborador','Outra pessoa fictícia'],['rev-resumo','Resumo alterado']]){
+    await p.locator('#form-revisao button').click();await p.locator('#titulo-impacto').waitFor();
+    await p.locator('#'+id).fill(valor);assert.equal(await p.locator('#confirmar-revisao').count(),0,'Editar '+id+' invalida a prévia');
+  }
+  await p.locator('#form-revisao button').click();await p.getByText('Nenhuma nova ocorrência neste período.',{exact:false}).waitFor();
+  await p.screenshot({path:'artifacts/previa-revisao-celular.png'});await p.locator('#voltar-rascunho').click();assert.equal((await persistido()).programacao.revisoes.length,2,'Conferir e voltar não ativa revisão');
   await ir('executar');assert.ok(await p.locator('[data-item-ocorrencia]').count()<=20,'Lista grande começa limitada a 20');
   await p.locator('#buscar-ocorrencias').fill('termo-impossivel');await p.getByRole('heading',{name:'Nenhuma ocorrência com esses filtros'}).waitFor();await p.locator('#limpar-ocorrencias').click();
   await p.locator('[data-periodo=feitas]').click();

@@ -1,7 +1,8 @@
-import { estado,dadosAtuais,salvar,demonstrar,sairDaDemonstracao,emDemonstracao,ativarRevisao,registrarOcorrencia,restaurarBackup,BIBLIOTECA_PADRAO } from '../estado.js';
+import { telaPlanejar } from './planejar.js';
+export { telaPlanejar };
+import { estado,dadosAtuais,salvar,demonstrar,sairDaDemonstracao,emDemonstracao,registrarOcorrencia,restaurarBackup,BIBLIOTECA_PADRAO } from '../estado.js';
 import { criarBackup,verificarBackup } from '../logica/backup.js';
-import { novoId } from '../logica/entrada.js';
-import { prepararRevisao,painelDaSemana,idsConcluidos } from '../logica/programacao.js';
+import { painelDaSemana,idsConcluidos } from '../logica/programacao.js';
 import { textoData } from '../logica/cronograma.js';
 import { esc,num,avisar,baixar } from '../ui.js';
 import { telaEquipamentos } from './equipamentos.js';
@@ -9,7 +10,6 @@ import { telaCriticidade } from './criticidade.js';
 import { abrirExecucao } from './campo-ui.js';
 
 const titulo=(rotulo,texto,descricao)=>`<header class="cabecalho-tela"><p class="sobretitulo">${rotulo}</p><h2>${texto}</h2><p class="origem">${descricao}</p></header>`;
-const atalhos=()=>`<div class="acoes"><a href="#equipamentos">Equipamentos</a><a href="#criticidade">Criticidade</a><a href="#plano">Responsáveis</a><a href="#revisao">Tarefas e capacidade</a><a href="#mensal">Mensal</a></div>`;
 function demo(main,ir){if(emDemonstracao()){const faixa=document.createElement('section');faixa.className='cartao aviso-demo';faixa.innerHTML='<strong>Demonstração · dados fictícios</strong><p>As alterações do exemplo não substituem sua base de trabalho.</p><button id="sair-demo" class="secundario">Voltar aos meus dados</button>';main.prepend(faixa);faixa.querySelector('button').onclick=()=>{sairDaDemonstracao();ir('inicio');};}}
 
 export function telaBoasVindas(main,ir){
@@ -32,13 +32,6 @@ export function telaAssistente(main,ir){
     if(passo===2&&!dadosAtuais().equipamentos.length){avisar('Cadastre ao menos um equipamento válido para continuar.');return;}
     estado.metadados.passo++;const guardado=await salvar();if(!guardado)avisar('Não foi possível guardar. Baixe um backup antes de sair.');telaAssistente(main,ir);main.focus();
   });demo(main,ir);
-}
-
-export function telaPlanejar(main,ir){
-  const d=dadosAtuais();const hoje=textoData(new Date());
-  main.innerHTML=titulo('Planejar','Rascunho e revisões do plano','Ajustes de tarefas e capacidade permanecem no rascunho até a ativação de uma revisão.')+`<section class="cartao">${atalhos()}<p><strong>${d.equipamentos.length}</strong> ativos válidos · <strong>${d.resumo.tarefas}</strong> tarefas ativas · ${num(d.resumo.horasAno)} h estimadas no ciclo.</p><p>${estado.programacao.revisoes.length?`${estado.programacao.revisoes.length} revisão(ões) preservada(s).`:'Nenhuma revisão ativada ainda.'}</p></section><section class="cartao"><h3>Ativar uma revisão</h3><form id="form-revisao"><div class="grade duas"><div><label for="rev-vigencia">Vigência</label><input id="rev-vigencia" name="vigencia" type="date" min="${hoje}" value="${hoje}" required></div><div><label for="rev-elaborador">Elaborado por</label><input id="rev-elaborador" name="elaborador" maxlength="120" value="${esc(estado.gestao.organizacao.elaborador)}" required></div></div><label for="rev-resumo">Resumo das alterações</label><input id="rev-resumo" name="resumo" maxlength="2000" required placeholder="Ex.: Plano preventivo inicial"><button type="submit">Conferir impacto da revisão</button></form><div id="impacto-revisao"></div></section><section class="cartao"><h3>Revisões preservadas</h3>${estado.programacao.revisoes.slice().reverse().map(r=>`<details><summary>Revisão ${r.numero} · vigência ${esc(r.vigencia)}</summary><p>${esc(r.resumo)} · ${esc(r.elaborador)}</p><p>${r.plano.length} tarefas no retrato desta revisão.</p></details>`).join('')||'<p class="origem">Ative a primeira revisão após conferir tarefas e capacidade.</p>'}</section>`;
-  const form=main.querySelector('#form-revisao');
-  form.onsubmit=e=>{e.preventDefault();const meta={...Object.fromEntries(new FormData(form)),id:novoId(),capacidade:estado.capacidade};const r=prepararRevisao(estado.programacao,dadosAtuais(),estado.gestao,meta);if(!r.ok){avisar(r.motivo);return;}const impacto=main.querySelector('#impacto-revisao');impacto.innerHTML=`<p>${r.impacto.adicionadas} novas ocorrências; ${r.impacto.substituidas} previsões futuras substituídas. ${r.impacto.preservadasConcluidas} ocorrências já concluídas preservadas.</p><p>Carga substituída: ${num(r.impacto.horasAnteriores)} h → nova carga: ${num(r.impacto.horasNovas)} h.</p><button id="confirmar-revisao">Ativar revisão ${estado.programacao.revisoes.length+1}</button>`;impacto.querySelector('button').onclick=async e=>{e.target.disabled=true;const resultado=await ativarRevisao(meta);if(!resultado.ok){e.target.disabled=false;avisar(resultado.motivo);return;}avisar('Revisão ativada e histórico preservado.');ir('semana');};};
 }
 
 export function telaSemana(main,ir){

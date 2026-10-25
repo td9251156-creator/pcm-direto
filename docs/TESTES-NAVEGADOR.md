@@ -73,3 +73,6 @@ duas revisões e 76 registros. Restaura pela interface e confere IndexedDB, busc
 ordenação por realização, filtros, paginação e download de todas as páginas. Inclui legado de
 ativo removido, texto escapado, intervalo inválido, Escape/foco na confirmação, troca de tela
 e quota simulada sem alterar o registro persistido nem gerar exceção não tratada.
+O cenário grande também confere a prévia de revisão com 100 ativos, invalidação por edição de
+vigência/elaborador/resumo e retorno ao rascunho sem ativação. O roteiro Gestão ativa a primeira
+revisão após reconferir os campos, verifica foco e testa Voltar ao rascunho.

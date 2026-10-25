@@ -8,7 +8,7 @@ Ferramenta aberta de Planejamento e Controle de Manutenção, em português, par
 - **Máquinas e tarefas:** fichas PDF da biblioteca para baixar offline. Na comunidade, é possível anexar PDF pronto de até 5 MB e 200 páginas; fica privado até a aprovação do modelo. JSON continua em Outros formatos.
 - **Gerar minha ficha:** no formulário do catálogo ou em um tipo da Biblioteca técnica, use Gerar ficha em PDF. A prévia abre em outra aba; escolha Imprimir / salvar PDF e selecione Salvar como PDF. A geração funciona localmente e não envia os campos ao servidor.
 - **Fábrica privada:** cadastros, planos, criticidade, execuções e falhas ficam no IndexedDB deste navegador, sem sincronização da base operacional.
-- **Planejar:** equipamentos por cadastro, colagem, CSV ou XLSX, criticidade com cinco notas, capacidade e revisões com vigência e prévia do impacto.
+- **Planejar:** equipamentos por cadastro, colagem, CSV ou XLSX, criticidade com cinco notas, capacidade e revisões com vigência. A prévia compara tarefas, responsáveis, capacidade semanal e carga afetada por especialidade; editar os campos ou mudar o plano exige nova conferência antes de ativar.
 - **Executar:** busca por TAG, tarefa ou responsável, datas legíveis e conclusões mais recentes primeiro. Histórico com filtros por data realizada e situação, páginas e download da consulta. Cancelar exige confirmação e mantém o registro anterior se a gravação falhar. Execuções antigas permanecem como legado sem vínculo presumido.
 - **Documentos:** cópias preenchidas dos seis modelos originais PCMD com uma data de corte comum; exportações anteriores em Outros formatos.
 - **Meus dados:** backup JSON versão 3 e restauração com prévia; aceita versões 1 e 2 e preserva os originais locais na migração.

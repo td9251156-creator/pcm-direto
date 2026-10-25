@@ -27,8 +27,9 @@ let repositorio = null;
 let sequencia = 0;
 let fila = Promise.resolve();
 const cancelamentosPendentes = new Map();
-async function esperarCancelamentos() {
-  while(cancelamentosPendentes.size)await Promise.all([...cancelamentosPendentes.values()].map(p=>p.concluido));
+let revisaoPendente = null;
+async function esperarOperacoesDoPlano() {
+  while(cancelamentosPendentes.size||revisaoPendente)await Promise.all([...cancelamentosPendentes.values(),...(revisaoPendente?[revisaoPendente]:[])].map(p=>p.concluido));
 }
 let geracaoBase=0;
 const vinculoExecucao=(e,previsao)=>`${e.equipamentoId}|${e.tarefaId}|${previsao||''}`;
@@ -146,7 +147,7 @@ export function carregar() {
 export async function restaurarBackup(arquivo) {
   const r = verificarBackup(arquivo, padrao);
   if (!r.ok) return r;
-  await esperarCancelamentos();
+  await esperarOperacoesDoPlano();
   if (repositorio) {
     const anterior = criarBackup(estado);
     aplicarDados(r);
@@ -168,6 +169,7 @@ export async function salvar(opcoes = {}) {
   if (!opcoes.semAlteracao) estado.metadados.alteradoEm = new Date().toISOString();
   if (persistenciaBloqueada) { armazenamento.rascunho = false; return false; }
   const dados = criarBackup(estado);
+  if(revisaoPendente?.geracao===geracaoBase)dados.rascunho.programacao={...copia(revisaoPendente.programacao),emissoes:dados.rascunho.programacao.emissoes};
   // Todas as cópias enfileiradas incluem o cancelamento; a tela só o recebe após gravar.
   const pendentes=new Set([...cancelamentosPendentes].filter(([,p])=>p.geracao===geracaoBase).map(([id])=>id));
   if(pendentes.size){
@@ -307,6 +309,7 @@ export async function atualizarGestao(nova) {
 
 /** Registra cada execução sem alterar frequência ou planejamento. */
 export async function registrarExecucao(linha, alteracao) {
+  if(revisaoPendente)return {ok:false,motivo:'Aguarde a ativação da revisão terminar antes de registrar uma execução.'};
   if([...cancelamentosPendentes.values()].some(p=>p.geracao===geracaoBase&&p.vinculo===vinculoExecucao(linha,alteracao.dataPrevista)))return {ok:false,motivo:'Aguarde o cancelamento desta ocorrência terminar antes de registrar novamente.'};
   const r = marcarExecucao(estado.execucoes, linha, { ...alteracao, concluida: true });
   if (!r.ok) return r;
@@ -344,6 +347,7 @@ function ultimasExecucoes(historico,equipamentos) {
 function atualizarUltimasExecucoes(){estado.execucoes=ultimasExecucoes(estado.gestao.historico,estado.equipamentos);}
 
 export async function cancelarExecucao(id) {
+  if(revisaoPendente)return {ok:false,motivo:'Aguarde a ativação da revisão terminar antes de cancelar uma execução.'};
   const anterior=estado.gestao.historico.find(h=>h.id===id&&!h.cancelada);
   if(!anterior||cancelamentosPendentes.has(id))return {ok:false,motivo:'Registro não encontrado, já cancelado ou aguardando gravação.'};
   const geracao=geracaoBase;
@@ -397,13 +401,25 @@ export async function inicializarPersistencia() {
   }
 }
 
-export async function ativarRevisao(meta) {
+export function referenciaRevisao(){
+  return JSON.stringify({geracao:geracaoBase,hoje:textoData(new Date()),equipamentos:estado.equipamentos,ajustes:estado.ajustes,
+    inicio:estado.inicio,capacidade:estado.capacidade,biblioteca:estado.biblioteca,responsaveis:estado.gestao.responsaveis,pessoas:estado.gestao.pessoas,
+    programacao:estado.programacao,historico:estado.gestao.historico});
+}
+
+export async function ativarRevisao(meta,referencia=null) {
+  if(revisaoPendente||cancelamentosPendentes.size)return {ok:false,motivo:'Aguarde a gravação pendente e confira o impacto novamente.'};
+  if(referencia!==null&&referencia!==referenciaRevisao())return {ok:false,motivo:'O plano ou o histórico mudou. Confira o impacto novamente antes de ativar.'};
   const r = prepararRevisao(estado.programacao, dadosAtuais(), estado.gestao, { ...meta, capacidade: estado.capacidade });
   if (!r.ok) return r;
-  const anterior = estado.programacao; estado.programacao = r.programacao;
-  const guardado = await salvar();
-  if (!guardado) { estado.programacao = anterior; return { ok: false, motivo: motivoArmazenamento || 'Não foi possível guardar a revisão.' }; }
-  return { ok: true, impacto: r.impacto };
+  let concluir;const concluido=new Promise(resolve=>{concluir=resolve;});const geracao=geracaoBase;
+  revisaoPendente={programacao:r.programacao,geracao,concluido};
+  try {
+    if(!await salvar())return {ok:false,motivo:motivoArmazenamento||'Não foi possível guardar a revisão. A programação anterior foi mantida.'};
+    if(geracao===geracaoBase)estado.programacao={...r.programacao,emissoes:estado.programacao.emissoes};
+    return {ok:true,impacto:r.impacto};
+  } catch {return {ok:false,motivo:'Não foi possível guardar a revisão. A programação anterior foi mantida.'};}
+  finally{revisaoPendente=null;concluir();}
 }
 
 export async function registrarOcorrencia(id, alteracao = {}) {
@@ -415,7 +431,7 @@ export async function registrarOcorrencia(id, alteracao = {}) {
 }
 
 export async function demonstrar() {
-  await esperarCancelamentos();
+  await esperarOperacoesDoPlano();
   geracaoBase++;
   if (!antesDaDemonstracao) antesDaDemonstracao = criarBackup(estado);
   estado.gestao = criarGestao(); estado.programacao = criarProgramacao();
