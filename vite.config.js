@@ -17,15 +17,19 @@ export function versaoDoCache(arquivos) {
 function serviceWorker() {
   return {
     name: 'pcm-service-worker',
+    enforce: 'post',
     apply: 'build',
     generateBundle(_opcoes, pacote) {
       // Arquivos gerados pelo build + arquivos fixos da pasta public (manifesto e ícones)
       const publicos = readdirSync('public', { recursive: true })
         .map((f) => String(f).split(path.sep).join('/'))
         .filter((f) => statSync('public/' + f).isFile());
-      const arquivos = [...Object.keys(pacote), ...publicos].filter((f) => !f.endsWith('.map')).sort();
+      const entradaAtual = pacote['index.html'];
+      // Entrada no mesmo endereço/origem para recuperar uma aba presa em HTML antigo.
+      if (entradaAtual) this.emitFile({ type: 'asset', fileName: 'atualizar.html', source: entradaAtual.source });
+      const arquivos = [...new Set([...Object.keys(pacote), ...publicos, ...(entradaAtual ? ['atualizar.html'] : [])])].filter((f) => !f.endsWith('.map')).sort();
       const worker = readFileSync('src/sw.js', 'utf8');
-      const conteudos = arquivos.map((nome) => [nome, pacote[nome]
+      const conteudos = arquivos.map((nome) => [nome, nome === 'atualizar.html' && entradaAtual ? entradaAtual.source : pacote[nome]
         ? (pacote[nome].type === 'chunk' ? pacote[nome].code : pacote[nome].source)
         : readFileSync(path.join('public', nome))]);
       const versao = versaoDoCache([...conteudos, ['src/sw.js', worker]]);

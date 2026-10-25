@@ -2,6 +2,18 @@
 
 # Fila de evolução
 
+## Recuperação de uma aba com versão antiga (24/10/2026)
+
+A aba do mantenedor continuava no HTML antigo, com atualização pendente. Reabrir ativou uma
+versão intermediária. Verificar explicitamente registro.update() a cada abertura, com falha de
+rede tolerada. A entrada atualizar.html usa o mesmo HTML e a mesma origem/base de dados;
+permite abrir a publicação atual quando o worker antigo fixa a página inicial no cache.
+Nenhum skipWaiting, recarregamento automático, exclusão de cache manual ou limpeza de dados.
+Teste confere entradas idênticas, verificação offline tolerada e histórico preservado ao trocar a entrada.
+A entrada recupera clientes anteriores que não a tinham no cache; não é uma URL permanentemente
+sem cache. Após sua instalação, aplica-se a atualização segura por fechamento das abas.
+Arquivos públicos de URL fixa ainda pertencem ao worker ativo; nenhum deles mudou nesta correção.
+
 ## Correção da assinatura da marca (24/10/2026)
 
 O SVG horizontal já contém a linha laranja. O cabeçalho acrescentava uma segunda borda e
