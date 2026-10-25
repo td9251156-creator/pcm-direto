@@ -2,6 +2,13 @@
 
 # Fila de evolução
 
+## Handoff mobile e desktop do mantenedor (24/10/2026)
+
+Aplicação da referência HTML do ZIP sobre os dados e serviços existentes. Navegação responsiva,
+visão geral, execução em painel, filtros e histórico, consulta de ativos e falhas adaptadas.
+Escopo, decisões preservadas e diferenças restantes em [HANDOFF-MOBILE.md](HANDOFF-MOBILE.md).
+Revisão independente identificou e orientou correções de foco e de respostas atrasadas após navegação.
+
 ## Encontrar e conferir tarefas antes do PDF (24/10/2026)
 
 A busca da comunidade passa a consultar nomes e códigos das máquinas, descrição/ID das tarefas,
