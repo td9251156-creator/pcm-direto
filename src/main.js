@@ -2,6 +2,7 @@
 // e registra o service worker para funcionar como aplicativo e sem internet.
 import { inicializarPersistencia, recuperacao, estado } from './estado.js';
 import { baixar, atualizarAvisoArmazenamento } from './ui.js';
+import { telaAtivos } from './telas/ativos.js';
 import { telaEquipamentos } from './telas/equipamentos.js';
 import { telaRevisao } from './telas/revisao.js';
 import { telaDocumentos } from './telas/documentos.js';
@@ -29,6 +30,7 @@ const TELAS = {
   executar: { titulo: 'Executar', desenhar: telaOcorrencias },
   mais: { titulo: 'Mais', desenhar: telaMais },
   apoio: { titulo: 'Central de apoio', desenhar: telaApoio },
+  ativos: { titulo: 'Ativos', desenhar: telaAtivos },
   equipamentos: { titulo: 'Equipamentos', desenhar: telaEquipamentos },
   revisao: { titulo: 'Revisão', desenhar: telaRevisao },
   entrega: { titulo: 'Documentos', desenhar: telaDocumentos },
@@ -57,15 +59,25 @@ function ir(nome) {
 
 let encerrarTela;
 
+function marcarNavegacao(atual) {
+  const mobile = matchMedia('(max-width:1023px)').matches;
+  const emMais = !['semana','executar','ativos','falhas'].includes(atual);
+  document.querySelectorAll('nav a[data-tela]').forEach(a=>{
+    const ativa = mobile ? a.dataset.tela === (emMais?'mais':atual) : a.dataset.tela === atual;
+    if(ativa)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+  });
+}
+matchMedia('(max-width:1023px)').addEventListener('change',()=>marcarNavegacao(location.hash.slice(1).split('?')[0]||'comunidade'));
+
 /** Desenha a tela indicada no endereço. */
 function mostrar() {
-  const nome = location.hash.slice(1);
+  const nome = location.hash.slice(1).split('?')[0];
+  document.body.dataset.tela = nome;
+  main.classList.remove('ativo-aberto');
+  document.querySelectorAll('dialog.painel-execucao').forEach(d=>d.close());
   const tela = TELAS[nome] ?? TELAS.comunidade;
   const atual = TELAS[nome] ? nome : 'comunidade';
-  document.querySelectorAll('nav a[data-tela]').forEach((a) => {
-    if (a.dataset.tela === atual) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  });
+  marcarNavegacao(atual);
   document.title = `${tela.titulo} · PCM Direto`;
   encerrarTela?.();
   encerrarTela = tela.desenhar(main, ir);
@@ -81,6 +93,7 @@ function mostrar() {
   // Leva o foco para o conteúdo novo (ajuda quem navega por teclado ou leitor de tela)
   main.focus();
   window.scrollTo(0, 0);
+  if(nome==='falhas'&&location.hash.includes('?ativo='))main.querySelector('#g-sintoma')?.focus();
 }
 
 // Direção aprovada: tema claro fixo, inclusive em aparelhos com tema escuro.

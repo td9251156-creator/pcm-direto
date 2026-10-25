@@ -14,6 +14,8 @@ export function telaFalhas(main) {
     <section class="cartao"><h3>Histórico de falhas</h3><button type="button" class="secundario" id="baixar-falhas">Baixar registros (.json)</button>
     ${tabela(['Data / ativo', 'Sintoma / causa provável', 'Ação / peça', 'Parada / responsável', 'Ações'], estado.gestao.falhas.slice().reverse().map(f => `<tr><td>${esc(f.data)}<br>${esc(f.tag)}${!equipamentos.some(e => e.id === f.equipamentoId) ? '<br>Ativo fora da lista atual' : ''}</td><td>${esc(f.sintoma)}<br><span class="origem">${esc(f.causa || 'Causa não informada')}</span></td><td>${esc(f.acao || 'Não informada')}<br>${esc(f.peca)}</td><td>${f.horasParada === null ? 'Parada não informada' : num(f.horasParada, 2) + ' h'}<br>${esc(pessoaNome(f.responsavelId))}</td><td><button type="button" class="secundario" data-editar-falha="${f.id}">Corrigir registro</button></td></tr>`))}</section></div>`;
   const form = main.querySelector('#form-falha');
+  const ativo = new URLSearchParams(location.hash.split('?')[1]||'').get('ativo');
+  if(equipamentos.some(e=>e.id===ativo)){form.elements.equipamentoId.value=ativo;form.elements.sintoma.focus();}
   form.addEventListener('submit', async e => {
     e.preventDefault(); const f = form.elements; const nova = copiaGestao();
     const anterior = nova.falhas.find(r => r.id === f.id.value);
