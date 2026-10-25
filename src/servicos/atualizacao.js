@@ -21,5 +21,8 @@ export async function registrarAtualizacao(serviceWorker = navigator.serviceWork
   if (registro.waiting) avisarAtualizacao();
   acompanhar(registro.installing);
   registro.addEventListener('updatefound', () => acompanhar(registro.installing));
+  // Conferir a publicação mesmo se o navegador verificou outra versão há pouco.
+  // Falha de rede não impede o uso offline nem força ativação ou recarga.
+  try { await registro.update(); } catch { /* A versão instalada continua disponível. */ }
   return registro;
 }

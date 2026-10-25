@@ -29,6 +29,7 @@ await executarComRecursos({
       if(caminho==='/ativou-B'){sinalAtivacao();res.writeHead(204).end();return;}
       if(caminho==='/sw.js'){
         const arquivos=[`./lazy-${versao}.js`,'./propostas/index.html'];
+        if(versao!=='A')arquivos.push('./atualizar.html');
         if(!usarLegado||versao!=='A')arquivos.push('./atualizacao.js');
         const base=usarLegado&&versao==='A'?legado:fonte;
         const sw=base.replace('[/*ARQUIVOS*/]',JSON.stringify(arquivos)).replace('/*VERSAO*/','teste-'+versao);
@@ -38,7 +39,7 @@ await executarComRecursos({
       if(caminho==='/atualizacao.js'){res.setHeader('Content-Type','text/javascript');res.end(atualizacao);return;}
       if(caminho===`/lazy-${versao}.js`&&versao!=='C'){res.setHeader('Content-Type','text/javascript');res.end(`export const versao='Recurso ${versao}';`);return;}
       if(caminho==='/propostas/index.html'){res.setHeader('Content-Type','text/html');res.end('<h1>Propostas isoladas</h1>');return;}
-      if(caminho==='/'||caminho==='/index.html'){res.setHeader('Content-Type','text/html');res.end(html(versao));return;}
+      if(caminho==='/'||caminho==='/index.html'||caminho==='/atualizar.html'){res.setHeader('Content-Type','text/html');res.end(html(versao));return;}
       res.writeHead(404).end('Arquivo ausente nesta publicação');
     });
     servidor.listen(4176,'127.0.0.1');await once(servidor,'listening');
@@ -61,6 +62,11 @@ await executarComRecursos({
     assert.equal(await primeira.locator('h1').textContent(),'Versão A');
     assert.equal(await primeira.locator('#rascunho').inputValue(),'Trabalho ainda não enviado');
     await segunda.reload();assert.equal(await segunda.locator('h1').textContent(),'Versão A','HTML continua na versão ativa, mesmo online');
+    const recuperada=await contexto.newPage();await recuperada.goto(origem+'/atualizar.html');
+    assert.equal(await recuperada.locator('h1').textContent(),'Versão B','Entrada nova abre HTML atual sob worker antigo');
+    assert.equal(await recuperada.evaluate(()=>localStorage.getItem('dados-ficticios')),'preservados');
+    assert.equal(await primeira.locator('#rascunho').inputValue(),'Trabalho ainda não enviado');
+    await recuperada.close();
     await contexto.setOffline(true);
     await primeira.locator('#abrir').click();await primeira.getByText('Recurso A',{exact:true}).waitFor();
     await segunda.reload();assert.equal(await segunda.locator('h1').textContent(),'Versão A');

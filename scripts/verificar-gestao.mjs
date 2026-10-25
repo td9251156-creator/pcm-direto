@@ -8,6 +8,7 @@ import { atribuirTags } from '../src/logica/tag.js';
 import { iniciarServidor,aguardarOffline,executarComRecursos } from './navegador.mjs';
 const ferramenta=process.env.PCM_PLAYWRIGHT||new URL('../ferramentas/navegador/node_modules/playwright/index.mjs',import.meta.url).href;
 const {chromium}=await import(ferramenta);const raiz=fileURLToPath(new URL('../',import.meta.url));
+assert.deepEqual(await readFile(new URL('../dist/atualizar.html',import.meta.url)),await readFile(new URL('../dist/index.html',import.meta.url)),'Entrada de atualização usa o mesmo aplicativo');
 const biblioteca=JSON.parse(await readFile(new URL('../src/dados/biblioteca.json',import.meta.url),'utf8'));
 const equipamentos=atribuirTags(EXEMPLO.map((e,i)=>({...e,id:'eq'+i})),Object.fromEntries(biblioteca.tipos.map(t=>[t.id,t.sigla])));
 const d=new Date();const hoje=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -130,7 +131,7 @@ await executarComRecursos({
     else{assert.ok((await gerado.file('xl/workbook.xml').async('string')).includes('fullCalcOnLoad="1"'));assert.ok(Object.keys(gerado.files).some(n=>n.startsWith('xl/worksheets/')));}
   }
   assert.equal(Object.keys(zip.files).filter(n=>/\.(xlsx|docx)$/.test(n)).length,6);
-  await contexto.setOffline(false);await ir('dados');
+  await contexto.setOffline(false);await page.goto('http://127.0.0.1:4175/atualizar.html#dados');await page.locator('#baixar-backup').waitFor();assert.equal((await rascunho()).gestao.historico.length,3,'Entrada atualizada preserva a mesma base');await ir('dados');
   const semExecucoes=structuredClone(v1);delete semExecucoes.rascunho.execucoes;
   await page.locator('#restaurar-backup').setInputFiles({name:'v1-sem-execucoes.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(semExecucoes))});await page.locator('#confirmar-backup').click();await page.waitForURL('**/#semana');
   assert.equal((await rascunho()).gestao.historico.length,0,'Backup antigo sem execuções não herda o histórico anterior');
