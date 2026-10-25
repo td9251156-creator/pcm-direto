@@ -18,6 +18,8 @@ Para revisar tarefas, use o checklist de [BIBLIOTECA.md](BIBLIOTECA.md#checklist
 Informe sempre a origem: manual (modelo e edição), experiência própria ou norma com versão e data.
 Não envie dados, fotos ou documentos da sua empresa.
 
+Dúvidas e conversas sobre o app ficam nas [Discussões da comunidade](https://github.com/td9251156-creator/pcm-direto/discussions).
+
 Quem contribui entra em [CREDITOS.md](CREDITOS.md), com nome, apelido ou como anônimo, à sua escolha.
 
 ## Formas de ajudar com arquivos e código

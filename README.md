@@ -132,6 +132,7 @@ Não é preciso saber programar. Quem trabalha com manutenção já pode ajudar 
 - **Sugerir um artigo para a Central de apoio:** use o formulário "Sugerir artigo".
 - **Relatar um erro:** use o formulário "Relatar um erro", com passos para repetir e dados fictícios.
 - **Compartilhar modelos:** publique modelos técnicos na comunidade do app, sem TAGs ou dados da sua fábrica.
+- **Conversar com a comunidade:** tire dúvidas e troque experiências nas [Discussões](https://github.com/td9251156-creator/pcm-direto/discussions).
 - **Código:** veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Quem contribui entra nos [créditos](CREDITOS.md).

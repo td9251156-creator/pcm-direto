@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Comunidade (Discussões)
+    url: https://github.com/td9251156-creator/pcm-direto/discussions
+    about: Dúvidas de uso, conversa sobre máquinas e tarefas e ideias. Leia as regras fixadas antes de postar.
   - name: Abrir o PCM Direto
     url: https://pcmdireto.me/
     about: Use o app no navegador, com o exemplo fictício ou com os seus dados.
