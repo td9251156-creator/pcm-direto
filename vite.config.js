@@ -35,7 +35,8 @@ function serviceWorker() {
       const versao = versaoDoCache([...conteudos, ['src/sw.js', worker]]);
       const codigo = worker
         .replace('[/*ARQUIVOS*/]', JSON.stringify(arquivos.map((f) => './' + f)))
-        .replace('/*VERSAO*/', versao);
+        .replace('/*VERSAO*/', versao)
+        .replace('/*PAGINA*/null', JSON.stringify(entradaAtual?.source ?? null));
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: codigo });
     },
   };

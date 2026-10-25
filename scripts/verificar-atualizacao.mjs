@@ -32,14 +32,15 @@ await executarComRecursos({
         if(versao!=='A')arquivos.push('./atualizar.html');
         if(!usarLegado||versao!=='A')arquivos.push('./atualizacao.js');
         const base=usarLegado&&versao==='A'?legado:fonte;
-        const sw=base.replace('[/*ARQUIVOS*/]',JSON.stringify(arquivos)).replace('/*VERSAO*/','teste-'+versao);
+        const sw=base.replace('[/*ARQUIVOS*/]',JSON.stringify(arquivos)).replace('/*VERSAO*/','teste-'+versao).replace('/*PAGINA*/null',versao==='A'?'null':JSON.stringify(html(versao)));
         res.setHeader('Content-Type','text/javascript');
         res.end(sw+(versao==='B'?`\nself.addEventListener('activate',e=>e.waitUntil(fetch('/ativou-B',{method:'POST'})));`:''));return;
       }
       if(caminho==='/atualizacao.js'){res.setHeader('Content-Type','text/javascript');res.end(atualizacao);return;}
       if(caminho===`/lazy-${versao}.js`&&versao!=='C'){res.setHeader('Content-Type','text/javascript');res.end(`export const versao='Recurso ${versao}';`);return;}
       if(caminho==='/propostas/index.html'){res.setHeader('Content-Type','text/html');res.end('<h1>Propostas isoladas</h1>');return;}
-      if(caminho==='/'||caminho==='/index.html'||caminho==='/atualizar.html'){res.setHeader('Content-Type','text/html');res.end(html(versao));return;}
+      if(caminho==='/atualizar.html'){res.setHeader('Content-Type','text/html');res.end(html(versao));return;}
+      if(caminho==='/'||caminho==='/index.html'){res.setHeader('Content-Type','text/html');res.end(html(versao==='B'?'A':versao));return;}
       res.writeHead(404).end('Arquivo ausente nesta publicação');
     });
     servidor.listen(4176,'127.0.0.1');await once(servidor,'listening');
