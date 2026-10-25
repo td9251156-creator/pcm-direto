@@ -2,6 +2,16 @@
 
 # Fila de evolução
 
+## HTML offline da mesma publicação (24/10/2026)
+
+Uma atualização guardou HTML HTTP anterior junto de arquivos do build novo, deixando uma
+referência a CSS antigo sem recurso disponível. O worker agora incorpora o HTML final do próprio
+build e guarda as três entradas equivalentes; recursos são baixados com cache HTTP recarregado.
+Instalação continua atômica quanto à ativação, sem skipWaiting, apagamento de dados ou recarga forçada.
+Regressão simula publicação B enquanto o HTTP da página principal ainda responde A.
+Uma entrada identificada pela versão, descoberta em versao-atual.json, permite recuperação online
+quando até as entradas fixas estão presas no cache anterior; não é a abertura offline habitual.
+
 ## Tipografia do slogan (24/10/2026)
 
 Ajuste solicitado pelo mantenedor: slogan sem serifa em Arial/Helvetica, peso 700 e espaçamento

@@ -9,6 +9,8 @@ import { iniciarServidor,aguardarOffline,executarComRecursos } from './navegador
 const ferramenta=process.env.PCM_PLAYWRIGHT||new URL('../ferramentas/navegador/node_modules/playwright/index.mjs',import.meta.url).href;
 const {chromium}=await import(ferramenta);const raiz=fileURLToPath(new URL('../',import.meta.url));
 assert.deepEqual(await readFile(new URL('../dist/atualizar.html',import.meta.url)),await readFile(new URL('../dist/index.html',import.meta.url)),'Entrada de atualização usa o mesmo aplicativo');
+const publicada=JSON.parse(await readFile(new URL('../dist/versao-atual.json',import.meta.url),'utf8'));
+assert.deepEqual(await readFile(new URL('../dist/'+publicada.entrada,import.meta.url)),await readFile(new URL('../dist/index.html',import.meta.url)),'Recuperação identificada pela versão usa HTML do build');
 const biblioteca=JSON.parse(await readFile(new URL('../src/dados/biblioteca.json',import.meta.url),'utf8'));
 const equipamentos=atribuirTags(EXEMPLO.map((e,i)=>({...e,id:'eq'+i})),Object.fromEntries(biblioteca.tipos.map(t=>[t.id,t.sigla])));
 const d=new Date();const hoje=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;

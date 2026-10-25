@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { versaoDoCache } from '../vite.config.js';
 
-function worker() {
+function worker(pagina = null) {
   const scope = 'https://exemplo.test/pcm/';
   const prefixo = 'pcm-direto-' + encodeURIComponent(scope) + '-';
   const eventos = {};
@@ -15,12 +15,21 @@ function worker() {
   };
   const self = { registration: { scope }, clients: { claim: vi.fn() }, skipWaiting: vi.fn(), addEventListener: (n, f) => { eventos[n] = f; } };
   const fetch = vi.fn(async () => ({ ok: true, clone: () => 'página nova' }));
-  const codigo = readFileSync('src/sw.js', 'utf8').replace('[/*ARQUIVOS*/]', JSON.stringify(['./index.html', './assets/app.js']));
-  runInNewContext(codigo, { self, caches, fetch, URL, encodeURIComponent });
+  const codigo = readFileSync('src/sw.js', 'utf8').replace('[/*ARQUIVOS*/]', JSON.stringify(['./index.html', './assets/app.js'])).replace('/*PAGINA*/null',JSON.stringify(pagina));
+  runInNewContext(codigo, { self, caches, fetch, URL, Request, Response, encodeURIComponent });
   return { scope, prefixo, eventos, cache, caches, fetch, self };
 }
 
 describe('cache do aplicativo', () => {
+  it('guarda o HTML do build sem consultar uma página HTTP antiga', async () => {
+    const html='<html><link rel="stylesheet" href="assets/atual.css"></html>';
+    const w=worker(html);let pronto;
+    w.eventos.install({waitUntil:p=>{pronto=p;}});await pronto;
+    expect(w.cache.addAll.mock.calls[0][0].map(r=>[r.url,r.cache])).toEqual([[w.scope+'assets/app.js','reload']]);
+    expect(w.cache.put.mock.calls.map(([chave])=>chave)).toEqual(['./','./index.html','./atualizar.html']);
+    for(const [,resposta] of w.cache.put.mock.calls){expect(await resposta.text()).toBe(html);expect(resposta.headers.get('content-type')).toContain('text/html');}
+    expect(w.fetch).not.toHaveBeenCalled();expect(w.self.skipWaiting).not.toHaveBeenCalled();
+  });
   it('instala a página e os arquivos necessários antes de assumir o controle', async () => {
     const w = worker();
     let pronto;

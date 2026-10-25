@@ -1,12 +1,24 @@
 // Service worker simples: guarda os arquivos do app para abrir sem internet.
 // A lista ARQUIVOS é preenchida automaticamente no "npm run build" (veja vite.config.js).
 const ARQUIVOS = [/*ARQUIVOS*/];
+const PAGINA = /*PAGINA*/null;
 const PREFIXO = 'pcm-direto-' + encodeURIComponent(self.registration.scope) + '-';
 const CACHE = PREFIXO + '/*VERSAO*/';
 
 self.addEventListener('install', (evento) => {
   // Não forçar ativação: a versão nova espera todas as abas da anterior fecharem.
-  evento.waitUntil(caches.open(CACHE).then((c) => c.addAll(['./', ...ARQUIVOS])));
+  evento.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    if (PAGINA === null) { await c.addAll(['./', ...ARQUIVOS]); return; }
+    // O HTML pertence ao próprio build; não aceitar uma página HTTP anterior
+    // referenciando CSS/JS que não estão no cache desta publicação.
+    const entradas = new Set(['./', './index.html', './atualizar.html']);
+    await c.addAll(ARQUIVOS.filter(a => !entradas.has(a)).map(a =>
+      new Request(new URL(a, self.registration.scope), { cache: 'reload' })));
+    await Promise.all([...entradas].map(a => c.put(a, new Response(PAGINA, {
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+    }))));
+  })());
 });
 
 // Sem skipWaiting, o navegador só ativa a atualização após liberar os clientes antigos.
