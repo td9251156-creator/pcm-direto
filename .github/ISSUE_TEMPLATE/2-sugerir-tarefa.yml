@@ -1,0 +1,50 @@
+name: Sugerir tarefa de manutenção
+description: Proponha uma tarefa, correção ou novo tipo de máquina para a biblioteca técnica.
+title: "[Biblioteca] "
+labels: ["biblioteca"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Toda tarefa precisa de origem. Periodicidades sem fonte entram como "base genérica a validar com manual do fabricante".
+        Não cite número de norma sem fonte oficial, versão e data. Veja o formato em [BIBLIOTECA.md](https://github.com/td9251156-creator/pcm-direto/blob/main/BIBLIOTECA.md).
+  - type: input
+    id: maquina
+    attributes:
+      label: Tipo de máquina
+      placeholder: "Ex.: redutor de velocidade, painel elétrico, empilhadeira"
+    validations:
+      required: true
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: O que você está propondo
+      options:
+        - Nova tarefa para um tipo existente
+        - Correção de uma tarefa existente
+        - Novo tipo de máquina
+    validations:
+      required: true
+  - type: textarea
+    id: tarefas
+    attributes:
+      label: Tarefas
+      description: Uma por linha, com periodicidade, especialidade e tempo estimado.
+      placeholder: |
+        Verificar nível de óleo · semanal · lubrificação · 0,1 h
+        Medir vibração nos mancais · mensal · preditiva · 0,3 h
+    validations:
+      required: true
+  - type: checkboxes
+    id: seguranca
+    attributes:
+      label: Segurança
+      options:
+        - label: Alguma das tarefas é de segurança (proteção de pessoas). Indiquei qual na lista acima.
+  - type: textarea
+    id: origem
+    attributes:
+      label: Origem das informações
+      description: Manual do fabricante (modelo e edição), experiência prática ou norma com fonte oficial, versão e data.
+    validations:
+      required: true

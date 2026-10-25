@@ -1,0 +1,53 @@
+name: Relatar um erro
+description: Algo não funcionou como esperado no app.
+title: "[Erro] "
+labels: ["erro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por ajudar. Use apenas dados fictícios: não informe TAGs, nomes ou registros reais da sua fábrica.
+  - type: textarea
+    id: aconteceu
+    attributes:
+      label: O que aconteceu
+      description: Descreva o que você viu, incluindo a mensagem de erro, se houver.
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que você esperava
+    validations:
+      required: true
+  - type: textarea
+    id: passos
+    attributes:
+      label: Como repetir
+      description: Passo a passo, de preferência a partir do exemplo do app.
+      placeholder: |
+        1. Abri Mais → Primeiros passos → Explorar o exemplo
+        2. Fui em Executar
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: aparelho
+    attributes:
+      label: Aparelho
+      options:
+        - Computador
+        - Celular
+        - Tablet
+    validations:
+      required: true
+  - type: input
+    id: navegador
+    attributes:
+      label: Navegador
+      placeholder: "Ex.: Chrome no Android, Edge no Windows"
+  - type: textarea
+    id: imagens
+    attributes:
+      label: Imagens da tela (opcional)
+      description: Confira se não aparecem dados reais antes de anexar.

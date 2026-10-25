@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Abrir o PCM Direto
+    url: https://pcmdireto.me/
+    about: Use o app no navegador, com o exemplo fictício ou com os seus dados.
+  - name: Falar por e-mail
+    url: mailto:pcmdireto@gmail.com
+    about: Opiniões, dúvidas e convites. Não envie dados reais da sua fábrica.

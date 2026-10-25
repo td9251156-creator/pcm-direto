@@ -1,0 +1,27 @@
+name: Ideia ou melhoria
+description: Sugira uma melhoria para o app.
+title: "[Ideia] "
+labels: ["ideia"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qual dificuldade você tem hoje
+    validations:
+      required: true
+  - type: textarea
+    id: ideia
+    attributes:
+      label: O que ajudaria
+    validations:
+      required: true
+  - type: dropdown
+    id: perfil
+    attributes:
+      label: Você é
+      options:
+        - Técnico ou líder de manutenção
+        - Gestor ou engenheiro
+        - Estudante ou professor
+        - Desenvolvedor
+        - Outro
