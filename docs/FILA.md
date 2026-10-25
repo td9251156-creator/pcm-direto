@@ -2,6 +2,14 @@
 
 # Fila de evolução
 
+## Correção da assinatura da marca (24/10/2026)
+
+O SVG horizontal já contém a linha laranja. O cabeçalho acrescentava uma segunda borda e
+colocava o slogan dentro do link, propagando o sublinhado. Agora usa uma única imagem horizontal
+com dimensões coerentes (1140 × 235), slogan separado e legível, sem borda adicional.
+Regressão no navegador confere proporção, assinatura única e ausência de sobreposição em
+320, 390, 820 e 1280 px, além das rotinas existentes.
+
 ## Handoff mobile e desktop do mantenedor (24/10/2026)
 
 Aplicação da referência HTML do ZIP sobre os dados e serviços existentes. Navegação responsiva,
