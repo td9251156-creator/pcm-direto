@@ -22,3 +22,9 @@ body:
     attributes:
       label: Rascunho (opcional)
       description: Artigos têm de 1 a 2 minutos de leitura, um exemplo com a Indústria Exemplo e um passo a passo no app. Sem promessa de conformidade com norma.
+  - type: input
+    id: creditos
+    attributes:
+      label: Como quer aparecer nos créditos (opcional)
+      description: Nome, apelido ou "anônimo". Se a sugestão entrar no app, você aparece em CREDITOS.md.
+      placeholder: "Ex.: Ana, técnica de manutenção"

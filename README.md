@@ -134,6 +134,8 @@ Não é preciso saber programar. Quem trabalha com manutenção já pode ajudar 
 - **Compartilhar modelos:** publique modelos técnicos na comunidade do app, sem TAGs ou dados da sua fábrica.
 - **Código:** veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
+Quem contribui entra nos [créditos](CREDITOS.md).
+
 ## Biblioteca técnica
 
 As tarefas de manutenção ficam em um único arquivo: [`src/dados/biblioteca.json`](src/dados/biblioteca.json).
@@ -142,7 +144,7 @@ Veja [BIBLIOTECA.md](BIBLIOTECA.md) para entender o formato e o checklist de rev
 ## Documentos do projeto
 
 [ROADMAP.md](ROADMAP.md) · [DECISOES.md](DECISOES.md) · [CONTRIBUTING.md](CONTRIBUTING.md) ·
-[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [LICENSE](LICENSE)
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [SECURITY.md](SECURITY.md) · [CREDITOS.md](CREDITOS.md) · [LICENSE](LICENSE)
 
 [Lista priorizada de melhorias](docs/MELHORIAS.md), com problemas encontrados e próximas rodadas.
 [Histórico das revisões e melhorias](docs/REVISOES.md).

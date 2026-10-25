@@ -2,7 +2,25 @@
 
 Obrigado pelo interesse no PCM Direto. Toda ajuda é bem-vinda, principalmente de quem trabalha com manutenção.
 
-## Formas de ajudar
+## Sem programar
+
+A maior ajuda vem de quem está no chão de fábrica. Escolha uma tarefa de 10 a 30 minutos:
+
+| Quanto tempo | O que fazer | Como enviar |
+|---|---|---|
+| 10 min | Abrir o app, clicar em **Explorar o exemplo** e contar o que confundiu | E-mail para pcmdireto@gmail.com ou formulário [Ideia ou melhoria](https://github.com/td9251156-creator/pcm-direto/issues/new/choose) |
+| 15 min | Conferir as tarefas de **uma máquina** da biblioteca com o manual que você tem em mãos | Formulário "Sugerir tarefa de manutenção", com a fonte consultada |
+| 15 min | Sugerir uma máquina que falta na biblioteca, com 5 a 10 tarefas | Formulário "Sugerir tarefa de manutenção" |
+| 20 min | Propor ou revisar um guia da Central de apoio | Formulário "Sugerir artigo para a Central de apoio" |
+| 30 min | Usar o app numa semana real e anotar o que travou | E-mail ou formulário "Relatar um erro" |
+
+Para revisar tarefas, use o checklist de [BIBLIOTECA.md](BIBLIOTECA.md#checklist-de-revisão-tarefa-por-tarefa).
+Informe sempre a origem: manual (modelo e edição), experiência própria ou norma com versão e data.
+Não envie dados, fotos ou documentos da sua empresa.
+
+Quem contribui entra em [CREDITOS.md](CREDITOS.md), com nome, apelido ou como anônimo, à sua escolha.
+
+## Formas de ajudar com arquivos e código
 
 - **Biblioteca técnica:** sugerir, corrigir ou detalhar tarefas em `src/dados/biblioteca.json`.
   Siga o formato descrito em [BIBLIOTECA.md](BIBLIOTECA.md).

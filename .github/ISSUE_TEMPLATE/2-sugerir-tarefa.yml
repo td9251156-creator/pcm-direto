@@ -48,3 +48,9 @@ body:
       description: Manual do fabricante (modelo e edição), experiência prática ou norma com fonte oficial, versão e data.
     validations:
       required: true
+  - type: input
+    id: creditos
+    attributes:
+      label: Como quer aparecer nos créditos (opcional)
+      description: Nome, apelido ou "anônimo". Se a sugestão entrar no app, você aparece em CREDITOS.md.
+      placeholder: "Ex.: Ana, técnica de manutenção"
