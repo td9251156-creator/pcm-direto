@@ -1,5 +1,5 @@
 {
-  "versao": "2.0.0",
+  "versao": "2.0.1-marca",
   "recebidoEm": "2026-10-25",
   "modelos": {
     "PCMD-03-04-Plano-Cronograma.xlsx": {
@@ -80,7 +80,7 @@
         "lst_sim_nao": "'Listas'!$G$4:$G$5",
         "lst_origem_execucao": "'Listas'!$I$4:$I$5"
       },
-      "sha256": "d23e59c458e64c2e41d728b0aee80a7c62cb5efeb669e6a6cb3385ff220a2280",
+      "sha256": "19488a20d9c77f07908d0b412511082275dc1860573c11212e0125434b0b25e2",
       "nomesLocais": [
         {
           "nome": "_xlnm._FilterDatabase",
@@ -216,7 +216,7 @@
         "lst_sim_nao": "'Listas'!$E$4:$E$5",
         "lst_status_requisito": "'Listas'!$G$4:$G$5"
       },
-      "sha256": "be219bcc7d02e6b1ed05efce6241e54cc192423fc3cc6bc39a9e1be928316fac",
+      "sha256": "46a2711d183404edf7a4d6e92dc8f6f14cebc981dc85931b15232665a4e9deca",
       "nomesLocais": [
         {
           "nome": "_xlnm._FilterDatabase",
@@ -306,7 +306,7 @@
         "pcmd_origem": "'Config'!$C$21",
         "pcmd_emissao": "'Config'!$C$22"
       },
-      "sha256": "e8a7d3d3b825c9720babb773ada799349e71949c5f0ad049cfb4fe4d09e9db2d",
+      "sha256": "db304bd76ac415def9a04c4ef4604abdb907513084ba7e1ecf5ba14c778b0482",
       "nomesLocais": [
         {
           "nome": "_xlnm._FilterDatabase",
@@ -394,7 +394,7 @@
         "lst_tipo_nome": "'Listas'!$B$4:$B$33",
         "lst_tipo_sigla": "'Listas'!$C$4:$C$33"
       },
-      "sha256": "cb3276a222cd40696b52863f65a82b02fc2974ae02861ad41112fa1ff1c84c69",
+      "sha256": "bf9aa534ac2595f55a34319439badcb98e3321fb1b217c0a062e486e016fa5e8",
       "nomesLocais": [
         {
           "nome": "_xlnm._FilterDatabase",
@@ -573,7 +573,7 @@
           ]
         }
       },
-      "sha256": "d80e414065e717c825451ca95ccf19c669e67360dd9498b97846f613a93e1018"
+      "sha256": "7f46e18723b055a81cbe61e7453cf5c9037bb483375343f5d717ba75a3d33322"
     },
     "PCMD-W1-Manual-Gestao-Ativos.docx": {
       "partes": {
@@ -680,7 +680,7 @@
           ]
         }
       },
-      "sha256": "e03bec31aebfaa6a8eba36c1a093a13ed3ce3958e75eca122606f7d258427444"
+      "sha256": "691f072c78e60516a219358ca573ee51fb76dc25a5eef4866d5c8c8333de9673"
     }
   }
 }

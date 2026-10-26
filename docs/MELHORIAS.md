@@ -110,3 +110,8 @@ Correção solicitada pelo mantenedor: cabeçalho usa o SVG oficial horizontal c
 ### Revisão das imagens públicas da marca — 26/10/2026
 
 Atualizadas a imagem social e as quatro capturas da página de apresentação. Assinatura oficial incorporada, fontes locais e capturas reais da demonstração isolada, apenas com dados fictícios. Metadados sociais ajustados para 1200×630 e endereço versionado para renovação da imagem compartilhada. Nenhuma mudança funcional ou nos dados de usuários.
+
+
+### Logo oficial nos templates de gestão — 26/10/2026
+
+Atualizados os seis modelos de gestão e seus seis exemplos: 44 imagens antigas substituídas pela assinatura oficial do modelo, mantendo a proporção. Versão 2.0.1-marca; contratos e manifesto atualizados com hashes de origem preservados. Comparação por partes OOXML comprova preservação de fórmulas, células, estilos, validações, proteção, gráficos e textos Word. Oito planilhas abertas e recalculadas no Excel sem erros, antes e depois. Prévia Excel regenerada no Excel; prévias Word recebem somente a nova imagem e sua matriz, com textos e páginas comparados e renderizados. A conversão PDF do Word nativo travou neste ambiente e não foi declarada aprovada. Os 18 modelos adicionais e seu ZIP já usavam o logo novo. Detalhes em REVISAO-LOGOS-TEMPLATES.md. Sem revisão independente.
