@@ -43,6 +43,13 @@ rolagem horizontal em 320/390/820/1280 px, busca e teclado, cadastros, criticida
 Inclui migração v1, exemplo isolado, revisões, execução/cancelamento, falha com parada desconhecida,
 backup v3 e restauração antiga sem herdar execuções, concorrência, corrupção e quota simulada.
 Gera os seis documentos PCMD sem rede e compara imagens e desenhos com os modelos originais.
+Cada clique baixa um Excel ou Word e registra apenas o documento escolhido. Aprovação inválida
+abre o campo obrigatório para receber foco. Não há opção de baixar modelos juntos em ZIP.
+
+O roteiro de experiência dos documentos verifica ausência de materiais internos na interface,
+redirecionamento do endereço antigo, explicações e 18 downloads separados, filtros preservados,
+seleção direta pelo catálogo, modelos manuais sem cadastro, geração única durante navegação,
+erro recuperável mantendo os campos e telas de 320 a 1280 px.
 
 Em seguida, `scripts/verificar-atualizacao.mjs` cria servidor próprio na porta 4176 e testa
 duas versões do worker com duas abas abertas. A versão em uso mantém HTML, recursos offline

@@ -68,3 +68,14 @@ que continuam obrigatórias. O formato do rascunho e suas chaves de armazenament
 | Perda do rascunho (limpeza do navegador) | Rascunho só no localStorage; orientar a baixar a planilha ao final |
 | Dependências desatualizadas | Poucas dependências; revisar alertas do `npm audit` periodicamente |
 | Planilha em versões antigas do Excel | Só funções clássicas (PROCV, ÍNDICE, CORRESP), sem macros nem matriz dinâmica |
+
+
+## Documentos individuais e referências internas (26/10/2026)
+
+O mantenedor definiu que o manual e o Design System orientam o padrão interno e não devem ser oferecidos a usuários. A tela da marca foi retirada; o endereço antigo leva ao catálogo de modelos. Os PPTX, ZIP da identidade e modelos-base Word/Excel foram preservados em PCM-Direto-Marca/Referencias-internas, fora do checkout e da publicação. Logos e fontes usados pelo produto permanecem.
+
+Os modelos são baixados individualmente em Excel ou Word, com finalidade, orientação inicial e prévia PDF. Busca por palavras e filtro de finalidade reduzem a lista e permanecem na sessão ao navegar. O arquivo ZIP dos 18 modelos foi preservado em Templates/Arquivos-originais e retirado da distribuição. A importação futura não volta a copiá-lo para public.
+
+Preencher um modelo gera um único arquivo com os equipamentos em edição; controles manuais dispensam cadastro. Documentos da revisão ativa também gera um arquivo por escolha, com data de corte e aprovação explícita. O histórico registra somente o documento emitido. Formulários mantêm envio único durante geração e navegação. A confirmação de aprovação fica expandida quando já marcada; falha de geração preserva os campos.
+
+Foram removidos o download combinado antigo e o aviso ultrapassado de modelos “aguardando”. Revisão focada na experiência de documentos: não altera tarefas, critérios técnicos, templates Office, formato de backup ou esquema dos dados. Revisão independente e validação com usuários/aparelhos reais continuam pendentes. Ver docs/REVISAO-EXPERIENCIA-DOCUMENTOS.md (caminho a partir da raiz).

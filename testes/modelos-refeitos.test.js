@@ -1,10 +1,11 @@
-import {it,expect} from 'vitest';
+import {it,expect,vi,afterEach} from 'vitest';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import JSZip from 'jszip';
 import contrato from '../src/dados/modelos-refeitos.json';
 import biblioteca from '../src/dados/biblioteca.json';
-import {prepararModelos,selecionarModelos,gerarPacoteModelos} from '../src/saida/modelos-refeitos.js';
+import {prepararModelos,selecionarModelos,gerarModelo} from '../src/saida/modelos-refeitos.js';
+import {guiaModelo} from '../src/dados/guias-modelos.js';
 import {EXEMPLO} from '../src/dados/exemplo.js';
 import {atribuirTags} from '../src/logica/tag.js';
 const estado=()=>({biblioteca:structuredClone(biblioteca),equipamentos:[{id:'eq1',setor:'UTL',tipo:'motor_eletrico',numero:1,tag:'UTL-MOT-001',descricao:'Motor fictício'}],inicio:'2026-01-05',capacidade:{},ajustes:{},execucoes:{}});
@@ -14,8 +15,24 @@ it('seleciona somente documentos conhecidos, sem duplicar e sem aceitar seleçã
   expect(()=>selecionarModelos([])).toThrow('pelo menos um');
   expect(()=>selecionarModelos(['../arquivo'])).toThrow('desconhecido');
 });
-it('recusa seleção inválida antes de acessar dados ou arquivos',async()=>{
-  await expect(gerarPacoteModelos(null,null,()=>{},[])).rejects.toThrow('pelo menos um');
+afterEach(()=>vi.unstubAllGlobals());
+it('recusa um documento desconhecido antes de acessar dados ou arquivos',async()=>{
+  await expect(gerarModelo(null,null,'../arquivo')).rejects.toThrow('desconhecido');
+});
+it('oferece explicação e orientação inicial para cada modelo',()=>{
+  for(const m of contrato.modelos){expect(guiaModelo(m.codigo).quando.length).toBeGreaterThan(20);expect(guiaModelo(m.codigo).comecar.length).toBeGreaterThan(20);}
+});
+it('baixa um único modelo manual sem exigir equipamentos e preserva seus bytes',async()=>{
+  const modelo=contrato.modelos.find(m=>m.codigo==='PCMD-K04');const bytes=readFileSync('public/modelos/refeitos/'+modelo.arquivo);
+  const buscar=vi.fn(async()=>new Response(bytes));vi.stubGlobal('fetch',buscar);
+  const arquivo=await gerarModelo(null,null,modelo.codigo);
+  expect(Buffer.from(arquivo.conteudo)).toEqual(bytes);expect(arquivo.nome).toBe(modelo.arquivo);expect(arquivo.tipo).toContain('spreadsheetml.sheet');expect(buscar).toHaveBeenCalledTimes(1);
+});
+it('recusa arquivo incompatível e modelo indisponível sem fornecer um download enganoso',async()=>{
+  vi.stubGlobal('fetch',async()=>new Response('outro arquivo'));
+  await expect(gerarModelo(null,null,'PCMD-K04')).rejects.toThrow('incompatível');
+  vi.stubGlobal('fetch',async()=>new Response('',{status:404}));
+  await expect(gerarModelo(null,null,'PCMD-K04')).rejects.toThrow('indisponível');
 });
 it('mantém os 18 modelos recebidos e as abas reais ligadas pelos relacionamentos',async()=>{
   expect(contrato.modelos).toHaveLength(18);

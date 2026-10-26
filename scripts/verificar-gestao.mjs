@@ -60,7 +60,7 @@ await executarComRecursos({
     assert.equal((await readFile(await pdf.path())).subarray(0,5).toString(),'%PDF-');
   }
   await page.locator('#categoria-documentos').click();
-  const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar modelo',exact:true}).first().click()]);
+  const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar Controle documental em branco',exact:true}).click()]);
   assert.deepEqual(await readFile(await modelo.path()),await readFile('public/modelos/PCMD-01-Controle-Documental.xlsx'));
   for(const card of await page.locator('#banco-modelos article').all())await card.locator('summary').click();
   const previas=await page.locator('a[href^="./modelos/previas/"]').evaluateAll(es=>es.map(e=>e.getAttribute('href')));assert.equal(previas.length,12);
@@ -132,15 +132,21 @@ await executarComRecursos({
   assert.equal(fichaLocalPdf.subarray(0,5).toString(),'%PDF-');
   await fichaLocal.close();
   await ir('entrega');
-  console.log('Iniciando emissão:',await page.title(),await page.locator('#gerar-pcmd').count());
-  const download=page.waitForEvent('download',{timeout:90000}).catch(async erro=>{throw new Error(erro.message+' · '+await page.locator('#conteudo').innerText());});
-  await page.locator('#gerar-pcmd').click();const pacote=await download;const zip=await JSZip.loadAsync(await readFile(await pacote.path()));
   await mkdir('artifacts/pcmd',{recursive:true});
-  for(const nome of Object.keys(zip.files).filter(n=>/\.(xlsx|docx)$/.test(n))){const bytes=await zip.file(nome).async('nodebuffer');await writeFile('artifacts/pcmd/'+nome,bytes);const gerado=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(await readFile('public/modelos/'+nome.replace('-Preenchido','')));for(const parte of Object.keys(original.files).filter(n=>/\/(media|drawings)\//.test(n)&&!original.files[n].dir))assert.deepEqual(await gerado.file(parte).async('nodebuffer'),await original.file(parte).async('nodebuffer'),nome+' preserva mídia e desenhos');
+  const emissoesAntes=(await rascunho()).programacao.emissoes.length;
+  const botoes=page.locator('[data-documento]');assert.equal(await botoes.count(),6);
+  for(let i=0;i<6;i++){
+    const [download]=await Promise.all([page.waitForEvent('download',{timeout:90000}),botoes.nth(i).click()]);
+    const nome=download.suggestedFilename();assert.match(nome,/\.(xlsx|docx)$/);const bytes=await readFile(await download.path());
+    await writeFile('artifacts/pcmd/'+nome,bytes);const gerado=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(await readFile('public/modelos/'+nome.replace('-Preenchido','')));
+    for(const parte of Object.keys(original.files).filter(n=>/\/(media|drawings)\//.test(n)&&!original.files[n].dir))assert.deepEqual(await gerado.file(parte).async('nodebuffer'),await original.file(parte).async('nodebuffer'),nome+' preserva mídia e desenhos');
     if(nome.endsWith('.docx')){for(const parte of Object.keys(gerado.files).filter(n=>/^word\/.*\.xml$/.test(n)))assert.ok(!(await gerado.file(parte).async('string')).includes('{{'),'Marcador pendente em '+nome+'/'+parte);assert.ok((await gerado.file('word/document.xml').async('string')).includes('Indústria Exemplo'));}
     else{assert.ok((await gerado.file('xl/workbook.xml').async('string')).includes('fullCalcOnLoad="1"'));assert.ok(Object.keys(gerado.files).some(n=>n.startsWith('xl/worksheets/')));}
+    const emissoes=(await rascunho()).programacao.emissoes;assert.equal(emissoes.length,emissoesAntes+i+1,'Uma emissão registra somente o documento escolhido');assert.equal(emissoes.at(-1).modelo,await botoes.nth(i).getAttribute('value'));
   }
-  assert.equal(Object.keys(zip.files).filter(n=>/\.(xlsx|docx)$/.test(n)).length,6);
+  await page.setViewportSize({width:1280,height:900});await page.evaluate(async()=>{await document.fonts.ready;window.scrollTo(0,0);});await page.screenshot({path:'artifacts/documentos-pc.jpg',type:'jpeg',quality:85});await page.setViewportSize({width:390,height:844});
+  const aprovacao=page.locator('#emissao-aprovada');await aprovacao.locator('xpath=ancestor::details').evaluate(d=>d.open=true);await aprovacao.check();await aprovacao.locator('xpath=ancestor::details').evaluate(d=>d.open=false);await botoes.first().click();assert.equal(await page.locator('#emissao-aprovador').isVisible(),true);assert.equal(await page.locator('#emissao-aprovador').evaluate(e=>e===document.activeElement),true);await aprovacao.uncheck();
+
   await contexto.setOffline(false);await page.goto('http://127.0.0.1:4175/atualizar.html#dados');await page.locator('#baixar-backup').waitFor();assert.equal((await rascunho()).gestao.historico.length,3,'Entrada atualizada preserva a mesma base');await ir('dados');
   const semExecucoes=structuredClone(v1);delete semExecucoes.rascunho.execucoes;
   await page.locator('#restaurar-backup').setInputFiles({name:'v1-sem-execucoes.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(semExecucoes))});await page.locator('#confirmar-backup').click();await page.waitForURL('**/#semana');

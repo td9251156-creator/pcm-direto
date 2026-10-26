@@ -8,16 +8,16 @@ Direção: uma fábrica com até 100 ativos, interface Gestão, dados operaciona
 |---|---|
 | Cadastro e planejamento | Equipamentos por cadastro/importação, biblioteca com origem, capacidade, criticidade e revisões com prévia de impacto. |
 | Rotina | Visão geral, ocorrências, conclusão/cancelamento preservando histórico, consulta de ativos e registro de falhas. |
-| Documentos | Seis documentos ligados à revisão ativa, com corte e aprovação explícita; 18 modelos adicionais por finalidade e pacote do rascunho. Logo oficial nos editáveis, exemplos, prévias e arquivos gerados. |
+| Documentos | Seis documentos ligados à revisão ativa, com corte e aprovação explícita; 18 modelos adicionais por finalidade e preenchimento individual com equipamentos em edição. Logo oficial nos editáveis, exemplos, prévias e arquivos gerados. |
 | Dados | IndexedDB v3, migração, compatibilidade de backups, restauração com prévia, concorrência entre abas e recuperação. |
-| Apoio | Comunidade, biblioteca de tarefas, guias locais e manual da marca. |
+| Apoio | Comunidade, biblioteca de tarefas, guias locais e guias de uso. |
 | Qualidade | Testes unitários, fluxos de navegador, geração offline, atualização da PWA e integridade dos templates. |
 
 ## Rodada de uso diário
 
 1. Corrigir o avanço do assistente: uma gravação por etapa, confirmação após persistir, falha mantendo os campos e navegação sem resposta atrasada substituindo a tela.
 2. Preservar o rascunho da organização durante a navegação na mesma sessão e permitir continuar por teclado.
-3. Organizar Mais por Rotina, Planejamento, Documentos e Dados e apoio; busca por finalidade e distinção entre documentos da revisão e modelos do rascunho.
+3. Organizar Mais por Rotina, Planejamento, Documentos e Dados e apoio; busca por finalidade e distinção entre documentos da revisão e modelos com equipamentos em edição.
 4. Verificar regressões, publicar por PR e conferir o resultado no site público.
 
 Escopo desta rodada: sem migração, dependência nova, alteração de regras técnicas, edição de templates ou envio de dados da fábrica.
@@ -37,3 +37,8 @@ Escopo desta rodada: sem migração, dependência nova, alteração de regras t�
 MTBF, MTTR, disponibilidade e novas regras técnicas precisam de definições e exemplos numéricos aprovados pelo mantenedor. QR, fotos, assinaturas e integrações adicionais devem ter escopo, privacidade e evidências definidos antes da implementação. Não estão incluídos implicitamente nesta rodada.
 
 Nenhuma atividade é prometida após o fim da sessão sem um executor persistente configurado. As próximas rodadas devem usar esta fila e os resultados observados, preservando as autorizações existentes e os dados antigos.
+
+
+## Ajustes da experiência de documentos
+
+O manual da marca e o Design System são referências internas. Downloads separados, explicações por modelo e preenchimento individual substituem os pacotes ZIP nas telas. A revisão geral do uso identificou nomenclatura interna exposta, duplicidade de ações, aviso antigo sobre modelos indisponíveis, links de download sem contexto e falta de filtro por finalidade. Esses pontos foram tratados nesta rodada. Os critérios de validação humana e as ampliações acima continuam válidos.

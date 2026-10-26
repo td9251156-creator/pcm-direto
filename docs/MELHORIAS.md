@@ -122,3 +122,14 @@ Atualizados os seis modelos de gestão e seus seis exemplos: 44 imagens antigas 
 Reproduzido o envio duplicado: dois cliques em Guardar e continuar enfileiravam duas gravações. A etapa agora é preparada na cópia persistida e só chega ao estado visível após salvar. Avanço repetido é recusado também no estado; demonstração e restauração aguardam a operação pendente. Falha conserva etapa e campos, com acesso ao backup. Navegação durante a gravação não sofre substituição pela resposta antiga. Organização aceita Enter e mantém rascunho em memória por base de dados, sem misturar com demonstração/restauração.
 
 Mais organizado em quatro grupos com busca por finalidade e acesso direto aos documentos da revisão e do rascunho. Nenhuma regra técnica, formato de backup, template Office ou biblioteca de tarefas alterado. Regressões específicas cobrem gravação lenta, falha, envio duplicado, teclado, busca e celular. Próximas entregas e validações humanas em PLANO-DESENVOLVIMENTO.md. Sem revisão independente nesta rodada.
+
+
+## Documentos individuais e referências internas (26/10/2026)
+
+O mantenedor definiu que o manual e o Design System orientam o padrão interno e não devem ser oferecidos a usuários. A tela da marca foi retirada; o endereço antigo leva ao catálogo de modelos. Os PPTX, ZIP da identidade e modelos-base Word/Excel foram preservados em PCM-Direto-Marca/Referencias-internas, fora do checkout e da publicação. Logos e fontes usados pelo produto permanecem.
+
+Os modelos são baixados individualmente em Excel ou Word, com finalidade, orientação inicial e prévia PDF. Busca por palavras e filtro de finalidade reduzem a lista e permanecem na sessão ao navegar. O arquivo ZIP dos 18 modelos foi preservado em Templates/Arquivos-originais e retirado da distribuição. A importação futura não volta a copiá-lo para public.
+
+Preencher um modelo gera um único arquivo com os equipamentos em edição; controles manuais dispensam cadastro. Documentos da revisão ativa também gera um arquivo por escolha, com data de corte e aprovação explícita. O histórico registra somente o documento emitido. Formulários mantêm envio único durante geração e navegação. A confirmação de aprovação fica expandida quando já marcada; falha de geração preserva os campos.
+
+Foram removidos o download combinado antigo e o aviso ultrapassado de modelos “aguardando”. Revisão focada na experiência de documentos: não altera tarefas, critérios técnicos, templates Office, formato de backup ou esquema dos dados. Revisão independente e validação com usuários/aparelhos reais continuam pendentes. Ver docs/REVISAO-EXPERIENCIA-DOCUMENTOS.md (caminho a partir da raiz).

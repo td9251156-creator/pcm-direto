@@ -1,91 +1,50 @@
-// Tela 4: Entrega — baixar a planilha .xlsx e o resumo .docx.
-import { estado, dadosAtuais } from '../estado.js';
-import { validarLista } from '../logica/validacao.js';
-import { esc, num, baixar, avisar } from '../ui.js';
-import { gerarPacoteModelos } from '../saida/modelos-refeitos.js';
+import {estado} from '../estado.js';
+import {validarLista} from '../logica/validacao.js';
+import {esc,baixar,avisar} from '../ui.js';
+import {gerarModelo} from '../saida/modelos-refeitos.js';
+import {guiaModelo} from '../dados/guias-modelos.js';
 import contrato from '../dados/modelos-refeitos.json';
 
-// Rascunho em memória: mantém a navegação, sem gravar dados pessoais no aparelho.
-const essenciais=contrato.modelos.filter(m=>m.preenchimento==='parcial').map(m=>m.codigo);
-const emissaoDaSessao={organizacao:'',elaborador:'',modo:'essencial',selecionados:[...essenciais],gerando:false,mensagem:'',concluido:false};
+// Somente na memória da sessão: não grava campos ainda não confirmados.
+const emissao={codigo:'',organizacao:'',elaborador:'',gerando:false,mensagem:''};
 let refletirEmissao=()=>{};
 
-
-export function telaEntregaModelos(main) {
-  const problemas = validarLista(estado.equipamentos, estado.biblioteca.tipos);
-  const comErro = Object.keys(problemas).length;
-  const vazio = !estado.equipamentos.length;
-  const bloqueado = comErro || vazio;
-  const dados = dadosAtuais();
-  const r = dados.resumo;
-
-  main.innerHTML = `
-    <section class="cartao entrega-principal"><p class="sobretitulo">Documentos PCM Direto</p><h2>Modelos do rascunho</h2>
-      <p>Escolha entre os 18 modelos e gere cópias com os dados do rascunho de equipamentos. Para usar uma revisão ativa, execuções e falhas, acesse <a href="#entrega">Documentos de gestão</a>.</p>
-      ${bloqueado?'':`<p class="origem">${r.equipamentos} equipamentos · ${r.tarefas} tarefas ativas · ${num(r.horasAno)} h previstas no ano</p>`}
-      <form id="pacote-refeito">
-        <fieldset class="opcoes-pacote"><legend>Quais documentos deseja?</legend>
-          ${[['essencial','Essencial','5 documentos'],['completo','Completo','18 documentos'],['personalizado','Escolher','Personalizar']].map(([valor,titulo,descricao])=>`<label class="opcao-pacote"><input type="radio" name="pacote" value="${valor}" ${emissaoDaSessao.modo===valor?'checked':''}><span><strong>${titulo}</strong><small>${descricao}</small></span></label>`).join('')}
-        </fieldset>
-        <details id="selecionar-documentos" ${emissaoDaSessao.modo==='personalizado'?'open':''}><summary>Escolher documentos individualmente</summary>
-          <div class="grade duas selecao-documentos">${contrato.modelos.map(m=>`<label class="caixa"><input type="checkbox" name="documento" value="${esc(m.codigo)}" ${emissaoDaSessao.selecionados.includes(m.codigo)?'checked':''}><span>${esc(m.codigo)} · ${esc(m.titulo)}<small>${m.preenchimento==='parcial'?'Recebe os dados disponíveis':'Preenchimento manual'}</small></span></label>`).join('')}</div>
-        </details>
-        <p id="resumo-selecao" class="origem" role="status" aria-live="polite"></p>
-        <div id="identificacao-emissao" class="grade duas">
-          <div><label for="modelo-organizacao">Organização (opcional)</label><input id="modelo-organizacao" name="organizacao" value="${esc(emissaoDaSessao.organizacao)}" maxlength="120" autocomplete="organization"></div>
-          <div><label for="modelo-elaborador">Elaborado por</label><input id="modelo-elaborador" name="elaborador" value="${esc(emissaoDaSessao.elaborador)}" required maxlength="120" autocomplete="name"></div>
-        </div>
-        <p id="nota-emissao" class="origem">Os documentos ficam em elaboração. Informações não cadastradas ficam vazias ou “A definir”. Confira antes de usar.</p>
-        <p id="bloqueio-documentos" class="erro" role="status" aria-live="polite"></p>
-        <div class="acoes"><button id="baixar-modelos-refeitos" aria-describedby="bloqueio-documentos resumo-selecao">Gerar meus documentos (.zip)</button><a href="#modelos">Baixar modelos em branco</a></div>
-        <p id="progresso-modelos" role="status" aria-live="polite"></p>
-      </form>
-      <section id="apos-gerar" class="orientacao-entrega" hidden tabindex="-1"><h3>Pacote preparado</h3><ol><li>Localize o arquivo baixado e extraia o ZIP.</li><li>Abra os documentos. Se houver planilhas, recalcule no Excel com Ctrl+Alt+F9.</li><li>Confira os avisos e campos “A definir” antes de usar ou aprovar.</li></ol></section>
-    </section>
-  `;
-
-  const form=main.querySelector('#pacote-refeito');
-  const button=main.querySelector('#baixar-modelos-refeitos');
-  const status=main.querySelector('#progresso-modelos');
-  const selecao=main.querySelector('#selecionar-documentos');
-  function atualizarSelecao(){
-    const modelos=contrato.modelos.filter(m=>emissaoDaSessao.selecionados.includes(m.codigo));
-    const parciais=modelos.filter(m=>m.preenchimento==='parcial').length;
-    main.querySelector('#resumo-selecao').textContent=!modelos.length?'Nenhum documento selecionado.':parciais===modelos.length?`${modelos.length} documento${modelos.length===1?'':'s'} com os dados disponíveis do aplicativo.`:!parciais?`${modelos.length} modelo${modelos.length===1?'':'s'} para preenchimento manual. Não exige cadastro de equipamentos.`:`${modelos.length} documentos: ${parciais} com dados disponíveis e ${modelos.length-parciais} manuais.`;
-    main.querySelector('#identificacao-emissao').hidden=!parciais;
-    main.querySelector('#nota-emissao').hidden=!parciais;
-    for(const input of form.querySelectorAll('input'))input.disabled=emissaoDaSessao.gerando;
-    form.elements.organizacao.disabled=emissaoDaSessao.gerando||!parciais;form.elements.elaborador.disabled=emissaoDaSessao.gerando||!parciais;form.elements.elaborador.required=!!parciais;
-    const motivo=!modelos.length?'Selecione pelo menos um documento.':parciais&&bloqueado?(vazio?'Cadastre ao menos um equipamento para preencher os documentos.':`Corrija ${comErro} equipamento(s) com pendência para preencher os documentos.`):'';
-    const aviso=main.querySelector('#bloqueio-documentos');aviso.replaceChildren();
-    if(motivo){aviso.append(document.createTextNode(motivo+' '));if(parciais&&bloqueado){const link=document.createElement('a');link.href='#equipamentos';link.textContent='Ir para Equipamentos';aviso.append(link);}}
-    aviso.hidden=!motivo;button.disabled=emissaoDaSessao.gerando||!!motivo;
-    form.setAttribute('aria-busy',String(emissaoDaSessao.gerando));
+export function telaEntregaModelos(main){
+  const codigo=new URLSearchParams(location.hash.split('?')[1]).get('documento');
+  if(codigo&&!emissao.gerando)emissao.codigo=contrato.modelos.some(m=>m.codigo===codigo)?codigo:'';
+  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Um arquivo por vez</p><h2>Preencher um modelo</h2><p>Escolha um documento para receber os dados dos equipamentos em edição. Para usar a revisão ativa e seu histórico, acesse <a href="#entrega">Documentos da revisão ativa</a>.</p></header>
+    <section class="cartao"><form id="modelo-individual"><label for="documento-modelo">Qual modelo deseja?</label><select id="documento-modelo" name="documento"><option value="">Selecione um modelo</option>${contrato.modelos.map(m=>`<option value="${m.codigo}" ${emissao.codigo===m.codigo?'selected':''}>${esc(m.titulo)} · ${m.arquivo.endsWith('xlsx')?'Excel':'Word'}</option>`).join('')}</select>
+    <div id="guia-modelo"></div><div id="identificacao-emissao" class="grade duas" hidden><div><label for="modelo-organizacao">Organização (opcional)</label><input id="modelo-organizacao" name="organizacao" value="${esc(emissao.organizacao)}" maxlength="120" autocomplete="organization"></div><div><label for="modelo-elaborador">Elaborado por</label><input id="modelo-elaborador" name="elaborador" value="${esc(emissao.elaborador)}" maxlength="120" autocomplete="name"></div></div>
+    <p id="bloqueio-documentos" class="erro" role="status" aria-live="polite"></p><div class="acoes"><button id="baixar-modelo" aria-describedby="bloqueio-documentos">Escolha um modelo</button><a href="#modelos">Ver todos os modelos e suas explicações</a></div><p id="progresso-modelos" role="status" aria-live="polite"></p></form></section>
+    <section class="cartao"><h3>Depois do download</h3><p>Abra o arquivo diretamente no Excel, LibreOffice ou Word. Confira os campos “A definir”, recalcule as fórmulas das planilhas e revise antes de usar. Os documentos ficam em elaboração.</p><p class="origem">O arquivo baixado não sincroniza com o aplicativo. Nenhum dado é enviado para gerar o documento.</p></section>`;
+  const form=main.querySelector('#modelo-individual');const button=main.querySelector('#baixar-modelo');const select=form.elements.documento;
+  const modeloAtual=()=>contrato.modelos.find(m=>m.codigo===emissao.codigo);
+  function atualizarGuia(){
+    const modelo=modeloAtual();const guia=modelo&&guiaModelo(modelo.codigo);
+    main.querySelector('#guia-modelo').innerHTML=modelo?`<h3>${esc(modelo.titulo)}</h3><p>${esc(guia.quando)}</p><p class="origem"><strong>Comece assim:</strong> ${esc(guia.comecar)}</p><p class="origem">${modelo.preenchimento==='parcial'?'O aplicativo insere os dados disponíveis. Complete e confira os demais campos.':'Este modelo é preenchido no próprio arquivo. Você pode baixar sem cadastrar equipamentos.'}</p>`:'';
   }
-  refletirEmissao=()=>{if(!form.isConnected)return;atualizarSelecao();status.textContent=emissaoDaSessao.mensagem;main.querySelector('#apos-gerar').hidden=!emissaoDaSessao.concluido;button.textContent=emissaoDaSessao.gerando?'Gerando documentos…':'Gerar meus documentos (.zip)';};
-  for(const nome of ['organizacao','elaborador'])form.elements[nome].addEventListener('input',()=>{emissaoDaSessao[nome]=form.elements[nome].value;emissaoDaSessao.concluido=false;emissaoDaSessao.mensagem='';refletirEmissao();});
-  form.addEventListener('change',event=>{
-    if(event.target.name==='pacote'){
-      emissaoDaSessao.modo=event.target.value;
-      if(event.target.value!=='personalizado')emissaoDaSessao.selecionados=event.target.value==='completo'?contrato.modelos.map(m=>m.codigo):[...essenciais];
-      else selecao.open=true;
-      for(const input of form.querySelectorAll('[name="documento"]'))input.checked=emissaoDaSessao.selecionados.includes(input.value);
-    }else if(event.target.name==='documento'){
-      emissaoDaSessao.selecionados=[...form.querySelectorAll('[name="documento"]:checked')].map(input=>input.value);
-      emissaoDaSessao.modo='personalizado';form.querySelector('[name="pacote"][value="personalizado"]').checked=true;
-    }else return;
-    emissaoDaSessao.concluido=false;emissaoDaSessao.mensagem='';refletirEmissao();
-  });
-  refletirEmissao();
+  refletirEmissao=()=>{
+    if(!form.isConnected)return;
+    const modelo=modeloAtual();const parcial=modelo?.preenchimento==='parcial';
+    for(const input of form.querySelectorAll('input,select'))input.disabled=emissao.gerando;
+    main.querySelector('#identificacao-emissao').hidden=!parcial;
+    form.elements.organizacao.disabled=emissao.gerando||!parcial;form.elements.elaborador.disabled=emissao.gerando||!parcial;form.elements.elaborador.required=!!parcial;
+    const problemas=parcial&&Object.keys(validarLista(estado.equipamentos,estado.biblioteca.tipos)).length;
+    const motivo=!modelo?'Escolha o documento que deseja baixar.':parcial&&!estado.equipamentos.length?'Cadastre ao menos um equipamento para preencher este modelo.':problemas?'Corrija os equipamentos com pendência antes de preencher este modelo.':'';
+    const aviso=main.querySelector('#bloqueio-documentos');aviso.textContent=motivo;aviso.hidden=!motivo;
+    if(parcial&&motivo){const link=document.createElement('a');link.href='#equipamentos';link.textContent='Ir para Equipamentos';aviso.append(' ',link);}
+    button.disabled=emissao.gerando||!!motivo;button.textContent=emissao.gerando?'Preparando arquivo…':modelo?`${parcial?'Gerar':'Baixar'} ${modelo.arquivo.endsWith('xlsx')?'Excel':'Word'}`:'Escolha um modelo';
+    form.setAttribute('aria-busy',String(emissao.gerando));main.querySelector('#progresso-modelos').textContent=emissao.mensagem;
+  };
+  select.addEventListener('change',()=>{emissao.codigo=select.value;emissao.mensagem='';history.replaceState(null,'','#entrega-modelos'+(select.value?'?documento='+select.value:''));atualizarGuia();refletirEmissao();});
+  for(const nome of ['organizacao','elaborador'])form.elements[nome].addEventListener('input',()=>{emissao[nome]=form.elements[nome].value;});
+  atualizarGuia();refletirEmissao();
   form.addEventListener('submit',async event=>{
-    event.preventDefault();if(button.disabled)return;
-    const selecionados=[...emissaoDaSessao.selecionados];
-    const meta={organizacao:form.elements.organizacao.value,elaborador:form.elements.elaborador.value};
-    emissaoDaSessao.gerando=true;emissaoDaSessao.concluido=false;emissaoDaSessao.mensagem='Preparando documentos…';refletirEmissao();
-    try{
-      const content=await gerarPacoteModelos(estado,meta,message=>{emissaoDaSessao.mensagem='Preparando '+message+'…';refletirEmissao();},selecionados);
-      baixar(content,'pcm-direto-modelos-refeitos.zip','application/zip');emissaoDaSessao.mensagem=`Pacote preparado com ${selecionados.length} documento${selecionados.length===1?'':'s'}.`;emissaoDaSessao.concluido=true;refletirEmissao();avisar('Documentos preparados para download.');
-    }catch(error){emissaoDaSessao.mensagem=error.message;refletirEmissao();avisar(error.message);}finally{emissaoDaSessao.gerando=false;refletirEmissao();}
+    event.preventDefault();if(button.disabled||emissao.gerando)return;
+    const modelo=modeloAtual();const meta={organizacao:form.elements.organizacao.value,elaborador:form.elements.elaborador.value};
+    emissao.gerando=true;emissao.mensagem=`Preparando ${modelo.titulo}…`;refletirEmissao();
+    try{const arquivo=await gerarModelo(estado,meta,modelo.codigo);baixar(arquivo.conteudo,arquivo.nome,arquivo.tipo);emissao.mensagem=`${modelo.titulo}: arquivo preparado para download. Confira antes de usar.`;avisar(emissao.mensagem);}
+    catch(erro){emissao.mensagem=erro.message;avisar(erro.message);}
+    finally{emissao.gerando=false;refletirEmissao();}
   });
-
 }

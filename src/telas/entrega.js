@@ -35,7 +35,7 @@ export function telaEntrega(main) {
 
   main.innerHTML = `
     <section class="cartao">
-      <h2>Entrega</h2>
+      <h3>Exportar o planejamento em edição</h3>
       ${vazio ? '<p class="erro"><strong>A lista está vazia.</strong> <a href="#equipamentos">Cadastre os equipamentos</a>.</p>' : ''}
       ${comErro ? `<p class="erro"><strong>${comErro} equipamento(s) com pendência.</strong>
         <a href="#equipamentos">Corrija na tela Equipamentos</a> para liberar os arquivos.</p>` : ''}
@@ -46,28 +46,11 @@ export function telaEntrega(main) {
           <li><strong>${num(r.horasAno)} h</strong> previstas no ano</li>
         </ul>`}
       <div class="acoes">
-        <button type="button" id="baixar-tudo" ${bloqueado ? 'disabled' : ''}>Baixar planilha e resumo</button>
-        <button type="button" class="secundario" id="baixar-xlsx" ${bloqueado ? 'disabled' : ''}>Só a planilha (.xlsx)</button>
-        <button type="button" class="secundario" id="baixar-docx" ${bloqueado ? 'disabled' : ''}>Só o resumo (.docx)</button>
+        <button type="button" class="secundario" id="baixar-xlsx" ${bloqueado ? 'disabled' : ''}>Baixar planilha do planejamento (.xlsx)</button>
+        <button type="button" class="secundario" id="baixar-docx" ${bloqueado ? 'disabled' : ''}>Baixar resumo do planejamento (.docx)</button>
         <a class="botao secundario" href="#impressao" ${bloqueado ? 'aria-disabled="true" tabindex="-1"' : ''}>Imprimir cronograma (A4)</a>
         <button type="button" class="secundario" id="baixar-csv" ${vazio ? 'disabled' : ''}>Baixar equipamentos (.csv)</button>
       </div>
-    </section>
-
-    <section class="cartao">
-      <h3>Seus modelos PCMD</h3>
-      <p>Os novos documentos serão conectados aos modelos Excel e Word que você fornecer.
-        A interface já guarda os cadastros e registros; os downloads acima continuam no formato anterior.</p>
-      <ul>
-        <li>PCMD-01 · Lista Mestra de Documentos — aguardando modelo.</li>
-        <li>PCMD-02 · Ativos e Criticidade — aguardando modelo.</li>
-        <li>PCMD-03 · Plano Mestre — aguardando modelo.</li>
-        <li>PCMD-04 · Cronograma Anual — aguardando modelo.</li>
-        <li>PCMD-05 · Ficha de Falha — aguardando modelo.</li>
-        <li>PCMD-W1 e PCMD-W2 · Manuais — aguardando modelos.</li>
-      </ul>
-      <p>Guarde os cadastros e o histórico no <a href="#inicio">backup completo</a>.
-        As exportações antigas ainda não incluem esses registros novos.</p>
     </section>
 
     <section class="cartao">
@@ -97,11 +80,6 @@ export function telaEntrega(main) {
     baixar(await docx.Packer.toBlob(montarDocx(dadosAtuais(), docx)), nomeArquivo('docx'));
   }
 
-  main.querySelector('#baixar-tudo').addEventListener('click', (e) => gerando(e.target, async () => {
-    await planilha();
-    await resumo();
-    avisar('Planilha e resumo gerados. Confira a pasta de downloads.');
-  }));
   main.querySelector('#baixar-xlsx').addEventListener('click', (e) => gerando(e.target, async () => {
     await planilha();
     avisar('Planilha gerada.');
