@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PCM Direto</title>
     <meta name="description" content="Gerador de PCM aberto: lista de equipamentos entra, plano de manutenção sai em planilha e documento." />
-    <meta name="theme-color" content="#0b3d63" />
+    <meta name="theme-color" content="#0b2a5b" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="og:title" content="PCM Direto · Planejamento de Manutenção simples, aberto e eficiente" />
+    <meta property="og:title" content="PCM Direto · Manutenção planejada. Direto ao ponto." />
     <meta property="og:description" content="Plano preventivo, cronograma, execuções, falhas e documentos PCMD. Gratuito, código aberto e com os dados só no seu aparelho." />
     <meta property="og:image" content="https://pcmdireto.me/apresentacao/compartilhar.jpg" />
     <link rel="manifest" href="./manifest.webmanifest" />
@@ -16,6 +16,8 @@
     <link rel="apple-touch-icon" href="./icones/apple-touch-icon.png" />
     <link rel="stylesheet" href="./src/estilo.css" />
     <link rel="stylesheet" href="./src/gestao.css" />
+    <link rel="stylesheet" href="/fontes/fontes.css" />
+    <link rel="stylesheet" href="./src/identidade.css" />
     <!-- Aplica o tema escolhido antes de desenhar a página (evita piscar) -->
     <script>document.documentElement.dataset.tema = 'claro';</script>
   </head>
@@ -23,7 +25,7 @@
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
     <header class="topo">
-      <h1 class="marca"><a href="#comunidade" aria-label="PCM Direto — início da comunidade"><img src="./icones/logo-horizontal.svg" alt="PCM Direto" width="1140" height="235" fetchpriority="high"></a><span class="marca-slogan">Manutenção planejada: simples, aberta e eficiente</span></h1>
+      <h1 class="marca"><a href="#comunidade" aria-label="PCM Direto — início da comunidade"><img src="./marca/logo/PCM-Direto_horizontal_azul.svg" alt="PCM Direto" width="2134" height="636" fetchpriority="high"></a><span class="marca-slogan">Manutenção planejada. Direto ao ponto.</span></h1>
       <div class="acoes-cabecalho"><span class="selo-local">Neste aparelho</span><a class="botao secundario" href="#apoio">Central de apoio</a><a class="botao" href="#inicio">Meu PCM</a></div>
       <nav aria-label="Navegação principal">
         <ol class="etapas">
@@ -64,6 +66,7 @@
 
     <footer class="rodape">
       <p>PCM Direto · <a href="./conheca.html">Conheça o projeto</a> · <a href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Código aberto · MIT</a> · dados da fábrica somente neste aparelho.</p>
+      <p><a href="#modelos">18 modelos refeitos</a> · <a href="#marca">Manual da marca</a></p>
       <!-- Aviso: discreto no rodapé de todas as telas; completo na planilha, no Word e no README -->
       <p class="aviso-rodape" id="aviso-permanente">
         O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o

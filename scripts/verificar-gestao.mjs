@@ -25,7 +25,7 @@ await executarComRecursos({
   await page.goto('http://127.0.0.1:4175/');await page.getByRole('heading',{name:'Conhecimento aberto. Manutenção melhor organizada.'}).waitFor();
   assert.equal(await page.locator('html').getAttribute('data-tema'),'claro');assert.equal(await page.locator('#tema').count(),0);
   const logo=page.locator('.marca img');await logo.evaluate(img=>img.decode());
-  assert.ok((await logo.getAttribute('src')).endsWith('/logo-horizontal.svg'));
+  assert.ok((await logo.getAttribute('src')).endsWith('/PCM-Direto_horizontal_azul.svg'));
   for(const largura of [320,390,820,1280]){
     await page.setViewportSize({width:largura,height:900});
     await logo.evaluate(img=>img.decode());const proporcao=await logo.evaluate(img=>img.naturalWidth/img.naturalHeight);

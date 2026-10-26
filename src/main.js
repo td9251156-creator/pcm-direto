@@ -1,3 +1,6 @@
+import { telaMarca } from './telas/marca.js';
+import { telaModelos } from './telas/modelos.js';
+import { telaEntregaModelos } from './telas/entrega-modelos.js';
 // Ponto de entrada: carrega o rascunho, troca de tela pelo endereço (#inicio, #equipamentos...)
 // e registra o service worker para funcionar como aplicativo e sem internet.
 import { inicializarPersistencia, recuperacao, estado } from './estado.js';
@@ -20,6 +23,9 @@ import { telaCatalogo } from './telas/catalogo.js';
 import { registrarAtualizacao } from './servicos/atualizacao.js';
 
 const TELAS = {
+  marca: { titulo: 'Manual da marca', desenhar: telaMarca },
+  modelos: { titulo: '18 modelos refeitos', desenhar: telaModelos },
+  'entrega-modelos': { titulo: 'Modelos do rascunho', desenhar: telaEntregaModelos },
   comunidade: { titulo: 'Comunidade e modelos', desenhar: telaComunidade },
   catalogo: { titulo: 'Catálogo colaborativo', desenhar: telaCatalogo },
   inicio: { titulo: 'Início', desenhar: telaBoasVindas },

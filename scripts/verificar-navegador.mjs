@@ -6,3 +6,5 @@ await import('./verificar-pdfs-banco.mjs');
 await import('./verificar-pdfs-comunidade.mjs');
 await import('./verificar-historico.mjs');
 await import('./verificar-modelos.mjs');
+await import('./verificar-refeitos-navegador.mjs');
+await import('./verificar-entrega-lean.mjs');
