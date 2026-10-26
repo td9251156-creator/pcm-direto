@@ -1,4 +1,5 @@
 import {it,expect} from 'vitest';
+import JSZip from 'jszip';
 import {readFileSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {MARCA} from '../src/marca.js';
@@ -16,4 +17,13 @@ it('todos os links fixos da página da marca existem e fontes não dependem da r
   const fontes=readFileSync('public/fontes/fontes.css','utf8');
   expect(fontes).not.toMatch(/https?:\/\//);
   for(const m of fontes.matchAll(/url\(\.\/([^)]+)\)/g))expect(existsSync('public/fontes/'+m[1])).toBe(true);
+});
+
+it('usa a assinatura completa do modelo no aplicativo e na apresentação',async()=>{
+  for(const nome of ['index.html','public/conheca.html']){
+    const html=readFileSync(nome,'utf8');expect(html).toContain('./marca/logo/PCM-Direto_horizontal-slogan_cor.svg');expect(html).not.toContain('<span class="marca-slogan">');
+  }
+  const modelo=await JSZip.loadAsync(readFileSync('public/marca/templates/PCMD-Modelo-Padrao.xlsx'));
+  expect(await modelo.file('xl/media/image1.png').async('nodebuffer')).toEqual(readFileSync('public/marca/logo/PCM-Direto_modelo-slogan.png'));
+  expect(readFileSync('public/icones/logo-horizontal-slogan.svg','utf8')).toBe(readFileSync('public/marca/logo/PCM-Direto_horizontal-slogan_cor.svg','utf8'));
 });
