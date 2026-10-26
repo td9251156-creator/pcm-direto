@@ -15,7 +15,7 @@ function normalizar(texto,ids){
 
 it('todos os templates e exemplos públicos usam a imagem oficial do modelo',async()=>{
   expect(sha(logo)).toBe(relatorio.logoSha256);
-  for(const pasta of ['public/modelos','public/modelos/refeitos','public/marca/templates']){
+  for(const pasta of ['public/modelos','public/modelos/refeitos']){
     for(const nome of readdirSync(pasta).filter(n=>/\.(xlsx|docx)$/.test(n))){
       const zip=await JSZip.loadAsync(readFileSync(pasta+'/'+nome));
       const imagens=Object.keys(zip.files).filter(n=>/\/media\//.test(n)&&!zip.files[n].dir);

@@ -1,7 +1,7 @@
 // Preenche somente as entradas disponíveis; preserva fórmulas, proteção e mídia nativa.
 import JSZip from 'jszip';
 import contrato from '../dados/modelos-refeitos.json';
-import {montarDados,AVISO} from '../logica/pacote.js';
+import {montarDados} from '../logica/pacote.js';
 import {validarLista} from '../logica/validacao.js';
 import {dataDaSemana,textoData} from '../logica/cronograma.js';
 const S='http://schemas.openxmlformats.org/spreadsheetml/2006/main';
@@ -139,18 +139,15 @@ export function selecionarModelos(codigos=null){
   return contrato.modelos.filter(m=>codigos.includes(m.codigo));
 }
 
-export async function gerarPacoteModelos(estado,meta,progresso=()=>{},codigos=null){
-  const modelos=selecionarModelos(codigos);
-  const preenchidos=modelos.filter(m=>m.preenchimento==='parcial').length;
-  const emissao=preenchidos?prepararModelos(estado,meta):null;const zip=new JSZip();
-  for(const [i,modelo] of modelos.entries()){
-    progresso(`${modelo.codigo} · ${i+1} de ${modelos.length}`);
-    const response=await fetch('./modelos/refeitos/'+modelo.arquivo);if(!response.ok)throw new Error('Modelo indisponível: '+modelo.codigo);
-    const bytes=await response.arrayBuffer();await validarBytes(bytes,modelo);
-    const automatic=modelo.preenchimento==='parcial';
-    const content=automatic?await (modelo.arquivo.endsWith('.xlsx')?preencherPlanilha:preencherManual)(bytes,modelo,emissao):bytes;
-    zip.file((automatic?'preenchidos/':'preenchimento-manual/')+modelo.arquivo,content);
-  }
-  zip.file('LEIA-ME.txt',`PCM Direto — modelos refeitos\n${modelos.length} documentos selecionados: ${preenchidos} com preenchimento parcial e ${modelos.length-preenchidos} para preenchimento manual.\nSituação: Em elaboração. Aprovador, criticidade, metas, estratégia e demais informações não cadastradas precisam ser definidos pelo responsável.\nAs últimas marcações antigas são exportadas sem vínculo: não contam como ocorrência concluída.\nExtraia o ZIP, abra os documentos e confira campos A definir e avisos. Nas planilhas, recalcule no Excel (Ctrl+Alt+F9) e confira as colunas Conferência.\nNão use os controles separados e o CMMS em paralelo para o mesmo registro: os arquivos não sincronizam entre si.\n\n${AVISO}\n`);
-  return zip.generateAsync({type:'blob',compression:'DEFLATE'});
+export async function gerarModelo(estado,meta,codigo){
+  const [modelo]=selecionarModelos([codigo]);
+  const automatico=modelo.preenchimento==='parcial';
+  // Captura os dados antes de buscar o arquivo, preservando a emissão durante a navegação.
+  const emissao=automatico?prepararModelos(estado,meta):null;
+  const resposta=await fetch('./modelos/refeitos/'+modelo.arquivo);
+  if(!resposta.ok)throw new Error('Modelo indisponível. Aguarde o carregamento offline ou tente conectado.');
+  const bytes=await resposta.arrayBuffer();await validarBytes(bytes,modelo);
+  const excel=modelo.arquivo.endsWith('.xlsx');
+  const conteudo=automatico?await (excel?preencherPlanilha:preencherManual)(bytes,modelo,emissao):bytes;
+  return {conteudo,nome:automatico?modelo.arquivo.replace(/\.(xlsx|docx)$/,'-Preenchido.$1'):modelo.arquivo,tipo:'application/vnd.openxmlformats-officedocument.'+(excel?'spreadsheetml.sheet':'wordprocessingml.document')};
 }

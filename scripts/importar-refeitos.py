@@ -44,8 +44,6 @@ for code,group,title,description,automatic in catalog:
     item['abas'][sh.get('name')]=path
    item['nomes']={n.get('name'):n.text for n in wb.findall('s:definedNames/s:definedName',N) if not n.get('name').startswith('_xlnm.')}
  contract['modelos'].append(item);contract['arquivos'][p.name]={'bytes':p.stat().st_size,'sha256':item['sha256']}
-shutil.copyfile(SOURCE/'PCMD-refeitos.zip',DEST/'PCMD-refeitos.zip')
-contract['arquivos']['PCMD-refeitos.zip']={'bytes':(DEST/'PCMD-refeitos.zip').stat().st_size,'sha256':hashlib.sha256((DEST/'PCMD-refeitos.zip').read_bytes()).hexdigest()}
 preview=ROOT/'artifacts/refeitos/office'
 for item in contract['modelos']:
  p=preview/Path(item['arquivo']).with_suffix('.pdf').name

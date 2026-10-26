@@ -25,7 +25,7 @@ de graça, em português e com os dados guardados só no seu aparelho. Para fáb
 
 | Executar no celular | Criticidade A/B/C | Documentos PCMD |
 |---|---|---|
-| <img src="public/apresentacao/executar-cel.webp" alt="Tela Executar no celular com o botão Feito hoje" width="220"> | <img src="public/apresentacao/criticidade-pc.webp" alt="Tela de criticidade com cinco critérios" width="300"> | <img src="public/apresentacao/entrega-pc.webp" alt="Tela de emissão do pacote PCMD" width="300"> |
+| <img src="public/apresentacao/executar-cel.webp" alt="Tela Executar no celular com o botão Feito hoje" width="220"> | <img src="public/apresentacao/criticidade-pc.webp" alt="Tela de criticidade com cinco critérios" width="300"> | <img src="public/apresentacao/entrega-pc.jpg" alt="Tela de geração individual dos documentos da revisão ativa" width="300"> |
 
 ## O que o app faz
 
@@ -37,7 +37,7 @@ Ferramenta aberta de Planejamento e Controle de Manutenção, em português, par
 - **Fábrica privada:** cadastros, planos, criticidade, execuções e falhas ficam no IndexedDB deste navegador, sem sincronização da base operacional.
 - **Planejar:** equipamentos por cadastro, colagem, CSV ou XLSX, criticidade com cinco notas, capacidade e revisões com vigência. A prévia compara tarefas, responsáveis, capacidade semanal e carga afetada por especialidade; editar os campos ou mudar o plano exige nova conferência antes de ativar.
 - **Executar:** busca por TAG, tarefa ou responsável, datas legíveis e conclusões mais recentes primeiro. Histórico com filtros por data realizada e situação, páginas e download da consulta. Cancelar exige confirmação e mantém o registro anterior se a gravação falhar. Execuções antigas permanecem como legado sem vínculo presumido.
-- **Documentos:** pacote de modelos 2.0.1-marca, com o logo oficial atualizado em 26/10/2026, com os seis modelos e seus exemplos. Cópias preenchidas usam uma data de corte comum; exportações anteriores em Outros formatos. As 12 prévias PDF do Banco de modelos são arquivos estáticos fornecidos, sem dados da fábrica.
+- **Documentos:** modelos de gestão 2.0.1-marca, com o logo oficial atualizado em 26/10/2026, com os seis modelos e seus exemplos. Cópias preenchidas usam uma data de corte comum; exportações anteriores em Outros formatos. As 12 prévias PDF do Banco de modelos são arquivos estáticos fornecidos, sem dados da fábrica.
 - **Meus dados:** backup JSON versão 3 e restauração com prévia; aceita versões 1 e 2 e preserva os originais locais na migração.
 - PWA para computador e celular; operação local e documentos offline após carregamento. Comunidade entre aparelhos exige internet.
 - Licença MIT. HTML, CSS, JavaScript e Vite, sem framework.
@@ -50,7 +50,7 @@ Ferramenta aberta de Planejamento e Controle de Manutenção, em português, par
 2. Cadastre organização, setores e equipamentos; avalie a criticidade e atribua responsáveis quando disponíveis.
 3. Em Planejar, confira tarefas e capacidade; informe elaborador, vigência e resumo e confira o impacto antes de ativar a revisão.
 4. Em Executar, selecione a ocorrência e use Feito hoje ou informe os detalhes. Registre falhas em Mais → Falhas.
-5. Em Documentos, gere o pacote PCMD e confira no editor antes da aprovação.
+5. Em Documentos, confira a identificação, escolha um documento e abra o arquivo no editor antes da aprovação.
 6. Baixe backups em Mais → Meus dados. Limpar o navegador, mudar a origem ou trocar de aparelho exige restauração de backup.
 
 Quando aparecer **Uma atualização está pronta**, termine seu trabalho e feche todas as abas
@@ -115,11 +115,9 @@ Outros comandos:
 
 ## Logo e ícones
 
-O logo fica em [`public/icones/logo.svg`](public/icones/logo.svg). Os ícones do aplicativo
-(`icone-192.png`, `icone-512.png` e `icone-maskable-512.png`) são imagens geradas a partir dele.
-Para trocar o logo, substitua esses quatro arquivos mantendo os nomes.
-As letras do logo usam a fonte DejaVu Sans Bold (licença livre do projeto DejaVu), convertidas em desenho
-para aparecerem iguais em qualquer aparelho.
+A assinatura completa do cabeçalho é o SVG oficial `public/marca/logo/PCM-Direto_horizontal-slogan_cor.svg`, com proporção e slogan preservados. As cores ficam em `src/marca.js`, e Archivo e IBM Plex Mono são servidas localmente. Os ícones do aplicativo ficam em `public/icones`.
+
+O manual da marca, o Design System e os modelos-base são referências de trabalho do mantenedor, fora da distribuição do site. Mudanças de identidade devem preservar o logo oficial nos modelos, exemplos, prévias e arquivos gerados; os testes conferem hashes e conteúdo funcional.
 
 ## Como contribuir
 
@@ -167,16 +165,16 @@ Parte do código deste projeto foi escrita com ajuda de IA e revisada pelo autor
 
 ## Manual final e modelos adicionais
 
-A identidade visual segue o manual final de outubro de 2026: azul PCM, laranja como sinal, Archivo e IBM Plex Mono locais. O manual e os arquivos oficiais ficam em **Mais → Manual da marca**.
+A identidade visual segue o manual final de outubro de 2026: azul PCM, laranja como sinal, Archivo e IBM Plex Mono locais. O manual, o Design System e os modelos-base da identidade são referências internas do mantenedor e não fazem parte do site.
 
-**Comunidade → Explorar os 18 modelos** reúne os novos documentos por finalidade, com busca e prévias PDF. **Modelos do rascunho** permite gerar o pacote essencial (cinco arquivos parcialmente preenchidos), completo (18) ou personalizado. Seleções somente manuais dispensam equipamentos. O formulário permanece na memória ao navegar, até recarregar a página.
+**Modelos para sua rotina** reúne 18 documentos por finalidade, com explicação de uso, orientação inicial, busca, filtro e prévia PDF. Cada download entrega um único Excel ou Word. **Preencher um modelo** insere os dados disponíveis dos equipamentos em edição em cinco modelos; os outros 13 são manuais e dispensam cadastro. O formulário permanece na memória ao navegar, até recarregar a página. Não há download de todos juntos.
 
 **Documentos** continua emitindo os seis modelos da revisão ativa, com data de corte, aprovação explícita, execuções e falhas. Os novos arquivos ficam separados em public/modelos/refeitos para preservar os contratos e exemplos já existentes. Os documentos do rascunho não substituem a emissão da revisão ativa.
 
 
 ## Uso diário e configuração
 
-Em **Mais**, os acessos ficam organizados por Rotina, Planejamento, Documentos e Dados e apoio. A busca aceita termos como backup, plano ou modelos. Os documentos da revisão ativa e os modelos do rascunho têm acessos próprios.
+Em **Mais**, os acessos ficam organizados por Rotina, Planejamento, Documentos e Dados e apoio. A busca aceita termos como backup, plano ou modelos. Os documentos da revisão ativa, os modelos em branco e o preenchimento com equipamentos em edição têm acessos com finalidades explícitas.
 
 O assistente confirma uma etapa após guardar os dados. Durante a gravação, os controles ficam bloqueados para impedir repetições; sair da tela não provoca retorno automático. Se a gravação falhar, a etapa e os campos são preservados e o aplicativo orienta guardar um backup. O formulário de organização aceita Enter e mantém o rascunho ao navegar durante a sessão. Recarregar descarta campos ainda não confirmados.
 

@@ -15,14 +15,16 @@ await executarComRecursos({limiteTotal:240000,criarServidor:async()=>{const s=aw
   for(const m of contrato.modelos){const r=await p.request.get('http://127.0.0.1:4194/modelos/refeitos/'+m.arquivo);assert.equal(r.status(),200);assert.equal(createHash('sha256').update(await r.body()).digest('hex'),m.sha256);const pdf=await p.request.get('http://127.0.0.1:4194/modelos/refeitos/previas/'+m.arquivo.replace(/\.(xlsx|docx)$/,'.pdf'));assert.equal(pdf.status(),200);assert.equal((await pdf.body()).subarray(0,4).toString(),'%PDF');}
   await p.goto('http://127.0.0.1:4194/#entrega-modelos');
   await p.evaluate(async()=>{const {estado}=await import('/src/estado.js');estado.equipamentos=[{id:'eq1',setor:'UTL',tipo:'motor_eletrico',numero:1,tag:'UTL-MOT-001',descricao:'Motor fictício <&>'},{id:'eq2',setor:'PRD',tipo:'motor_eletrico',numero:2,tag:'PRD-MOT-002',descricao:'Motor dois'}];estado.inicio='2026-01-05';estado.ajustes={};estado.execucoes={'eq1|MOT-01':{data:'2026-10-20',observacao:'Teste <&>'}};const {telaEntregaModelos}=await import('/src/telas/entrega-modelos.js');telaEntregaModelos(document.querySelector('main'));});
+  await p.locator('#documento-modelo').selectOption('PCMD-01');
   await p.locator('#modelo-organizacao').fill('Indústria fictícia <&>');await p.locator('#modelo-elaborador').fill('Pessoa fictícia');
-  await p.locator('[name="pacote"][value="completo"]').check();
-  const [download]=await Promise.all([p.waitForEvent('download'),p.locator('#baixar-modelos-refeitos').click()]);await download.saveAs(fileURLToPath(new URL('pacote.zip',output)));
-  const zip=await JSZip.loadAsync(await readFile(new URL('pacote.zip',output)));const editables=Object.keys(zip.files).filter(n=>/\.(xlsx|docx)$/.test(n));assert.equal(editables.length,18);assert.equal(editables.filter(n=>n.startsWith('preenchidos/')).length,5);
-  for(const name of editables){
-    const bytes=await zip.file(name).async('uint8array');const base=name.split('/').at(-1);const source=await readFile(new URL('../public/modelos/refeitos/'+base,import.meta.url));
-    if(name.startsWith('preenchimento-manual/')){assert.deepEqual(Buffer.from(bytes),source);continue;}
-    const target=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(source);const info=contrato.modelos.find(m=>m.arquivo===base);
+  for(const info of contrato.modelos){
+    await p.locator('#documento-modelo').selectOption(info.codigo);
+    const [download]=await Promise.all([p.waitForEvent('download'),p.locator('#baixar-modelo').click()]);
+    const base=info.arquivo;assert.equal(download.suggestedFilename(),info.preenchimento==='parcial'?base.replace(/\.(xlsx|docx)$/,'-Preenchido.$1'):base);
+    const caminho=new URL(base,output);await download.saveAs(fileURLToPath(caminho));
+    const bytes=await readFile(caminho);const source=await readFile(new URL('../public/modelos/refeitos/'+base,import.meta.url));
+    if(info.preenchimento==='manual'){assert.deepEqual(bytes,source);continue;}
+    const target=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(source);
     await (await import('node:fs/promises')).writeFile(new URL(base,output),bytes);
     for(const part of Object.keys(original.files).filter(n=>!original.files[n].dir&&/\/media\//.test(n)))assert.deepEqual(await target.file(part).async('uint8array'),await original.file(part).async('uint8array'));
     if(base.endsWith('.xlsx'))for(const path of Object.values(info.abas)){
@@ -31,5 +33,5 @@ await executarComRecursos({limiteTotal:240000,criarServidor:async()=>{const s=aw
     }
     else{const body=await target.file('word/document.xml').async('string');assert.ok(!body.includes('{{'));assert.ok(body.includes('Pessoa fictícia'));assert.ok(body.includes('Em elaboração'));assert.ok(body.includes('A definir'));}
   }
-  assert.match(await p.locator('#progresso-modelos').textContent(),/Pacote preparado/);assert.deepEqual(errors,[]);await context.close();console.log('Modelos refeitos: 18 downloads e prévias, cinco arquivos preenchidos, 13 manuais intactos, mídia, fórmulas e proteção preservadas.');
+  assert.match(await p.locator('#progresso-modelos').textContent(),/arquivo preparado/);assert.deepEqual(errors,[]);await context.close();console.log('Modelos refeitos: 18 downloads e prévias, cinco arquivos preenchidos, 13 manuais intactos, mídia, fórmulas e proteção preservadas.');
 }});

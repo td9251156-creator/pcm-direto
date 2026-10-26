@@ -16,9 +16,9 @@ const grupos=[
     ['mensal','Mensal','Consultar previsões e realizações por mês'],
   ]],
   ['Documentos',[
-    ['entrega','Documentos','Emitir os seis documentos da revisão ativa'],
-    ['entrega-modelos','Modelos do rascunho','Gerar pacote essencial, completo ou personalizado do rascunho'],
-    ['modelos','18 modelos refeitos','Baixar modelos em branco e conferir as prévias PDF'],
+    ['entrega','Documentos da revisão ativa','Gerar um documento com o plano ativo, execuções e falhas'],
+    ['entrega-modelos','Preencher um modelo','Escolher um arquivo e inserir os equipamentos em edição'],
+    ['modelos','Modelos para sua rotina','Entender cada modelo, ver o PDF e baixar Excel ou Word'],
   ]],
   ['Dados e apoio',[
     ['dados','Meus dados','Backup completo e restauração'],
@@ -26,7 +26,6 @@ const grupos=[
     ['apoio','Central de apoio','Guias, trilhas e glossário'],
     ['inicio','Primeiros passos','Preparar a fábrica ou explorar o exemplo isolado'],
     ['comunidade','Comunidade','Modelos públicos e contribuições'],
-    ['marca','Manual da marca','Identidade visual e arquivos oficiais'],
   ]],
 ];
 

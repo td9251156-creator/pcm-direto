@@ -2,8 +2,6 @@
   "versao": "02",
   "referencia": "Manual final fornecido pelo mantenedor — outubro de 2026",
   "sha256": {
-    "PCM-Direto-Design-System.zip": "8b1b5e899ac5b13fc1babb0c679424af31ce79e8aa14d1d9767fabc11c15e992",
-    "PCM-Direto-Manual-da-Marca.pptx": "65bdfd1b4c057046dd1c0a340d3bdb6b2025ed353a76e2f0fe9ce61b691b7536",
     "favicon/favicon.svg": "f0c4308f59ed816712fb0d844b1400ec131b1bf7a027a579dc801fda0adc62bc",
     "favicon/icon-512.png": "1a215b73a60a5c658b8866f8d38ec441648b354a00ed7b9b70132b223906b127",
     "logo/PCM-Direto_horizontal-slogan_cor.svg": "4c95d76f6538359db3da779911993eada95475dc9b7af0d114f8bfad8d8a5f16",
@@ -16,8 +14,6 @@
     "logo/PCM-Direto_icone-app.svg": "109ec5aecd1a80ccdabaa50bf8858d600ebdec05ccc5a8974a91d0bc61409e22",
     "logo/PCM-Direto_icone-app_negativo.svg": "5eb83825366dba69638f4f35548b4bb8e1ed74b4d42a74923c80b587bc45e7f1",
     "logo/PCM-Direto_vertical_cor.svg": "9340ffa0ce8712ce5f90007cdc43365f3e84e846ed7a6a19c9aaf63a1ec2e135",
-    "logo/PCM-Direto_vertical_negativo.svg": "6e77c3c8742a9d81207c23393b26b212fa97caf047905ac1c7909710e4eae993",
-    "templates/PCMD-Modelo-Padrao.docx": "6860dcfc850b596720776622baa7dd2a986ae6292256c537abacf2ab90712933",
-    "templates/PCMD-Modelo-Padrao.xlsx": "fb6fdf4b7293e9fe7bfdbf2b868082c0a8aff5b925d259042c4d7d9cbc4eeb1c"
+    "logo/PCM-Direto_vertical_negativo.svg": "6e77c3c8742a9d81207c23393b26b212fa97caf047905ac1c7909710e4eae993"
   }
 }
