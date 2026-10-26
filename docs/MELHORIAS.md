@@ -105,3 +105,8 @@ Verificação local inicial: npm ci sem vulnerabilidades; lint, 239 testes e bui
 ### Assinatura oficial do modelo — 26/10/2026
 
 Correção solicitada pelo mantenedor: cabeçalho usa o SVG oficial horizontal com barra laranja e slogan incorporado, sem reconstrução em HTML. Página de apresentação e endpoints de logo alinhados. Fichas PDF públicas usam a imagem original extraída do modelo Excel e fontes Archivo locais. Modelos Office recebidos preservados. Contraste dos passos da apresentação corrigido. A publicação anterior foi autorizada; esta correção segue pelo mesmo fluxo de PR e CI.
+
+
+### Revisão das imagens públicas da marca — 26/10/2026
+
+Atualizadas a imagem social e as quatro capturas da página de apresentação. Assinatura oficial incorporada, fontes locais e capturas reais da demonstração isolada, apenas com dados fictícios. Metadados sociais ajustados para 1200×630 e endereço versionado para renovação da imagem compartilhada. Nenhuma mudança funcional ou nos dados de usuários.
