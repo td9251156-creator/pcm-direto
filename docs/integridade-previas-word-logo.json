@@ -1,0 +1,30 @@
+{
+  "PCMD-W1-Manual-Gestao-Ativos-Exemplo.pdf": {
+    "sha256Origem": "112291a73c6c20fc50623677605369fd2cfa320cb1847de2cd16b0e8ac24c64d",
+    "sha256Atual": "3ca2875409ab34b62a36003a61cb700f24621410e66493ade94834f118bbc36e",
+    "paginas": 5,
+    "logosAtualizados": 5,
+    "textosEPaginasPreservados": true
+  },
+  "PCMD-W1-Manual-Gestao-Ativos.pdf": {
+    "sha256Origem": "994875f5c38a5a28fa1dbb68ca425cbb7c0caba767190a211a5d4dd994bc8968",
+    "sha256Atual": "d15cfd8539bfff9afcdcaefab2b175ecbc7896d1e62ff434af123d35f7d9617c",
+    "paginas": 5,
+    "logosAtualizados": 5,
+    "textosEPaginasPreservados": true
+  },
+  "PCMD-W2-Manual-Estrategia-Manutencao-Exemplo.pdf": {
+    "sha256Origem": "9396091b7868c15af2ec0e21d828ff73ab02928b30a507140631d386d25c3281",
+    "sha256Atual": "1aefc7d1c0399220bf68f8f6d42fff63ba8604466f1d388c7cf89c3c2e0a77e0",
+    "paginas": 8,
+    "logosAtualizados": 8,
+    "textosEPaginasPreservados": true
+  },
+  "PCMD-W2-Manual-Estrategia-Manutencao.pdf": {
+    "sha256Origem": "019b7be20530caefb3dbf3a5044da5a01c3c2a105f688a653a79379b11f2f45c",
+    "sha256Atual": "c544ea4e06fcd704995878c05af8111d8fc433aef4eb01330061da57bf7fb18b",
+    "paginas": 5,
+    "logosAtualizados": 5,
+    "textosEPaginasPreservados": true
+  }
+}
