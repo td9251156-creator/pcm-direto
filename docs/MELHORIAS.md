@@ -115,3 +115,10 @@ Atualizadas a imagem social e as quatro capturas da página de apresentação. A
 ### Logo oficial nos templates de gestão — 26/10/2026
 
 Atualizados os seis modelos de gestão e seus seis exemplos: 44 imagens antigas substituídas pela assinatura oficial do modelo, mantendo a proporção. Versão 2.0.1-marca; contratos e manifesto atualizados com hashes de origem preservados. Comparação por partes OOXML comprova preservação de fórmulas, células, estilos, validações, proteção, gráficos e textos Word. Oito planilhas abertas e recalculadas no Excel sem erros, antes e depois. Prévia Excel regenerada no Excel; prévias Word recebem somente a nova imagem e sua matriz, com textos e páginas comparados e renderizados. A conversão PDF do Word nativo travou neste ambiente e não foi declarada aprovada. Os 18 modelos adicionais e seu ZIP já usavam o logo novo. Detalhes em REVISAO-LOGOS-TEMPLATES.md. Sem revisão independente.
+
+
+### Assistente seguro e acessos por rotina — 26/10/2026
+
+Reproduzido o envio duplicado: dois cliques em Guardar e continuar enfileiravam duas gravações. A etapa agora é preparada na cópia persistida e só chega ao estado visível após salvar. Avanço repetido é recusado também no estado; demonstração e restauração aguardam a operação pendente. Falha conserva etapa e campos, com acesso ao backup. Navegação durante a gravação não sofre substituição pela resposta antiga. Organização aceita Enter e mantém rascunho em memória por base de dados, sem misturar com demonstração/restauração.
+
+Mais organizado em quatro grupos com busca por finalidade e acesso direto aos documentos da revisão e do rascunho. Nenhuma regra técnica, formato de backup, template Office ou biblioteca de tarefas alterado. Regressões específicas cobrem gravação lenta, falha, envio duplicado, teclado, busca e celular. Próximas entregas e validações humanas em PLANO-DESENVOLVIMENTO.md. Sem revisão independente nesta rodada.

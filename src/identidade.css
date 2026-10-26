@@ -34,3 +34,5 @@
 .topo .marca img{aspect-ratio:auto}
 
 @media screen and (min-width:1024px){.topo{width:280px}body{padding-left:280px}}
+
+#buscar-ferramentas{max-width:38rem;width:100%}.ferramentas-grupo{margin:1.5rem 0}.ferramentas-grupo h3{margin:0 0 1rem}.ferramentas-grupo .modulo{min-width:0}
