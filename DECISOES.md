@@ -17,10 +17,12 @@ HTML, CSS e JavaScript puro, sem framework. Vite só para rodar localmente e ger
 Bibliotecas: ExcelJS (.xlsx) e docx (.docx), ambas MIT. Hospedagem no GitHub Pages, custo zero.
 
 ## Identidade visual
-Paleta "Azul aço": azul #0B3D63 (topo, cabeçalhos, botões), laranja #B85C00 (foco do teclado),
-aviso em amarelo #FFF4C2 e selo de segurança em vinho #7A0019. Cores centralizadas em src/marca.js.
-Logo: quadrado azul #13304A, "PCM" em branco, barra e "DIRETO" em laranja #D97030 (public/icones/logo.svg),
-letras em DejaVu Sans Bold convertidas em desenho.
+Manual final da marca, versão 02 / outubro de 2026. Azul #0B2A5B e azul profundo #071C3D;
+laranja sinal #E2701F e laranja texto #B85600. Tipografia Archivo e IBM Plex Mono, servida localmente
+com as licenças OFL. Logos oficiais sem distorção, cantos discretos e entradas em azul-claro.
+Cores centralizadas em src/marca.js; segurança e legibilidade dos estados permanecem preservadas.
+A página #marca reúne as regras e os downloads originais fornecidos pelo mantenedor.
+Alteração preparada localmente; publicação continua dependendo de autorização explícita.
 
 ## Licença
 MIT — Copyright (c) 2026 Thiago Oliveira Lima. Uso, cópia e modificação livres, sem garantia.

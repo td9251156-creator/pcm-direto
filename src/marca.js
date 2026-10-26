@@ -1,12 +1,20 @@
-// Cores da interface, em um só lugar. Usadas na planilha e no Word.
-// O logo (public/icones/logo.svg) tem cores próprias: azul #13304A e laranja #D97030.
+// Manual final da marca, versão 02 / outubro de 2026.
+// Cores da interface, em um só lugar. Usadas também na planilha e no Word.
 // Ao trocar a cor primária, troque também:
 //   - --primaria e --destaque no topo de src/estilo.css
 //   - theme-color no index.html e theme_color no public/manifest.webmanifest
 // Depois rode "npm test" (um teste confere se tudo bate).
 export const MARCA = {
-  primaria: '0B3D63', // barra do topo, cabeçalhos de tabela, botões
-  destaque: 'B85C00', // contorno de foco do teclado (sobre fundo branco)
+  primaria: '0B2A5B', // barra do topo, cabeçalhos de tabela, botões
+  destaque: 'B85600', // contorno de foco do teclado (sobre fundo branco)
+  profundo: '071C3D',
+  sinal: 'E2701F',
+  tinta: '0E1726',
+  textoSuave: '4A5668',
+  linha: 'DDE3EA',
+  superficie: 'F4F6F9',
+  entrada: 'E6EEF8',
+  automatico: 'ECEFF3',
   avisoFundo: 'FFF4C2', // fundo do aviso permanente
   avisoBorda: '8A6D00',
   avisoTexto: '5C4600',

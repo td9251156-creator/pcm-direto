@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PCM Direto</title>
     <meta name="description" content="Gerador de PCM aberto: lista de equipamentos entra, plano de manutenção sai em planilha e documento." />
-    <meta name="theme-color" content="#0b3d63" />
+    <meta name="theme-color" content="#0b2a5b" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./icones/logo.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icones/icone-192.png" />
     <link rel="stylesheet" href="./src/estilo.css" />
+    <link rel="stylesheet" href="/fontes/fontes.css" />
     <!-- Aplica o tema escolhido antes de desenhar a página (evita piscar) -->
     <script>try { const t = localStorage.getItem('pcm-direto:tema'); if (t) document.documentElement.dataset.tema = t; } catch (e) { /* sem acesso ao armazenamento */ }</script>
   </head>
@@ -17,7 +18,7 @@
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
     <header class="topo">
-      <h1 class="marca"><img src="./icones/logo.svg" alt="" width="44" height="44"> PCM Direto</h1>
+      <h1 class="marca"><a href="#inicio" aria-label="PCM Direto — início"><img src="./marca/logo/PCM-Direto_horizontal_branco.svg" alt="PCM Direto" width="240" height="72"></a></h1>
       <nav aria-label="Etapas">
         <ol class="etapas">
           <li><a href="#inicio" data-tela="inicio">1. Início</a></li>
@@ -26,6 +27,7 @@
           <li><a href="#entrega" data-tela="entrega">4. Entrega</a></li>
         </ol>
       </nav>
+      <nav aria-label="Acesso rápido"><ul class="atalhos"><li><a href="#modelos" data-tela="modelos">Modelos</a></li><li><a href="#execucao" data-tela="execucao">Checklist</a></li><li><a href="#biblioteca" data-tela="biblioteca">Biblioteca</a></li></ul></nav>
     </header>
 
     <aside class="cartao erro" id="aviso-armazenamento" role="alert" hidden>
@@ -39,6 +41,7 @@
 
     <footer class="rodape">
       <p>PCM Direto · código aberto (MIT) · seus dados ficam só neste aparelho.</p>
+      <p><a href="#modelos">Documentos PCM Direto</a> · <a href="#marca">Manual da marca</a></p>
       <button type="button" class="secundario tema" id="tema">Tema: automático</button>
       <!-- Aviso: discreto no rodapé de todas as telas; completo na planilha, no Word e no README -->
       <p class="aviso-rodape" id="aviso-permanente">

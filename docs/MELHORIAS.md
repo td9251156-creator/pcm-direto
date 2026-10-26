@@ -78,3 +78,25 @@ por profissional habilitado. Não ampliar tarefas técnicas ou periodicidades se
   e restauração, desfazer remoção, filtros, aviso de gravação, recuperação e geração offline de XLSX/DOCX.
 - Os 16 PRs foram integrados à main por solicitação do mantenedor. A publicação é executada pelo fluxo do GitHub Pages.
 - Leitor de tela, aparelhos reais e Excel antigo ainda precisam de conferência manual.
+
+
+### Manual final da marca no site — implementação local
+
+Aplicadas paleta, logos oficiais, slogan, fontes locais Archivo/IBM Plex Mono e estados de entrada.
+Nova página #marca com assinaturas, paleta, tipografia e downloads do manual, Design System e modelos
+Word/Excel originais (integridade SHA256). Conferência de celular, teclado, downloads e fluxo offline
+no navegador aprovada. Sem publicação e sem revisão independente.
+
+Verificação local: lint e build aprovados; 151 de 152 testes passaram com timeout de 60 segundos.
+A falha restante é o teste preexistente de symlink em agentes-ia.test.js: EPERM no Windows, sem
+permissão de criação de links simbólicos. Nenhum teste foi desativado. A suíte padrão também pode
+exceder 5 segundos ao carregar ExcelJS nesta máquina; repetição com 60 segundos passou nesse caso.
+
+
+### Modelos refeitos 2.0.0 — integração local
+
+Banco de 18 documentos recebidos, com prévias e busca. Novo pacote de cinco arquivos parcialmente preenchidos e 13 manuais. Proteção, mídia e fórmulas preservadas; 19 cenários no Excel aprovados. Detalhes e limites em [REVISAO-TEMPLATES-REFEITOS.md](REVISAO-TEMPLATES-REFEITOS.md). Sem publicação ou revisão independente.
+
+### Entrega enxuta e navegação — implementação local
+
+Aplicados pacote essencial/completo/personalizado, preservação do formulário na sessão, motivos de bloqueio próximos da ação, instruções após download e atalhos de navegação. Exportações anteriores recolhidas em detalhes. Seleção manual dispensa cadastro. Corrigido transbordamento da Revisão no celular sem ocultar a rolagem da tabela. Verificação específica com ZIPs reais e larguras de 320 a 1366 px aprovada. Sem publicação; aguarda aprovação humana.

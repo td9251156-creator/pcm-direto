@@ -25,7 +25,7 @@ com cronograma anual, em planilha (.xlsx) e documento (.docx).
    Escolha a data de início do plano: o cronograma mostra o dia em que cada semana começa
    e a carga de horas por semana de cada especialidade.
    Informe as horas disponíveis por semana em cada especialidade: o cronograma respeita esse limite.
-4. **Entrega:** baixe a planilha (.xlsx) e o resumo (.docx), ou imprima o cronograma em A4 deitado.
+4. **Entrega:** gere o pacote essencial, completo ou personalizado. A planilha anterior, o resumo e a impressão A4 ficam em **Outras opções de exportação**.
 
 Extras: a tela **Biblioteca técnica** (link no Início) permite editar tarefas e criar tipos de equipamento
 no próprio app, e o botão de tema no rodapé alterna entre claro, escuro e automático.
@@ -122,3 +122,11 @@ Parte do código deste projeto foi escrita com ajuda de IA e revisada pelo autor
 ## Licença
 
 [MIT](LICENSE) — Copyright (c) 2026 Thiago Oliveira Lima.
+
+## Manual da marca
+
+No rodapé, **Manual da marca** abre a referência visual final e os downloads do manual, Design System e modelos Word/Excel. As fontes são locais; não há carregamento de Google Fonts durante o uso.
+
+## Modelos refeitos
+
+Em **Modelos**, no menu, estão os 18 modelos oficiais refeitos e as prévias PDF. Na **Entrega**, o pacote **Essencial** reúne os cinco arquivos com preenchimento parcial; **Completo** acrescenta os 13 manuais, e **Escolher** permite selecionar documentos individualmente. Uma seleção somente manual dispensa equipamentos e elaborador. Organização, elaborador e seleção permanecem na memória ao navegar, até recarregar ou fechar a página. Os documentos ficam em elaboração e os dados não cadastrados exigem conferência. A exportação anterior permanece em **Outras opções de exportação**. Veja [revisão e limites](docs/REVISAO-TEMPLATES-REFEITOS.md).

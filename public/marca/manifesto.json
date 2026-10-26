@@ -1,0 +1,23 @@
+{
+  "versao": "02",
+  "referencia": "Manual final fornecido pelo mantenedor — outubro de 2026",
+  "sha256": {
+    "PCM-Direto-Design-System.zip": "8b1b5e899ac5b13fc1babb0c679424af31ce79e8aa14d1d9767fabc11c15e992",
+    "PCM-Direto-Manual-da-Marca.pptx": "65bdfd1b4c057046dd1c0a340d3bdb6b2025ed353a76e2f0fe9ce61b691b7536",
+    "favicon/favicon.svg": "f0c4308f59ed816712fb0d844b1400ec131b1bf7a027a579dc801fda0adc62bc",
+    "favicon/icon-512.png": "1a215b73a60a5c658b8866f8d38ec441648b354a00ed7b9b70132b223906b127",
+    "logo/PCM-Direto_horizontal-slogan_cor.svg": "4c95d76f6538359db3da779911993eada95475dc9b7af0d114f8bfad8d8a5f16",
+    "logo/PCM-Direto_horizontal-slogan_negativo.svg": "5115090cc94575246c311bdf41aa7133dfd5eacea3b51a6b9b67d760ecd35833",
+    "logo/PCM-Direto_horizontal_azul.svg": "5f6ece5f5b4f5e4109c76b716c25a6923a2bce55856218755fe0a316cc93abbb",
+    "logo/PCM-Direto_horizontal_branco.svg": "ce455ecaac9e54a8a6cf5e126d3e5a983adb464db551e4de8affd99e6b48bc25",
+    "logo/PCM-Direto_horizontal_cor.svg": "2234a4d80ad317d6178afdab203d5894627c9ff5ef0c4c99b855b9e3ae0eba25",
+    "logo/PCM-Direto_horizontal_negativo.svg": "7595e9b9711dfe0eb0b823173f1e133eaa9b08eab9bf005269596dba91721e45",
+    "logo/PCM-Direto_horizontal_preto.svg": "eecc908fa3e26e0bc038a8c9aa48c1a3ef1ed119b2b85554820b457a00116dec",
+    "logo/PCM-Direto_icone-app.svg": "109ec5aecd1a80ccdabaa50bf8858d600ebdec05ccc5a8974a91d0bc61409e22",
+    "logo/PCM-Direto_icone-app_negativo.svg": "5eb83825366dba69638f4f35548b4bb8e1ed74b4d42a74923c80b587bc45e7f1",
+    "logo/PCM-Direto_vertical_cor.svg": "9340ffa0ce8712ce5f90007cdc43365f3e84e846ed7a6a19c9aaf63a1ec2e135",
+    "logo/PCM-Direto_vertical_negativo.svg": "6e77c3c8742a9d81207c23393b26b212fa97caf047905ac1c7909710e4eae993",
+    "templates/PCMD-Modelo-Padrao.docx": "6860dcfc850b596720776622baa7dd2a986ae6292256c537abacf2ab90712933",
+    "templates/PCMD-Modelo-Padrao.xlsx": "fb6fdf4b7293e9fe7bfdbf2b868082c0a8aff5b925d259042c4d7d9cbc4eeb1c"
+  }
+}

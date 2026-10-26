@@ -9,8 +9,12 @@ import { telaEntrega } from './telas/entrega.js';
 import { telaBiblioteca } from './telas/biblioteca.js';
 import { telaImpressao } from './telas/impressao.js';
 import { telaExecucao } from './telas/execucao.js';
+import { telaMarca } from './telas/marca.js';
+import { telaModelos } from './telas/modelos.js';
 
 const TELAS = {
+  modelos: { titulo: 'Documentos PCM Direto', desenhar: telaModelos },
+  marca: { titulo: 'Manual da marca', desenhar: telaMarca },
   inicio: { titulo: 'Início', desenhar: telaInicio },
   equipamentos: { titulo: 'Equipamentos', desenhar: telaEquipamentos },
   revisao: { titulo: 'Revisão', desenhar: telaRevisao },
@@ -38,7 +42,7 @@ function mostrar() {
   const nome = location.hash.slice(1);
   const tela = TELAS[nome] ?? TELAS.inicio;
   const atual = TELAS[nome] ? nome : 'inicio';
-  document.querySelectorAll('.etapas a').forEach((a) => {
+  document.querySelectorAll('.etapas a, .atalhos a').forEach((a) => {
     if (a.dataset.tela === atual) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });

@@ -16,6 +16,7 @@ export function telaInicio(main, ir) {
   const n = estado.equipamentos.length;
   main.innerHTML = `
     <section class="cartao">
+      <p class="slogan">Manutenção planejada. <strong>Direto ao ponto.</strong></p>
       <h2>Plano de manutenção preventiva a partir da sua lista de equipamentos</h2>
       <ol>
         <li><strong>Equipamentos:</strong> cadastre, cole do Excel ou importe um CSV. A TAG sai padronizada.</li>

@@ -70,3 +70,27 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
   o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
   portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
   as duas variáveis pela integração retornaram HTTP 403; precisam ser cadastradas nas configurações do GitHub.
+
+
+### Manual final da marca no site — implementação local
+
+Aplicadas paleta, logos oficiais, slogan, fontes locais Archivo/IBM Plex Mono e estados de entrada.
+Nova página #marca com assinaturas, paleta, tipografia e downloads do manual, Design System e modelos
+Word/Excel originais (integridade SHA256). Conferência de celular, teclado, downloads e fluxo offline
+no navegador aprovada. Sem publicação e sem revisão independente.
+
+Verificação local: lint e build aprovados; 151 de 152 testes passaram com timeout de 60 segundos.
+A falha restante é o teste preexistente de symlink em agentes-ia.test.js: EPERM no Windows, sem
+permissão de criação de links simbólicos. Nenhum teste foi desativado. A suíte padrão também pode
+exceder 5 segundos ao carregar ExcelJS nesta máquina; repetição com 60 segundos passou nesse caso.
+
+
+### Modelos refeitos 2.0.0 — integração local
+
+Banco de 18 documentos recebidos, com prévias e busca. Novo pacote de cinco arquivos parcialmente preenchidos e 13 manuais. Proteção, mídia e fórmulas preservadas; 19 cenários no Excel aprovados. Detalhes e limites em [REVISAO-TEMPLATES-REFEITOS.md](REVISAO-TEMPLATES-REFEITOS.md). Sem publicação ou revisão independente.
+
+### Entrega enxuta e navegação — implementação local
+
+Entrega com ação principal única, pacote essencial de cinco documentos por padrão, completo de 18 e seleção individual. Exportações anteriores recolhidas. Bloqueios explicados junto ao botão; seleção somente manual funciona sem equipamentos ou elaborador. Identificação e seleção preservadas apenas na memória durante a navegação, inclusive com proteção contra geração duplicada ao trocar de tela. Orientações em três passos após gerar. Atalhos para Modelos, Checklist e Biblioteca. Contêiner da tabela de Revisão corrigido para evitar transbordamento no celular.
+
+Validação específica: ZIP essencial e manual reais, navegação durante geração, recarga limpando identificação e larguras de 320 a 1366 px aprovados. Suíte geral: 157 de 158 testes passaram; única falha preexistente EPERM ao criar symlink no Windows. Nenhum teste desativado. Sem publicação e sem revisão independente.

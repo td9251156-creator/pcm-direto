@@ -23,6 +23,17 @@ await executarComRecursos({
     page.on('pageerror', (e) => erros.push(e.message));
     await page.goto('http://127.0.0.1:4175/');
     await page.getByRole('heading', { name: 'Plano de manutenção preventiva a partir da sua lista de equipamentos' }).waitFor();
+    await page.getByRole('link', { name: 'Manual da marca', exact: true }).click();
+    await page.getByRole('heading', { name: 'Manual da marca', exact: true }).waitFor();
+    assert.ok(await page.evaluate(async()=> (await document.fonts.load('16px Archivo')).length>0), 'Archivo deve carregar localmente');
+    assert.ok(await page.evaluate(async()=> (await document.fonts.load('16px "IBM Plex Mono"')).length>0), 'IBM Plex Mono deve carregar localmente');
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Manual da marca deve caber no celular');
+    for (const arquivo of ['PCM-Direto-Manual-da-Marca.pptx','PCM-Direto-Design-System.zip','templates/PCMD-Modelo-Padrao.docx','templates/PCMD-Modelo-Padrao.xlsx']) {
+      const resposta = await page.request.get('http://127.0.0.1:4175/marca/'+arquivo);
+      assert.equal(resposta.status(),200,arquivo);
+      assert.ok((await resposta.body()).length>1000,arquivo);
+    }
+    await page.goto('http://127.0.0.1:4175/#inicio');
     await page.getByRole('link', { name: '2. Equipamentos' }).focus();
     await page.keyboard.press('Enter');
     await page.waitForURL('**/#equipamentos');
@@ -102,6 +113,7 @@ await executarComRecursos({
     await page.reload();
     await page.getByRole('heading', { name: 'Checklist de execução', exact: true }).waitFor();
     await page.getByRole('link', { name: '4. Entrega' }).click();
+    await page.locator('#outras-exportacoes > summary').click();
     for (const [botao, extensao] of [['#baixar-xlsx', '.xlsx'], ['#baixar-docx', '.docx']]) {
       const [arquivo] = await Promise.all([page.waitForEvent('download'), page.locator(botao).click()]);
       assert.ok(arquivo.suggestedFilename().endsWith(extensao));
@@ -109,6 +121,13 @@ await executarComRecursos({
       assert.ok(bytes.length > 5000);
       assert.equal(bytes.subarray(0, 2).toString(), 'PK');
     }
+    await page.locator('#modelo-organizacao').fill('Organização fictícia');
+    await page.locator('#modelo-elaborador').fill('Pessoa fictícia');
+    await page.locator('[name="pacote"][value="completo"]').check();
+    const [modelosOffline]=await Promise.all([page.waitForEvent('download',{timeout:120000}),page.locator('#baixar-modelos-refeitos').click()]);
+    assert.equal(modelosOffline.suggestedFilename(),'pcm-direto-modelos-refeitos.zip');
+    const JSZip=(await import('jszip')).default;const pacoteModelos=await JSZip.loadAsync(await readFile(await modelosOffline.path()));
+    const arquivosModelos=Object.keys(pacoteModelos.files).filter(n=>/\.(xlsx|docx)$/.test(n));assert.equal(arquivosModelos.length,18);assert.equal(arquivosModelos.filter(n=>n.startsWith('preenchidos/')).length,5);
     await contexto.setOffline(false);
     await page.goto('http://127.0.0.1:4175/#revisao');
     await page.evaluate(() => { Storage.prototype.setItem = () => { throw new Error('Falha simulada de armazenamento'); }; });
@@ -121,6 +140,6 @@ await executarComRecursos({
     await page.getByRole('button', { name: 'Baixar dados originais para recuperação' }).waitFor();
     assert.equal(await page.evaluate(() => localStorage.getItem('pcm-direto:rascunho:v1')), '{');
     assert.deepEqual(erros, []);
-    console.log('Aprovado: celular, teclado, importação, checklist, backup/restauração, desfazer remoção, filtros, falha de gravação, recuperação, abertura offline e XLSX/DOCX offline.');
+    console.log('Aprovado: celular, teclado, importação, checklist, backup/restauração, filtros, recuperação, XLSX/DOCX offline e pacote dos 18 modelos refeitos offline.');
   },
 });
