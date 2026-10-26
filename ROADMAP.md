@@ -1,3 +1,5 @@
+> Plano atual de continuidade: [PLANO-DESENVOLVIMENTO.md](docs/PLANO-DESENVOLVIMENTO.md). O roteiro abaixo conserva o histórico do MVP.
+
 > Atualização 24/10/2026: decisões atuais em [Reformulação](docs/REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
 # Roteiro (Roadmap)

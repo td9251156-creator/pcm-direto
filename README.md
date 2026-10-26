@@ -172,3 +172,12 @@ A identidade visual segue o manual final de outubro de 2026: azul PCM, laranja c
 **Comunidade → Explorar os 18 modelos** reúne os novos documentos por finalidade, com busca e prévias PDF. **Modelos do rascunho** permite gerar o pacote essencial (cinco arquivos parcialmente preenchidos), completo (18) ou personalizado. Seleções somente manuais dispensam equipamentos. O formulário permanece na memória ao navegar, até recarregar a página.
 
 **Documentos** continua emitindo os seis modelos da revisão ativa, com data de corte, aprovação explícita, execuções e falhas. Os novos arquivos ficam separados em public/modelos/refeitos para preservar os contratos e exemplos já existentes. Os documentos do rascunho não substituem a emissão da revisão ativa.
+
+
+## Uso diário e configuração
+
+Em **Mais**, os acessos ficam organizados por Rotina, Planejamento, Documentos e Dados e apoio. A busca aceita termos como backup, plano ou modelos. Os documentos da revisão ativa e os modelos do rascunho têm acessos próprios.
+
+O assistente confirma uma etapa após guardar os dados. Durante a gravação, os controles ficam bloqueados para impedir repetições; sair da tela não provoca retorno automático. Se a gravação falhar, a etapa e os campos são preservados e o aplicativo orienta guardar um backup. O formulário de organização aceita Enter e mantém o rascunho ao navegar durante a sessão. Recarregar descarta campos ainda não confirmados.
+
+O plano atual de continuidade e as validações ainda necessárias estão em [Plano de desenvolvimento](docs/PLANO-DESENVOLVIMENTO.md).

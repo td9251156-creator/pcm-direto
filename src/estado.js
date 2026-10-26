@@ -28,8 +28,9 @@ let sequencia = 0;
 let fila = Promise.resolve();
 const cancelamentosPendentes = new Map();
 let revisaoPendente = null;
+let assistentePendente = null;
 async function esperarOperacoesDoPlano() {
-  while(cancelamentosPendentes.size||revisaoPendente)await Promise.all([...cancelamentosPendentes.values(),...(revisaoPendente?[revisaoPendente]:[])].map(p=>p.concluido));
+  while(cancelamentosPendentes.size||revisaoPendente||assistentePendente)await Promise.all([...cancelamentosPendentes.values(),...(revisaoPendente?[revisaoPendente]:[]),...(assistentePendente?[assistentePendente]:[])].map(p=>p.concluido));
 }
 let geracaoBase=0;
 const vinculoExecucao=(e,previsao)=>`${e.equipamentoId}|${e.tarefaId}|${previsao||''}`;
@@ -169,6 +170,7 @@ export async function salvar(opcoes = {}) {
   if (!opcoes.semAlteracao) estado.metadados.alteradoEm = new Date().toISOString();
   if (persistenciaBloqueada) { armazenamento.rascunho = false; return false; }
   const dados = criarBackup(estado);
+  if(assistentePendente?.geracao===geracaoBase)dados.rascunho.metadados.passo=assistentePendente.destino;
   if(revisaoPendente?.geracao===geracaoBase)dados.rascunho.programacao={...copia(revisaoPendente.programacao),emissoes:dados.rascunho.programacao.emissoes};
   // Todas as cópias enfileiradas incluem o cancelamento; a tela só o recebe após gravar.
   const pendentes=new Set([...cancelamentosPendentes].filter(([,p])=>p.geracao===geracaoBase).map(([id])=>id));
@@ -201,6 +203,25 @@ export async function salvar(opcoes = {}) {
     armazenamento.rascunho = false;
     return false;
   }
+}
+
+export const assistenteGravando=()=>assistentePendente!==null;
+
+/** A etapa só é publicada na memória após a gravação, como as revisões do plano. */
+export async function alterarPassoAssistente(destino){
+  if(assistentePendente||revisaoPendente||cancelamentosPendentes.size)return {ok:false,motivo:'Aguarde a gravação pendente terminar.'};
+  const origem=estado.metadados.passo;
+  if(!Number.isInteger(destino)||destino<1||destino>4||Math.abs(destino-origem)!==1)return {ok:false,motivo:'Escolha a etapa anterior ou a próxima.'};
+  if(destino>origem&&origem===1&&!estado.gestao.organizacao.nome.trim())return {ok:false,motivo:'Informe o nome da organização.'};
+  if(destino>origem&&origem===2&&!dadosAtuais().equipamentos.length)return {ok:false,motivo:'Cadastre ao menos um equipamento válido para continuar.'};
+  let concluir;const concluido=new Promise(resolve=>{concluir=resolve;});const geracao=geracaoBase;
+  assistentePendente={destino,geracao,concluido};
+  try{
+    if(!await salvar())return {ok:false,precisaBackup:true,motivo:'Não foi possível guardar esta etapa. Seus campos foram mantidos; baixe um backup antes de sair.'};
+    if(geracao===geracaoBase)estado.metadados.passo=destino;
+    return {ok:true};
+  }catch{return {ok:false,precisaBackup:true,motivo:'Não foi possível guardar esta etapa. Seus campos foram mantidos; baixe um backup antes de sair.'};}
+  finally{assistentePendente=null;concluir();}
 }
 
 /** Troca a biblioteca em uso (depois de editar ou importar) e salva no navegador. */

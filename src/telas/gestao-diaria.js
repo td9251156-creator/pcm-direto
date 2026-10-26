@@ -1,6 +1,6 @@
 import { telaPlanejar } from './planejar.js';
 export { telaPlanejar };
-import { estado,dadosAtuais,salvar,demonstrar,sairDaDemonstracao,emDemonstracao,registrarOcorrencia,restaurarBackup,BIBLIOTECA_PADRAO } from '../estado.js';
+import { estado,salvar,demonstrar,sairDaDemonstracao,emDemonstracao,registrarOcorrencia,restaurarBackup,BIBLIOTECA_PADRAO,alterarPassoAssistente,assistenteGravando } from '../estado.js';
 import { criarBackup,verificarBackup } from '../logica/backup.js';
 import { painelDaSemana,idsConcluidos } from '../logica/programacao.js';
 import { textoData } from '../logica/cronograma.js';
@@ -19,20 +19,53 @@ export function telaBoasVindas(main,ir){
   main.querySelector('#demonstrar').onclick=async()=>{await demonstrar();ir('semana');};demo(main,ir);
 }
 
+const rascunhosAssistente=new WeakMap();
+let refletirAssistente=()=>{};
+let resultadoAssistente={meta:null,mensagem:''};
+
 export function telaAssistente(main,ir){
-  const passo=estado.metadados.passo;
+  const meta=estado.metadados;const passo=meta.passo;
   main.innerHTML=titulo('Primeiros passos',`Prepare seu PCM · passo ${passo} de 4`,'Você pode sair e continuar depois; as pendências ficam visíveis.')+`<ol class="passos"><li ${passo===1?'aria-current="step"':''}>Organização</li><li ${passo===2?'aria-current="step"':''}>Equipamentos</li><li ${passo===3?'aria-current="step"':''}>Criticidade</li><li ${passo===4?'aria-current="step"':''}>Ativação</li></ol><div id="passo-assistente"></div><div class="acoes"><button id="anterior" class="secundario" ${passo===1?'disabled':''}>Anterior</button>${passo<4?'<button id="proximo">Guardar e continuar</button>':''}<a href="#inicio">Continuar depois</a></div>`;
   const area=main.querySelector('#passo-assistente');
-  if(passo===1){const o=estado.gestao.organizacao;area.innerHTML=`<section class="cartao"><h3>Organização e setores</h3><label for="org-nome">Nome da organização</label><input id="org-nome" maxlength="120" value="${esc(o.nome)}" placeholder="Ex.: Indústria Exemplo"><label for="org-setores">Setores, separados por vírgula</label><input id="org-setores" value="${esc(o.setores.join(', '))}" placeholder="UTL, PRD"><p class="origem">Pessoas e funções podem ser preenchidas depois em Cadastros.</p></section>`;}
+  if(passo===1){
+    const o=estado.gestao.organizacao;const base=JSON.stringify(o);let rascunho=rascunhosAssistente.get(meta);
+    if(!rascunho||rascunho.base!==base){rascunho={base,nome:o.nome,setores:o.setores.join(', ')};rascunhosAssistente.set(meta,rascunho);}
+    area.innerHTML=`<section class="cartao"><h3>Organização e setores</h3><form id="organizacao-assistente"><label for="org-nome">Nome da organização</label><input id="org-nome" name="nome" maxlength="120" value="${esc(rascunho.nome)}" placeholder="Ex.: Indústria Exemplo" autocomplete="organization" required><label for="org-setores">Setores, separados por vírgula</label><input id="org-setores" name="setores" value="${esc(rascunho.setores)}" placeholder="UTL, PRD"><p class="origem">Pessoas e funções podem ser preenchidas depois em Cadastros.</p></form></section>`;
+    for(const nome of ['nome','setores'])area.querySelector('#org-'+nome).addEventListener('input',event=>{rascunho[nome]=event.target.value;});
+    main.querySelector('#proximo').setAttribute('form','organizacao-assistente');main.querySelector('#proximo').type='submit';
+  }
   if(passo===2)telaEquipamentos(area,ir);
   if(passo===3){telaCriticidade(area);area.insertAdjacentHTML('afterbegin','<p>Notas e responsáveis podem ficar pendentes. <a href="#cadastros">Cadastrar pessoas</a> · <a href="#plano">Atribuir responsáveis às tarefas</a></p>');}
   if(passo===4)telaPlanejar(area,ir);
-  main.querySelector('#anterior').onclick=async()=>{estado.metadados.passo--;await salvar();telaAssistente(main,ir);main.focus();};
-  main.querySelector('#proximo')?.addEventListener('click',async()=>{
-    if(passo===1){const nome=area.querySelector('#org-nome').value.trim();if(!nome){avisar('Informe o nome da organização.');area.querySelector('#org-nome').focus();return;}estado.gestao.organizacao.nome=nome;estado.gestao.organizacao.setores=[...new Set(area.querySelector('#org-setores').value.split(',').map(s=>s.trim()).filter(Boolean))];}
-    if(passo===2&&!dadosAtuais().equipamentos.length){avisar('Cadastre ao menos um equipamento válido para continuar.');return;}
-    estado.metadados.passo++;const guardado=await salvar();if(!guardado)avisar('Não foi possível guardar. Baixe um backup antes de sair.');telaAssistente(main,ir);main.focus();
-  });demo(main,ir);
+  main.querySelector('#anterior').closest('.acoes').insertAdjacentHTML('afterend','<p id="status-assistente" role="status" aria-live="polite"></p>');
+  const visita=main.querySelector('.cabecalho-tela');const ativa=()=>visita.isConnected&&location.hash.split('?')[0]==='#assistente'&&estado.metadados===meta;
+  let controlesTravados=null;
+  refletirAssistente=()=>{
+    if(!ativa())return;
+    if(meta.passo!==passo){telaAssistente(main,ir);main.focus();return;}
+    const ocupado=assistenteGravando();area.setAttribute('aria-busy',String(ocupado));
+    for(const b of main.querySelectorAll('#anterior,#proximo'))b.disabled=ocupado||(b.id==='anterior'&&passo===1);
+    if(ocupado&&!controlesTravados)controlesTravados=new Map([...area.querySelectorAll('input,select,textarea,button')].map(el=>[el,el.disabled]));
+    if(controlesTravados){for(const [el,anterior] of controlesTravados)el.disabled=ocupado||anterior;if(!ocupado)controlesTravados=null;}
+    const status=main.querySelector('#status-assistente');status.replaceChildren();
+    status.textContent=ocupado?'Guardando esta etapa…':resultadoAssistente.meta===meta?resultadoAssistente.mensagem:'';
+    if(!ocupado&&resultadoAssistente.meta===meta&&resultadoAssistente.precisaBackup){const link=document.createElement('a');link.href='#dados';link.textContent='Guardar um backup';status.append(' ',link);}
+  };
+  async function mover(destino){
+    if(assistenteGravando()||!ativa())return;
+    if(destino>passo&&passo===1){
+      const nome=area.querySelector('#org-nome').value.trim();if(!nome){area.querySelector('#org-nome').focus();avisar('Informe o nome da organização.');return;}
+      estado.gestao.organizacao.nome=nome;estado.gestao.organizacao.setores=[...new Set(area.querySelector('#org-setores').value.split(',').map(s=>s.trim()).filter(Boolean))];
+      const rascunho=rascunhosAssistente.get(meta);rascunho.base=JSON.stringify(estado.gestao.organizacao);
+    }
+    resultadoAssistente={meta,mensagem:''};const operacao=alterarPassoAssistente(destino);refletirAssistente();const r=await operacao;
+    if(estado.metadados===meta){resultadoAssistente={meta,mensagem:r.ok?'':r.motivo,precisaBackup:r.precisaBackup};if(r.ok)rascunhosAssistente.delete(meta);}
+    refletirAssistente();if(!r.ok&&ativa())avisar(r.motivo);
+  }
+  main.querySelector('#anterior').onclick=()=>mover(passo-1);
+  if(passo===1)area.querySelector('form').onsubmit=event=>{event.preventDefault();mover(passo+1);};
+  else main.querySelector('#proximo')?.addEventListener('click',()=>mover(passo+1));
+  refletirAssistente();demo(main,ir);
 }
 
 export function telaSemana(main,ir){
@@ -47,7 +80,7 @@ function ligarFeito(main,redesenhar){const visita=main.querySelector('.cabecalho
 
 export { telaOcorrenciasCampo as telaOcorrencias } from './ocorrencias-campo.js';
 
-export function telaMais(main){main.innerHTML=titulo('Mais','Seu PCM em um só lugar','Cadastros e ferramentas de apoio à rotina.')+`<section class="painel-modulos">${[['modelos','18 modelos refeitos','Documentos por finalidade e pacote do rascunho'],['marca','Manual da marca','Identidade visual e arquivos oficiais'],['comunidade','Comunidade','Modelos públicos e contribuições'],['planejar','Planejar','Rascunho, capacidade e revisões'],['entrega','Documentos','Gerar pacote PCMD'],['ativos','Ativos','Consulta rápida dos equipamentos'],['cadastros','Cadastros','Organização, setores, pessoas, metas e referências'],['equipamentos','Equipamentos','Cadastro e importação da lista de ativos'],['criticidade','Criticidade','Avaliação A/B/C sem alterar as frequências'],['falhas','Falhas','Sintoma, causa, ação e parada'],['mensal','Mensal','Previsões e realizações por mês'],['biblioteca','Biblioteca técnica','Tarefas e modelos locais'],['apoio','Central de apoio','Guias, trilhas e glossário'],['dados','Meus dados','Backup completo e restauração'],['inicio','Primeiros passos','Configuração e exemplo isolado']].map(([rota,nome,desc])=>`<a class="modulo cartao" href="#${rota}"><strong>${nome}</strong><span>${desc}</span></a>`).join('')}</section>`;}
+export {telaMais} from './mais.js';
 
 export function telaMeusDados(main,ir){
   let pendente=null;
