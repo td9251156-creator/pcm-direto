@@ -11,7 +11,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="pt_BR" />
   <meta property="og:site_name" content="PCM Direto" />
-  <meta property="og:title" content="PCM Direto · Planejamento de Manutenção simples, aberto e eficiente" />
+  <meta property="og:title" content="PCM Direto · Manutenção planejada. Direto ao ponto." />
   <meta property="og:description" content="Plano preventivo, cronograma, execuções, falhas e documentos PCMD. Gratuito, código aberto e com os dados só no seu aparelho." />
   <meta property="og:url" content="https://pcmdireto.me/conheca.html" />
   <meta property="og:image" content="https://pcmdireto.me/apresentacao/compartilhar.jpg" />
@@ -19,14 +19,15 @@
   <meta property="og:image:height" content="640" />
   <meta property="og:image:alt" content="Logo do PCM Direto, slogan e a tela Executar no celular com dados fictícios" />
   <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="./fontes/fontes.css">
   <style>
     :root {
-      --azul: #0b2a5b; --azul-claro: #dce6f5; --laranja: #e2701f; --laranja-texto: #b85c00;
+      --azul: #0b2a5b; --azul-claro: #dce6f5; --laranja: #e2701f; --laranja-texto: #b85600;
       --cinza: #64717d; --texto: #1d252c; --fundo: #f4f6f8; --borda: #d5dbe1; --branco: #fff;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: var(--texto); background: var(--branco); line-height: 1.55; }
+    body { margin: 0; font-family: Archivo, Arial, sans-serif; color: var(--texto); background: var(--branco); line-height: 1.55; }
     a { color: var(--azul); }
     a:focus-visible, summary:focus-visible { outline: 3px solid var(--laranja-texto); outline-offset: 2px; }
     img { max-width: 100%; height: auto; display: block; }
@@ -36,7 +37,7 @@
     .largura { max-width: 1120px; margin: 0 auto; padding: 0 1rem; }
     header.topo { border-bottom: 3px solid var(--laranja); background: var(--branco); }
     header.topo .largura { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: .75rem; padding-bottom: .75rem; flex-wrap: wrap; }
-    header.topo img { width: 180px; }
+    header.topo img { width: 300px; }
     header.topo nav { display: flex; gap: .5rem; flex-wrap: wrap; }
     .botao { display: inline-block; padding: .7rem 1.2rem; border-radius: 8px; background: var(--azul); color: var(--branco); text-decoration: none; font-weight: 700; border: 2px solid var(--azul); }
     .botao.secundario { background: var(--branco); color: var(--azul); }
@@ -60,7 +61,7 @@
     .cartao.destaque { border-top: 4px solid var(--azul); }
     ol.passos { list-style: none; counter-reset: passo; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
     ol.passos li { counter-increment: passo; background: var(--branco); border: 1px solid var(--borda); border-radius: 10px; padding: 1rem; }
-    ol.passos li::before { content: counter(passo); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--laranja); color: var(--branco); font-weight: 700; margin-bottom: .5rem; }
+    ol.passos li::before { content: counter(passo); display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--laranja); color: #071c3d; font-weight: 700; margin-bottom: .5rem; }
     ol.passos strong { display: block; margin-bottom: .25rem; }
     .recurso { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
     .recurso + .recurso { margin-top: 3.5rem; }
@@ -90,7 +91,7 @@
     }
     @media (max-width: 520px) {
       ol.passos { grid-template-columns: 1fr; }
-      header.topo img { width: 150px; }
+      header.topo img { width: 280px; }
       .acoes .botao { width: 100%; text-align: center; }
     }
   </style>
@@ -99,7 +100,7 @@
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
   <header class="topo">
     <div class="largura">
-      <a href="./conheca.html" aria-label="PCM Direto — página de apresentação"><img src="./icones/logo-horizontal.svg" alt="PCM Direto" width="1140" height="235"></a>
+      <a href="./conheca.html" aria-label="PCM Direto — página de apresentação"><img src="./marca/logo/PCM-Direto_horizontal-slogan_cor.svg" alt="PCM Direto — Manutenção planejada. Direto ao ponto." width="2134" height="802"></a>
       <nav aria-label="Atalhos">
         <a class="botao secundario" href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Código aberto</a>
         <a class="botao" href="./#inicio">Abrir o app</a>
@@ -111,7 +112,7 @@
     <section class="heroi">
       <div class="largura grade">
         <div>
-          <p class="sobretitulo">Planejamento de Manutenção simples, aberto e eficiente</p>
+          <p class="sobretitulo">Manutenção planejada. Direto ao ponto.</p>
           <h1>Do Excel ao plano preventivo da sua fábrica, em minutos.</h1>
           <p class="lead">O PCM Direto monta o plano de manutenção preventiva a partir da lista de máquinas, de graça, em português e com os dados guardados só no seu aparelho.</p>
           <div class="acoes">

@@ -7,6 +7,9 @@ import json
 from pathlib import Path
 from xml.sax.saxutils import escape
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import ImageReader
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
@@ -17,12 +20,14 @@ RAIZ = Path(__file__).resolve().parents[1]
 BIBLIOTECA = json.loads((RAIZ / 'src/dados/biblioteca.json').read_text(encoding='utf-8'))
 DESTINO = RAIZ / 'public/modelos/maquinas'
 DESTINO.mkdir(parents=True, exist_ok=True)
-AZUL = colors.HexColor('#0B3D63')
-LARANJA = colors.HexColor('#B85C00')
+pdfmetrics.registerFont(TTFont('Archivo', str(RAIZ / 'public/fontes/marca-1.ttf')))
+pdfmetrics.registerFont(TTFont('Archivo-Bold', str(RAIZ / 'public/fontes/marca-4.ttf')))
+AZUL = colors.HexColor('#0B2A5B')
+LARANJA = colors.HexColor('#E2701F')
 SEGURANCA = colors.HexColor('#7A0019')
-ESTILO = ParagraphStyle('corpo', fontName='Helvetica', fontSize=10, leading=14, textColor=AZUL, alignment=TA_LEFT)
+ESTILO = ParagraphStyle('corpo', fontName='Archivo', fontSize=10, leading=14, textColor=AZUL, alignment=TA_LEFT)
 PEQUENO = ParagraphStyle('fonte', parent=ESTILO, fontSize=8, leading=11, textColor=colors.HexColor('#465565'))
-TITULO = ParagraphStyle('titulo', parent=ESTILO, fontName='Helvetica-Bold', fontSize=25, leading=29, spaceAfter=10)
+TITULO = ParagraphStyle('titulo', parent=ESTILO, fontName='Archivo-Bold', fontSize=25, leading=29, spaceAfter=10)
 
 
 def paragrafo(texto, estilo=ESTILO):
@@ -40,18 +45,16 @@ for tipo in BIBLIOTECA['tipos']:
     def pagina(canvas, doc):
         largura, altura = A4
         canvas.saveState()
-        canvas.drawImage(str(RAIZ / 'public/icones/icone-512.png'), 42, altura - 76, width=44, height=44)
-        canvas.setFillColor(AZUL)
-        canvas.setFont('Helvetica-Bold', 16)
-        canvas.drawString(98, altura - 45, 'PCM Direto')
-        canvas.setFont('Helvetica', 9)
-        canvas.drawString(98, altura - 61, 'Manutenção planejada: simples, aberta e eficiente')
+        logo = ImageReader(str(RAIZ / 'public/marca/logo/PCM-Direto_modelo-slogan.png'))
+        logo_largura, logo_altura = logo.getSize()
+        canvas.drawImage(logo, 42, altura - 86, width=250,
+                         height=250 * logo_altura / logo_largura, mask='auto')
         canvas.setStrokeColor(LARANJA)
         canvas.line(42, altura - 88, largura - 42, altura - 88)
         aviso = paragrafo('O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante.', PEQUENO)
         _, h = aviso.wrap(largura - 84, 45)
         aviso.drawOn(canvas, 42, 39)
-        canvas.setFont('Helvetica', 8)
+        canvas.setFont('Archivo', 8)
         canvas.setFillColor(AZUL)
         canvas.drawString(42, 24, f"pcmdireto.me · MIT · Biblioteca {BIBLIOTECA['versao']} · {tipo['sigla']}")
         canvas.drawRightString(largura - 42, 24, f'Página {doc.page}')
@@ -64,7 +67,7 @@ for tipo in BIBLIOTECA['tipos']:
     for tarefa in tipo['tarefas']:
         seguro = tarefa['seguranca']
         cabecalho = f"{tarefa['id']}" + (' · SEGURANÇA' if seguro else '')
-        dados = [[paragrafo(cabecalho, ParagraphStyle('codigo', parent=ESTILO, fontName='Helvetica-Bold', textColor=SEGURANCA if seguro else AZUL)),
+        dados = [[paragrafo(cabecalho, ParagraphStyle('codigo', parent=ESTILO, fontName='Archivo-Bold', textColor=SEGURANCA if seguro else AZUL)),
                   paragrafo(tarefa['periodicidade'])],
                  [paragrafo(tarefa['descricao']), ''],
                  [paragrafo(f"Especialidade: {tarefa['especialidade']} · Duração estimada: {str(tarefa['duracao_horas']).replace('.', ',')} h por execução", PEQUENO), ''],
