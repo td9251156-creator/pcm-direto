@@ -1,0 +1,771 @@
+{
+  "versao": "2.0.0-refeitos",
+  "modelos": [
+    {
+      "codigo": "PCMD-01",
+      "grupo": "Governança",
+      "titulo": "Controle documental",
+      "descricao": "Organização, lista mestra, pessoas e referências.",
+      "arquivo": "PCMD-01-Controle-Documental.xlsx",
+      "preenchimento": "parcial",
+      "sha256": "570f5a7771d8a5ae1f8626fed803e3d82b982a32cca595e792c89bf0e8cc8069",
+      "abas": {
+        "Lista Mestra": "xl/worksheets/sheet1.xml",
+        "Revisões": "xl/worksheets/sheet2.xml",
+        "Cadastros": "xl/worksheets/sheet3.xml",
+        "Config": "xl/worksheets/sheet4.xml",
+        "Listas": "xl/worksheets/sheet5.xml"
+      },
+      "nomes": {
+        "lm_codigo": "'Lista Mestra'!$A$4:$A$103",
+        "cad_org_nome": "Cadastros!$B$7",
+        "cad_referencial": "Cadastros!$B$8",
+        "cad_prefixo": "Cadastros!$B$9",
+        "cad_elaborador_padrao": "Cadastros!$B$10",
+        "cad_aprovador_padrao": "Cadastros!$B$11",
+        "cad_meta_disponibilidade": "Cadastros!$B$12",
+        "cad_pessoa_nome": "Cadastros!$A$16:$A$35",
+        "cad_req_referencia": "Cadastros!$A$39:$A$68",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20",
+        "lst_tipo_documento": "Listas!$A$4:$A$13",
+        "lst_situacao_documento": "Listas!$C$4:$C$13",
+        "lst_sim_nao": "Listas!$E$4:$E$13",
+        "lst_status_requisito": "Listas!$G$4:$G$13"
+      }
+    },
+    {
+      "codigo": "PCMD-02",
+      "grupo": "Operação",
+      "titulo": "Ativos e criticidade",
+      "descricao": "Inventário de ativos e avaliação de criticidade.",
+      "arquivo": "PCMD-02-Ativos-Criticidade.xlsx",
+      "preenchimento": "parcial",
+      "sha256": "f61247794de8e0e5243aedc77eb143fb517cf085041de4c85c0e5ad96998354c",
+      "abas": {
+        "Ativos": "xl/worksheets/sheet1.xml",
+        "Cadastros": "xl/worksheets/sheet2.xml",
+        "Revisões": "xl/worksheets/sheet3.xml",
+        "Config": "xl/worksheets/sheet4.xml",
+        "Listas": "xl/worksheets/sheet5.xml"
+      },
+      "nomes": {
+        "at_tag": "Ativos!$A$4:$A$303",
+        "at_descricao": "Ativos!$B$4:$B$303",
+        "at_classe": "Ativos!$Q$4:$Q$303",
+        "cad_limite_a": "Cadastros!$B$7",
+        "cad_limite_b": "Cadastros!$B$8",
+        "cad_limites_ok": "Cadastros!$B$9",
+        "cad_setor": "Cadastros!$A$23:$A$52",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20",
+        "lst_tipo_id": "Listas!$A$4:$A$33",
+        "lst_tipo_nome": "Listas!$B$4:$B$33",
+        "lst_tipo_sigla": "Listas!$C$4:$C$33"
+      }
+    },
+    {
+      "codigo": "PCMD-03-04",
+      "grupo": "Operação",
+      "titulo": "Plano e cronograma",
+      "descricao": "Tarefas, ocorrências previstas e execuções.",
+      "arquivo": "PCMD-03-04-Plano-Cronograma.xlsx",
+      "preenchimento": "parcial",
+      "sha256": "db8b863a376ed85c00757c6066d5637c12b101afd2824bbcf8c5d209a32c071f",
+      "abas": {
+        "Plano Mestre": "xl/worksheets/sheet1.xml",
+        "Cronograma": "xl/worksheets/sheet2.xml",
+        "Ocorrências": "xl/worksheets/sheet3.xml",
+        "Execuções": "xl/worksheets/sheet4.xml",
+        "Revisões": "xl/worksheets/sheet5.xml",
+        "Config": "xl/worksheets/sheet6.xml",
+        "Listas": "xl/worksheets/sheet7.xml"
+      },
+      "nomes": {
+        "pl_tag": "'Plano Mestre'!$A$4:$A$2003",
+        "pl_codigo": "'Plano Mestre'!$B$4:$B$2003",
+        "pl_chave": "'Plano Mestre'!$C$4:$C$2003",
+        "pl_atividade": "'Plano Mestre'!$D$4:$D$2003",
+        "pl_seguranca": "'Plano Mestre'!$H$4:$H$2003",
+        "pl_vezes": "'Plano Mestre'!$J$4:$J$2003",
+        "pl_especialidade": "'Plano Mestre'!$K$4:$K$2003",
+        "pl_duracao": "'Plano Mestre'!$L$4:$L$2003",
+        "pl_horas_ano": "'Plano Mestre'!$M$4:$M$2003",
+        "pl_ativa": "'Plano Mestre'!$N$4:$N$2003",
+        "pl_conferencia": "'Plano Mestre'!$P$4:$P$2003",
+        "crono_ano": "Cronograma!$C$7",
+        "crono_inicio": "Cronograma!$C$8",
+        "crono_meta_aderencia": "Cronograma!$C$11",
+        "oc_chave": "'Ocorrências'!$F$4:$F$5003",
+        "oc_horas": "'Ocorrências'!$J$4:$J$5003",
+        "oc_ano": "'Ocorrências'!$K$4:$K$5003",
+        "oc_mes": "'Ocorrências'!$L$4:$L$5003",
+        "oc_posicao": "'Ocorrências'!$M$4:$M$5003",
+        "oc_conta": "'Ocorrências'!$O$4:$O$5003",
+        "oc_concluida": "'Ocorrências'!$Q$4:$Q$5003",
+        "oc_conferencia": "'Ocorrências'!$R$4:$R$5003",
+        "ex_chave_oc": "'Execuções'!$G$4:$G$3003",
+        "ex_cancelada": "'Execuções'!$K$4:$K$3003",
+        "ex_vinculo": "'Execuções'!$L$4:$L$3003",
+        "ex_ano": "'Execuções'!$M$4:$M$3003",
+        "ex_conferencia": "'Execuções'!$O$4:$O$3003",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20",
+        "lst_frequencias": "Listas!$A$4:$A$33",
+        "lst_frequencias_vezes": "Listas!$B$4:$B$33",
+        "lst_especialidades": "Listas!$E$4:$E$33",
+        "lst_sim_nao": "Listas!$G$4:$G$33",
+        "lst_origem_execucao": "Listas!$I$4:$I$33"
+      }
+    },
+    {
+      "codigo": "PCMD-05",
+      "grupo": "Operação",
+      "titulo": "Ficha de falha",
+      "descricao": "Sintoma, causa, ação e tempo de parada.",
+      "arquivo": "PCMD-05-Ficha-Falha.xlsx",
+      "preenchimento": "manual",
+      "sha256": "5afa6672aa4d6dc2be4380086ddff5e1a62208eeae07b05b0461810f662db453",
+      "abas": {
+        "Ficha de Falha": "xl/worksheets/sheet1.xml",
+        "Revisões": "xl/worksheets/sheet2.xml",
+        "Config": "xl/worksheets/sheet3.xml"
+      },
+      "nomes": {
+        "fa_tag": "'Ficha de Falha'!$A$4:$A$1003",
+        "fa_parada": "'Ficha de Falha'!$F$4:$F$1003",
+        "fa_conferencia": "'Ficha de Falha'!$J$4:$J$1003",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-06",
+      "grupo": "Materiais",
+      "titulo": "Peças críticas",
+      "descricao": "Peças, estoque e reposição.",
+      "arquivo": "PCMD-06-Pecas-Criticas.xlsx",
+      "preenchimento": "manual",
+      "sha256": "cf12e7cc3cf7d9b37604953c53fa00f948adbcdfa2cc50880e1b3e57cd44a08c",
+      "abas": {
+        "Peças Críticas": "xl/worksheets/sheet1.xml",
+        "Revisões": "xl/worksheets/sheet2.xml",
+        "Config": "xl/worksheets/sheet3.xml"
+      },
+      "nomes": {
+        "pc_tag": "'Peças Críticas'!$A$4:$A$303",
+        "pc_codigo": "'Peças Críticas'!$B$4:$B$303",
+        "pc_situacao": "'Peças Críticas'!$J$4:$J$303",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-07",
+      "grupo": "Resultados e ações",
+      "titulo": "Indicadores mensais",
+      "descricao": "Dados e análise mensal da manutenção.",
+      "arquivo": "PCMD-07-Indicadores-Mensais.xlsx",
+      "preenchimento": "manual",
+      "sha256": "ecdfa2a3a8816c8af2281ce22da75f6df7b3c5de6851560266487befda96d180",
+      "abas": {
+        "Indicadores": "xl/worksheets/sheet1.xml",
+        "Revisões": "xl/worksheets/sheet2.xml",
+        "Config": "xl/worksheets/sheet3.xml"
+      },
+      "nomes": {
+        "in_mes": "Indicadores!$A$4:$A$39",
+        "in_conferencia": "Indicadores!$N$4:$N$39",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-08",
+      "grupo": "Resultados e ações",
+      "titulo": "Ação corretiva",
+      "descricao": "Problema, ação, responsável, prazo e eficácia.",
+      "arquivo": "PCMD-08-Acao-Corretiva.xlsx",
+      "preenchimento": "manual",
+      "sha256": "e021a0f87060e29c63e7532de1240086f215a4f91cf2b6c23f1cb40d2d459097",
+      "abas": {
+        "Ação Corretiva": "xl/worksheets/sheet1.xml",
+        "Revisões": "xl/worksheets/sheet2.xml",
+        "Config": "xl/worksheets/sheet3.xml",
+        "Listas": "xl/worksheets/sheet4.xml"
+      },
+      "nomes": {
+        "ac_numero": "'Ação Corretiva'!$A$4:$A$203",
+        "ac_status": "'Ação Corretiva'!$L$4:$L$203",
+        "ac_conferencia": "'Ação Corretiva'!$O$4:$O$203",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "Config!$C$15",
+        "cfg_aprovado": "Config!$C$16",
+        "cfg_revisao": "Config!$C$17",
+        "cfg_data_revisao": "Config!$C$18",
+        "pcmd_origem": "Config!$C$19",
+        "pcmd_emissao": "Config!$C$20",
+        "lst_origem_acao": "Listas!$A$4:$A$18",
+        "lst_eficacia": "Listas!$C$4:$C$18"
+      }
+    },
+    {
+      "codigo": "PCMD-K01",
+      "grupo": "Operação",
+      "titulo": "Ativos e preventiva",
+      "descricao": "Controle separado de ativos e planos.",
+      "arquivo": "PCMD-K01-Planilha_Controle_de_Ativos_e_Preventiva.xlsx",
+      "preenchimento": "manual",
+      "sha256": "e6a00ea38f1f2c5d1eaf436ec8f8c79320a3e2f2fbb3ee6ff115f506ea45c118",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet7.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Ativos": "xl/worksheets/sheet2.xml",
+        "Planos": "xl/worksheets/sheet3.xml",
+        "Cronograma Anual": "xl/worksheets/sheet4.xml",
+        "Listas": "xl/worksheets/sheet5.xml",
+        "Revisões": "xl/worksheets/sheet6.xml"
+      },
+      "nomes": {
+        "at_codigo": "Ativos!$A$4:$A$203",
+        "at_criticidade": "Ativos!$F$4:$F$203",
+        "at_situacao": "Ativos!$G$4:$G$203",
+        "at_conferencia": "Ativos!$I$4:$I$203",
+        "pl_plano": "Planos!$A$4:$A$303",
+        "pl_situacao": "Planos!$I$4:$I$303",
+        "pl_conferencia": "Planos!$M$4:$M$303",
+        "lst_setor": "Listas!$A$4:$A$33",
+        "lst_situacao_ativo": "Listas!$C$4:$C$33",
+        "lst_tipo_plano": "Listas!$E$4:$E$33",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20",
+        "crono_ano": "'Instruções'!$C$21",
+        "crono_ano_ref": "'Instruções'!$C$22"
+      }
+    },
+    {
+      "codigo": "PCMD-K02",
+      "grupo": "Operação",
+      "titulo": "Ordens de serviço",
+      "descricao": "Abertura, planejamento e conclusão das OS.",
+      "arquivo": "PCMD-K02-Planilha_Sistema_de_Ordens_de_Servico.xlsx",
+      "preenchimento": "manual",
+      "sha256": "1031ad9dcc77c9d3b72818a0636573a7bbfc8966cf5a9b3178ff9098e8cbd5eb",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet5.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Ordens de Serviço": "xl/worksheets/sheet2.xml",
+        "Listas": "xl/worksheets/sheet3.xml",
+        "Revisões": "xl/worksheets/sheet4.xml"
+      },
+      "nomes": {
+        "os_numero": "'Ordens de Serviço'!$A$4:$A$503",
+        "os_prazo": "'Ordens de Serviço'!$M$4:$M$503",
+        "os_conferencia": "'Ordens de Serviço'!$O$4:$O$503",
+        "lst_status_os": "Listas!$A$4:$A$63",
+        "lst_prioridade": "Listas!$C$4:$C$63",
+        "lst_tipo_os": "Listas!$E$4:$E$63",
+        "lst_responsavel": "Listas!$G$4:$G$63",
+        "lst_ativo_codigo": "Listas!$I$4:$I$63",
+        "lst_ativo_descricao": "Listas!$J$4:$J$63",
+        "lst_ativo_setor": "Listas!$K$4:$K$63",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-K03",
+      "grupo": "Operação",
+      "titulo": "Checklists de manutenção",
+      "descricao": "Roteiros diário, semanal e mensal.",
+      "arquivo": "PCMD-K03-Kit_3_Checklists_de_Manutencao.xlsx",
+      "preenchimento": "manual",
+      "sha256": "dbc42b08018af3726cdd0b6f761cfed030c1970df74ec6842871ef4440904b29",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet5.xml",
+        "Checklist Diário": "xl/worksheets/sheet1.xml",
+        "Checklist Semanal": "xl/worksheets/sheet2.xml",
+        "Checklist Mensal": "xl/worksheets/sheet3.xml",
+        "Revisões": "xl/worksheets/sheet4.xml"
+      },
+      "nomes": {
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-K04",
+      "grupo": "Materiais",
+      "titulo": "Estoque e almoxarifado",
+      "descricao": "Materiais, entradas, saídas e compras sugeridas.",
+      "arquivo": "PCMD-K04-Planilha_Controle_de_Estoque_e_Almoxarifado.xlsx",
+      "preenchimento": "manual",
+      "sha256": "ba48b18b1d79b2f3292dd408dc60807248595455fe9b3f89fb802741f882fc8d",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet7.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Itens": "xl/worksheets/sheet2.xml",
+        "Movimenta": "xl/worksheets/sheet3.xml",
+        "Lista de Compras": "xl/worksheets/sheet4.xml",
+        "Listas": "xl/worksheets/sheet5.xml",
+        "Revisões": "xl/worksheets/sheet6.xml"
+      },
+      "nomes": {
+        "it_codigo": "Itens!$A$4:$A$303",
+        "it_descricao": "Itens!$B$4:$B$303",
+        "it_saldo": "Itens!$H$4:$H$303",
+        "it_situacao": "Itens!$J$4:$J$303",
+        "it_conferencia": "Itens!$K$4:$K$303",
+        "mv_conferencia": "Movimenta!$J$4:$J$3003",
+        "lst_unidade": "Listas!$A$4:$A$33",
+        "lst_categoria": "Listas!$C$4:$C$33",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20",
+        "rep_fator": "'Instruções'!$C$21",
+        "ano_painel": "'Instruções'!$C$22",
+        "ano_ref": "'Instruções'!$C$23"
+      }
+    },
+    {
+      "codigo": "PCMD-K05",
+      "grupo": "Materiais",
+      "titulo": "Pedidos de compra",
+      "descricao": "Pedidos, valores, recebimentos e prazos.",
+      "arquivo": "PCMD-K05-Controle_de_Pedidos_de_Compra.xlsx",
+      "preenchimento": "manual",
+      "sha256": "456b2a64695b8267edcf46a0ff62c4fe57ffa837af9059055407831f0803758a",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet5.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Pedidos": "xl/worksheets/sheet2.xml",
+        "Listas": "xl/worksheets/sheet3.xml",
+        "Revisões": "xl/worksheets/sheet4.xml"
+      },
+      "nomes": {
+        "pd_prazo": "Pedidos!$M$4:$M$503",
+        "pd_conferencia": "Pedidos!$N$4:$N$503",
+        "lst_status_pedido": "Listas!$A$4:$A$43",
+        "lst_fornecedor": "Listas!$C$4:$C$43",
+        "lst_centro_custo": "Listas!$E$4:$E$43",
+        "lst_comprador": "Listas!$G$4:$G$43",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-K06",
+      "grupo": "Resultados e ações",
+      "titulo": "Indicadores por ativo",
+      "descricao": "Corretivas, produção e indicadores por equipamento.",
+      "arquivo": "PCMD-K06-Dashboard_KPIs_Manutencao.xlsx",
+      "preenchimento": "manual",
+      "sha256": "8a647577185214844f480b9e89e8af2ee2df97d4a3692d2620f310bed255df34",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet7.xml",
+        "Dashboard KPIs": "xl/worksheets/sheet1.xml",
+        "KPIs por Ativo": "xl/worksheets/sheet2.xml",
+        "Apontamentos": "xl/worksheets/sheet3.xml",
+        "Apontamento de Produção": "xl/worksheets/sheet4.xml",
+        "Listas": "xl/worksheets/sheet5.xml",
+        "Revisões": "xl/worksheets/sheet6.xml"
+      },
+      "nomes": {
+        "ap_conferencia": "Apontamentos!$F$4:$F$1003",
+        "pr_conferencia": "'Apontamento de Produção'!$I$4:$I$1003",
+        "lst_ativo": "Listas!$A$4:$A$33",
+        "lst_ativo_desc": "Listas!$B$4:$B$33",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-K07",
+      "grupo": "Resultados e ações",
+      "titulo": "Plano de ação 5W2H",
+      "descricao": "Ações, responsáveis, prazos e avanço.",
+      "arquivo": "PCMD-K07-Planilha_Plano_de_Acao_5W2H.xlsx",
+      "preenchimento": "manual",
+      "sha256": "b99a3a3b4b2c010ed15fe1f0e2fe13339dc5f49a9b6c6e34de91082cd241054d",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet6.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Plano de Ação": "xl/worksheets/sheet2.xml",
+        "Cronograma": "xl/worksheets/sheet3.xml",
+        "Listas": "xl/worksheets/sheet4.xml",
+        "Revisões": "xl/worksheets/sheet5.xml"
+      },
+      "nomes": {
+        "pa_situacao": "'Plano de Ação'!$L$4:$L$303",
+        "pa_conferencia": "'Plano de Ação'!$O$4:$O$303",
+        "lst_status_acao": "Listas!$A$4:$A$43",
+        "lst_responsavel": "Listas!$C$4:$C$43",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20",
+        "ano_crono": "'Instruções'!$C$21",
+        "ano_ref": "'Instruções'!$C$22"
+      }
+    },
+    {
+      "codigo": "PCMD-K08",
+      "grupo": "Governança",
+      "titulo": "Documentos e evidências",
+      "descricao": "Calibrações, treinamentos, requisitos e registros.",
+      "arquivo": "PCMD-K08-Kit_Documentos_Auditoria.xlsx",
+      "preenchimento": "manual",
+      "sha256": "72f3d1240e98dcf97d02697aea032b6a8ceac4010be3547534754568415ec10d",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet15.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Matriz de Criticidade": "xl/worksheets/sheet2.xml",
+        "Plano de Calibração": "xl/worksheets/sheet3.xml",
+        "NC e Ação Corretiva": "xl/worksheets/sheet4.xml",
+        "Competência e Treinamento": "xl/worksheets/sheet5.xml",
+        "Requisitos Legais": "xl/worksheets/sheet6.xml",
+        "Máquinas e riscos": "xl/worksheets/sheet7.xml",
+        "Avaliação de Fornecedores": "xl/worksheets/sheet8.xml",
+        "Checklist de Auditoria": "xl/worksheets/sheet9.xml",
+        "Lista Mestra de Documentos": "xl/worksheets/sheet10.xml",
+        "Manutenção Autônoma (TPM)": "xl/worksheets/sheet11.xml",
+        "A3 - Resolução de Problemas": "xl/worksheets/sheet12.xml",
+        "Listas": "xl/worksheets/sheet13.xml",
+        "Revisões": "xl/worksheets/sheet14.xml"
+      },
+      "nomes": {
+        "lst_funcao": "Listas!$H$4:$H$33",
+        "lst_treinamento": "Listas!$J$4:$J$33",
+        "lst_orgao": "Listas!$L$4:$L$33",
+        "lst_setor": "Listas!$N$4:$N$33",
+        "lst_origem_nc": "Listas!$P$4:$P$33",
+        "lst_metodo_causa": "Listas!$R$4:$R$33",
+        "lst_status_acao": "Listas!$T$4:$T$33",
+        "crit_matriz": "Listas!$B$4:$F$8",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20"
+      }
+    },
+    {
+      "codigo": "PCMD-K09",
+      "grupo": "Gestão integrada",
+      "titulo": "Gestão integrada de manutenção",
+      "descricao": "Alternativa aos controles separados, em um único arquivo.",
+      "arquivo": "PCMD-K09-CMMS_Completo.xlsx",
+      "preenchimento": "manual",
+      "sha256": "710047aad5de0639f8c254e3e4b3c57466054269a377770729e39a613620c556",
+      "abas": {
+        "Instruções": "xl/worksheets/sheet17.xml",
+        "Painel": "xl/worksheets/sheet1.xml",
+        "Ativos": "xl/worksheets/sheet2.xml",
+        "Peças Críticas": "xl/worksheets/sheet3.xml",
+        "FMEA": "xl/worksheets/sheet4.xml",
+        "Planos": "xl/worksheets/sheet5.xml",
+        "Cronograma Anual": "xl/worksheets/sheet6.xml",
+        "Programação": "xl/worksheets/sheet7.xml",
+        "Kanban": "xl/worksheets/sheet8.xml",
+        "Calendário": "xl/worksheets/sheet9.xml",
+        "KPIs por Ativo": "xl/worksheets/sheet10.xml",
+        "Piores Falhas": "xl/worksheets/sheet11.xml",
+        "RCA": "xl/worksheets/sheet12.xml",
+        "Equipe": "xl/worksheets/sheet13.xml",
+        "Apontamento de Produção": "xl/worksheets/sheet14.xml",
+        "Listas": "xl/worksheets/sheet15.xml",
+        "Revisões": "xl/worksheets/sheet16.xml"
+      },
+      "nomes": {
+        "at_codigo": "Ativos!$A$4:$A$203",
+        "at_setor": "Ativos!$D$4:$D$203",
+        "at_conferencia": "Ativos!$J$4:$J$203",
+        "fm_nivel": "FMEA!$J$4:$J$303",
+        "fm_conferencia": "FMEA!$N$4:$N$303",
+        "pl_codigo": "Planos!$A$4:$A$203",
+        "pl_situacao": "Planos!$I$4:$I$203",
+        "pl_conferencia": "Planos!$L$4:$L$203",
+        "os_numero": "'Programação'!$A$4:$A$503",
+        "os_kanban": "'Programação'!$N$4:$N$503",
+        "os_conferencia": "'Programação'!$O$4:$O$503",
+        "os_chave": "'Programação'!$P$4:$P$503",
+        "os_rank": "'Programação'!$Q$4:$Q$503",
+        "cal_mes": "'Calendário'!$B$4",
+        "cal_ano": "'Calendário'!$D$4",
+        "rca_os": "RCA!$A$4:$A$103",
+        "rca_conferencia": "RCA!$J$4:$J$103",
+        "eq_nome": "Equipe!$A$6:$A$45",
+        "eq_ferias_conf": "Equipe!$I$49:$I$108",
+        "pr_conferencia": "'Apontamento de Produção'!$I$4:$I$503",
+        "lst_frequencia": "Listas!$A$4:$A$33",
+        "lst_frequencia_meses": "Listas!$B$4:$B$33",
+        "lst_tipo_ativo": "Listas!$D$4:$D$33",
+        "lst_setor": "Listas!$F$4:$F$33",
+        "lst_setor_filtro": "Listas!$H$4:$H$33",
+        "lst_status_ativo": "Listas!$J$4:$J$33",
+        "lst_tipo_atividade": "Listas!$L$4:$L$33",
+        "lst_tipo_os": "Listas!$N$4:$N$33",
+        "lst_status_os": "Listas!$P$4:$P$33",
+        "lst_turno": "Listas!$R$4:$R$33",
+        "lst_status_ferias": "Listas!$T$4:$T$33",
+        "lst_tipo_feriado": "Listas!$V$4:$V$33",
+        "rv_revisao": "'Revisões'!$A$4:$A$33",
+        "rv_data": "'Revisões'!$B$4:$B$33",
+        "cfg_elaborado": "'Instruções'!$C$15",
+        "cfg_aprovado": "'Instruções'!$C$16",
+        "cfg_revisao": "'Instruções'!$C$17",
+        "cfg_data_revisao": "'Instruções'!$C$18",
+        "pcmd_origem": "'Instruções'!$C$19",
+        "pcmd_emissao": "'Instruções'!$C$20",
+        "ano_crono": "'Instruções'!$C$21",
+        "ano_ref": "'Instruções'!$C$22",
+        "kanban_setor": "'Instruções'!$C$23"
+      }
+    },
+    {
+      "codigo": "PCMD-W1",
+      "grupo": "Manuais",
+      "titulo": "Gestão de ativos",
+      "descricao": "Manual com cadastro, criticidade e responsabilidades.",
+      "arquivo": "PCMD-W1-Manual-Gestao-Ativos.docx",
+      "preenchimento": "parcial",
+      "sha256": "fc25ee7006f54d07eee557988c7604723b75c791b619fb4393fc5a29a9c29bb8"
+    },
+    {
+      "codigo": "PCMD-W2",
+      "grupo": "Manuais",
+      "titulo": "Estratégia de manutenção",
+      "descricao": "Manual de planejamento e revisão das estratégias.",
+      "arquivo": "PCMD-W2-Manual-Estrategia-Manutencao.docx",
+      "preenchimento": "parcial",
+      "sha256": "70ee14680d446d05a4fafadfebe9c8a6958771e62a27be122524c23960991338"
+    }
+  ],
+  "arquivos": {
+    "PCMD-01-Controle-Documental.xlsx": {
+      "bytes": 96597,
+      "sha256": "570f5a7771d8a5ae1f8626fed803e3d82b982a32cca595e792c89bf0e8cc8069"
+    },
+    "PCMD-02-Ativos-Criticidade.xlsx": {
+      "bytes": 106320,
+      "sha256": "f61247794de8e0e5243aedc77eb143fb517cf085041de4c85c0e5ad96998354c"
+    },
+    "PCMD-03-04-Plano-Cronograma.xlsx": {
+      "bytes": 615732,
+      "sha256": "db8b863a376ed85c00757c6066d5637c12b101afd2824bbcf8c5d209a32c071f"
+    },
+    "PCMD-05-Ficha-Falha.xlsx": {
+      "bytes": 109232,
+      "sha256": "5afa6672aa4d6dc2be4380086ddff5e1a62208eeae07b05b0461810f662db453"
+    },
+    "PCMD-06-Pecas-Criticas.xlsx": {
+      "bytes": 90026,
+      "sha256": "cf12e7cc3cf7d9b37604953c53fa00f948adbcdfa2cc50880e1b3e57cd44a08c"
+    },
+    "PCMD-07-Indicadores-Mensais.xlsx": {
+      "bytes": 82143,
+      "sha256": "ecdfa2a3a8816c8af2281ce22da75f6df7b3c5de6851560266487befda96d180"
+    },
+    "PCMD-08-Acao-Corretiva.xlsx": {
+      "bytes": 92224,
+      "sha256": "e021a0f87060e29c63e7532de1240086f215a4f91cf2b6c23f1cb40d2d459097"
+    },
+    "PCMD-K01-Planilha_Controle_de_Ativos_e_Preventiva.xlsx": {
+      "bytes": 198258,
+      "sha256": "e6a00ea38f1f2c5d1eaf436ec8f8c79320a3e2f2fbb3ee6ff115f506ea45c118"
+    },
+    "PCMD-K02-Planilha_Sistema_de_Ordens_de_Servico.xlsx": {
+      "bytes": 116805,
+      "sha256": "1031ad9dcc77c9d3b72818a0636573a7bbfc8966cf5a9b3178ff9098e8cbd5eb"
+    },
+    "PCMD-K03-Kit_3_Checklists_de_Manutencao.xlsx": {
+      "bytes": 92809,
+      "sha256": "dbc42b08018af3726cdd0b6f761cfed030c1970df74ec6842871ef4440904b29"
+    },
+    "PCMD-K04-Planilha_Controle_de_Estoque_e_Almoxarifado.xlsx": {
+      "bytes": 220734,
+      "sha256": "ba48b18b1d79b2f3292dd408dc60807248595455fe9b3f89fb802741f882fc8d"
+    },
+    "PCMD-K05-Controle_de_Pedidos_de_Compra.xlsx": {
+      "bytes": 114426,
+      "sha256": "456b2a64695b8267edcf46a0ff62c4fe57ffa837af9059055407831f0803758a"
+    },
+    "PCMD-K06-Dashboard_KPIs_Manutencao.xlsx": {
+      "bytes": 151852,
+      "sha256": "8a647577185214844f480b9e89e8af2ee2df97d4a3692d2620f310bed255df34"
+    },
+    "PCMD-K07-Planilha_Plano_de_Acao_5W2H.xlsx": {
+      "bytes": 160758,
+      "sha256": "b99a3a3b4b2c010ed15fe1f0e2fe13339dc5f49a9b6c6e34de91082cd241054d"
+    },
+    "PCMD-K08-Kit_Documentos_Auditoria.xlsx": {
+      "bytes": 170912,
+      "sha256": "72f3d1240e98dcf97d02697aea032b6a8ceac4010be3547534754568415ec10d"
+    },
+    "PCMD-K09-CMMS_Completo.xlsx": {
+      "bytes": 299851,
+      "sha256": "710047aad5de0639f8c254e3e4b3c57466054269a377770729e39a613620c556"
+    },
+    "PCMD-W1-Manual-Gestao-Ativos.docx": {
+      "bytes": 92270,
+      "sha256": "fc25ee7006f54d07eee557988c7604723b75c791b619fb4393fc5a29a9c29bb8"
+    },
+    "PCMD-W2-Manual-Estrategia-Manutencao.docx": {
+      "bytes": 92327,
+      "sha256": "70ee14680d446d05a4fafadfebe9c8a6958771e62a27be122524c23960991338"
+    },
+    "PCMD-refeitos.zip": {
+      "bytes": 1900763,
+      "sha256": "9c6035be90b01f6233e87a71ffebc8bc8bbbbe1501d8d57d697c87a3df3f5037"
+    },
+    "previas/PCMD-01-Controle-Documental.pdf": {
+      "bytes": 48312,
+      "sha256": "4d7c0bd015f4d79639d280d416c5d052178ef8baf57d773e4789c8dfb0dc8fc1"
+    },
+    "previas/PCMD-02-Ativos-Criticidade.pdf": {
+      "bytes": 61734,
+      "sha256": "66bb4648154fb7d024e6b640c0b7ca904530393c23d1b306eb7f1d2014610f72"
+    },
+    "previas/PCMD-03-04-Plano-Cronograma.pdf": {
+      "bytes": 61783,
+      "sha256": "4366ffc9e62426b7f3f0c9db211f25ac64196b8c60b2d73ae53989aa3da15e80"
+    },
+    "previas/PCMD-05-Ficha-Falha.pdf": {
+      "bytes": 39969,
+      "sha256": "69bb3ada537a6b3c7f987c8034f8282aefa015bfcf5515cb6d4982b6a0d7a84d"
+    },
+    "previas/PCMD-06-Pecas-Criticas.pdf": {
+      "bytes": 41114,
+      "sha256": "956024dec2908cbadb44e17e922923f3a42ccf39048552b87b5ed56bff42d597"
+    },
+    "previas/PCMD-07-Indicadores-Mensais.pdf": {
+      "bytes": 38815,
+      "sha256": "a19ae3ecfc181ee0a18b94d65d7cde51357361db962c854a163bec0ccacd8370"
+    },
+    "previas/PCMD-08-Acao-Corretiva.pdf": {
+      "bytes": 54160,
+      "sha256": "8279ef87eb6c34be9663c6514cf0c5e11275dc64537642ccc70074aa1e320748"
+    },
+    "previas/PCMD-K01-Planilha_Controle_de_Ativos_e_Preventiva.pdf": {
+      "bytes": 75873,
+      "sha256": "7c7c2dca06d87e9f094f79508db41e198fe0927f48bedb39a0e3176a8346f065"
+    },
+    "previas/PCMD-K02-Planilha_Sistema_de_Ordens_de_Servico.pdf": {
+      "bytes": 32370,
+      "sha256": "22987c24e6c78128a69dcc304181467220ca19efcaaaff9e921117a46bf25c66"
+    },
+    "previas/PCMD-K03-Kit_3_Checklists_de_Manutencao.pdf": {
+      "bytes": 75767,
+      "sha256": "0abba3f741f2c085ac5ff770806ff19477c10da3872b556ffaba833534202476"
+    },
+    "previas/PCMD-K04-Planilha_Controle_de_Estoque_e_Almoxarifado.pdf": {
+      "bytes": 34373,
+      "sha256": "1a06b0833fee353fd0b142a6fd6241059e0e3397aad77be2d55a47289b0d9a86"
+    },
+    "previas/PCMD-K05-Controle_de_Pedidos_de_Compra.pdf": {
+      "bytes": 31705,
+      "sha256": "f2d958856cf979677f2a3194b242a7a494f311985d3b776aaeeda7565d60bf52"
+    },
+    "previas/PCMD-K06-Dashboard_KPIs_Manutencao.pdf": {
+      "bytes": 33043,
+      "sha256": "860ceed4f24d1172f81d596a1b4d4d35f99f72cc674bf436d939a4473b30da37"
+    },
+    "previas/PCMD-K07-Planilha_Plano_de_Acao_5W2H.pdf": {
+      "bytes": 32965,
+      "sha256": "27f93d2ba0c8ab6b5c263e94b14b2c45e7720ed88d74198d9023434b3e40e150"
+    },
+    "previas/PCMD-K08-Kit_Documentos_Auditoria.pdf": {
+      "bytes": 84116,
+      "sha256": "83eb71b1fdba5538efb47912ba912fd6ec6b65a5f94315cb2cae8910ac32a82c"
+    },
+    "previas/PCMD-K09-CMMS_Completo.pdf": {
+      "bytes": 125535,
+      "sha256": "56cd549b18618ac73bfccd966f1659943b719e3923166df4b3fd800b207b7212"
+    },
+    "previas/PCMD-W1-Manual-Gestao-Ativos.pdf": {
+      "bytes": 137423,
+      "sha256": "67c1a21ff1e8085caab86891babd579a47fbe34621ac09fedeea5cf85d7902a5"
+    },
+    "previas/PCMD-W2-Manual-Estrategia-Manutencao.pdf": {
+      "bytes": 138456,
+      "sha256": "e486e2211f1578dda982baac3dde9bc0f356705faa06c341229333128ffa5632"
+    }
+  }
+}

@@ -258,3 +258,10 @@ Não abrir tarefas públicas com dados pessoais, segredos ou detalhes de falhas 
   o Actions recebeu `OPENAI_API_KEY`; modelo ausente e ativação desabilitada. Não houve chamada à IA,
   portanto validade da chave, saldo e acesso ao modelo ainda não foram testados. Tentativas de salvar
   as duas variáveis pela integração retornaram HTTP 403; precisam ser cadastradas nas configurações do GitHub.
+
+
+### Integração da marca final e 18 modelos — 26/10/2026
+
+Integração autorizada pelo mantenedor à main atual, preservando Gestão, comunidade, persistência v3, revisões, execuções, falhas e os seis documentos de gestão. Manual final e fontes locais aplicados; banco adicional de 18 modelos em pasta própria, com busca, PDF e pacote essencial/completo/personalizado do rascunho. Formulários de emissão preservados em memória ao navegar; bloqueios próximos ao botão. Nenhuma migração de dados ou alteração no catálogo online.
+
+Verificação local inicial: npm ci sem vulnerabilidades; lint, 239 testes e build aprovados. ZIP completo dos novos modelos conferido, com cinco parcialmente preenchidos e 13 manuais intactos; seleção essencial/manual, envio único entre telas e larguras de 320 a 1366 px aprovados. Revisão independente não realizada. Publicação segue por PR e verificação do Actions.

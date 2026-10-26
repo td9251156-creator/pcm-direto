@@ -16,3 +16,9 @@ Thumbs.db
 # Artefatos locais de verificações e propostas anteriores
 artifacts/
 supabase/.temp/
+
+.env.local
+!public/marca/templates/*.xlsx
+!public/marca/templates/*.docx
+!public/modelos/refeitos/*.xlsx
+!public/modelos/refeitos/*.docx

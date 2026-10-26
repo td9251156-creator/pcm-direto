@@ -3,7 +3,7 @@
   --fundo: #ffffff;
   --texto: #111111;
   --suave: #3a3a3a;
-  --primaria: #0b3d63; /* mesma cor de src/marca.js */
+  --primaria: #0b2a5b; /* mesma cor de src/marca.js */
   --primaria-texto: #ffffff;
   --borda: #555555;
   --aviso-fundo: #fff4c2;
@@ -12,7 +12,7 @@
   --erro-fundo: #ffe5e5;
   --ok: #0a5c1a;
   --seguranca: #7a0019;
-  --destaque: #b85c00; /* contorno de foco e detalhes; mesma cor de src/marca.js */
+  --destaque: #b85600; /* contorno de foco e detalhes; mesma cor de src/marca.js */
   --foco: var(--destaque);
   --acento: var(--primaria); /* cor de links, botões secundários e marcas sobre o fundo */
   --th-fundo: #e8eef4;
@@ -92,7 +92,7 @@ textarea { min-height: 8rem; }
 
 .acoes { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
 
-.tabela-rolagem { overflow-x: auto; }
+.tabela-rolagem { overflow-x: auto; position: relative; }
 table { border-collapse: collapse; width: 100%; font-size: .95rem; }
 th, td { border: 1px solid var(--borda); padding: .4rem .5rem; text-align: left; vertical-align: top; }
 th { background: var(--th-fundo); }

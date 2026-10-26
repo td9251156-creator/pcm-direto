@@ -93,3 +93,10 @@ outros formulários ao salvar um deles. A revisão encontrou esses cenários e f
 regressões relevantes. Lint, 168 testes, build e Chromium aprovados, inclusive backup/restauração,
 fluxos novos, celular/teclado e downloads antigos offline. Revisão independente sem bloqueadores.
 Sem merge, publicação ou consumo de API. Nenhum novo template Excel/Word criado nesta entrega.
+
+
+### Integração da marca final e 18 modelos — 26/10/2026
+
+Integração autorizada pelo mantenedor à main atual, preservando Gestão, comunidade, persistência v3, revisões, execuções, falhas e os seis documentos de gestão. Manual final e fontes locais aplicados; banco adicional de 18 modelos em pasta própria, com busca, PDF e pacote essencial/completo/personalizado do rascunho. Formulários de emissão preservados em memória ao navegar; bloqueios próximos ao botão. Nenhuma migração de dados ou alteração no catálogo online.
+
+Verificação local inicial: npm ci sem vulnerabilidades; lint, 239 testes e build aprovados. ZIP completo dos novos modelos conferido, com cinco parcialmente preenchidos e 13 manuais intactos; seleção essencial/manual, envio único entre telas e larguras de 320 a 1366 px aprovados. Revisão independente não realizada. Publicação segue por PR e verificação do Actions.

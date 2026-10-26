@@ -2,7 +2,7 @@
 
 <h1 align="center">PCM Direto</h1>
 
-<p align="center"><strong>Planejamento de Manutenção simples, aberto e eficiente.</strong></p>
+<p align="center"><strong>Manutenção planejada. Direto ao ponto.</strong></p>
 
 <p align="center">
   <a href="https://pcmdireto.me/"><strong>Abrir o app</strong></a> ·
@@ -163,3 +163,12 @@ Parte do código deste projeto foi escrita com ajuda de IA e revisada pelo autor
 ## Licença
 
 [MIT](LICENSE) — Copyright (c) 2026 Thiago Oliveira Lima.
+
+
+## Manual final e modelos adicionais
+
+A identidade visual segue o manual final de outubro de 2026: azul PCM, laranja como sinal, Archivo e IBM Plex Mono locais. O manual e os arquivos oficiais ficam em **Mais → Manual da marca**.
+
+**Comunidade → Explorar os 18 modelos** reúne os novos documentos por finalidade, com busca e prévias PDF. **Modelos do rascunho** permite gerar o pacote essencial (cinco arquivos parcialmente preenchidos), completo (18) ou personalizado. Seleções somente manuais dispensam equipamentos. O formulário permanece na memória ao navegar, até recarregar a página.
+
+**Documentos** continua emitindo os seis modelos da revisão ativa, com data de corte, aprovação explícita, execuções e falhas. Os novos arquivos ficam separados em public/modelos/refeitos para preservar os contratos e exemplos já existentes. Os documentos do rascunho não substituem a emissão da revisão ativa.
