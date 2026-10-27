@@ -56,7 +56,7 @@ export function criarGestao() {
 /** Confere a estrutura inteira antes de abrir dados locais ou restaurar um backup. */
 export function validarGestao(g) {
   try {
-    if (!objeto(g) || g.versao !== 1 || !semChavesPerigosas(g)) return false;
+    if (!objeto(g) || ![1, 2].includes(g.versao) || !semChavesPerigosas(g)) return false;
     const o = g.organizacao;
     if (!objeto(o) || !texto(o.nome) || !texto(o.elaborador) || !texto(o.aprovador) ||
         !texto(o.padraoCodigo, 40, true) || !texto(o.referencial, 120, true) ||
@@ -74,6 +74,25 @@ export function validarGestao(g) {
     if (!registrosValidos(g.historico, h => id(h.equipamentoId) && id(h.tarefaId) && texto(h.tag, Number.MAX_SAFE_INTEGER) && texto(h.descricao, Number.MAX_SAFE_INTEGER) &&
         dataValida(h.data) && (h.dataPrevista === '' || dataValida(h.dataPrevista)) && texto(h.observacao, 2000) &&
         pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean')) return false;
+    const novo = f => Object.hasOwn(f, 'dataConclusao') || Object.hasOwn(f, 'horasReparo');
+    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || g.falhas.some(novo))) return false;
+    if (g.versao === 2) {
+      if (g.indicadoresMensais !== undefined) {
+        if (!lista(g.indicadoresMensais)) return false;
+        const vistos = new Set();
+        for (const r of g.indicadoresMensais) {
+          if (!objeto(r) || !id(r.equipamentoId) || !texto(r.tag, Number.MAX_SAFE_INTEGER) ||
+              typeof r.mes !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])$/.test(r.mes) || r.mes < '1900-01' ||
+              !['horasPlanejadas', 'horasParada'].every(c => r[c] === null || (Number.isFinite(r[c]) && r[c] >= 0)) ||
+              (r.horasPlanejadas !== null && r.horasParada !== null && r.horasParada > r.horasPlanejadas)) return false;
+          const chave = `${r.equipamentoId}|${r.mes}`;
+          if (vistos.has(chave)) return false;
+          vistos.add(chave);
+        }
+      }
+      if (!g.falhas.every(f => !novo(f) || ((f.dataConclusao === '' || (dataValida(f.dataConclusao) && f.dataConclusao >= f.data)) &&
+          (f.horasReparo === null || (Number.isFinite(f.horasReparo) && f.horasReparo >= 0))))) return false;
+    }
     return registrosValidos(g.falhas, f => id(f.equipamentoId) && texto(f.tag, Number.MAX_SAFE_INTEGER) && dataValida(f.data) &&
       texto(f.sintoma, 2000, true) && texto(f.causa, 2000) && texto(f.acao, 2000) && texto(f.peca) && pessoaOpcional(f.responsavelId) &&
       (f.horasParada === null || (Number.isFinite(f.horasParada) && f.horasParada >= 0)));
