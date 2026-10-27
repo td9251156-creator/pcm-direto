@@ -6,6 +6,14 @@ revisa antes de publicar. Itens ainda não implementados não são promessas de 
 
 ## T6 — indicadores por ativo e mês fechado — 27/10/2026
 
+Complemento integrado no [PR #40](https://github.com/td9251156-creator/pcm-direto/pull/40):
+Cadastros, Glossário e README agora orientam para os indicadores disponíveis;
+M5 tem acesso direto a Mensal. Teste de navegador reproduziu a ausência do link
+antes da correção e passou depois, mantendo meta vazia e cenários de dados.
+Revisor independente aprovou sem achados após instalação, lint, 301 testes/38
+arquivos, build e navegador específico próprios; o navegador completo passou
+localmente e na CI. Sem alteração de cálculos, metas, dados, templates ou dependências.
+
 Entregues nos [PRs #37](https://github.com/td9251156-creator/pcm-direto/pull/37) e
 [#38](https://github.com/td9251156-creator/pcm-direto/pull/38), após as aprovações
 do mantenedor. A tela Mensal recebe horas planejadas sem paradas programadas e
