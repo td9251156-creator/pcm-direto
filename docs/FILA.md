@@ -2,6 +2,41 @@
 
 # Fila de evolução
 
+## T6 — indicadores integrados e publicados — 27/10/2026
+
+Os [PRs #37](https://github.com/td9251156-creator/pcm-direto/pull/37) e
+[#38](https://github.com/td9251156-creator/pcm-direto/pull/38) entregaram a base de
+cálculo e as telas Mensal/Falhas, após aprovação das fórmulas, do exemplo e das
+regras pelo mantenedor. Este registro atualiza a situação histórica da T6 abaixo.
+
+- Consulta por ativo e mês fechado; horas planejadas já excluem paradas programadas.
+- Parada mensal total conferida pelo usuário, contando sobreposições uma vez;
+  as durações individuais de falha não são somadas automaticamente.
+- Uma falha por registro no mês da ocorrência, inclusive com parada zero;
+  corrigir o mesmo registro mantém a contagem.
+- Reparos entram no MTTR pelo mês da conclusão informada, com sua duração total,
+  separada da parada. Dados antigos não recebem conclusão ou duração presumidas.
+  Campos vazios não viram zero; reparo concluído sem duração impede MTTR parcial.
+- Exemplo aprovado: 720 h planejadas, 6 h paradas, três falhas e três reparos
+  concluídos com 6 h totais: 714 h operadas, MTBF 238 h, MTTR 2 h e disponibilidade
+  99,17%. Quocientes sem divisor válido aparecem como não calculados.
+
+**Evidências:** implementador e revisor independente executaram instalação,
+lint, 301 testes em 38 arquivos e build. Navegador completo aprovado localmente
+e na CI; roteiro específico repetido pelo revisor, com backups 1/2/3, falta de
+espaço simulada, recuperação, gravação lenta, teclado e 320/1280 px. Gestão antiga
+permanece aceita; dados novos usam gestão 2, recusada pelo leitor antigo, e a
+sequência do IndexedDB impede sobrescrita por uma aba desatualizada. O formato
+do backup completo continua 3. O revisor aprovou sem bloqueadores.
+
+Merge autorizado ao coordenador e publicação confirmados na
+[execução da main](https://github.com/td9251156-creator/pcm-direto/actions/runs/40572591819).
+O pacote servido por pcmdireto.me contém a nova tela. Modelos Office e dependências
+preservados. Leitor de tela, aparelhos reais e Office não foram conferidos nesta
+entrega. T7 continua aguardando as fichas dos três técnicos; T8 aguarda o teste e
+as regras de privacidade. A aplicação da migração do catálogo no banco real
+continua sem confirmação; nenhum acesso ao Supabase real foi feito nesta tarefa.
+
 ## Rodada T0–T4 integrada — 27/10/2026
 
 O mantenedor integrou os PRs na ordem T0 → T2 → T3 → T4 → T1. Este registro
