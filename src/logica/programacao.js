@@ -68,9 +68,9 @@ export function idsConcluidos(programacao,historico){return new Set(conclusoesPo
 export function prepararRevisao(programacao, dados, gestao, metadados, hoje = textoData(new Date())) {
   if (!validarProgramacao(programacao)) return { ok: false, motivo: 'A programação atual é inválida. Preserve um backup para recuperação.' };
   const { id, vigencia, elaborador, resumo } = metadados;
-  if (!idValido(id) || programacao.revisoes.some(r => r.id === id) || !dataValida(vigencia) || vigencia < hoje ||
+  if (!idValido(id) || programacao.revisoes.some(r => r.id === id) || !dataValida(vigencia) ||
     !texto(elaborador) || !elaborador.trim() || !texto(resumo) || !resumo.trim()) {
-    return { ok: false, motivo: 'Informe vigência a partir de hoje, elaborador e resumo da revisão.' };
+    return { ok: false, motivo: 'Informe a data de vigência, o elaborador e o resumo da revisão.' };
   }
   if (programacao.revisoes.at(-1)?.vigencia > vigencia) return { ok: false, motivo: 'A vigência não pode anteceder a última revisão.' };
   if (!dados.plano.some(t => t.ativa)) return { ok: false, motivo: 'O plano precisa de ao menos uma tarefa ativa.' };
