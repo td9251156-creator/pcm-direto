@@ -2,6 +2,43 @@
 
 # Fila de evolução
 
+## Rodada T0–T4 integrada — 27/10/2026
+
+O mantenedor integrou os PRs na ordem T0 → T2 → T3 → T4 → T1. Este registro
+não acrescenta funcionalidades nem substitui as decisões técnicas pendentes.
+
+| Tarefa | Entrega integrada | PR |
+|---|---|---|
+| T0 | Coordenação paralela autorizada para arquivos sem sobreposição, orientações para agentes e integrador dos ramos. | [#31](https://github.com/td9251156-creator/pcm-direto/pull/31) |
+| T2 | Página de apresentação com 18 modelos em seis grupos, downloads existentes e seis exemplos; botões de acesso corrigidos. | [#32](https://github.com/td9251156-creator/pcm-direto/pull/32) |
+| T3 | Três artigos na trilha de modelos: ordens de serviço, estoque/compras e plano de ação 5W2H, usando as orientações existentes. | [#33](https://github.com/td9251156-creator/pcm-direto/pull/33) |
+| T4 | Catálogo com sete tipos específicos e a opção Outro tipo; nova migração preservando as validações anteriores. | [#34](https://github.com/td9251156-creator/pcm-direto/pull/34) |
+| T1 | Vigência anterior a hoje permitida, mantendo data válida, elaborador, resumo e a ordem das revisões; previsões vigentes anteriores a hoje e sem conclusão aparecem vencidas. | [#35](https://github.com/td9251156-creator/pcm-direto/pull/35) |
+
+**Verificações da rodada:** houve revisão independente por agentes diferentes dos
+implementadores. A última conferência conjunta aprovou lint, 272 testes em 36 arquivos
+e build. As CIs dos PRs executaram a suíte completa de navegador com sucesso. Depois
+de cada merge, os ramos restantes receberam a main e repetiram as verificações.
+Foram usados dados fictícios; o agente executou SQL somente em banco descartável
+na memória, sem acessar ou alterar o banco real.
+
+**Pendências e limites:** a aplicação de
+`supabase/migrations/20261027120000_tipos_catalogo.sql` no Supabase real ainda não
+foi confirmada pelo mantenedor. Até a aplicação, o servidor pode recusar os três
+tipos novos; as instruções manuais estão no PR #34. A suíte local no Windows teve
+falha ao encerrar um recurso após os testes funcionais; essa execução não foi
+declarada aprovada. A suíte completa passou na CI Linux, sem alterar testes ou
+prazos. Leitor de tela, aparelhos reais e conferência no Office não foram refeitos
+nesta rodada. Os modelos Office e as dependências não foram alterados.
+
+### Próximos itens — aguardam o mantenedor
+
+| Tarefa | Situação e próximo passo |
+|---|---|
+| T6 — MTBF, MTTR e disponibilidade | Somente diagnóstico. Aguardar fórmulas e exemplo numérico aprovados. Existem falhas com horas de parada opcionais e execuções com datas e vínculos; as horas previstas das tarefas não são horas de operação. Na base operacional do app, não foram encontrados campos de horas operacionais por período nem de início/fim de reparo. |
+| T7 — Teste com três técnicos | Aguardar as fichas do teste; tratar cada assunto em PR pequeno, com reprodução do problema. |
+| T8 — QR, foto e assinatura | Aguardar o resultado do teste e as regras de privacidade do mantenedor. Essas funções não foram implementadas nesta rodada. |
+
 ## Troca dos modelos pelo novo pacote do mantenedor (25/10/2026)
 
 PCMD-Modelos.zip substitui os seis editáveis e seis exemplos, preservados byte a byte. As 12
