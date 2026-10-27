@@ -9,3 +9,4 @@ await import('./verificar-modelos.mjs');
 await import('./verificar-refeitos-navegador.mjs');
 await import('./verificar-entrega-lean.mjs');
 await import('./verificar-assistente-rotina.mjs');
+await import('./verificar-identidade.mjs');

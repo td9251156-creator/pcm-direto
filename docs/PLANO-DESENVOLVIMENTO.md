@@ -42,3 +42,20 @@ Nenhuma atividade é prometida após o fim da sessão sem um executor persistent
 ## Ajustes da experiência de documentos
 
 O manual da marca e o Design System são referências internas. Downloads separados, explicações por modelo e preenchimento individual substituem os pacotes ZIP nas telas. A revisão geral do uso identificou nomenclatura interna exposta, duplicidade de ações, aviso antigo sobre modelos indisponíveis, links de download sem contexto e falta de filtro por finalidade. Esses pontos foram tratados nesta rodada. Os critérios de validação humana e as ampliações acima continuam válidos.
+
+## Identidade do Figma e orientação de navegação — 26/10/2026
+
+Pedido: aplicar e publicar melhorias do site; templates ficam para uma rodada futura.
+Referência interna: https://www.figma.com/design/OCnoDOYbcfe1rfOJw0dvZM.
+Foram consultados fundamentos, ações, formulários, navegação e feedback; a referência não é oferecida aos usuários.
+
+A interface mantém o logo oficial e as fontes locais. Controles usam altura mínima de 48 px,
+campos de texto com 16 px, raios de 4 px, cores de entrada/cálculo/erro e foco laranja texto.
+Preservada a navegação inferior existente no celular. Subtelas destacam seu acesso de origem:
+Cadastros e Plano Mestre em Planejar; modelos em Documentos; histórico em Executar.
+Mais preserva a busca durante a sessão e permite limpar resultados vazios com foco no campo.
+
+Escopo: nenhuma alteração em templates, geradores, biblioteca técnica, dados salvos, dependências
+ou regras de manutenção. O teste de navegador reproduziu a ausência de localização em Cadastros
+antes da correção. Regressões cobrem localização, troca de largura, busca, foco e estados dos campos.
+Validação em aparelhos reais e leitor de tela permanece pendente.
