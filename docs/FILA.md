@@ -298,3 +298,27 @@ Os modelos são baixados individualmente em Excel ou Word, com finalidade, orien
 Preencher um modelo gera um único arquivo com os equipamentos em edição; controles manuais dispensam cadastro. Documentos da revisão ativa também gera um arquivo por escolha, com data de corte e aprovação explícita. O histórico registra somente o documento emitido. Formulários mantêm envio único durante geração e navegação. A confirmação de aprovação fica expandida quando já marcada; falha de geração preserva os campos.
 
 Foram removidos o download combinado antigo e o aviso ultrapassado de modelos “aguardando”. Revisão focada na experiência de documentos: não altera tarefas, critérios técnicos, templates Office, formato de backup ou esquema dos dados. Revisão independente e validação com usuários/aparelhos reais continuam pendentes. Ver docs/REVISAO-EXPERIENCIA-DOCUMENTOS.md (caminho a partir da raiz).
+
+## Identidade do Figma e orientação de navegação — 26/10/2026
+
+Pedido: aplicar e publicar melhorias do site; templates ficam para uma rodada futura.
+Referência interna: https://www.figma.com/design/OCnoDOYbcfe1rfOJw0dvZM.
+Foram consultados fundamentos, ações, formulários, navegação e feedback; a referência não é oferecida aos usuários.
+
+A interface mantém o logo oficial e as fontes locais. Controles usam altura mínima de 48 px,
+campos de texto com 16 px, raios de 4 px, cores de entrada/cálculo/erro e foco laranja texto.
+Preservada a navegação inferior existente no celular. Subtelas destacam seu acesso de origem:
+Cadastros e Plano Mestre em Planejar; modelos em Documentos; histórico em Executar.
+Mais preserva a busca durante a sessão e permite limpar resultados vazios com foco no campo.
+
+Escopo: nenhuma alteração em templates, geradores, biblioteca técnica, dados salvos, dependências
+ou regras de manutenção. O teste de navegador reproduziu a ausência de localização em Cadastros
+antes da correção. Regressões cobrem localização, troca de largura, busca, foco e estados dos campos.
+Validação em aparelhos reais e leitor de tela permanece pendente.
+
+Validação da rodada: npm ci concluído sem vulnerabilidades informadas; lint, 257 testes
+em 36 arquivos e build aprovados. Revisão independente somente leitura identificou conflito de
+especificidade na borda de erro e hover de botão secundário desabilitado; ambos corrigidos e
+conferidos pelo revisor no Chromium com os CSS reais. Nenhum bloqueador restante no escopo.
+O roteiro específico também confere os dois estados e aguarda o evento de mudança de largura
+antes de verificar a navegação. Evidências locais em artifacts/identidade-figma-*.png.

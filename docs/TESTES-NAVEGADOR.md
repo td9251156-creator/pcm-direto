@@ -93,3 +93,5 @@ Compara imagens/desenhos com os originais e recusa modelo de outra versão pelo 
 ExcelJS não abre nem o original fornecido com drawing Target absoluto; isso não foi tratado como
 prova de arquivo inválido nem motivou regravação dos originais. XML válido não prova recálculo.
 O roteiro Gestão lê as 12 prévias PDF sem internet, compara os bytes com os fornecidos e confere um download por clique. Evita uma rajada artificial de downloads automáticos.
+
+O roteiro verificar-identidade.mjs também confere localização das subtelas, busca preservada em Mais, limpeza com retorno de foco, campos inválidos/somente leitura, botões desabilitados e larguras de 320 a 1280 px. Não altera templates nem usa dados reais.

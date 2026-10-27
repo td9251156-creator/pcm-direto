@@ -20,6 +20,7 @@ import { telaApoio } from './telas/apoio.js';
 import { telaComunidade } from './telas/comunidade.js';
 import { telaCatalogo } from './telas/catalogo.js';
 import { registrarAtualizacao } from './servicos/atualizacao.js';
+import { acessoAtual } from './navegacao.js';
 
 const TELAS = {
   modelos: { titulo: 'Modelos para sua rotina', desenhar: telaModelos },
@@ -65,9 +66,9 @@ let encerrarTela;
 
 function marcarNavegacao(atual) {
   const mobile = matchMedia('(max-width:1023px)').matches;
-  const emMais = !['semana','executar','ativos','falhas'].includes(atual);
+  const acesso = acessoAtual(atual, mobile);
   document.querySelectorAll('nav a[data-tela]').forEach(a=>{
-    const ativa = mobile ? a.dataset.tela === (emMais?'mais':atual) : a.dataset.tela === atual;
+    const ativa = a.dataset.tela === acesso;
     if(ativa)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
   });
 }
