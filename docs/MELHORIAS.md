@@ -4,6 +4,34 @@ Diagnóstico de 20/10/2026, a partir da revisão `18e06e1`. Ordem de trabalho: e
 qualidade, funções novas e melhorias de uso. Um assunto por pull request (PR); o mantenedor
 revisa antes de publicar. Itens ainda não implementados não são promessas de entrega.
 
+## Entregas T0–T4 — 27/10/2026
+
+Integradas pelo mantenedor, na ordem combinada:
+
+- [T0 / #31](https://github.com/td9251156-creator/pcm-direto/pull/31): autorização condicional para agentes em arquivos separados, orientações e integrador. Foram corrigidos, com autorização, os nomes dos ramos, a chamada do npm no Windows, a identidade Git limitada ao comando e uma variável não utilizada.
+- [T2 / #32](https://github.com/td9251156-creator/pcm-direto/pull/32): apresentação dos 18 modelos por finalidade, com links apenas para arquivos existentes e seis exemplos reais.
+- [T3 / #33](https://github.com/td9251156-creator/pcm-direto/pull/33): guias curtos de ordens de serviço, estoque/compras e 5W2H, sem regras técnicas novas ou promessa de módulos operacionais no app.
+- [T4 / #34](https://github.com/td9251156-creator/pcm-direto/pull/34): inclusão de transportador de correia, ventilador/exaustor e unidade hidráulica no catálogo, mantendo Outro tipo. A nova migração altera somente a função de validação; as migrações anteriores permanecem intactas.
+- [T1 / #35](https://github.com/td9251156-creator/pcm-direto/pull/35): aceitação de vigência anterior a hoje, mantendo os campos obrigatórios e a recusa de data anterior à última revisão. Testes cobrem vencidas sem registro e preservação de ocorrências realizadas ou anteriores à vigência.
+
+Nas tarefas T1, T3 e T4, novos testes falharam antes das correções. Cada tarefa
+passou por revisão independente de outro agente. A última conferência conjunta aprovou lint, 272 testes em
+36 arquivos e build; as CIs dos cinco PRs concluíram a suíte completa de navegador.
+Os ramos restantes foram atualizados e verificados após cada merge. A migração
+também passou em PostgreSQL descartável na memória, com as regras de autoria,
+permissões, PDFs e moderação preservadas. O agente não acessou o banco real.
+
+A aplicação da migração no Supabase real permanece **pendente de confirmação do
+mantenedor**; os tipos novos podem ser recusados pelo servidor até essa etapa.
+A falha local de encerramento de recurso no Windows permanece registrada, sem
+enfraquecer testes ou prazos; a suíte completa passou na CI Linux. Leitor de tela,
+aparelhos reais e conferência no Office não foram refeitos nesta rodada. Não houve
+alteração dos modelos Office, das dependências ou do formato dos backups.
+
+Indicadores, correções do teste com três técnicos e QR/foto/assinatura continuam
+aguardando as decisões e os materiais descritos na [fila](FILA.md); não foram
+declarados entregues.
+
 ## Verificação inicial
 
 - Leitura de README, decisões, roteiro, biblioteca, contribuição, segurança, código e testes.
