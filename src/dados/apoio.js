@@ -10,6 +10,7 @@ export const TRILHAS = [
 
 const R1 = '24/10/2026';
 const R2 = '25/10/2026';
+const R3 = '27/10/2026';
 
 // [id, trilha, título, texto, exemplo, no app, revisão]
 export const ARTIGOS = [
@@ -29,6 +30,9 @@ export const ARTIGOS = [
   ['backup', 'executar', 'Backup e troca de aparelho', 'Os dados ficam no navegador deste aparelho. Limpar os dados do navegador, trocar de aparelho ou mudar de navegador exige restaurar um backup. Baixe um backup ao fim de cada semana e guarde em local seguro.', 'O supervisor da Indústria Exemplo baixa o backup toda sexta e guarda numa pasta da empresa.', 'Abra Meus dados para baixar o backup completo ou restaurar um arquivo, com prévia antes de confirmar.', R2],
   ['documentos', 'modelos', 'Como usar os modelos PCMD', 'PCMD-01 organiza documentos e cadastros; 02 reúne ativos e criticidade; 03/04 reúne plano e programação; 05 registra falhas; W1 e W2 descrevem gestão e estratégia. Uma emissão deve usar a mesma revisão e data de corte. Aprovação precisa ocorrer de fato.', 'A Indústria Exemplo prepara os documentos e deixa o aprovador a definir até a revisão responsável.', 'Abra Documentos, confira os campos e gere os arquivos. Consulte as instruções de recálculo no Excel antes de usar os resultados.', R1],
   ['aprovacao', 'modelos', 'Revisar e aprovar um documento', 'Gerar o arquivo não aprova o documento. Abra cada arquivo no Excel ou no Word, confira os dados, as fórmulas recalculadas e os campos "A definir". Só marque a aprovação depois que o responsável tiver de fato aprovado.', 'Na Indústria Exemplo, o supervisor confere o PCMD-03-04 e o gestor aprova; até lá a situação fica "Em elaboração".', 'Em Documentos, informe o aprovador somente quando a aprovação tiver ocorrido.', R2],
+  ['ordens-servico', 'modelos', 'Ordens de serviço (PCMD-K02)', 'Use o PCMD-K02 para abrir uma ordem de serviço e acompanhar o atendimento até a conclusão. Informe equipamento, solicitação, prioridade e responsável; após o serviço, complete o encerramento.', 'Na Indústria Exemplo, uma ordem de serviço reúne a solicitação e o responsável pelo atendimento.', 'Em Mais → Modelos para sua rotina, baixe o PCMD-K02. No arquivo, informe equipamento, solicitação, prioridade e responsável; complete o encerramento após o serviço.', R3],
+  ['estoque-compras', 'modelos', 'Estoque e compras (PCMD-K04 e PCMD-K05)', 'Use o PCMD-K04 para controlar materiais, entradas e saídas do almoxarifado. Cadastre os materiais e o saldo inicial, registre cada movimentação e confira as sugestões de compra. No PCMD-K05, acompanhe o pedido até o recebimento: informe item, quantidade, fornecedor, valor e prazo e atualize o recebimento.', 'Na Indústria Exemplo, o técnico registra uma saída de material e acompanha o pedido até o recebimento.', 'Em Mais → Modelos para sua rotina, baixe o PCMD-K04 e o PCMD-K05. No arquivo de estoque, cadastre materiais e saldo inicial e registre as movimentações; no de compras, preencha o pedido e atualize o recebimento.', R3],
+  ['plano-acao-5w2h', 'modelos', 'Plano de ação 5W2H (PCMD-K07)', 'Use o PCMD-K07 para transformar uma melhoria em ações com responsáveis e prazos. Descreva o que fazer, por quê, onde, quando, quem, como e quanto (custo); acompanhe o avanço.', 'Na Indústria Exemplo, uma melhoria vira uma ação com responsável e prazo, acompanhada pelo avanço registrado.', 'Em Mais → Modelos para sua rotina, baixe o PCMD-K07. No arquivo, preencha os sete campos do 5W2H e acompanhe o avanço da ação.', R3],
 ];
 
 // [termo, definição]
