@@ -1,6 +1,6 @@
 // Contrato dos modelos públicos. Não inclui nenhum dado da fábrica ou da sessão.
 import { PERIODICIDADES } from './plano.js';
-export const TIPOS_CATALOGO = Object.freeze({ motor_eletrico: 'Motor elétrico', compressor_ar: 'Compressor de ar', bomba_centrifuga: 'Bomba centrífuga', ponte_rolante: 'Ponte rolante', outro: 'Outro tipo' });
+export const TIPOS_CATALOGO = Object.freeze({ motor_eletrico: 'Motor elétrico', compressor_ar: 'Compressor de ar', bomba_centrifuga: 'Bomba centrífuga', ponte_rolante: 'Ponte rolante', transportador_correia: 'Transportador de correia', ventilador_exaustor: 'Ventilador/exaustor', unidade_hidraulica: 'Unidade hidráulica', outro: 'Outro tipo' });
 export const CAMPOS_MODELO = ['titulo', 'tipo_base', 'fabricante', 'modelo', 'descricao', 'caracteristicas', 'apelido', 'tarefas'];
 const CAMPOS_TAREFA = ['descricao', 'periodicidade', 'especialidade', 'duracao_horas', 'seguranca', 'origem', 'versao', 'observacao'];
 const objeto = o => o !== null && typeof o === 'object' && !Array.isArray(o);
