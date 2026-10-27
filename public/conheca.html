@@ -72,6 +72,8 @@
     .modelos li { background: var(--branco); border: 1px solid var(--borda); border-radius: 8px; padding: .8rem 1rem; }
     .modelos .codigo { color: var(--laranja-texto); font-weight: 700; font-size: .85rem; letter-spacing: .06em; }
     .modelos a { margin-right: .75rem; }
+    .modelos .nome { display: block; margin: .25rem 0 .5rem; font-size: 1.15rem; line-height: 1.2; }
+    .modelos .orientacao { margin: .5rem 0; font-size: .9rem; }
     details { background: var(--branco); border: 1px solid var(--borda); border-radius: 8px; padding: .9rem 1rem; margin-bottom: .6rem; }
     summary { font-weight: 700; cursor: pointer; }
     details p { margin: .6rem 0 0; color: #3a4650; }
@@ -117,7 +119,7 @@
           <p class="lead">O PCM Direto monta o plano de manutenção preventiva a partir da lista de máquinas, de graça, em português e com os dados guardados só no seu aparelho.</p>
           <div class="acoes">
             <a class="botao" href="./#inicio">Começar meu PCM</a>
-            <a class="botao secundario" href="./#comunidade">Baixar modelos PCMD</a>
+            <a class="botao secundario" href="#modelos">Baixar modelos PCMD</a>
           </div>
           <p class="selo-teste"><strong>Versão de teste aberta.</strong> Use, teste e conte o que achou.</p>
         </div>
@@ -220,16 +222,44 @@
       <div class="largura">
         <p class="sobretitulo">Para baixar</p>
         <h2 id="modelos">Modelos PCMD gratuitos</h2>
-        <p>Cada modelo tem uma versão em branco e uma preenchida com a Indústria Exemplo. Use sozinhos ou deixe o app preencher.</p>
+        <p>18 modelos organizados por finalidade, para baixar individualmente em Excel ou Word. Seis também têm exemplo preenchido com a Indústria Exemplo. No app, consulte Mais → Modelos para sua rotina.</p>
+        <h3>Governança</h3>
         <ul class="modelos">
-          <li><span class="codigo">PCMD-01 · Excel</span><h3>Controle documental</h3><a href="./modelos/PCMD-01-Controle-Documental.xlsx" download>Em branco</a><a href="./modelos/PCMD-01-Controle-Documental-Exemplo.xlsx" download>Exemplo</a></li>
-          <li><span class="codigo">PCMD-02 · Excel</span><h3>Ativos e criticidade</h3><a href="./modelos/PCMD-02-Ativos-Criticidade.xlsx" download>Em branco</a><a href="./modelos/PCMD-02-Ativos-Criticidade-Exemplo.xlsx" download>Exemplo</a></li>
-          <li><span class="codigo">PCMD-03-04 · Excel</span><h3>Plano e cronograma</h3><a href="./modelos/PCMD-03-04-Plano-Cronograma.xlsx" download>Em branco</a><a href="./modelos/PCMD-03-04-Plano-Cronograma-Exemplo.xlsx" download>Exemplo</a></li>
-          <li><span class="codigo">PCMD-05 · Excel</span><h3>Ficha de falha</h3><a href="./modelos/PCMD-05-Ficha-Falha.xlsx" download>Em branco</a><a href="./modelos/PCMD-05-Ficha-Falha-Exemplo.xlsx" download>Exemplo</a></li>
-          <li><span class="codigo">PCMD-W1 · Word</span><h3>Manual de gestão de ativos</h3><a href="./modelos/PCMD-W1-Manual-Gestao-Ativos.docx" download>Em branco</a><a href="./modelos/PCMD-W1-Manual-Gestao-Ativos-Exemplo.docx" download>Exemplo</a></li>
-          <li><span class="codigo">PCMD-W2 · Word</span><h3>Manual de estratégia de manutenção</h3><a href="./modelos/PCMD-W2-Manual-Estrategia-Manutencao.docx" download>Em branco</a><a href="./modelos/PCMD-W2-Manual-Estrategia-Manutencao-Exemplo.docx" download>Exemplo</a></li>
+          <li><span class="codigo">PCMD-01 · Excel</span><strong class="nome">Controle documental</strong><a href="./modelos/PCMD-01-Controle-Documental.xlsx" download aria-label="Em branco — PCMD-01 — Controle documental">Em branco</a><a href="./modelos/PCMD-01-Controle-Documental-Exemplo.xlsx" download aria-label="Exemplo — PCMD-01 — Controle documental">Exemplo</a></li>
+          <li><span class="codigo">PCMD-K08 · Excel</span><strong class="nome">Documentos e evidências</strong><a href="./modelos/refeitos/PCMD-K08-Kit_Documentos_Auditoria.xlsx" download aria-label="Em branco — PCMD-K08 — Documentos e evidências">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K08 — Documentos e evidências">Abrir no app</a></li>
         </ul>
-        <a class="botao secundario" href="./#comunidade">Ver todos os modelos na comunidade</a>
+        <h3>Operação</h3>
+        <ul class="modelos">
+          <li><span class="codigo">PCMD-02 · Excel</span><strong class="nome">Ativos e criticidade</strong><a href="./modelos/PCMD-02-Ativos-Criticidade.xlsx" download aria-label="Em branco — PCMD-02 — Ativos e criticidade">Em branco</a><a href="./modelos/PCMD-02-Ativos-Criticidade-Exemplo.xlsx" download aria-label="Exemplo — PCMD-02 — Ativos e criticidade">Exemplo</a></li>
+          <li><span class="codigo">PCMD-03-04 · Excel</span><strong class="nome">Plano e cronograma</strong><a href="./modelos/PCMD-03-04-Plano-Cronograma.xlsx" download aria-label="Em branco — PCMD-03-04 — Plano e cronograma">Em branco</a><a href="./modelos/PCMD-03-04-Plano-Cronograma-Exemplo.xlsx" download aria-label="Exemplo — PCMD-03-04 — Plano e cronograma">Exemplo</a></li>
+          <li><span class="codigo">PCMD-05 · Excel</span><strong class="nome">Ficha de falha</strong><a href="./modelos/PCMD-05-Ficha-Falha.xlsx" download aria-label="Em branco — PCMD-05 — Ficha de falha">Em branco</a><a href="./modelos/PCMD-05-Ficha-Falha-Exemplo.xlsx" download aria-label="Exemplo — PCMD-05 — Ficha de falha">Exemplo</a></li>
+          <li><span class="codigo">PCMD-K01 · Excel</span><strong class="nome">Ativos e preventiva</strong><a href="./modelos/refeitos/PCMD-K01-Planilha_Controle_de_Ativos_e_Preventiva.xlsx" download aria-label="Em branco — PCMD-K01 — Ativos e preventiva">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K01 — Ativos e preventiva">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-K02 · Excel</span><strong class="nome">Ordens de serviço</strong><a href="./modelos/refeitos/PCMD-K02-Planilha_Sistema_de_Ordens_de_Servico.xlsx" download aria-label="Em branco — PCMD-K02 — Ordens de serviço">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K02 — Ordens de serviço">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-K03 · Excel</span><strong class="nome">Checklists de manutenção</strong><a href="./modelos/refeitos/PCMD-K03-Kit_3_Checklists_de_Manutencao.xlsx" download aria-label="Em branco — PCMD-K03 — Checklists de manutenção">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K03 — Checklists de manutenção">Abrir no app</a></li>
+        </ul>
+        <h3>Materiais</h3>
+        <ul class="modelos">
+          <li><span class="codigo">PCMD-06 · Excel</span><strong class="nome">Peças críticas</strong><a href="./modelos/refeitos/PCMD-06-Pecas-Criticas.xlsx" download aria-label="Em branco — PCMD-06 — Peças críticas">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-06 — Peças críticas">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-K04 · Excel</span><strong class="nome">Estoque e almoxarifado</strong><a href="./modelos/refeitos/PCMD-K04-Planilha_Controle_de_Estoque_e_Almoxarifado.xlsx" download aria-label="Em branco — PCMD-K04 — Estoque e almoxarifado">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K04 — Estoque e almoxarifado">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-K05 · Excel</span><strong class="nome">Pedidos de compra</strong><a href="./modelos/refeitos/PCMD-K05-Controle_de_Pedidos_de_Compra.xlsx" download aria-label="Em branco — PCMD-K05 — Pedidos de compra">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K05 — Pedidos de compra">Abrir no app</a></li>
+        </ul>
+        <h3>Resultados e ações</h3>
+        <ul class="modelos">
+          <li><span class="codigo">PCMD-07 · Excel</span><strong class="nome">Indicadores mensais</strong><a href="./modelos/refeitos/PCMD-07-Indicadores-Mensais.xlsx" download aria-label="Em branco — PCMD-07 — Indicadores mensais">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-07 — Indicadores mensais">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-08 · Excel</span><strong class="nome">Ação corretiva</strong><a href="./modelos/refeitos/PCMD-08-Acao-Corretiva.xlsx" download aria-label="Em branco — PCMD-08 — Ação corretiva">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-08 — Ação corretiva">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-K06 · Excel</span><strong class="nome">Indicadores por ativo</strong><a href="./modelos/refeitos/PCMD-K06-Dashboard_KPIs_Manutencao.xlsx" download aria-label="Em branco — PCMD-K06 — Indicadores por ativo">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K06 — Indicadores por ativo">Abrir no app</a></li>
+          <li><span class="codigo">PCMD-K07 · Excel</span><strong class="nome">Plano de ação 5W2H</strong><a href="./modelos/refeitos/PCMD-K07-Planilha_Plano_de_Acao_5W2H.xlsx" download aria-label="Em branco — PCMD-K07 — Plano de ação 5W2H">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K07 — Plano de ação 5W2H">Abrir no app</a></li>
+        </ul>
+        <h3>Gestão integrada</h3>
+        <ul class="modelos">
+          <li><span class="codigo">PCMD-K09 · Excel</span><strong class="nome">Gestão integrada de manutenção</strong><a href="./modelos/refeitos/PCMD-K09-CMMS_Completo.xlsx" download aria-label="Em branco — PCMD-K09 — Gestão integrada de manutenção">Em branco</a><p class="orientacao">Consulte a orientação em Mais → Modelos para sua rotina.</p><a href="./" aria-label="Abrir no app — PCMD-K09 — Gestão integrada de manutenção">Abrir no app</a></li>
+        </ul>
+        <h3>Manuais</h3>
+        <ul class="modelos">
+          <li><span class="codigo">PCMD-W1 · Word</span><strong class="nome">Gestão de ativos</strong><a href="./modelos/PCMD-W1-Manual-Gestao-Ativos.docx" download aria-label="Em branco — PCMD-W1 — Gestão de ativos">Em branco</a><a href="./modelos/PCMD-W1-Manual-Gestao-Ativos-Exemplo.docx" download aria-label="Exemplo — PCMD-W1 — Gestão de ativos">Exemplo</a></li>
+          <li><span class="codigo">PCMD-W2 · Word</span><strong class="nome">Estratégia de manutenção</strong><a href="./modelos/PCMD-W2-Manual-Estrategia-Manutencao.docx" download aria-label="Em branco — PCMD-W2 — Estratégia de manutenção">Em branco</a><a href="./modelos/PCMD-W2-Manual-Estrategia-Manutencao-Exemplo.docx" download aria-label="Exemplo — PCMD-W2 — Estratégia de manutenção">Exemplo</a></li>
+        </ul>
+        <a class="botao secundario" href="./">Abrir os modelos no app</a>
       </div>
     </section>
 
