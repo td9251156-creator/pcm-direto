@@ -39,9 +39,9 @@ export const ARTIGOS = [
 export const GLOSSARIO = [
   ['Backlog', 'Serviços de manutenção pendentes, normalmente medidos em horas de trabalho.'],
   ['Criticidade', 'Classificação da importância do ativo (A, B ou C) para segurança, qualidade, produção e custo.'],
-  ['Disponibilidade', 'Parte do tempo em que o equipamento está apto a operar. O app ainda não calcula esse indicador.'],
-  ['MTBF', 'Tempo médio entre falhas. Depende de regras técnicas ainda não definidas no app.'],
-  ['MTTR', 'Tempo médio para reparo. Depende de regras técnicas ainda não definidas no app.'],
+  ['Disponibilidade', 'Parte do tempo em que o equipamento está apto a operar. Consulte em Mensal por ativo e mês fechado, após informar horas planejadas sem paradas programadas e parada total conferida.'],
+  ['MTBF', 'Tempo médio entre falhas. Consulte em Mensal por ativo e mês fechado, com horas planejadas, parada total conferida e registros de falhas no mês.'],
+  ['MTTR', 'Tempo médio para reparo. Consulte em Mensal por ativo e mês fechado, com conclusão e duração total dos reparos informadas em Falhas.'],
   ['OS', 'Ordem de serviço: o pedido ou registro de um trabalho de manutenção.'],
   ['Periodicidade', 'Intervalo entre duas execuções de uma tarefa preventiva.'],
   ['TAG', 'Código curto e único que identifica o ativo, como UTL-CMP-001.'],
