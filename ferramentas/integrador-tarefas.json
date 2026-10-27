@@ -1,0 +1,12 @@
+{
+  "base": "origin/main",
+  "arquivosCompartilhados": ["docs/FILA.md", "docs/MELHORIAS.md", "src/main.js", "src/estilo.css", "src/sw.js", "package.json", "package-lock.json", "AGENTS.md"],
+  "ordemDeMerge": ["T0", "T2", "T3", "T4", "T1"],
+  "tarefas": {
+    "T0": { "nome": "Preparar paralelo", "ramo": "coord/preparar-paralelo", "permitidos": ["AGENTS.md", "CLAUDE.md", ".github/copilot-instructions.md", "ferramentas/integrador.mjs", "ferramentas/integrador-tarefas.json", ".devcontainer/**", ".vscode/tasks.json"] },
+    "T1": { "nome": "Vigência anterior a hoje", "ramo": "coord/vigencia-passado", "permitidos": ["src/logica/programacao.js", "src/telas/planejar.js", "testes/programacao.test.js"] },
+    "T2": { "nome": "Página com 18 modelos", "ramo": "coord/pagina-18-modelos", "permitidos": ["public/conheca.html"] },
+    "T3": { "nome": "Guias dos modelos novos", "ramo": "coord/guias-modelos-novos", "permitidos": ["src/dados/apoio.js", "testes/apoio.test.js"] },
+    "T4": { "nome": "Catálogo com 7 tipos", "ramo": "coord/catalogo-7-tipos", "permitidos": ["supabase/migrations/20261027*.sql", "src/logica/catalogo.js", "testes/catalogo.test.js", "testes/catalogo-servico.test.js"] }
+  }
+}
