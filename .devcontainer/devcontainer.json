@@ -1,0 +1,21 @@
+{
+  "name": "PCM Direto",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "postCreateCommand": "npm ci && git fetch origin",
+  "forwardPorts": [5173],
+  "portsAttributes": { "5173": { "label": "PCM Direto (npm run dev)" } },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "GitHub.vscode-pull-request-github",
+        "anthropic.claude-code",
+        "openai.chatgpt",
+        "dbaeumer.vscode-eslint",
+        "vitest.explorer"
+      ],
+      "settings": { "git.autofetch": true, "editor.formatOnSave": false }
+    }
+  }
+}

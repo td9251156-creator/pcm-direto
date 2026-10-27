@@ -41,6 +41,8 @@ de manutenção bloqueia apenas o trecho que depende dela; avance no restante au
 
 ## Coordenação entre agentes
 
+Quando o mantenedor autorizar trabalho paralelo, agentes diferentes podem implementar ao mesmo tempo apenas em tarefas com listas de arquivos permitidos que não se sobreponham; cada tarefa usa ramo próprio; docs/FILA.md e docs/MELHORIAS.md só são atualizados pelo integrador depois dos merges; o revisor independente é sempre outro agente, nunca quem implementou.
+
 Mantenha **uma implementação por vez**. O coordenador pode delegar diagnósticos delimitados
 e uma revisão independente em paralelo, sem autorizar agentes diferentes a editar os mesmos arquivos.
 
