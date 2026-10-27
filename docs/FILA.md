@@ -2,6 +2,18 @@
 
 # Fila de evolução
 
+### Orientações dos indicadores — 27/10/2026
+
+O [PR #40](https://github.com/td9251156-creator/pcm-direto/pull/40), integrado após
+revisão independente sem achados, corrigiu os textos de Cadastros, Glossário e
+README que ainda descreviam os indicadores como pendentes. M5 agora dá acesso à
+tela Mensal. A regressão de navegador falhou antes pela ausência do link e passou
+após a correção; metas vazias e cenários anteriores permaneceram preservados.
+Implementador e revisor executaram instalação, lint, 301 testes/38 arquivos,
+build e navegador específico; navegador completo aprovado localmente e na CI.
+Nenhuma fórmula, dado, dependência ou modelo Office foi alterado. As pendências
+de T7/T8 e as limitações de validação humana abaixo continuam válidas.
+
 ## T6 — indicadores integrados e publicados — 27/10/2026
 
 Os [PRs #37](https://github.com/td9251156-creator/pcm-direto/pull/37) e
