@@ -8,6 +8,22 @@ beforeEach(() => {
   vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'sb_publishable_1234567890abcdefghijkl');
 });
 describe('Cliente do catálogo e permissões solicitadas', () => {
+  it.each(['transportador_correia', 'ventilador_exaustor', 'unidade_hidraulica'])('salva %s usando somente os campos públicos do modelo', async tipo => {
+    mock.cliente = { rpc: vi.fn(async () => ({ data: 'modelo-ficticio', error: null })) };
+    const { salvarModelo } = await import('../src/servicos/catalogo.js');
+    const { modeloVazio } = await import('../src/logica/catalogo.js');
+    const dados = { ...modeloVazio(), tipo_base: tipo, titulo: 'Equipamento fictício', descricao: 'Modelo de teste fictício' };
+    expect(await salvarModelo(dados)).toBe('modelo-ficticio');
+    expect(mock.cliente.rpc).toHaveBeenCalledOnce();
+    expect(mock.cliente.rpc).toHaveBeenCalledWith('catalogo_salvar', { p_dados: dados, p_id: null, p_original_id: null });
+  });
+  it('recusa tipo inexistente antes de solicitar salvamento remoto', async () => {
+    mock.cliente = { rpc: vi.fn() };
+    const { salvarModelo } = await import('../src/servicos/catalogo.js');
+    const { modeloVazio } = await import('../src/logica/catalogo.js');
+    await expect(salvarModelo({ ...modeloVazio(), tipo_base: 'maquina_inexistente', titulo: 'Exemplo fictício', descricao: 'Modelo fictício' })).rejects.toThrow('Escolha uma categoria de máquina.');
+    expect(mock.cliente.rpc).not.toHaveBeenCalled();
+  });
   it('retoma PDF validado após resposta perdida sem tentar sobrescrever o objeto', async () => {
     const arquivo = new Blob(['%PDF-1.7\nficticio\n%%EOF'], { type: 'application/pdf' });
     const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', await arquivo.arrayBuffer()))].map(n => n.toString(16).padStart(2, '0')).join('');

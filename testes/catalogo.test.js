@@ -4,6 +4,13 @@ import { modeloVazio, tarefaCatalogoVazia, validarModeloCatalogo, configuracaoCa
 const modelo = () => ({ ...modeloVazio(), titulo: 'Motor Exemplo', descricao: 'Modelo fictício' });
 const env = chave => ({ VITE_SUPABASE_URL: 'https://exemplo.supabase.co', VITE_SUPABASE_ANON_KEY: chave });
 describe('Contrato público do catálogo', () => {
+  it.each(['transportador_correia', 'ventilador_exaustor', 'unidade_hidraulica'])('aceita o tipo %s sem mudar o contrato do modelo', tipo => {
+    expect(validarModeloCatalogo({ ...modelo(), tipo_base: tipo })).toEqual([]);
+  });
+  it('recusa um tipo de máquina inexistente e mantém a opção Outro tipo', () => {
+    expect(validarModeloCatalogo({ ...modelo(), tipo_base: 'maquina_inexistente' })).toContain('Escolha uma categoria de máquina.');
+    expect(validarModeloCatalogo({ ...modelo(), tipo_base: 'outro' })).toEqual([]);
+  });
   it('aceita modelo sem tarefas e exige origem e versão das tarefas incluídas', () => {
     expect(validarModeloCatalogo(modelo())).toEqual([]);
     const m = modelo(); m.tarefas = [{ ...tarefaCatalogoVazia(), descricao: 'Inspeção fictícia', especialidade: 'Elétrica' }];
