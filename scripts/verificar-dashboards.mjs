@@ -13,7 +13,7 @@ await executarComRecursos({
     const p = await c.newPage();
     const erros = [];
     p.on('pageerror', (e) => erros.push(e.message));
-    await p.goto(`${URL_BASE}#dashboards`);
+    await p.goto(`${URL_BASE}#dashboards?fonte=demo`);
     await p.locator('.pd-cartao').first().waitFor();
     const valores = await p.locator('.pd-valor').allInnerTexts();
     assert.deepEqual(valores.slice(0, 3), ['85 OS', '81 OS', '238,5 h'], 'Controles da demonstração');
@@ -33,7 +33,7 @@ await executarComRecursos({
     for (let i = 0; i < 3; i++) {
       await p.evaluate(() => { location.hash = 'mais'; });
       await p.locator('#buscar-ferramentas').waitFor();
-      await p.evaluate(() => { location.hash = 'dashboards'; });
+      await p.evaluate(() => { location.hash = 'dashboards?fonte=demo'; });
       await p.locator('.pd-cartao').first().waitFor();
     }
 

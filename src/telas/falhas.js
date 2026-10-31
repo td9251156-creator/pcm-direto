@@ -28,7 +28,7 @@ export function telaFalhas(main) {
     if (conclusao && (conclusao < f['data-falha'].value || conclusao > hoje)) { avisar('A conclusão deve estar entre a data da falha e hoje.'); return; }
     const reparo = valorOpcional(f.horasReparo.value);
     const novos = conclusao !== '' || reparo !== null || anterior?.dataConclusao !== undefined;
-    if (novos) nova.versao = 2;
+    if (novos) nova.versao = Math.max(nova.versao, 2); // nunca rebaixa uma base com dados da operação (versão 3)
     const r = { ...(anterior ?? {}), ...(novos ? { dataConclusao: conclusao, horasReparo: reparo } : {}), id: anterior?.id || novoId(), ...identificacaoDaFalha(eq, anterior),
       data: f['data-falha'].value, sintoma: f.sintoma.value.trim(), causa: f.causa.value.trim(), acao: f.acao.value.trim(),
       horasParada: valorOpcional(f.horasParada.value), peca: f.peca.value.trim(), responsavelId: f.responsavelId.value };

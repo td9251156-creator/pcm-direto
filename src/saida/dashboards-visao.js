@@ -240,8 +240,8 @@ export function visaoCustos(r) {
       titulo: 'Por setor do lançamento', vazio: 'Nenhum lançamento ou orçamento no período filtrado.',
       colunas: [{ titulo: 'Setor', campo: 'rotulo' }, { titulo: 'Realizado', campo: 'real', num: true }, { titulo: 'Orçado', campo: 'orc', num: true },
         { titulo: 'Desvio', campo: 'desv', num: true }, { titulo: 'Consumo', campo: 'cons', num: true }],
-      linhas: r.porSetor.map((s) => ({ ...s, real: brl(s.realizado), orc: brl(s.orcado), desv: brl(s.desvio), cons: pct(s.consumo) })),
-      nota: 'Desvio = realizado − orçado. Positivo significa acima do orçamento.',
+      linhas: r.porSetor.map((s) => ({ ...s, real: brl(s.realizado), orc: s.desvio === null ? '—' : brl(s.orcado), desv: s.desvio === null ? 'Sem orçamento' : brl(s.desvio), cons: pct(s.consumo) })),
+      nota: 'Desvio = realizado − orçado. Positivo significa acima do orçamento. Orçamento geral da fábrica (sem setor) não é dividido entre os setores.',
     },
     acoes: r.acoes, avisos: r.avisos, limitacoes: r.limitacoes,
   };

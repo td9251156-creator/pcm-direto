@@ -1,6 +1,6 @@
 // Dashboard de Manutenção e Programação. Funções puras: a mesma saída alimenta cartões,
 // gráficos, tabela, frases, ações e a exportação HTML.
-import { tagsPermitidas, filtroPorAtivo, noPeriodo, dia } from './filtros.js';
+import { tagsPermitidas, filtroPorAtivo, noPeriodo, dia, mesesParciais } from './filtros.js';
 
 const FONTE_OS = 'Modelo 004 · tb_pcm_os (cadastro por TAG em tb_pcm_ativos)';
 const FIM = ['CONCLUIDA', 'CANCELADA'];
@@ -74,7 +74,8 @@ export function calcularManutencao(fonte, filtro) {
   const meses = {};
   for (const o of abertasPeriodo) (meses[mes(o.data_abertura)] ??= { abertas: 0, concluidas: 0 }).abertas++;
   for (const o of concluidasPeriodo) (meses[mes(o.data_conclusao)] ??= { abertas: 0, concluidas: 0 }).concluidas++;
-  const movimento = Object.keys(meses).sort().map((m) => ({ mes: m, ...meses[m], parcial: Boolean(metadados.ultimoMesParcial) && m === mes(referencia) }));
+  const parciais = mesesParciais(periodo);
+  const movimento = Object.keys(meses).sort().map((m) => ({ mes: m, ...meses[m], parcial: parciais.has(m) }));
 
   const faixas = [['No prazo', 0], ['1 a 7 dias', 0], ['8 a 30 dias', 0], ['Mais de 30 dias', 0], ['Sem programação', 0]];
   for (const o of abertas) {

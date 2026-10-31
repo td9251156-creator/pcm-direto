@@ -15,6 +15,7 @@ import { criarProgramacao, prepararRevisao, ocorrenciasVigentes, idsConcluidos }
 import { recuperarTransacao, lerDadoLocal, guardarBackupLocal } from './armazenamento.js';
 import { criarGestao, validarGestao, migrarExecucoesAntigas, ocorrenciasPlanejadas } from './logica/gestao.js';
 import { marcarExecucao } from './logica/execucao.js';
+import { aplicarImportacao } from './logica/operacao.js';
 import { chaveAjuste } from './logica/plano.js';
 
 const CHAVE = 'pcm-direto:rascunho:v1';
@@ -449,6 +450,31 @@ export async function registrarOcorrencia(id, alteracao = {}) {
   if (idsConcluidos(estado.programacao, estado.gestao.historico).has(id)) return { ok: false, motivo: 'Esta ocorrência já foi registrada.' };
   return registrarExecucao({ ...o, ativa: true }, { data: textoData(new Date()), observacao: '', responsavelId: o.responsavelId,
     ...alteracao, ocorrenciaId: id, dataPrevista: o.dataPrevista });
+}
+
+/** Retrato da base da operação: a prévia só pode ser aplicada se nada mudou depois dela. */
+export function referenciaOperacao() {
+  return `${geracaoBase}|${JSON.stringify(estado.gestao.operacao ?? null)}`;
+}
+
+/** Grava uma importação já conferida. Em falha, a base anterior continua em uso e salva. */
+export async function importarOperacao(plano, opcoes = {}) {
+  if (antesDaDemonstracao) return { ok: false, motivo: 'Saia do exemplo antes de importar dados da fábrica.' };
+  if (persistenciaBloqueada) return { ok: false, motivo: motivoArmazenamento || 'Os dados locais estão bloqueados. Nada foi importado.' };
+  if (revisaoPendente || assistentePendente || cancelamentosPendentes.size) return { ok: false, motivo: 'Aguarde a gravação pendente terminar e leia o arquivo novamente.' };
+  if (plano.referencia !== referenciaOperacao()) return { ok: false, motivo: 'Os dados mudaram depois da prévia. Leia o arquivo novamente antes de confirmar.' };
+  let r;
+  try { r = aplicarImportacao(estado.gestao.operacao, plano, { ...opcoes, id: novoId(), data: new Date().toISOString() }); }
+  catch (erro) { return { ok: false, motivo: erro.message }; }
+  const nova = { ...estado.gestao, versao: 3, operacao: r.operacao };
+  if (!validarGestao(nova)) return { ok: false, motivo: 'Os dados não passaram na conferência final. Nada foi gravado.' };
+  const anterior = estado.gestao;
+  estado.gestao = nova;
+  if (!await salvar()) {
+    estado.gestao = anterior;
+    return { ok: false, motivo: motivoArmazenamento || 'Não foi possível gravar a importação. A base anterior foi mantida; baixe um backup antes de sair.' };
+  }
+  return { ok: true, registro: r.registro };
 }
 
 export async function demonstrar() {

@@ -1,6 +1,9 @@
 import '../dashboards.css';
 import { esc, baixar, avisar } from '../ui.js';
 import { carregarDemonstracao } from '../logica/dashboards/fonte.js';
+import { fonteDaOperacao } from '../logica/dashboards/fonte-operacao.js';
+import { estado } from '../estado.js';
+import { textoData } from '../logica/cronograma.js';
 import { FILTRO_VAZIO, opcoesDeFiltro, descreverFiltros } from '../logica/dashboards/filtros.js';
 import { VISOES, filtrosIgnorados } from '../saida/dashboards-visoes.js';
 import { visaoHtml, dataBr, valorDoIndicador } from '../saida/dashboards-visao.js';
@@ -32,17 +35,35 @@ function ligarDicas(conteudo, signal) {
   conteudo.addEventListener('pointerleave', esconder, { signal });
 }
 
+// Dados da fábrica: base local (operação importada + equipamentos do plano), consultada direto.
+function fonteDaFabrica() {
+  const nomes = new Map(estado.biblioteca.tipos.map((t) => [t.id, t.nome]));
+  return fonteDaOperacao({
+    operacao: estado.gestao.operacao,
+    equipamentos: estado.equipamentos.map((e) => ({ tag: e.tag, descricao: e.descricao, familia: nomes.get(e.tipo) ?? '', setor: e.setor })),
+    falhasDoApp: estado.gestao.falhas.length,
+  }, textoData(new Date()));
+}
+
 export function telaDashboards(main) {
   const parametros = new URLSearchParams(location.hash.split('?')[1] || '');
   const id = VISOES[parametros.get('visao')] ? parametros.get('visao') : 'manutencao';
+  const demo = parametros.get('fonte') === 'demo';
+  const sufixo = demo ? '&fonte=demo' : '';
   const visao = VISOES[id];
   const ctrl = new AbortController();
   let vivo = true;
   let dialogo = null;
   main.innerHTML = `<header class="cabecalho-tela"><p class="sobretitulo">Dashboards</p><h2>${esc(visao.titulo)}</h2></header><p role="status">Carregando dados…</p>`;
 
-  carregarDemonstracao().then((fonte) => {
+  (demo ? carregarDemonstracao() : Promise.resolve().then(fonteDaFabrica)).then((fonte) => {
     if (!vivo) return;
+    if (!demo && fonte.metadados.vazia) {
+      main.innerHTML = `<header class="cabecalho-tela"><p class="sobretitulo">Dashboards</p><h2>${esc(visao.titulo)}</h2></header>` +
+        '<section class="cartao"><h3>Ainda não há dados da operação nesta base</h3><p>Os dashboards usam as OS, falhas, custos e orçamento importados dos modelos 004, 008 e 012 da Biblioteca PCM v2. Nada sai deste aparelho.</p>' +
+        `<div class="chips"><a class="botao" href="#importar-operacao">Importar dados da operação</a><a class="botao secundario" href="#dashboards?visao=${id}&fonte=demo">Ver a demonstração com dados fictícios</a></div></section>`;
+      return;
+    }
     const opcoes = opcoesDeFiltro(fonte.bases);
     const lista = { setor: visao.setores ? visao.setores(fonte) : opcoes.setores, familia: opcoes.familias, tag: opcoes.tags };
     const campo = (nome) => {
@@ -53,9 +74,10 @@ export function telaDashboards(main) {
     };
     const m = fonte.metadados;
     main.innerHTML = `<div class="pd-tela"><header class="pd-topo"><div><p class="sobretitulo">Dashboards</p><h2>${esc(visao.titulo)}</h2>` +
-      `<p class="pd-meta-linha">${m.demonstracao ? '<span class="pd-selo-demo">DEMONSTRAÇÃO · dados fictícios, não são da sua fábrica</span>' : ''}` +
-      `<span>Referência ${esc(dataBr(m.referencia))}</span><span>Período padrão ${esc(dataBr(m.periodo.inicio))} a ${esc(dataBr(m.periodo.fim))}</span></p></div></header>` +
-      `<ul class="pd-abas">${Object.entries(VISOES).map(([k, v]) => `<li><a href="#dashboards?visao=${k}"${k === id ? ' aria-current="page"' : ''}>${esc(v.titulo)}</a></li>`).join('')}</ul>` +
+      `<p class="pd-meta-linha">${m.demonstracao ? '<span class="pd-selo-demo">DEMONSTRAÇÃO · dados fictícios, não são da sua fábrica</span>' : '<span>Dados desta base local</span>'}` +
+      `<span>Referência ${esc(dataBr(m.referencia))}</span><span>Período padrão ${esc(dataBr(m.periodo.inicio))} a ${esc(dataBr(m.periodo.fim))}</span></p>` +
+      `<p class="pd-meta-linha">${demo ? `<a href="#dashboards?visao=${id}">Voltar aos dados da fábrica</a>` : `<a href="#importar-operacao">Importar ou atualizar dados</a><a href="#dashboards?visao=${id}&fonte=demo">Ver demonstração</a>`}</p></div></header>` +
+      `<ul class="pd-abas">${Object.entries(VISOES).map(([k, v]) => `<li><a href="#dashboards?visao=${k}${sufixo}"${k === id ? ' aria-current="page"' : ''}>${esc(v.titulo)}</a></li>`).join('')}</ul>` +
       `<form class="pd-filtros" aria-label="Filtros">${visao.filtros.map(campo).join('')}` +
       '<div class="pd-filtros-acoes"><button type="button" class="secundario" id="pd-limpar">Limpar filtros</button><button type="button" id="pd-baixar">Baixar HTML</button></div></form>' +
       '<p class="pd-ativos" id="pd-ativos"></p><p class="oculto-leitor" id="pd-anuncio" role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p><div id="pd-conteudo"></div></div>';
@@ -123,7 +145,7 @@ export function telaDashboards(main) {
     }, { signal: ctrl.signal });
     desenhar();
   }).catch(() => {
-    if (vivo) main.innerHTML = '<p class="cartao erro" role="alert">Não foi possível abrir os dados da demonstração. Nenhum dado foi alterado.</p>';
+    if (vivo) main.innerHTML = `<p class="cartao erro" role="alert">Não foi possível abrir ${demo ? 'os dados da demonstração' : 'os dados desta base'}. Nenhum dado foi alterado.</p>`;
   });
 
   return () => { vivo = false; ctrl.abort(); dialogo?.remove(); };

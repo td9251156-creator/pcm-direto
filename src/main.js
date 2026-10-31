@@ -1,4 +1,5 @@
 import { telaModelos } from './telas/modelos.js';
+import { telaImportarOperacao } from './telas/importar-operacao.js';
 import { telaEntregaModelos } from './telas/entrega-modelos.js';
 // Ponto de entrada: carrega o rascunho, troca de tela pelo endereço (#inicio, #equipamentos...)
 // e registra o service worker para funcionar como aplicativo e sem internet.
@@ -49,6 +50,7 @@ const TELAS = {
   mensal: { titulo: 'Planejamento mensal', desenhar: telaMensal },
   falhas: { titulo: 'Registro de falhas', desenhar: telaFalhas },
   dashboards: { titulo: 'Dashboards', desenhar: telaDashboards },
+  'importar-operacao': { titulo: 'Importar dados da operação', desenhar: telaImportarOperacao },
 };
 
 const main = document.getElementById('conteudo');

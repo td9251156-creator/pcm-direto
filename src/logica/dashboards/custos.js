@@ -4,7 +4,7 @@ import { noPeriodo } from './filtros.js';
 import { periodoEfetivo } from './manutencao.js';
 
 const FONTE_REAL = 'Modelo 012 · tb_pcm_custos (setor do lançamento)';
-const FONTE_ORC = 'Orçamento normalizado (setor × categoria × competência), fonte complementar';
+const FONTE_ORC = 'Orçamento por categoria e competência (por setor, ou geral da fábrica quando sem setor)';
 const ROTULO_CAT = { MATERIAL: 'Material', MAO_OBRA: 'Mão de obra', TERCEIROS: 'Terceiros', OUTROS: 'Outros' };
 const arred = (n) => Math.round(n * 100) / 100;
 const mes = (d) => String(d).slice(0, 7);
@@ -24,14 +24,19 @@ export function calcularCustos(fonte, filtro) {
 
   const vistos = new Set();
   let repetidos = 0;
-  const orcamento = bases.orcamento_manutencao.filter((o) => {
-    if (!o.competencia || !o.setor || !o.categoria_custo) return false;
-    const k = `${mes(o.competencia)}|${o.setor}|${o.categoria_custo}`;
+  // Orçamento sem setor = orçamento geral da fábrica (grade do 012 com setor vazio). Ele não é
+  // dividido por setor: com filtro de setor fica de fora e o desvio daquele setor fica indefinido.
+  const doPeriodo = bases.orcamento_manutencao.filter((o) => {
+    if (!o.competencia || !o.categoria_custo) return false;
+    const k = `${mes(o.competencia)}|${o.setor ?? ''}|${o.categoria_custo}`;
     if (vistos.has(k)) { repetidos++; return false; }
     vistos.add(k);
     return true;
-  }).filter((o) => doSetor(o) && mes(o.competencia) >= mIni && mes(o.competencia) <= mFim);
+  }).filter((o) => mes(o.competencia) >= mIni && mes(o.competencia) <= mFim);
+  const geralForaDoFiltro = filtro.setor ? doPeriodo.filter((o) => !o.setor).length : 0;
+  const orcamento = doPeriodo.filter((o) => (filtro.setor ? o.setor === filtro.setor : true));
   if (repetidos) avisos.push(`${repetidos} linha(s) de orçamento repetida(s) (mesmo mês, setor e categoria) ignorada(s).`);
+  if (geralForaDoFiltro) avisos.push('O orçamento geral da fábrica não é dividido por setor: com filtro de setor, só o realizado é comparável.');
   const lancamentos = bases.custos_manutencao.filter((c) => doSetor(c) && noPeriodo(c.data_lancamento, periodo));
   const semValor = lancamentos.filter((c) => c.valor_realizado === null).length;
   const semSetor = filtro.setor ? bases.custos_manutencao.filter((c) => !c.setor && noPeriodo(c.data_lancamento, periodo)).length : 0;
@@ -43,8 +48,11 @@ export function calcularCustos(fonte, filtro) {
   const temOrcamento = orcado > 0;
   const semData = bases.custos_manutencao.filter((c) => !c.data_lancamento).length;
   const ultimoDia = new Date(Date.UTC(+mFim.slice(0, 4), +mFim.slice(5, 7), 0)).getUTCDate();
-  const mesParcial = +periodo.fim.slice(8, 10) !== ultimoDia || periodo.inicio.slice(8, 10) !== '01';
-  const nota = mesParcial ? `Realizado de mês parcial (até ${periodo.fim}) comparado ao orçamento do mês completo.` : '';
+  const fimParcial = +periodo.fim.slice(8, 10) !== ultimoDia;
+  const inicioParcial = periodo.inicio.slice(8, 10) !== '01';
+  const mesParcial = fimParcial || inicioParcial;
+  const trechos = [inicioParcial && `a partir de ${periodo.inicio}`, fimParcial && `até ${periodo.fim}`].filter(Boolean);
+  const nota = mesParcial ? `Realizado de mês parcial (${trechos.join(' e ')}) comparado ao orçamento do mês completo.` : '';
   const desvio = arred(realizado - orcado);
   const incompleto = mesParcial || semValor > 0;
 
@@ -78,17 +86,24 @@ export function calcularCustos(fonte, filtro) {
   const meses = {};
   for (const c of lancamentos) (meses[mes(c.data_lancamento)] ??= { real: 0, orc: 0 }).real += c.valor_realizado ?? 0;
   for (const o of orcamento) (meses[mes(o.competencia)] ??= { real: 0, orc: 0 }).orc += o.valor_orcado ?? 0;
-  const porMes = Object.keys(meses).sort().map((m) => ({ mes: m, realizado: arred(meses[m].real), orcado: arred(meses[m].orc), parcial: Boolean(metadados.ultimoMesParcial) && m === mes(metadados.referencia) && m === mFim }));
+  // Parcial: mês do fim antes do último dia, ou mês do início depois do dia 1.
+  const porMes = Object.keys(meses).sort().map((m) => ({ mes: m, realizado: arred(meses[m].real), orcado: arred(meses[m].orc),
+    parcial: (fimParcial && m === mFim) || (inicioParcial && m === mIni) }));
 
   const agrupar = (campo, rotulo = (x) => x) => {
     const g = {};
     const sem = campo === 'setor' ? '(sem setor)' : '(sem categoria)';
-    for (const c of lancamentos) (g[c[campo] ?? sem] ??= { real: 0, orc: 0 }).real += c.valor_realizado ?? 0;
-    for (const o of orcamento) (g[o[campo] ?? sem] ??= { real: 0, orc: 0 }).orc += o.valor_orcado ?? 0;
-    return Object.keys(g).map((k) => ({ chave: k, rotulo: rotulo(k), realizado: arred(g[k].real), orcado: arred(g[k].orc), desvio: arred(g[k].real - g[k].orc), consumo: g[k].orc > 0 ? arred((g[k].real / g[k].orc) * 100) : null }));
+    for (const c of lancamentos) (g[c[campo] ?? sem] ??= { real: 0, orc: 0, comOrc: false }).real += c.valor_realizado ?? 0;
+    for (const o of orcamento) {
+      if (campo === 'setor' && !o.setor) continue; // orçamento geral não tem dono por setor
+      const grupo = (g[o[campo] ?? sem] ??= { real: 0, orc: 0, comOrc: false });
+      grupo.orc += o.valor_orcado ?? 0; grupo.comOrc = true;
+    }
+    return Object.keys(g).map((k) => ({ chave: k, rotulo: rotulo(k), realizado: arred(g[k].real), orcado: arred(g[k].orc),
+      desvio: g[k].comOrc ? arred(g[k].real - g[k].orc) : null, consumo: g[k].orc > 0 ? arred((g[k].real / g[k].orc) * 100) : null }));
   };
   const porCategoria = agrupar('categoria_custo', (k) => ROTULO_CAT[k] ?? k).sort((a, b) => b.realizado - a.realizado);
-  const porSetor = agrupar('setor').sort((a, b) => b.desvio - a.desvio || a.rotulo.localeCompare(b.rotulo, 'pt-BR'));
+  const porSetor = agrupar('setor').sort((a, b) => (b.desvio ?? -Infinity) - (a.desvio ?? -Infinity) || b.realizado - a.realizado || a.rotulo.localeCompare(b.rotulo, 'pt-BR'));
 
   const frases = {
     mes: porMes.length
@@ -118,7 +133,7 @@ export function calcularCustos(fonte, filtro) {
     limitacoes: [
       'Setor e competência são os do lançamento; não há rateio do orçamento por TAG.',
       'Compromissos, estoque e compras não entram: somente gasto realizado.',
-      'O orçamento do template 012 comporta um ano e um escopo por emissão; aqui vem de fonte complementar normalizada.',
+      'Orçamento sem setor é o geral da fábrica (grade anual do 012 com setor vazio): só é comparado sem filtro de setor.',
     ],
   };
 }

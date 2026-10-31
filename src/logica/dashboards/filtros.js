@@ -25,6 +25,17 @@ export function descreverFiltros(filtro) {
   return itens;
 }
 
+/** Meses do período que não estão completos: o do início (se não começa no dia 1) e o do fim (se não termina no último dia). */
+export function mesesParciais(periodo) {
+  const parciais = new Set();
+  if (periodo.inicio && periodo.inicio.slice(8, 10) !== '01') parciais.add(periodo.inicio.slice(0, 7));
+  if (periodo.fim) {
+    const [a, m, d] = periodo.fim.slice(0, 10).split('-').map(Number);
+    if (d !== new Date(Date.UTC(a, m, 0)).getUTCDate()) parciais.add(periodo.fim.slice(0, 7));
+  }
+  return parciais;
+}
+
 // Datas ISO (AAAA-MM-DD) comparam como texto; ignora a hora quando existir.
 export const dia = (v) => (v ? String(v).slice(0, 10) : null);
 export const noPeriodo = (data, filtro) => {

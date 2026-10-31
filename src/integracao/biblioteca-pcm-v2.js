@@ -51,8 +51,9 @@ export async function abrirWorkbookBibliotecaV2(buffer, ExcelJS) {
 /** Recebe workbook já aberto, permitindo composição pelo aplicativo sem reler o arquivo. */
 export function prepararPreviaBibliotecaV2(wb, codigo) {
   const modelo = modeloBibliotecaV2(codigo);
-  const bases = {}, erros = [], avisos = [];
-  const erro = (base, linha, campo, mensagem) => erros.push({base, linha, campo, mensagem});
+  const bases = {}, linhas = {}, erros = [], avisos = [];
+  // estrutura = true impede qualquer importação do arquivo; os demais erros recusam só a linha.
+  const erro = (base, linha, campo, mensagem, estrutura = false) => erros.push({base, linha, campo, mensagem, ...(estrutura ? {estrutura} : {})});
   function valorCelula(cell, campo, base, linha) {
     let valor = cell.value;
     if (valor && typeof valor === 'object' && !(valor instanceof Date)) {
@@ -93,16 +94,16 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
     const esquema = aba.tabelas.find(t => t.nome === fonte.tabela);
     const sheet = wb.getWorksheet(aba.nome);
     const table = sheet?.getTable(fonte.tabela);
-    bases[base] = [];
-    if (!table) { erro(base, null, null, 'Tabela esperada não encontrada: ' + fonte.tabela); continue; }
+    bases[base] = []; linhas[base] = [];
+    if (!table) { erro(base, null, null, 'Tabela esperada não encontrada: ' + fonte.tabela, true); continue; }
     const ref = table.table.tableRef ?? table.table.ref;
     const match = /^([A-Z]+)(\d+):([A-Z]+)(\d+)$/.exec(ref ?? '');
-    if (!match) { erro(base, null, null, 'Intervalo da tabela inválido.'); continue; }
+    if (!match) { erro(base, null, null, 'Intervalo da tabela inválido.', true); continue; }
     const header = sheet.getCell(match[1] + match[2]);
     const start = header.col, rowHeader = +match[2], end = +match[4];
     const fields = table.table.columns.map(c => c.name);
     if (fields.length !== esquema.campos.length || new Set(fields).size !== fields.length || esquema.campos.some(f => !fields.includes(f))) {
-      erro(base, rowHeader, null, 'Campos incompatíveis com a biblioteca v2.'); continue;
+      erro(base, rowHeader, null, 'Campos incompatíveis com a biblioteca v2.', true); continue;
     }
     const chaves = new Set();
     for (let row = rowHeader + 1; row <= end; row++) {
@@ -114,7 +115,7 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
       if (key.some(vazio)) erro(base, row, fonte.chave.join(', '), 'Chave obrigatória ausente.');
       else if (chaves.has(JSON.stringify(key))) erro(base, row, fonte.chave.join(', '), 'Chave duplicada.');
       else chaves.add(JSON.stringify(key));
-      bases[base].push(record);
+      bases[base].push(record); linhas[base].push(row);
     }
   }
   if (!Object.keys(bases).length) avisos.push('Este modelo não possui leitor operacional nesta etapa. Grades, formulários e consolidados exigem adaptação específica.');
@@ -139,5 +140,46 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
     if (!custo.data_lancamento || !custo.setor || !custo.categoria_custo || custo.valor_realizado === null) erro('custos_manutencao', null, null, 'Lançamento de custo incompleto.');
   }
   avisos.push('Prévia sem gravação: conferir referências cruzadas e conflitos com a base atual antes de importar.');
-  return {versao: contrato.versao, codigo, bases, erros, avisos: [...new Set(avisos)], apto: erros.length === 0 && Object.keys(bases).length > 0};
+  return {versao: contrato.versao, codigo, bases, linhas, erros, avisos: [...new Set(avisos)], apto: erros.length === 0 && Object.keys(bases).length > 0};
+}
+
+const CATEGORIAS_GRADE = ['MATERIAL', 'MAO_OBRA', 'TERCEIROS', 'OUTROS']; // linhas 8 a 11 da grade
+
+/**
+ * Grade "Orçamento anual" do 012: ano em A4, setor em B4, categorias nas linhas 8–11 e meses em B–M.
+ * O setor escolhido em B4 é só um filtro do modelo e não prova a quem o orçamento pertence;
+ * por isso a grade só é aceita como orçamento geral da fábrica (B4 vazio).
+ */
+export function lerOrcamentoAnualV2(wb) {
+  const sheet = wb.getWorksheet('Orçamento anual');
+  if (!sheet) return {linhas: [], erros: [{mensagem: 'Aba Orçamento anual não encontrada.'}], avisos: []};
+  const texto = v => (v && typeof v === 'object' && v.richText ? v.richText.map(t => t.text).join('') : v);
+  const conferir = [['A7', 'Categoria'], ['B7', 'Jan'], ['M7', 'Dez'], ['A8', 'Material'], ['A11', 'Outros']];
+  if (conferir.some(([c, t]) => String(texto(sheet.getCell(c).value) ?? '').trim() !== t)) {
+    return {linhas: [], erros: [{mensagem: 'A grade Orçamento anual foi alterada; não é possível ler o orçamento.'}], avisos: []};
+  }
+  const linhas = [], erros = [];
+  for (let i = 0; i < 4; i++) {
+    for (let m = 0; m < 12; m++) {
+      const cell = sheet.getCell(8 + i, 2 + m);
+      let v = cell.value;
+      if (v && typeof v === 'object' && ('formula' in v || 'sharedFormula' in v)) { erros.push({mensagem: `Fórmula em ${cell.address}: informe o valor orçado.`}); continue; }
+      if (vazio(v)) continue;
+      if (typeof v !== 'number' || !Number.isFinite(v) || v < 0) { erros.push({mensagem: `Valor inválido em ${cell.address}: use número não negativo.`}); continue; }
+      linhas.push({mes: m + 1, categoria_custo: CATEGORIAS_GRADE[i], valor_orcado: v, celula: cell.address});
+    }
+  }
+  if (!linhas.length && !erros.length) return {linhas: [], erros: [], avisos: []};
+  // O modelo aceita ano numérico ou texto; vazio usaria o ano corrente no Excel, o que aqui não se presume.
+  const bruto = texto(sheet.getCell('A4').value);
+  const ano = typeof bruto === 'string' && /^\s*\d{4}\s*$/.test(bruto) ? Number(bruto) : bruto;
+  const setor = texto(sheet.getCell('B4').value);
+  if (!Number.isInteger(ano) || ano < 2000 || ano > 2100) erros.push({mensagem: 'Informe o ano do orçamento em A4 (ex.: 2026).'});
+  if (!vazio(setor) && String(setor).trim()) {
+    erros.push({mensagem: `A grade está com o setor "${String(setor).trim()}" escolhido em B4. O modelo não informa se o orçamento é desse setor; deixe B4 vazio para importar como orçamento geral da fábrica.`});
+  }
+  return {
+    linhas: erros.length ? [] : linhas.map(l => ({competencia: `${ano}-${String(l.mes).padStart(2, '0')}`, setor: null, categoria_custo: l.categoria_custo, valor_orcado: l.valor_orcado, celula: l.celula})),
+    erros, avisos: [],
+  };
 }
