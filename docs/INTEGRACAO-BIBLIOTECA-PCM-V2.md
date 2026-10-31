@@ -82,9 +82,9 @@ importação, persistência ou exportação; apenas cópias de referência e met
 
 ## Dashboards implementados com a demonstração (31/10/2026)
 
-Os três dashboards leem `src/dados/demo-dashboards.json` (cópia de `dados_demo.json`, fictício) pela camada
-`src/logica/dashboards/fonte.js`, carregada só ao abrir a tela. Um adaptador de dados reais deve devolver o mesmo
-formato `{metadados, bases}`; a importação operacional (004/008/012) ainda não existe.
+Desde 31/10 os dashboards leem por padrão a base local (`src/logica/dashboards/fonte-operacao.js`); a demonstração
+(`src/dados/demo-dashboards.json`, fictícia) abre só em `#dashboards?fonte=demo`, com selo. As duas passam pela mesma
+normalização (`src/logica/dashboards/fonte.js`). Ver "Dados reais" abaixo.
 
 Regras de cálculo (mesma função para cartões, gráficos, tabela, frases e exportação):
 - **Manutenção:** abertas = sem conclusão e sem status Concluída/Cancelada, abertas até a referência; atrasadas = abertas
@@ -100,6 +100,46 @@ Regras de cálculo (mesma função para cartões, gráficos, tabela, frases e ex
 Como atualizar o período: a referência e o período vêm de `metadados`; o usuário pode restringir por datas na tela.
 HTML exportado: retrato com resultados calculados, sem registros brutos, scripts ou recursos externos.
 
+## Dados reais: importação, armazenamento e dashboards (31/10/2026)
+
+**Onde:** Mais → Dados e apoio → Importar dados da operação (`#importar-operacao`). Lógica pura em
+`src/logica/operacao.js`; gravação em `importarOperacao` (`src/estado.js`); leitor em `src/integracao/biblioteca-pcm-v2.js`.
+
+**Fontes e chaves estáveis:** ativos (004, aba Cadastros, `tag`), OS (004, `numero_os`), falhas (008, `referencia_falha`),
+custos (012, `referencia_lancamento`), orçamento (012, grade "Orçamento anual": competência + categoria).
+
+**Antes de gravar:** estrutura da tabela (bloqueia o arquivo inteiro), tipos, datas reais do calendário, códigos padronizados,
+obrigatórios, limites (chave 120, texto 2000), TAG cadastrada (no 004 ou no plano; custo pode ser sem TAG), duplicidade no
+arquivo, conflito com o salvo. Falha citando OS inexistente entra com aviso. Linha com erro é recusada com linha e motivo.
+
+**Reimportação:** mesma chave e mesmo conteúdo = ignorado; conteúdo diferente = conflito mantido como está, salvo se o
+usuário marcar "substituir" (a versão anterior fica em `importacoes[].substituidos`); nada é apagado por importação.
+A confirmação é recusada se a base ou as TAGs do plano mudaram depois da prévia, ou se outra aba gravou antes.
+
+**Armazenamento:** sem migração do IndexedDB (continua formato 3). A gestão passa à **versão 3** só ao importar, com
+`gestao.operacao = {versao:1, ativos, ordens_servico, falhas, custos_manutencao, orcamento, importacoes}`, validada por
+`validarOperacao`. Backups 1, 2 e 3 sem operação continuam válidos; versões antigas do app recusam uma base v3 sem descartá-la.
+O backup completo inclui a operação. Gravação única: em falha, a memória volta ao estado anterior e a base não muda.
+
+**Orçamento:** a grade só é aceita com setor vazio (B4) e ano em A4; vira orçamento geral (`setor: null`), comparado só sem
+filtro de setor. Célula vazia = ausente (não zero); meses do período sem orçamento deixam orçado/desvio/consumo parciais.
+
+**Confiabilidade:** contagem pelo dia de início; horas = trecho de cada intervalo dentro do período (inclui falhas iniciadas
+antes, que não contam como evento). Falhas registradas no app (só data) não entram nos dashboards e geram aviso.
+
+**Período padrão real:** do registro mais antigo até hoje; mês inicial e final incompletos marcados como parciais.
+
+## PCM-MAN-002 preenchido (31/10/2026)
+
+Gerador `src/saida/biblioteca-v2-xlsx.js` (edita só o XML das células de uma cópia integral; hash conferido) e dados em
+`src/logica/biblioteca-v2-dados.js`. Mapeamento: Leia-me D13/D14 (elaborado/aprovado, aprovado só se confirmado);
+Cadastros A–D (ativos da revisão ativa), F (pessoas), H (famílias = tipo da biblioteca), J (setores); Plano a partir da linha 21
+(TAG, atividade — com "(tarefa de segurança)" quando for —, A cada (dias), responsável, duração, 1ª execução); Cronograma
+A4 = ano da data de corte. Periodicidade → dias: Diária 1, Semanal 7, Quinzenal 14, Mensal 30, Bimestral 60, Trimestral 90,
+Semestral 180, Anual 365 (convenção a confirmar). Em branco: Criticidade, FMECA, componente, tipo de tarefa, exige parada.
+Ampliação: linhas abaixo deslocadas; fórmulas de todas as abas, nomes, impressão, tabelas, validações, formatação condicional
+e mesclagens ajustadas. Conferência: teste com 100 ativos e Excel local (940 atividades, 0 erro de fórmula).
+
 ## Próxima implementação
 
 Dados fictícios adaptados em
@@ -111,10 +151,8 @@ Os 12 ativos, 440 OS, 124 falhas e 701 custos foram testados no leitor real de p
 usando buffers XLSX em memória com os schemas da biblioteca; nenhum template foi alterado.
 Não há importação operacional automática desses CSVs/JSON.
 
-Usar `PROMPT-DASHBOARDS-PCM-V2.md`. Não criar os dashboards nesta preparação.
-A próxima etapa liga a prévia ao fluxo real de dados, sem exportar/importar CSV
-manualmente dentro do aplicativo. Operação permanece local; nenhum registro
-privado é incluído em arquivos públicos do repositório.
+Histórico: a ligação da prévia ao fluxo real foi feita em 31/10 (seção acima). Próximo: preencher 001, 008, 018 e 019,
+um por vez, e as decisões D1–D3 de `FILA.md`. Operação permanece local; nenhum registro privado vai para o repositório.
 
 Publicação depende da aprovação explícita do mantenedor da versão apresentada.
 
