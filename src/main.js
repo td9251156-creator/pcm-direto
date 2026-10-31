@@ -16,6 +16,7 @@ import { telaCriticidade } from './telas/criticidade.js';
 import { telaPlano, telaMensal } from './telas/planejamento.js';
 import { telaFalhas } from './telas/falhas.js';
 import { telaBoasVindas,telaAssistente,telaPlanejar,telaSemana,telaOcorrencias,telaMais,telaMeusDados } from './telas/gestao-diaria.js';
+import { telaDashboards } from './telas/dashboards.js';
 import { telaApoio } from './telas/apoio.js';
 import { telaComunidade } from './telas/comunidade.js';
 import { telaCatalogo } from './telas/catalogo.js';
@@ -47,6 +48,7 @@ const TELAS = {
   plano: { titulo: 'Plano Mestre', desenhar: telaPlano },
   mensal: { titulo: 'Planejamento mensal', desenhar: telaMensal },
   falhas: { titulo: 'Registro de falhas', desenhar: telaFalhas },
+  dashboards: { titulo: 'Dashboards', desenhar: telaDashboards },
 };
 
 const main = document.getElementById('conteudo');

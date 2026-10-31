@@ -11,3 +11,4 @@ await import('./verificar-entrega-lean.mjs');
 await import('./verificar-assistente-rotina.mjs');
 await import('./verificar-identidade.mjs');
 await import('./verificar-indicadores.mjs');
+await import('./verificar-dashboards.mjs');

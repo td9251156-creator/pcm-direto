@@ -11,7 +11,7 @@ describe('localização na navegação',()=>{
     for(const rota of ['semana','executar','ativos','falhas','planejar','biblioteca','entrega','dados'])expect(acessoAtual(rota,false)).toBe(rota);
   });
   it('indica Mais para os acessos que ficam fora da barra do celular',()=>{
-    for(const rota of ['cadastros','plano','modelos','comunidade','biblioteca','apoio','assistente'])expect(acessoAtual(rota,true)).toBe('mais');
+    for(const rota of ['cadastros','plano','modelos','comunidade','biblioteca','apoio','assistente','dashboards'])expect(acessoAtual(rota,true)).toBe('mais');
     expect(acessoAtual('execucao',true)).toBe('executar');
     for(const rota of ['semana','executar','ativos','falhas'])expect(acessoAtual(rota,true)).toBe(rota);
   });

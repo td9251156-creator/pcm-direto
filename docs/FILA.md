@@ -1,5 +1,42 @@
 > Atualização 24/10/2026: decisões atuais em [Reformulação](REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
+## Dashboards PCM v2 — andamento local (31/10/2026)
+
+| Etapa | Situação | Próxima ação | Verificação |
+|---|---|---|---|
+| Visual (31/10) | Cartões com ícone/contexto/medidor, linhas mensais com mês parcial tracejado, barras horizontais legíveis no celular, dica ao passar o mouse | Validação humana do visual | Capturas 390–1280 px em `artifacts/` |
+| Revisão independente | Concluída: sem bloqueador; itens 1–7, 9–11, 13 e parte de 14–17 corrigidos com testes | Pendentes menores: mês parcial no início do filtro, falha que começa antes do período (declarada como limitação) | 298 testes |
+| Manutenção e Programação | Implementada (demonstração) | — | Controles 85 OS / 81 atrasadas / 238,5 h recalculados em teste |
+| Confiabilidade | Implementada; MTBF/MTTR/disponibilidade "Definição pendente" (F-005) | Aguardar definição técnica | 124 falhas; sobreposição, recorte e falha aberta testados |
+| Custos | Implementada | — | R$ 156.034 / 110.000 / 46.034; outubro marcado parcial |
+| Baixar HTML | Implementado, sem scripts nem recursos externos | Aprovação da prévia | Arquivo aberto offline no Edge; prévia em `outputs/dashboards-pcm-v2/` |
+| Fonte de dados real (OS/custos) | **Não iniciada**: telas leem só o pacote fictício | Decisão: armazenamento v4 + importação 004/008/012 | — |
+| Biblioteca (etapas 6–7), fluxo, qualidade | Não iniciadas | Um modelo por vez | — |
+
+Telas em `src/telas/dashboards.js` (rota `#dashboards`, Mais → Rotina); cálculo em `src/logica/dashboards/`;
+HTML em `src/saida/dashboards-*.js`. Testes: `testes/dashboards-*.test.js` e `scripts/verificar-dashboards.mjs`
+(roteiro de navegador, incluído em `npm run test:navegador`). Validação em aparelho real, leitor de tela e
+com técnicos continua pendente (F-004). Sem commit, PR ou publicação.
+
+## Preparação local da Biblioteca PCM v2 — 31/10/2026
+
+Atualização posterior: modelos 002 e Word 017–019 sincronizados com os novos
+arquivos enviados, manifesto v2.0.1 e versões anteriores preservadas em backup.
+Detalhes em `INTEGRACAO-BIBLIOTECA-PCM-V2.md`. Sem publicação.
+
+19 modelos recebidos (16 XLSX e 3 DOCX), cópias integrais e manifesto separado do catálogo
+anterior. Leitor de prévia de ativos, OS, falhas e custos, sem persistência ou ligação à tela.
+Normalização gráfica somente em memória para leitura; nunca usada para emitir documentos.
+Oito testes específicos e revisão independente aprovados no escopo de preparação.
+`npm run verificar`: 37 arquivos e 265 testes aprovados, lint e build concluídos.
+`npm run test:navegador` concluído com sucesso nas regressões existentes. O novo leitor
+foi validado por testes de dados; ainda não existe interface operacional para ele.
+Integração operacional e dashboards não implementados nesta etapa.
+Detalhes em [Integração v2](INTEGRACAO-BIBLIOTECA-PCM-V2.md); próxima etapa em
+[Prompt dos três dashboards](PROMPT-DASHBOARDS-PCM-V2.md).
+Não confundir a grade anual de 60 posições com semanas ISO; MTBF depende de horas de operação,
+e o orçamento exige escopo explícito. Nenhuma migração, push, PR ou publicação executados.
+
 # Fila de evolução
 
 ### Orientações dos indicadores — 27/10/2026

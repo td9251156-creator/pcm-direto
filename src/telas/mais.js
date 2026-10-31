@@ -7,6 +7,7 @@ const grupos=[
     ['executar','Executar','Registrar tarefas realizadas e consultar o histórico'],
     ['ativos','Ativos','Consultar equipamentos e suas tarefas'],
     ['falhas','Falhas','Registrar sintoma, causa, ação e parada'],
+    ['dashboards','Dashboards','Manutenção, confiabilidade e custos (demonstração)'],
   ]],
   ['Planejamento',[
     ['planejar','Planejar','Conferir o rascunho e ativar revisões do plano'],
