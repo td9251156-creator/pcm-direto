@@ -1,5 +1,23 @@
 > Atualização 24/10/2026: decisões atuais em [Reformulação](REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
+## Troca dos downloads pela Biblioteca PCM v2 (31/10/2026)
+
+Pedido do mantenedor: oferecer os 19 modelos da Biblioteca PCM v2 e retirar os antigos, **em etapas,
+sem perder função**. Feito nesta etapa:
+- Modelos para sua rotina, Comunidade e Conheça o projeto listam somente os 19 modelos v2
+  (`src/dados/modelos-v2.js`), com finalidade, abas e download; sem prévia PDF, por decisão do mantenedor.
+- Retirados 50 arquivos: 6 exemplos, 12 prévias PDF dos PCMD, 18 prévias dos refeitos, 13 modelos
+  manuais refeitos (05–08, K01–K09) e o COMO-USAR antigo. Manifestos e contratos ajustados.
+- Ficam **escondidos** 11 arquivos do formato anterior, só para o preenchimento automático:
+  6 em `public/modelos` (Documentos da revisão ativa) e 5 em `public/modelos/refeitos` (Preencher um
+  modelo). As duas telas avisam que usam o formato anterior. Lista e substitutos previstos em
+  `src/dados/modelos-anteriores.js`.
+- Central de apoio: artigos de K02, K04/K05 e K07 trocados por PCM-MAN-004, 010 e 009. A Biblioteca v2
+  não tem pedidos de compra.
+
+Próximas etapas (uma por vez): preencher automaticamente 002 (criticidade e plano), 001, 008 e os Word
+018/019; ao concluir cada uma, apagar o arquivo antigo correspondente e a linha em `modelos-anteriores.js`.
+
 ## Dashboards PCM v2 — andamento local (31/10/2026)
 
 | Etapa | Situação | Próxima ação | Verificação |

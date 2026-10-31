@@ -4,8 +4,10 @@ import {createHash} from 'node:crypto';
 import JSZip from 'jszip';
 import manifesto from '../public/modelos/manifesto.json';
 import contrato from '../src/dados/contrato-modelos.json';
-it('confere os 25 arquivos publicados e sua rastreabilidade no manifesto',()=>{
-  expect(Object.keys(manifesto.arquivos)).toHaveLength(25);expect(manifesto.versao).toBe(contrato.versao);
+it('confere os 6 arquivos do formato anterior mantidos para o preenchimento e sua rastreabilidade no manifesto',()=>{
+  // Exemplos e prévias foram retirados: os downloads em branco agora são da Biblioteca PCM v2.
+  expect(Object.keys(manifesto.arquivos)).toHaveLength(6);
+  expect(Object.keys(manifesto.arquivos).some(n=>/Exemplo|\.pdf$/.test(n))).toBe(false);expect(manifesto.versao).toBe(contrato.versao);
   for(const [nome,info] of Object.entries(manifesto.arquivos)){
     const bytes=readFileSync(new URL('../public/modelos/'+nome,import.meta.url));
     expect(bytes.length,nome).toBe(info.bytes);expect(createHash('sha256').update(bytes).digest('hex'),nome).toBe(info.sha256);

@@ -1,5 +1,5 @@
 import {it,expect} from 'vitest';
-import {readFileSync,readdirSync} from 'node:fs';
+import {readFileSync,readdirSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import JSZip from 'jszip';
 import relatorio from '../docs/integridade-logos-templates.json';
@@ -27,7 +27,10 @@ it('todos os templates e exemplos públicos usam a imagem oficial do modelo',asy
 
 it('troca dos logos preserva todas as partes funcionais e o conteúdo do Word',async()=>{
   expect(Object.keys(relatorio.arquivos)).toHaveLength(12);
-  for(const [nome,info] of Object.entries(relatorio.arquivos)){
+  // O relatório guarda o histórico dos 12 arquivos; exemplos foram retirados na troca pela Biblioteca PCM v2.
+  const publicados=Object.entries(relatorio.arquivos).filter(([nome])=>existsSync('public/modelos/'+nome));
+  expect(publicados.map(([n])=>n).some(n=>/Exemplo/.test(n))).toBe(false);expect(publicados).toHaveLength(6);
+  for(const [nome,info] of publicados){
     const bytes=readFileSync('public/modelos/'+nome);expect(sha(bytes),nome).toBe(info.sha256Atual);
     const zip=await JSZip.loadAsync(bytes);
     expect(Object.keys(zip.files).sort()).toEqual([...Object.keys(info.partesPreservadas),...info.imagens,...Object.keys(info.geometria)].sort());
