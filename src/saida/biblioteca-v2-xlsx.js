@@ -1,0 +1,197 @@
+// Preenche cópias integrais dos modelos .xlsx da Biblioteca PCM v2, editando só o XML das células.
+// Fórmulas, estilos, imagens, validações, nomes definidos, tabelas e impressão continuam do original;
+// ao ampliar um bloco, as linhas posteriores, referências, tabelas e áreas de impressão são deslocadas.
+// Não usa a cópia simplificada do leitor (sem desenhos) nem DOM: roda no navegador e nos testes.
+import JSZip from 'jszip';
+import contrato from '../dados/biblioteca-pcm-v2.json';
+
+const escXml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const numCol = (l) => l.split('').reduce((n, c) => n * 26 + c.charCodeAt(0) - 64, 0);
+const letraCol = (n) => { let s = ''; while (n > 0) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); } return s; };
+const serialData = (iso) => (Date.parse(`${iso}T00:00:00Z`) - Date.UTC(1899, 11, 30)) / 86400000;
+
+// Referência A1 com aba opcional. Não casa nomes de função (LOG10() nem tabelas estruturadas.
+const REF = /(?<![\w.$À-ſ])((?:'(?:[^']|'')+'|[A-Za-z_À-ſ][\w.À-ſ]*)!)?(\$?)([A-Z]{1,3})(\$?)(\d+)(?::(\$?)([A-Z]{1,3})(\$?)(\d+))?(?![\w(À-ſ])/g;
+const foraDeAspas = (texto, fn) => texto.split(/("(?:[^"]|"")*")/).map((p, i) => (i % 2 ? p : fn(p))).join('');
+const nomeDaAba = (prefixo) => (prefixo ? prefixo.slice(0, -1).replace(/^'|'$/g, '').replace(/''/g, "'") : null);
+
+/** Desloca linhas/colunas relativas (sem $), como ao copiar uma fórmula. */
+export function deslocarFormula(texto, dLinha, dCol = 0) {
+  return foraDeAspas(texto, (p) => p.replace(REF, (_, pre = '', c1, l1, r1, n1, c2, l2, r2, n2) => {
+    const um = (cAbs, letra, rAbs, n) => `${cAbs}${cAbs ? letra : letraCol(numCol(letra) + dCol)}${rAbs}${rAbs ? n : Number(n) + dLinha}`;
+    return pre + um(c1, l1, r1, n1) + (n2 ? `:${um(c2, l2, r2, n2)}` : '');
+  }));
+}
+
+/** Inserção de k linhas depois da linha R da aba `alvo`: move o que está abaixo e amplia intervalos que terminam em R ou depois. */
+export function moverReferencias(texto, alvo, propria, R, k) {
+  return foraDeAspas(texto, (p) => p.replace(REF, (todo, pre, c1, l1, r1, n1, c2, l2, r2, n2) => {
+    const aba = nomeDaAba(pre);
+    if (aba ? aba !== alvo : !propria) return todo;
+    const a = Number(n1), b = n2 ? Number(n2) : null;
+    if (b === null) return a > R ? `${pre ?? ''}${c1}${l1}${r1}${a + k}` : todo;
+    const na = a > R ? a + k : a, nb = b >= R ? b + k : b;
+    return `${pre ?? ''}${c1}${l1}${r1}${na}:${c2}${l2}${r2}${nb}`;
+  }));
+}
+
+const LINHA = /<row\b[^>]*?(?:\/>|>[\s\S]*?<\/row>)/g;
+const CELULA = /<c\b[^>]*?(?:\/>|>[\s\S]*?<\/c>)/g;
+const numLinha = (xml) => Number(/\br="(\d+)"/.exec(xml)[1]);
+
+function partesDaAba(xml) {
+  const ini = xml.indexOf('<sheetData');
+  const abre = xml.indexOf('>', ini) + 1;
+  if (xml[abre - 2] === '/') return { antes: xml.slice(0, ini) + '<sheetData>', linhas: [], depois: '</sheetData>' + xml.slice(abre) };
+  const fim = xml.indexOf('</sheetData>');
+  return { antes: xml.slice(0, abre), linhas: xml.slice(abre, fim).match(LINHA) ?? [], depois: xml.slice(fim) };
+}
+
+function renumerar(linhaXml, nova) {
+  return linhaXml.replace(/^<row\b([^>]*?)\br="\d+"/, `<row$1r="${nova}"`).replace(/(<c\b[^>]*?\br=")([A-Z]+)\d+"/g, `$1$2${nova}"`);
+}
+
+/** Troca fórmulas compartilhadas por fórmulas explícitas, para poder clonar e mover linhas com segurança. */
+export function expandirCompartilhadas(xml) {
+  const mestres = new Map();
+  for (const [, ref, corpo] of xml.matchAll(/<c\b[^>]*?\br="([A-Z]+\d+)"[^>]*?(?<!\/)>([\s\S]*?)<\/c>/g)) {
+    const m = /<f\b[^>]*\bt="shared"[^>]*\bsi="(\d+)"[^>]*>([\s\S]*?)<\/f>/.exec(corpo);
+    if (m && m[2]) mestres.set(m[1], { ref, texto: m[2] });
+  }
+  return xml.replace(/<c\b([^>]*?)\br="([A-Z]+)(\d+)"([^>]*?)(?<!\/)>([\s\S]*?)<\/c>/g, (todo, a, col, lin, b, corpo) => {
+    const m = /<f\b[^>]*\bt="shared"[^>]*\bsi="(\d+)"[^>]*?(?:\/>|>([\s\S]*?)<\/f>)/.exec(corpo);
+    if (!m) return todo;
+    const mestre = mestres.get(m[1]);
+    if (!mestre) throw new Error('Fórmula compartilhada sem origem no modelo.');
+    const [, mc, ml] = /^([A-Z]+)(\d+)$/.exec(mestre.ref);
+    const texto = m[2] ? m[2] : deslocarFormula(mestre.texto, Number(lin) - Number(ml), numCol(col) - numCol(mc));
+    return `<c${a}r="${col}${lin}"${b}>${corpo.replace(m[0], `<f>${texto}</f>`)}</c>`;
+  });
+}
+
+/** Pacote aberto: abas por nome, workbook, tabelas por aba e demais partes intactas. */
+async function abrirPacote(bytes) {
+  const zip = await JSZip.loadAsync(bytes);
+  const ler = (n) => zip.file(n).async('string');
+  const workbook = await ler('xl/workbook.xml');
+  const rels = await ler('xl/_rels/workbook.xml.rels');
+  const abas = new Map();
+  for (const [, nome, rid] of workbook.matchAll(/<sheet\b[^>]*\bname="([^"]+)"[^>]*\br:id="([^"]+)"/g)) {
+    const alvo = 'xl/' + new RegExp(`Id="${rid}"[^>]*Target="([^"]+)"`).exec(rels)[1].replace(/^\/?xl\//, '');
+    const relsAba = zip.file(alvo.replace('worksheets/', 'worksheets/_rels/') + '.rels');
+    const tabelas = relsAba ? [...(await relsAba.async('string')).matchAll(/Target="([^"]*tables\/[^"]+)"/g)].map((m) => 'xl/tables/' + m[1].split('/').pop()) : [];
+    abas.set(nome.replace(/&amp;/g, '&'), { arquivo: alvo, xml: await ler(alvo), tabelas });
+  }
+  const tabelas = new Map();
+  for (const n of Object.keys(zip.files).filter((f) => /^xl\/tables\/[^/]+\.xml$/.test(f))) tabelas.set(n, await ler(n));
+  return { zip, workbook, abas, tabelas };
+}
+
+// Abertura de elemento com conteúdo (exclui <f .../> das fórmulas compartilhadas filhas).
+const FORMULAS = /(<(f|formula|formula1|formula2)(?:\s[^>]*?)?(?<!\/)>)([\s\S]*?)(<\/\2>)/g;
+
+function inserirLinhas(pacote, alvo, R, k) {
+  if (k <= 0) return;
+  const aba = pacote.abas.get(alvo);
+  // 1) Referências primeiro (todas as abas, nomes, tabelas); 2) depois as linhas, clonando a linha modelo já ajustada.
+  const mover = (t, propria) => moverReferencias(t, alvo, propria, R, k);
+  for (const [nome, outra] of pacote.abas) outra.xml = outra.xml.replace(FORMULAS, (_, a, _t, texto, b) => a + mover(texto, nome === alvo) + b);
+  aba.xml = aba.xml.replace(/(<(?:mergeCell|dimension|hyperlink)\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`)
+    .replace(/(<(?:dataValidation|conditionalFormatting)\b[^>]*\bsqref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`);
+  pacote.workbook = pacote.workbook.replace(/(<definedName\b[^>]*>)([^<]*)(<\/definedName>)/g, (_, a, t, b) => a + mover(t, false) + b);
+  for (const t of aba.tabelas) pacote.tabelas.set(t, pacote.tabelas.get(t).replace(/(<(?:table|autoFilter)\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`));
+
+  const { antes, linhas, depois } = partesDaAba(aba.xml);
+  const modelo = linhas.find((l) => numLinha(l) === R);
+  if (!modelo) throw new Error(`Linha modelo ${R} não encontrada em ${alvo}.`);
+  const novas = [];
+  for (const l of linhas) {
+    const n = numLinha(l);
+    novas.push(n > R ? renumerar(l, n + k) : l);
+    if (n === R) for (let i = 1; i <= k; i++) novas.push(renumerar(modelo, R + i).replace(/<f>([\s\S]*?)<\/f>/g, (_, t) => `<f>${deslocarFormula(t, i)}</f>`));
+  }
+  aba.xml = antes + novas.join('') + depois;
+}
+
+/** Grava vários valores de uma aba numa passada, mantendo o estilo de cada célula. null apaga o conteúdo. */
+function escrever(pacote, nomeAba, valores) {
+  const aba = pacote.abas.get(nomeAba);
+  const { antes, linhas, depois } = partesDaAba(aba.xml);
+  const porLinha = new Map(linhas.map((l) => [numLinha(l), l.replace(/^<row\b([^>]*?)\/>$/, '<row$1></row>')]));
+  for (const [ref, valor] of valores) {
+    const [, col, lin] = /^([A-Z]+)(\d+)$/.exec(ref);
+    let linha = porLinha.get(Number(lin)) ?? `<row r="${lin}"></row>`;
+    const celulas = linha.match(CELULA) ?? [];
+    const atual = celulas.find((c) => c.startsWith(`<c r="${ref}"`) || new RegExp(`^<c\\b[^>]*\\br="${ref}"`).test(c));
+    const estilo = atual ? (/^<c\b[^>]*?\bs="(\d+)"/.exec(atual)?.[1] ?? null) : null;
+    const s = estilo === null ? '' : ` s="${estilo}"`;
+    let nova;
+    if (valor === null || valor === undefined || valor === '') nova = `<c r="${ref}"${s}/>`;
+    else if (typeof valor === 'number') {
+      if (!Number.isFinite(valor)) throw new Error('Valor numérico inválido.');
+      nova = `<c r="${ref}"${s}><v>${valor}</v></c>`;
+    } else nova = `<c r="${ref}"${s} t="inlineStr"><is><t xml:space="preserve">${escXml(valor)}</t></is></c>`;
+    if (atual) linha = linha.replace(atual, () => nova);
+    else {
+      const depoisDe = celulas.find((c) => numCol(/\br="([A-Z]+)\d+"/.exec(c)[1]) > numCol(col));
+      linha = depoisDe ? linha.replace(depoisDe, () => nova + depoisDe) : linha.replace('</row>', () => nova + '</row>');
+    }
+    porLinha.set(Number(lin), linha);
+  }
+  aba.xml = antes + [...porLinha.entries()].sort((a, b) => a[0] - b[0]).map(([, l]) => l).join('') + depois;
+}
+
+async function fecharPacote(pacote) {
+  for (const aba of pacote.abas.values()) {
+    // Sem resultados antigos nas fórmulas: Excel e LibreOffice recalculam ao abrir.
+    const xml = aba.xml.replace(/<c\b([^>]*?)(?<!\/)>([\s\S]*?)<\/c>/g, (todo, a, corpo) => (/<f[\s>/]/.test(corpo)
+      ? `<c${a.replace(/\st="(?:str|n|b|e)"/, '')}>${corpo.replace(/<v\b[^>]*\/>|<v\b[^>]*>[\s\S]*?<\/v>/, '')}</c>` : todo));
+    pacote.zip.file(aba.arquivo, xml);
+  }
+  for (const [n, t] of pacote.tabelas) pacote.zip.file(n, t);
+  let wb = pacote.workbook;
+  wb = /<calcPr\b/.test(wb) ? wb.replace(/<calcPr\b([^>]*?)\/?>/, (_, a) => `<calcPr${a.replace(/\s(?:fullCalcOnLoad|forceFullCalc)="[^"]*"/g, '')} fullCalcOnLoad="1" forceFullCalc="1"/>`)
+    : wb.replace('</workbook>', '<calcPr fullCalcOnLoad="1" forceFullCalc="1"/></workbook>');
+  pacote.zip.file('xl/workbook.xml', wb);
+  return pacote.zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+}
+
+async function conferirOriginal(bytes, codigo) {
+  const modelo = contrato.modelos.find((m) => m.codigo === codigo);
+  const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((n) => n.toString(16).padStart(2, '0')).join('');
+  if (hash !== modelo.sha256) throw new Error(`Modelo ${codigo} diferente do esperado por esta versão do app. Recarregue o aplicativo; seus dados não foram alterados.`);
+}
+
+/**
+ * PCM-MAN-002: Leia-me (elaborado/aprovado), Cadastros, Plano ("Outras atividades") e Cronograma.
+ * Criticidade e FMECA ficam em branco: dependem de análise humana e de escala própria do modelo.
+ * @param dados resultado de dadosPcmMan002 (src/logica/biblioteca-v2-dados.js)
+ */
+export async function preencherPcmMan002(bytes, dados) {
+  await conferirOriginal(bytes, 'PCM-MAN-002');
+  const p = await abrirPacote(bytes);
+  for (const nome of ['Plano', 'Cronograma', 'Cadastros']) p.abas.get(nome).xml = expandirCompartilhadas(p.abas.get(nome).xml);
+
+  // Cadastros: quatro tabelas lado a lado nas linhas 5 a 29 (25 linhas).
+  const maiorCadastro = Math.max(dados.ativos.length, dados.pessoas.length, dados.familias.length, dados.setores.length);
+  inserirLinhas(p, 'Cadastros', 29, maiorCadastro - 25);
+  const cad = [];
+  dados.ativos.forEach((a, i) => ['tag', 'descricao', 'familia', 'setor'].forEach((c, j) => cad.push([`${'ABCD'[j]}${5 + i}`, a[c] || null])));
+  dados.pessoas.forEach((n, i) => cad.push([`F${5 + i}`, n]));
+  dados.familias.forEach((n, i) => cad.push([`H${5 + i}`, n]));
+  dados.setores.forEach((n, i) => cad.push([`J${5 + i}`, n]));
+  escrever(p, 'Cadastros', cad);
+
+  // Plano: "Outras atividades" nas linhas 21 a 30; o Cronograma espelha o Plano nas linhas 8 a 33.
+  const extra = dados.atividades.length - 10;
+  inserirLinhas(p, 'Plano', 30, extra);
+  inserirLinhas(p, 'Cronograma', 33, extra);
+  escrever(p, 'Plano', dados.atividades.flatMap((t, i) => {
+    const l = 21 + i;
+    return [[`A${l}`, 16 + i], [`B${l}`, t.tag], [`E${l}`, t.atividade], [`G${l}`, t.dias], [`H${l}`, t.responsavel || null],
+      [`I${l}`, t.duracao], [`K${l}`, t.primeira ? serialData(t.primeira) : null]];
+  }));
+  if (dados.ano) escrever(p, 'Cronograma', [['A4', dados.ano]]);
+  escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
+  return fecharPacote(p);
+}

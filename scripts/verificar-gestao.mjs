@@ -135,11 +135,11 @@ await executarComRecursos({
   await ir('entrega');
   await mkdir('artifacts/pcmd',{recursive:true});
   const emissoesAntes=(await rascunho()).programacao.emissoes.length;
-  const botoes=page.locator('[data-documento]');assert.equal(await botoes.count(),6);
-  for(let i=0;i<6;i++){
+  const botoes=page.locator('[data-documento]');assert.equal(await botoes.count(),7);
+  for(let i=0;i<7;i++){
     const [download]=await Promise.all([page.waitForEvent('download',{timeout:90000}),botoes.nth(i).click()]);
     const nome=download.suggestedFilename();assert.match(nome,/\.(xlsx|docx)$/);const bytes=await readFile(await download.path());
-    await writeFile('artifacts/pcmd/'+nome,bytes);const gerado=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(await readFile('public/modelos/'+nome.replace('-Preenchido','')));
+    await writeFile('artifacts/pcmd/'+nome,bytes);const gerado=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(await readFile('public/modelos/'+(nome.startsWith('PCM-MAN-')?'biblioteca-v2/':'')+nome.replace('-Preenchido','')));
     for(const parte of Object.keys(original.files).filter(n=>/\/(media|drawings)\//.test(n)&&!original.files[n].dir))assert.deepEqual(await gerado.file(parte).async('nodebuffer'),await original.file(parte).async('nodebuffer'),nome+' preserva mídia e desenhos');
     if(nome.endsWith('.docx')){for(const parte of Object.keys(gerado.files).filter(n=>/^word\/.*\.xml$/.test(n)))assert.ok(!(await gerado.file(parte).async('string')).includes('{{'),'Marcador pendente em '+nome+'/'+parte);assert.ok((await gerado.file('word/document.xml').async('string')).includes('Indústria Exemplo'));}
     else{assert.ok((await gerado.file('xl/workbook.xml').async('string')).includes('fullCalcOnLoad="1"'));assert.ok(Object.keys(gerado.files).some(n=>n.startsWith('xl/worksheets/')));}
@@ -159,6 +159,6 @@ await executarComRecursos({
   const recuperacao=await browser.newContext();await recuperacao.addInitScript(()=>localStorage.setItem('pcm-direto:rascunho:v1','{'));const rec=await recuperacao.newPage();await rec.goto('http://127.0.0.1:4175/');await rec.getByRole('button',{name:'Baixar dados originais para recuperação'}).waitFor();assert.equal(await rec.evaluate(()=>localStorage.getItem('pcm-direto:rascunho:v1')),'{');await recuperacao.close();
   const quota=await browser.newContext();await quota.addInitScript(()=>{const original=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(...args){if(sessionStorage.getItem('simular-quota')){this.transaction.abort();throw new DOMException('Quota de teste excedida','QuotaExceededError');}return original.apply(this,args);};});
   const q=await quota.newPage();await q.goto('http://127.0.0.1:4175/#cadastros');await q.locator('#g-nome').waitFor();const salvo=await rascunho(q);await q.evaluate(()=>sessionStorage.setItem('simular-quota','1'));await q.locator('#g-nome').fill('Não deve ser persistido');await q.locator('#salvar-organizacao').click();await q.locator('#aviso-armazenamento').waitFor({state:'visible'});assert.deepEqual(await rascunho(q),salvo);await quota.close();
-  assert.deepEqual(erros,[]);console.log('Aprovado: comunidade inicial, tema claro, modelos originais, exemplo isolado, migração v1→v3, cadastros, criticidade, capacidade/teclado, importação inválida, revisão, execução/cancelamento, falha, backup, seis documentos offline, concorrência e recuperação.');
+  assert.deepEqual(erros,[]);console.log('Aprovado: comunidade inicial, tema claro, modelos originais, exemplo isolado, migração v1→v3, cadastros, criticidade, capacidade/teclado, importação inválida, revisão, execução/cancelamento, falha, backup, sete documentos offline (inclui PCM-MAN-002 v2), concorrência e recuperação.');
  },
 });
