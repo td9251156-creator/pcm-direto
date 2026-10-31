@@ -77,7 +77,7 @@ await executarComRecursos({
     assert.match(previa, /SEM-CADASTRO/);
     assert.match(await p.locator('#io-salvo').innerText(), /^0 ativos/);
     await p.getByRole('button', { name: 'Confirmar importação' }).click();
-    await p.getByText('Importação gravada: 4 novo(s)').waitFor();
+    await p.locator('#io-resultado', { hasText: 'Importação gravada: 4 novo(s)' }).waitFor();
     assert.match(await p.locator('#io-salvo').innerText(), /2 ativos · 2 OS/);
 
     // Reimportar o mesmo arquivo não duplica.
@@ -88,11 +88,12 @@ await executarComRecursos({
 
     await importar(p, 'PCM-MAN-008', 'falhas-demo.xlsx', xlsx.falhas);
     await p.getByRole('button', { name: 'Confirmar importação' }).click();
-    await p.getByText('Importação gravada: 1 novo(s)').waitFor();
+    await p.locator('#io-resultado', { hasText: 'Importação gravada: 1 novo(s)' }).waitFor();
     await importar(p, 'PCM-MAN-012', 'custos-demo.xlsx', xlsx.custos);
     assert.match(await p.locator('#io-previa').innerText(), /Lançamentos de custo: 1 · Orçamento: 1/);
     await p.getByRole('button', { name: 'Confirmar importação' }).click();
-    await p.getByText('Importação gravada: 2 novo(s)').waitFor();
+    await p.locator('#io-resultado', { hasText: 'Importação gravada: 2 novo(s)' }).waitFor();
+    assert.equal(await p.evaluate(() => document.activeElement?.id), 'io-resultado', 'Foco no resultado após importar');
 
     // Persistência: recarregar mantém a base; dashboards leem a base local diretamente.
     await p.reload();

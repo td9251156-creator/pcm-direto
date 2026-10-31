@@ -46,6 +46,15 @@ export function calcularCustos(fonte, filtro) {
   const orcSemValor = orcamento.filter((o) => o.valor_orcado === null).length;
   const comOrcamento = orcamento.some((o) => o.valor_orcado !== null);
   const temOrcamento = orcado > 0;
+  // Célula vazia na grade é ausência, não zero: meses do período sem nenhuma linha de orçamento
+  // deixam o orçado incompleto (não se compara 12 meses de realizado com 6 de orçamento sem avisar).
+  const mesesDoPeriodo = [];
+  for (let d = new Date(Date.UTC(+mIni.slice(0, 4), +mIni.slice(5, 7) - 1, 1)); d.toISOString().slice(0, 7) <= mFim; d.setUTCMonth(d.getUTCMonth() + 1)) {
+    mesesDoPeriodo.push(d.toISOString().slice(0, 7));
+  }
+  const comLinha = new Set(orcamento.filter((o) => o.valor_orcado !== null).map((o) => mes(o.competencia)));
+  const mesesSemOrcamento = comOrcamento ? mesesDoPeriodo.filter((m) => !comLinha.has(m)) : [];
+  if (mesesSemOrcamento.length) avisos.push(`Orçamento ausente em ${mesesSemOrcamento.length} mês(es) do período (ex.: ${mesesSemOrcamento[0]}): o orçado, o desvio e o consumo estão incompletos.`);
   const semData = bases.custos_manutencao.filter((c) => !c.data_lancamento).length;
   const ultimoDia = new Date(Date.UTC(+mFim.slice(0, 4), +mFim.slice(5, 7), 0)).getUTCDate();
   const fimParcial = +periodo.fim.slice(8, 10) !== ultimoDia;
@@ -54,7 +63,7 @@ export function calcularCustos(fonte, filtro) {
   const trechos = [inicioParcial && `a partir de ${periodo.inicio}`, fimParcial && `até ${periodo.fim}`].filter(Boolean);
   const nota = mesParcial ? `Realizado de mês parcial (${trechos.join(' e ')}) comparado ao orçamento do mês completo.` : '';
   const desvio = arred(realizado - orcado);
-  const incompleto = mesParcial || semValor > 0;
+  const incompleto = mesParcial || semValor > 0 || mesesSemOrcamento.length > 0;
 
   const base = { data: `Lançamentos de ${periodo.inicio} a ${periodo.fim}; orçamento das competências ${mIni} a ${mFim}` };
   const comparado = { fonte: `${FONTE_REAL} e ${FONTE_ORC}`, populacao: 'Mesmo período e mesmo setor nas duas fontes.', ...base };
@@ -66,7 +75,7 @@ export function calcularCustos(fonte, filtro) {
       ausencias: semValor ? `${semValor} lançamento(s) sem valor.` : '', ...base,
     },
     orcado: {
-      id: 'orcado', titulo: 'Orçado', valor: comOrcamento ? orcado : null, unidade: 'R$', estado: comOrcamento ? (mesParcial || orcSemValor ? 'parcial' : (orcado ? 'ok' : 'zero')) : 'indefinido', fonte: FONTE_ORC,
+      id: 'orcado', titulo: 'Orçado', valor: comOrcamento ? orcado : null, unidade: 'R$', estado: comOrcamento ? (mesParcial || orcSemValor || mesesSemOrcamento.length ? 'parcial' : (orcado ? 'ok' : 'zero')) : 'indefinido', fonte: FONTE_ORC,
       formula: 'Soma do orçamento mensal das competências do período.', populacao: `${orcamento.length} linhas de orçamento.`,
       exclusoes: 'Sem rateio por TAG; o seletor de setor do template 012 não define o dono do orçamento.',
       ausencias: temOrcamento ? nota : 'Sem orçamento comparável no período/setor.', ...base,

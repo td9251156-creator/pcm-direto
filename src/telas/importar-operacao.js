@@ -115,8 +115,10 @@ export function telaImportarOperacao(main) {
       return;
     }
     plano = null;
-    desenhar(`<p class="cartao" role="status">Importação gravada: ${r.registro.novos} novo(s) e ${r.registro.atualizados} atualizado(s). ${r.registro.conflitosMantidos ? `${r.registro.conflitosMantidos} conflito(s) mantido(s) como estavam.` : ''}</p>`);
-    avisar('Importação gravada neste aparelho.');
+    desenhar(`<p class="cartao" id="io-resultado" tabindex="-1">Importação gravada: ${r.registro.novos} novo(s) e ${r.registro.atualizados} atualizado(s). ${r.registro.conflitosMantidos ? `${r.registro.conflitosMantidos} conflito(s) mantido(s) como estavam.` : ''}</p>`);
+    // O botão some com o redesenho: o foco vai para o resultado e a área de mensagens anuncia.
+    main.querySelector('#io-resultado').focus();
+    avisar(main.querySelector('#io-resultado').textContent);
   }
 
   desenhar();

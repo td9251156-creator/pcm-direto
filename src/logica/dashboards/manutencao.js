@@ -100,7 +100,7 @@ export function calcularManutencao(fonte, filtro) {
 
   const frases = {
     movimento: movimento.length
-      ? `No período, ${abertasPeriodo.length} OS foram abertas e ${concluidasPeriodo.length} concluídas${movimento.some((m) => m.parcial) ? '; o último mês está parcial' : ''}.`
+      ? `No período, ${abertasPeriodo.length} OS foram abertas e ${concluidasPeriodo.length} concluídas${movimento.some((m) => m.parcial) ? '; há mês parcial no período' : ''}.`
       : 'Sem OS abertas ou concluídas no período filtrado.',
     idade: abertas.length
       ? `${atrasadas.length} das ${abertas.length} OS abertas passaram da data prevista; ${idade[3].valor} há mais de 30 dias.`

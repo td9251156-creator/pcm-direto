@@ -454,7 +454,8 @@ export async function registrarOcorrencia(id, alteracao = {}) {
 
 /** Retrato da base da operação: a prévia só pode ser aplicada se nada mudou depois dela. */
 export function referenciaOperacao() {
-  return `${geracaoBase}|${JSON.stringify(estado.gestao.operacao ?? null)}`;
+  // Inclui as TAGs do plano: a prévia aceitou registros que dependem delas.
+  return `${geracaoBase}|${JSON.stringify(estado.equipamentos.map((e) => [e.tag, e.setor]))}|${JSON.stringify(estado.gestao.operacao ?? null)}`;
 }
 
 /** Grava uma importação já conferida. Em falha, a base anterior continua em uso e salva. */

@@ -75,6 +75,21 @@ describe('importação dos dados da operação', () => {
     expect(plano.rejeitados[1].motivos.join(' ')).toContain('SEM-CADASTRO');
   });
 
+  it('ativo recusado não valida a TAG de uma OS do mesmo arquivo (revisão independente)', async () => {
+    const ativoRuim = { tag: 'DEMO-X', descricao_ativo: 'x'.repeat(2001), familia: 'Motor', setor: 'Setor Demo' };
+    const plano = prepararImportacao(await previa004([os('OS-0001', { tag: 'DEMO-X' })], [ativoRuim]), null, null, []);
+    expect(plano.rejeitados.map(r => r.chave)).toEqual(['DEMO-X', 'OS-0001']);
+    expect(plano.rejeitados[0].motivos.join(' ')).toContain('2000 caracteres');
+    expect(plano.apto).toBe(false);
+  });
+
+  it('texto acima do limite recusa só a linha, com motivo, em vez de falhar na gravação', async () => {
+    const plano = prepararImportacao(await previa004([os('OS-0001', { atividade: 'a'.repeat(2001) }), os('OS-0002')]), null, null, []);
+    expect(plano.rejeitados.map(r => [r.chave, r.linha])).toEqual([['OS-0001', 5]]);
+    const op = importar(null, plano);
+    expect(validarGestao({ ...criarGestao(), versao: 3, operacao: op })).toBe(true);
+  });
+
   it('recusa chave duplicada no mesmo arquivo sem perder a primeira linha', async () => {
     const plano = prepararImportacao(await previa004([os('OS-0001'), os('OS-0001', { atividade: 'Outra' })]), null, null, []);
     expect(plano.novos.filter(n => n.base === 'ordens_servico')).toHaveLength(1);

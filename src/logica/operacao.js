@@ -54,6 +54,9 @@ function dataIso(valor, comHora) {
 /** Regras de cada registro; devolve os motivos de recusa (vazio = aceito). */
 function conferirRegistro(base, r) {
   const motivos = [];
+  // Mesmos limites da conferência final (validarOperacao), para recusar só a linha, com motivo.
+  if (typeof r[CHAVES[base]] === 'string' && r[CHAVES[base]].length > 120) motivos.push(`${CHAVES[base]}: no máximo 120 caracteres.`);
+  for (const [campo, v] of Object.entries(r)) if (typeof v === 'string' && v.length > 2000) motivos.push(`${campo}: no máximo 2000 caracteres.`);
   for (const [campo, permitidos] of Object.entries(DOMINIOS)) {
     if (campo in r && !vazio(r[campo]) && !permitidos.includes(r[campo])) motivos.push(`${campo}: código fora da lista padronizada.`);
   }
@@ -95,10 +98,9 @@ export function prepararImportacao(previa, orcamentoLido, operacao, equipamentos
   const tagsPlano = new Map(equipamentos.filter(e => e.tag).map(e => [e.tag, e]));
   const tagsConhecidas = new Set([...atual.ativos.map(a => a.tag), ...tagsPlano.keys()]);
   const osConhecidas = new Set(atual.ordens_servico.map(o => o.numero_os));
-  // Ativos primeiro: uma OS do mesmo arquivo pode citar uma TAG cadastrada nele.
+  // Ativos primeiro: uma OS do mesmo arquivo pode citar uma TAG cadastrada nele. Só entram
+  // nas listas de vínculo os registros aceitos; uma linha recusada não valida outra.
   const ordem = ['ativos', 'ordens_servico', 'falhas', 'custos_manutencao'].filter(b => b in previa.bases);
-  for (const r of previa.bases.ativos ?? []) if (!vazio(r.tag)) tagsConhecidas.add(r.tag);
-  for (const r of previa.bases.ordens_servico ?? []) if (!vazio(r.numero_os)) osConhecidas.add(r.numero_os);
   const semOS = new Set();
 
   for (const base of ordem) {
@@ -113,6 +115,8 @@ export function prepararImportacao(previa, orcamentoLido, operacao, equipamentos
         motivos.push(`TAG ${registro.tag} não está no cadastro de ativos nem no plano. Importe o cadastro (aba Cadastros do 004) ou cadastre o equipamento.`);
       }
       if (motivos.length) { plano.rejeitados.push({ base, linha, chave: chave ?? '', motivos }); return; }
+      if (base === 'ativos') tagsConhecidas.add(registro.tag);
+      if (base === 'ordens_servico') osConhecidas.add(registro.numero_os);
       if (base === 'falhas' && registro.numero_os && !osConhecidas.has(registro.numero_os)) semOS.add(registro.numero_os);
       if (base === 'ativos') {
         const doPlano = tagsPlano.get(registro.tag);
@@ -204,7 +208,8 @@ export function validarOperacao(op) {
     for (const i of op.importacoes) {
       if (!objeto(i) || typeof i.id !== 'string' || ids.has(i.id) || !Number.isFinite(Date.parse(i.data)) || !CODIGOS_IMPORTACAO.includes(i.codigo) ||
         !['novos', 'iguais', 'atualizados', 'conflitosMantidos', 'rejeitados'].every(c => Number.isInteger(i[c]) && i[c] >= 0) ||
-        !Array.isArray(i.substituidos)) return false;
+        !Array.isArray(i.substituidos) || !i.substituidos.every(s => objeto(s) && (s.base in CHAVES || s.base === 'orcamento') &&
+          typeof s.chave === 'string' && objeto(s.anterior))) return false;
       ids.add(i.id);
     }
     return true;

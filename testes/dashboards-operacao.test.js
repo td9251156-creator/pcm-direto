@@ -70,6 +70,27 @@ describe('dashboards com os dados da base local', () => {
     expect(setembro.indicadores.indisponibilidade.valor).toBe(10); // recortada no fim de setembro
   });
 
+  it('confiabilidade: falha só anterior ao período soma horas, mas não vira "líder com 0 falhas"', () => {
+    const op = base();
+    op.falhas.pop(); // fica só F-1, iniciada em setembro
+    const f = fonteDaOperacao({ operacao: op, equipamentos: plano }, '2026-10-29');
+    const out = calcularConfiabilidade(f, { ...FILTRO_VAZIO, inicio: '2026-10-01', fim: '2026-10-29' });
+    expect(out.indicadores.falhas.valor).toBe(0);
+    expect(out.indicadores.indisponibilidade.valor).toBe(6);
+    expect(out.indicadores.reparo).toMatchObject({ valor: 6, estado: 'ok' });
+    expect(out.ranking).toEqual([]);
+    expect(out.frases.ativos).toBe('Sem ativos com falha no período filtrado.');
+    expect(out.acoes.some(a => a.texto.includes('0 falhas'))).toBe(false);
+  });
+
+  it('custos: meses sem orçamento deixam o comparativo parcial, com aviso', () => {
+    const f = fonteDaOperacao({ operacao: base(), equipamentos: plano }, '2026-10-31');
+    const r = calcularCustos(f, { ...FILTRO_VAZIO, inicio: '2026-09-01', fim: '2026-10-31' });
+    expect(r.indicadores.orcado.estado).toBe('parcial');
+    expect(r.indicadores.desvio.estado).toBe('parcial');
+    expect(r.avisos.join(' ')).toContain('Orçamento ausente em 1 mês(es) do período (ex.: 2026-09)');
+  });
+
   it('custos: orçamento geral só é comparado sem filtro de setor', () => {
     const f = fonteDaOperacao({ operacao: base(), equipamentos: plano }, '2026-10-31');
     const geral = calcularCustos(f, FILTRO_VAZIO);
