@@ -12,7 +12,7 @@ await executarComRecursos({limiteTotal:240000,criarServidor:async()=>{const s=aw
   assert.equal(await page.locator('.modelo-documental').count(),18);assert.equal(await page.locator('.modelo-documental a[download]').count(),18);
   await page.locator('#grupo-documentos').selectOption('Materiais');assert.equal(await page.locator('.modelo-documental').count(),3);
   await page.locator('#buscar-documentos').fill('almoxarifado estoque');assert.equal(await page.locator('.modelo-documental').count(),1);
-  await page.evaluate(()=>{location.hash='mais';});await page.locator('#buscar-ferramentas').waitFor();assert.equal(await page.locator('#ferramentas .modulo').count(),17);
+  await page.evaluate(()=>{location.hash='mais';});await page.locator('#buscar-ferramentas').waitFor();assert.equal(await page.locator('#ferramentas .modulo').count(),18);
   await page.evaluate(()=>{location.hash='modelos';});await page.locator('#buscar-documentos').waitFor();assert.equal(await page.locator('#buscar-documentos').inputValue(),'almoxarifado estoque');assert.equal(await page.locator('#grupo-documentos').inputValue(),'Materiais');
   await page.locator('#buscar-documentos').fill('inexistentexyz');await page.locator('#limpar-documentos').click();assert.equal(await page.locator('.modelo-documental').count(),18);assert.equal(await page.locator('#buscar-documentos').evaluate(e=>e===document.activeElement),true);
   await page.getByRole('link',{name:'Preencher Ativos e criticidade com meus equipamentos',exact:true}).click();await page.locator('#modelo-individual').waitFor();assert.equal(await page.locator('#documento-modelo').inputValue(),'PCMD-02');assert.equal(await page.locator('#baixar-modelo').isDisabled(),true);
