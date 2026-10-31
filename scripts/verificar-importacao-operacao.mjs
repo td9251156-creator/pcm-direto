@@ -115,8 +115,10 @@ await executarComRecursos({
     await p.getByRole('link', { name: 'Ver demonstração' }).click();
     await p.locator('.pd-selo-demo').waitFor();
     await p.getByRole('link', { name: 'Voltar aos dados da fábrica' }).click();
+    // Espera a troca de tela: os cartões da demonstração ainda existem logo após o clique.
+    await p.locator('.pd-selo-demo').waitFor({ state: 'detached' });
     await p.locator('.pd-cartao').first().waitFor();
-    assert.equal(await p.locator('.pd-selo-demo').count(), 0);
+    assert.match(await p.locator('.pd-meta-linha').first().innerText(), /Dados desta base local/);
     for (const largura of [390, 1280]) {
       await p.setViewportSize({ width: largura, height: 900 });
       assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Dashboards reais sem rolagem horizontal em ${largura}px`);
