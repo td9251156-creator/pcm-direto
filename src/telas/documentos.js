@@ -1,6 +1,6 @@
 import {estado,salvar} from '../estado.js';
 import {prepararEmissao,preencherXlsx,preencherDocx} from '../saida/pcmd.js';
-import {MODELOS_DOCUMENTAIS,VERSAO_MODELOS} from './comunidade.js';
+import {MODELOS_DOCUMENTAIS,VERSAO_MODELOS,AVISO_TRANSICAO} from '../dados/modelos-anteriores.js';
 import {telaEntrega} from './entrega.js';
 import {novoId} from '../logica/entrada.js';
 import {textoData} from '../logica/cronograma.js';
@@ -12,8 +12,8 @@ const rascunhoEmissao={dataCorte:null,elaborador:null,aprovado:false,aprovador:'
 let refletirEmissao=()=>{};
 export function telaDocumentos(main){
   const revisao=estado.programacao.revisoes.at(-1);const hoje=textoData(new Date());
-  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Documentos de gestão</p><h2>Documentos da revisão ativa</h2><p>Preencha a identificação e baixe o documento que precisa. Cada arquivo usa o plano da revisão ativa e os registros até a data de corte.</p><p class="origem">Para checklists, estoque e outros controles, veja os <a href="#modelos">modelos para sua rotina</a>.</p></header>
-    <section class="cartao"><h3>1. Confira a identificação</h3>${revisao?`<p>Revisão ${revisao.numero} · vigência ${dataExibida(revisao.vigencia)}.</p>`:'<p><a href="#planejar">Ative uma revisão em Planejar</a> para gerar documentos preenchidos. Você pode <a href="#comunidade">baixar os modelos em branco sem cadastrar dados</a>.</p>'}
+  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Documentos de gestão</p><h2>Documentos da revisão ativa</h2><p>Preencha a identificação e baixe o documento que precisa. Cada arquivo usa o plano da revisão ativa e os registros até a data de corte.</p><p class="origem">Para checklists, estoque e outros controles, veja os <a href="#modelos">modelos para sua rotina</a>.</p><p class="aviso-tecnico">${esc(AVISO_TRANSICAO)}</p></header>
+    <section class="cartao"><h3>1. Confira a identificação</h3>${revisao?`<p>Revisão ${revisao.numero} · vigência ${dataExibida(revisao.vigencia)}.</p>`:'<p><a href="#planejar">Ative uma revisão em Planejar</a> para gerar documentos preenchidos. Você pode <a href="#modelos">baixar os modelos em branco sem cadastrar dados</a>.</p>'}
     <form id="emissao-pcmd"><div class="grade duas"><div><label for="data-corte">Incluir registros até</label><input id="data-corte" name="dataCorte" type="date" value="${esc(rascunhoEmissao.dataCorte??hoje)}" max="${hoje}" required></div><div><label for="emissao-elaborador">Elaborado por</label><input id="emissao-elaborador" name="elaborador" value="${esc(rascunhoEmissao.elaborador??revisao?.elaborador??'')}" maxlength="120" required></div></div>
     <details ${rascunhoEmissao.aprovado?'open':''}><summary>Informar aprovação já realizada (opcional)</summary><label class="caixa caixa-bloco"><input name="aprovado" type="checkbox" id="emissao-aprovada" ${rascunhoEmissao.aprovado?'checked':''}> Estes documentos já foram aprovados pelo responsável</label><label for="emissao-aprovador">Aprovador</label><input id="emissao-aprovador" name="aprovador" maxlength="120" value="${esc(rascunhoEmissao.aprovador)}"><p class="origem">Sem essa confirmação, o documento fica “Em elaboração”, com aprovador “A definir”.</p></details>
     <p id="bloqueio-pcmd" class="origem">${revisao?'Escolha um documento abaixo.':'A geração será liberada após ativar uma revisão em Planejar.'}</p><p id="progresso-pcmd" role="status" aria-live="polite"></p></form></section>

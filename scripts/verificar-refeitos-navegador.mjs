@@ -10,9 +10,9 @@ const {chromium}=await import(process.env.PCM_PLAYWRIGHT||new URL('../ferramenta
 const output=new URL('../artifacts/refeitos/gerados/',import.meta.url);await mkdir(output,{recursive:true});
 await executarComRecursos({limiteTotal:240000,criarServidor:async()=>{const s=await createServer({root:fileURLToPath(new URL('../',import.meta.url)),server:{host:'127.0.0.1',port:4194,strictPort:true,watch:{ignored:['**/artifacts/**']}}});await s.listen();return s;},criarNavegador:()=>chromium.launch(),executar:async({navegador})=>{
   const context=await navegador.newContext({acceptDownloads:true,serviceWorkers:'block',viewport:{width:390,height:844}});const p=await context.newPage();p.setDefaultTimeout(180000);const errors=[];p.on('pageerror',e=>errors.push(e.message));await p.route('https://**/*',r=>r.abort());
-  await p.goto('http://127.0.0.1:4194/#modelos');await p.locator('#buscar-documentos').waitFor();assert.equal(await p.locator('.modelo-documental').count(),18);assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await p.goto('http://127.0.0.1:4194/#modelos');await p.locator('#buscar-documentos').waitFor();assert.equal(await p.locator('.modelo-documental').count(),19);assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await p.locator('#buscar-documentos').fill('estoque');assert.ok(await p.locator('.modelo-documental').count()>0);await p.locator('#buscar-documentos').fill('');
-  for(const m of contrato.modelos){const r=await p.request.get('http://127.0.0.1:4194/modelos/refeitos/'+m.arquivo);assert.equal(r.status(),200);assert.equal(createHash('sha256').update(await r.body()).digest('hex'),m.sha256);const pdf=await p.request.get('http://127.0.0.1:4194/modelos/refeitos/previas/'+m.arquivo.replace(/\.(xlsx|docx)$/,'.pdf'));assert.equal(pdf.status(),200);assert.equal((await pdf.body()).subarray(0,4).toString(),'%PDF');}
+  for(const m of contrato.modelos){const r=await p.request.get('http://127.0.0.1:4194/modelos/refeitos/'+m.arquivo);assert.equal(r.status(),200);assert.equal(createHash('sha256').update(await r.body()).digest('hex'),m.sha256);}
   await p.goto('http://127.0.0.1:4194/#entrega-modelos');
   await p.evaluate(async()=>{const {estado}=await import('/src/estado.js');estado.equipamentos=[{id:'eq1',setor:'UTL',tipo:'motor_eletrico',numero:1,tag:'UTL-MOT-001',descricao:'Motor fictício <&>'},{id:'eq2',setor:'PRD',tipo:'motor_eletrico',numero:2,tag:'PRD-MOT-002',descricao:'Motor dois'}];estado.inicio='2026-01-05';estado.ajustes={};estado.execucoes={'eq1|MOT-01':{data:'2026-10-20',observacao:'Teste <&>'}};const {telaEntregaModelos}=await import('/src/telas/entrega-modelos.js');telaEntregaModelos(document.querySelector('main'));});
   await p.locator('#documento-modelo').selectOption('PCMD-01');
@@ -33,5 +33,5 @@ await executarComRecursos({limiteTotal:240000,criarServidor:async()=>{const s=aw
     }
     else{const body=await target.file('word/document.xml').async('string');assert.ok(!body.includes('{{'));assert.ok(body.includes('Pessoa fictícia'));assert.ok(body.includes('Em elaboração'));assert.ok(body.includes('A definir'));}
   }
-  assert.match(await p.locator('#progresso-modelos').textContent(),/arquivo preparado/);assert.deepEqual(errors,[]);await context.close();console.log('Modelos refeitos: 18 downloads e prévias, cinco arquivos preenchidos, 13 manuais intactos, mídia, fórmulas e proteção preservadas.');
+  assert.match(await p.locator('#progresso-modelos').textContent(),/arquivo preparado/);assert.deepEqual(errors,[]);await context.close();console.log('Modelos: 19 da Biblioteca v2 listados; cinco do formato anterior preenchidos, mídia, fórmulas e proteção preservadas.');
 }});

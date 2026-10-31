@@ -19,9 +19,9 @@ describe('Central de apoio', () => {
   });
 
   it.each([
-    ['ordens-servico', ['PCMD-K02', 'equipamento', 'solicitação', 'prioridade', 'responsável', 'encerramento']],
-    ['estoque-compras', ['PCMD-K04', 'PCMD-K05', 'saldo inicial', 'movimentação', 'pedido', 'recebimento']],
-    ['plano-acao-5w2h', ['PCMD-K07', 'o que', 'por quê', 'onde', 'quando', 'quem', 'como', 'quanto', 'avanço']],
+    ['ordens-servico', ['PCM-MAN-004', 'TAG', 'prioridade', 'responsável', 'data prevista', 'conclusão']],
+    ['estoque-pecas', ['PCM-MAN-010', 'estoque mínimo', 'movimento', 'reservas', 'fornecedor']],
+    ['acao-corretiva', ['PCM-MAN-009', 'Leia-me', 'responsável', 'funcionou']],
   ])('orienta o modelo em %s na trilha de modelos', (id, orientacoes) => {
     const artigo = ARTIGOS.find(([artigoId]) => artigoId === id);
     expect(artigo).toBeDefined();
@@ -31,7 +31,8 @@ describe('Central de apoio', () => {
     for (const orientacao of orientacoes) expect(conteudo).toContain(orientacao);
     expect(artigo[5]).toContain('Mais → Modelos para sua rotina');
     expect(artigo[5]).toContain('arquivo');
-    expect(artigo[6]).toBe('27/10/2026');
+    expect(artigo[6]).toBe('31/10/2026');
+    expect(conteudo).not.toMatch(/PCMD-K0/);
     expect(conteudo).not.toMatch(/\b(NR|NBR|ISO)[ -]?\d/i);
   });
 
