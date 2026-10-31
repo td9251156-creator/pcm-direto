@@ -70,7 +70,7 @@ function montarIndicadores(main) {
     const valor = c => c.value === '' ? null : Number(c.value);
     const hp = valor(planejadas); const pp = valor(parada);
     if ((hp !== null && (!Number.isFinite(hp) || hp < 0)) || (pp !== null && (!Number.isFinite(pp) || pp < 0)) || (hp !== null && pp !== null && pp > hp)) { avisar('Informe horas válidas; a parada não pode superar as horas planejadas.'); return; }
-    const nova = copiaGestao(); nova.versao = 2;
+    const nova = copiaGestao(); nova.versao = Math.max(nova.versao, 2);
     const registro = { equipamentoId: a.id, tag: a.tag, mes: mes.value, horasPlanejadas: hp, horasParada: pp };
     nova.indicadoresMensais = [...(nova.indicadoresMensais ?? []).filter(r => r.equipamentoId !== a.id || r.mes !== mes.value), registro];
     const campos = [...secao.querySelectorAll('input, select, button')]; campos.forEach(c => { c.disabled = true; });

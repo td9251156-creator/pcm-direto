@@ -10,7 +10,7 @@ export default [
   },
   {
     languageOptions: {
-      ecmaVersion: 2022,
+      ecmaVersion: 2025, // atributos de importação (`with { type: 'json' }`) em src/logica/operacao.js
       sourceType: 'module',
       globals: { ...globals.browser, ...globals.node },
     },

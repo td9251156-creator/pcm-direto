@@ -1,5 +1,47 @@
 > Atualização 24/10/2026: decisões atuais em [Reformulação](REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
+## Lista única de pendências — situação em 31/10/2026
+
+Conferida contra o código e os testes do ramo `coord/operacao-dashboards` (sobre `coord/modelos-v2-downloads`).
+Situações: **Verificado** = implementado e verificado; **Validação humana** = implementado, aguardando validação
+humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta rodada, com justificativa.
+
+| # | Item | Prioridade | Situação | Depende de | Critério de aceite |
+|---|---|---|---|---|---|
+| P1 | Importar OS e ativos (004), falhas (008), custos e orçamento (012) | Alta | **Verificado** | — | Prévia com aceitos/sem mudança/conflitos/recusados por linha; confirmação; reimportar não duplica; falha mantém a base. 10 testes + roteiro de navegador. |
+| P2 | Dashboards com os dados da base local | Alta | **Verificado** (demo separada em `?fonte=demo`) | P1 | Mesmo cálculo em cartões, gráficos, tabelas e HTML; zero/vazio/parcial/indefinido; HTML offline sem selo demo. |
+| P3 | Mês parcial no início do filtro e falha iniciada antes do período | Alta | **Verificado** | — | Contagem pelo início; horas recortadas ao período; mês inicial/final parcial marcado. |
+| P4 | Orçamento do 012 | Alta | **Verificado** com escopo restrito | — | Grade anual só como orçamento geral (setor vazio); com setor em B4 é recusada; sem rateio por setor; meses sem orçamento = parcial. |
+| P5 | MTBF, MTTR e disponibilidade nos dashboards | Média | **Bloqueado** | Decisão D1 abaixo | Fórmulas de 27/10 já existem no Mensal (falhas do app + horas mensais); não transferidas para as falhas importadas (outra população). |
+| P6 | Preencher PCM-MAN-002 (plano) | Alta | **Verificado** (parcial) + **Validação humana** no Office | D2 para Criticidade | Cópia integral; 100 ativos/940 atividades abertos no Excel sem reparo e sem erro de fórmula. Criticidade/FMECA em branco. |
+| P7 | Retirar PCMD-02 e PCMD-03/04 | Média | **Bloqueado** | D2 e D3 | O 002 ainda não leva notas de criticidade, ocorrências nem execuções. |
+| P8 | Preencher PCM-MAN-001, 008, 018 e 019 e retirar PCMD-01, 05, W1, W2 | Média | **Adiado** para a próxima rodada | — | Um modelo por vez, com o mesmo gerador (`src/saida/biblioteca-v2-xlsx.js`); Word: só controles de metadados (contrato `camposDocumento`). |
+| P9 | "Preencher um modelo" (5 refeitos) só com v2 | Média | **Adiado** | P8 | Página de modelos já usa só v2; o preenchimento individual ainda usa 5 arquivos anteriores. |
+| P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais` (horas planejadas e de parada por ativo/mês fechado). |
+| P11 | Janelas de parada e agrupamento | Baixa | **Bloqueado** | D4 | Nenhuma regra presumida; tarefas de segurança nunca adiadas. |
+| P12 | QR code, fotos e assinaturas | Baixa | **Bloqueado** | D5 | Definir privacidade, espaço, offline e backup antes de implementar. |
+| P13 | Catálogo da comunidade no banco real | Baixa | **Validação humana** | Acesso do mantenedor | Roteiro em VALIDACAO-REFORMULACAO.md; nenhuma alteração online feita. |
+| P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | Roteiros em VALIDACAO-REFORMULACAO.md. LibreOffice não está instalado nesta máquina. |
+| P15 | Publicar `coord/modelos-v2-downloads` e `coord/operacao-dashboards` | — | Aguardando autorização | Mantenedor | Nada publicado; nenhum PR aberto. |
+
+### Decisões técnicas pendentes (cada uma bloqueia só o seu trecho)
+
+- **D1 — MTBF/MTTR/disponibilidade nos dashboards.** Hoje: o Mensal calcula por ativo e mês fechado com as falhas
+  registradas no app e as horas planejadas/de parada digitadas. As falhas importadas do 008 têm início e fim com hora.
+  Exemplo: motor DEMO-01, outubro, 600 h planejadas, 2 falhas importadas com 6 h e 4 h de indisponibilidade e 3 h e 2 h
+  de reparo. Proposta: horas operadas = 600 − 10 = 590 h; MTBF = 590 ÷ 2 = 295 h; MTTR = (3 + 2) ÷ 2 = 2,5 h;
+  disponibilidade = 590 ÷ 600 = 98,3 %. Pergunta: as horas de parada do Mensal podem ser substituídas pela
+  indisponibilidade das falhas importadas, ou continuam digitadas à parte (e o dashboard só calcula quando houver as duas)?
+- **D2 — Criticidade do PCM-MAN-002.** O app usa 5 notas de 1 a 3 (classe A/B/C por soma); o modelo usa consequência
+  S/Q/P e frequência de 1 a 5 (matriz). Exemplo: notas do app [3,2,2,1,1] → classe A (segurança 3). Proposta: não converter;
+  levar só a TAG para a Criticidade e a classe do app numa coluna de observação. Pergunta: aceita, ou prefere uma tabela
+  de conversão aprovada (ex.: 1→1, 2→3, 3→5)?
+- **D3 — Ocorrências e execuções.** O 002 não tem abas de ocorrências/execuções como o PCMD-03/04. Proposta: manter o
+  histórico no PCMD-03/04 até haver modelo v2 equivalente (o 006 de check-list ou o 011 de indicadores não são histórico).
+- **D4 — Janelas de parada:** limites de agrupamento, capacidade e o que nunca pode mudar de data.
+- **D5 — QR, fotos e assinaturas:** finalidade, tamanho máximo por foto, retenção, e que "assinatura" é registro de ciência,
+  sem validade jurídica.
+
 ## Troca dos downloads pela Biblioteca PCM v2 (31/10/2026)
 
 Pedido do mantenedor: oferecer os 19 modelos da Biblioteca PCM v2 e retirar os antigos, **em etapas,
@@ -17,6 +59,7 @@ sem perder função**. Feito nesta etapa:
 
 Próximas etapas (uma por vez): preencher automaticamente 002 (criticidade e plano), 001, 008 e os Word
 018/019; ao concluir cada uma, apagar o arquivo antigo correspondente e a linha em `modelos-anteriores.js`.
+Andamento em 31/10: 002 preenchido (plano e cadastros), antigos mantidos — ver P6–P9 na lista única.
 
 ## Dashboards PCM v2 — andamento local (31/10/2026)
 
@@ -28,7 +71,7 @@ Próximas etapas (uma por vez): preencher automaticamente 002 (criticidade e pla
 | Confiabilidade | Implementada; MTBF/MTTR/disponibilidade "Definição pendente" (F-005) | Aguardar definição técnica | 124 falhas; sobreposição, recorte e falha aberta testados |
 | Custos | Implementada | — | R$ 156.034 / 110.000 / 46.034; outubro marcado parcial |
 | Baixar HTML | Implementado, sem scripts nem recursos externos | Aprovação da prévia | Arquivo aberto offline no Edge; prévia em `outputs/dashboards-pcm-v2/` |
-| Fonte de dados real (OS/custos) | **Não iniciada**: telas leem só o pacote fictício | Decisão: armazenamento v4 + importação 004/008/012 | — |
+| Fonte de dados real (OS/custos) | **Concluída em 31/10** (ver lista única acima): importação 004/008/012 na gestão v3, sem migração do IndexedDB | — | `testes/operacao.test.js`, `scripts/verificar-importacao-operacao.mjs` |
 | Biblioteca (etapas 6–7), fluxo, qualidade | Não iniciadas | Um modelo por vez | — |
 
 Telas em `src/telas/dashboards.js` (rota `#dashboards`, Mais → Rotina); cálculo em `src/logica/dashboards/`;

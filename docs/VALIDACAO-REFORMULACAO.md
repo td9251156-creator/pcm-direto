@@ -221,3 +221,31 @@ A primeira CI do pacote passou código/testes/build e falhou esperando um evento
 rajada de PDFs do roteiro no Linux. A conferência passou a ler todos os 12 arquivos pelo worker
 offline e testar um download por clique, preservando a comparação de bytes e sem desativar testes
 ou proteções do navegador. A publicação permanece condicionada à CI completa aprovada.
+
+## Ciclo operacional e Biblioteca v2 — roteiros de validação humana (31/10/2026)
+
+Executado automaticamente nesta rodada (implementador + revisão independente só de leitura da importação):
+`npm run verificar` (lint, 373 testes, build), os 14 roteiros de `npm run test:navegador` (inclui importação →
+dashboards → backup → conflito entre abas e sete documentos offline) e abertura do PCM-MAN-002 com 100 ativos no
+Excel desta máquina (sem reparo, 0 erro de fórmula). LibreOffice e Word não foram conferidos; não há LibreOffice instalado.
+Teste automatizado não substitui as conferências abaixo. Use somente dados fictícios.
+
+**1. Ciclo completo com o mantenedor** — cadastrar 5 equipamentos; ativar revisão; registrar 2 execuções e 1 falha;
+baixar os modelos 004, 008 e 012, preencher 3 OS, 2 falhas e 3 custos e o orçamento de 2 meses; importar (conferir a prévia,
+um recusado proposital e a reimportação sem duplicar); abrir os três dashboards e baixar o HTML; gerar o PCM-MAN-002;
+baixar backup, limpar os dados do site e restaurar. Aceite: nenhum número diferente do esperado e nenhuma dúvida sem resposta na tela.
+
+**2. Três técnicos** — cada um, sem ajuda: importar um 004 preenchido, achar uma OS atrasada no dashboard e gerar o 002.
+Registrar tempo, erros e as palavras que não entenderam. Aceite: 3 de 3 concluem; dúvidas viram itens da fila.
+
+**3. Celular real e leitor de tela** — Android com TalkBack e/ou iPhone com VoiceOver: escolher arquivo, ouvir a prévia
+(novos, conflitos, recusados), confirmar, ouvir o resultado; navegar pelos filtros e cartões dos dashboards. Aceite: tudo
+alcançável por toque e leitor, sem rolagem lateral, mensagens anunciadas.
+
+**4. Excel, Word e LibreOffice** — abrir o PCM-MAN-002 gerado (poucos ativos e 100 ativos): sem pedido de reparo; Plano e
+Cronograma recalculam; listas ▼ funcionam; impressão em A4 paisagem com rodapé correto na última página; logo presente.
+Repetir no LibreOffice Calc (Ferramentas → Recalcular, se preciso). Word: só quando 018/019 forem preenchidos.
+
+**5. Comunidade e catálogo (online)** — com conta de teste do mantenedor, não pessoal: entrar; enviar um PDF fictício;
+moderar e publicar; baixar como outro usuário; conferir que arquivo privado não abre por link direto; confirmar no banco que
+os novos tipos de equipamento do catálogo foram aplicados. Nada disso foi executado nesta rodada (sem autorização online).

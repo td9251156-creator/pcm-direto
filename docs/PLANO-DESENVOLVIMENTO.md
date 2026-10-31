@@ -34,6 +34,10 @@ Escopo desta rodada: sem migração, dependência nova, alteração de regras t�
 
 ## Ampliações que dependem de definições
 
+> Situação atual (31/10/2026) e decisões pendentes D1–D5: ver a lista única no topo de `FILA.md`. Já entregues desde
+> este texto: fórmulas de MTBF/MTTR/disponibilidade no Mensal (27/10), importação 004/008/012, dashboards com a base
+> local e o PCM-MAN-002 preenchido.
+
 MTBF, MTTR, disponibilidade e novas regras técnicas precisam de definições e exemplos numéricos aprovados pelo mantenedor. QR, fotos, assinaturas e integrações adicionais devem ter escopo, privacidade e evidências definidos antes da implementação. Não estão incluídos implicitamente nesta rodada.
 
 Nenhuma atividade é prometida após o fim da sessão sem um executor persistente configurado. As próximas rodadas devem usar esta fila e os resultados observados, preservando as autorizações existentes e os dados antigos.

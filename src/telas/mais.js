@@ -7,7 +7,7 @@ const grupos=[
     ['executar','Executar','Registrar tarefas realizadas e consultar o histórico'],
     ['ativos','Ativos','Consultar equipamentos e suas tarefas'],
     ['falhas','Falhas','Registrar sintoma, causa, ação e parada'],
-    ['dashboards','Dashboards','Manutenção, confiabilidade e custos (demonstração)'],
+    ['dashboards','Dashboards','Manutenção, confiabilidade e custos com os dados da operação'],
   ]],
   ['Planejamento',[
     ['planejar','Planejar','Conferir o rascunho e ativar revisões do plano'],
@@ -19,10 +19,11 @@ const grupos=[
   ['Documentos',[
     ['entrega','Documentos da revisão ativa','Gerar um documento com o plano ativo, execuções e falhas'],
     ['entrega-modelos','Preencher um modelo','Escolher um arquivo e inserir os equipamentos em edição'],
-    ['modelos','Modelos para sua rotina','Entender cada modelo, ver o PDF e baixar Excel ou Word'],
+    ['modelos','Modelos para sua rotina','Entender cada modelo da Biblioteca PCM v2 e baixar Excel ou Word'],
   ]],
   ['Dados e apoio',[
     ['dados','Meus dados','Backup completo e restauração'],
+    ['importar-operacao','Importar dados da operação','OS, falhas, custos e orçamento dos modelos 004, 008 e 012'],
     ['biblioteca','Biblioteca técnica','Consultar tarefas, fontes e modelos de máquinas'],
     ['apoio','Central de apoio','Guias, trilhas e glossário'],
     ['inicio','Primeiros passos','Preparar a fábrica ou explorar o exemplo isolado'],

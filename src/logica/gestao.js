@@ -1,5 +1,6 @@
 // Cadastros e movimentos locais; não cria documentos nem altera as regras do plano.
 import { dataDaSemana, textoData } from './cronograma.js';
+import { validarOperacao } from './operacao.js';
 
 const objeto = valor => valor !== null && typeof valor === 'object' && !Array.isArray(valor) &&
   [Object.prototype, null].includes(Object.getPrototypeOf(valor));
@@ -56,7 +57,9 @@ export function criarGestao() {
 /** Confere a estrutura inteira antes de abrir dados locais ou restaurar um backup. */
 export function validarGestao(g) {
   try {
-    if (!objeto(g) || ![1, 2].includes(g.versao) || !semChavesPerigosas(g)) return false;
+    if (!objeto(g) || ![1, 2, 3].includes(g.versao) || !semChavesPerigosas(g)) return false;
+    // Versão 3 = versão 2 + dados da operação importados (004, 008, 012). Só ela pode conter `operacao`.
+    if (g.versao === 3 ? !validarOperacao(g.operacao) : Object.hasOwn(g, 'operacao')) return false;
     const o = g.organizacao;
     if (!objeto(o) || !texto(o.nome) || !texto(o.elaborador) || !texto(o.aprovador) ||
         !texto(o.padraoCodigo, 40, true) || !texto(o.referencial, 120, true) ||
@@ -76,7 +79,7 @@ export function validarGestao(g) {
         pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean')) return false;
     const novo = f => Object.hasOwn(f, 'dataConclusao') || Object.hasOwn(f, 'horasReparo');
     if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || g.falhas.some(novo))) return false;
-    if (g.versao === 2) {
+    if (g.versao >= 2) {
       if (g.indicadoresMensais !== undefined) {
         if (!lista(g.indicadoresMensais)) return false;
         const vistos = new Set();

@@ -1,6 +1,6 @@
 // Dashboard de Confiabilidade. MTBF, MTTR e disponibilidade seguem como "Definição pendente":
 // dependem de operação por TAG e de definições aprovadas pelo mantenedor (F-005).
-import { tagsPermitidas, filtroPorAtivo, noPeriodo, dia } from './filtros.js';
+import { tagsPermitidas, filtroPorAtivo, noPeriodo, dia, mesesParciais } from './filtros.js';
 import { periodoEfetivo } from './manutencao.js';
 
 const FONTE = 'Modelo 008 · tb_pcm_falhas (cadastro por TAG em tb_pcm_ativos)';
@@ -38,41 +38,61 @@ export function calcularConfiabilidade(fonte, filtro) {
   const semReparo = falhas.filter((f) => f.fim_falha && !(f.inicio_reparo && f.fim_reparo)).length;
   const corte = (a, b) => [Math.max(a, ini), Math.min(b, fim)];
 
+  // Critérios diferentes, de propósito: a CONTAGEM usa o dia de início da falha; as HORAS usam o
+  // trecho de cada intervalo que cai dentro do período. Uma falha iniciada antes do período e
+  // encerrada dentro dele não conta como evento, mas suas horas dentro do período entram.
+  const doFiltro = bases.falhas.filter((f) => (!porAtivo || (f.tag && permitidas.has(f.tag))) && f.inicio_falha);
+  const anteriores = doFiltro.filter((f) => ms(f.inicio_falha) < ini);
+  const anterioresComHoras = anteriores.filter((f) => f.fim_falha && ms(f.fim_falha) > ini && ms(f.fim_falha) >= ms(f.inicio_falha));
+  const anterioresAbertas = anteriores.filter((f) => !f.fim_falha).length;
   const porTag = new Map();
-  for (const f of falhas) {
+  const grupo = (f) => {
     const t = f.tag ?? '(sem TAG)';
     if (!porTag.has(t)) porTag.set(t, { tag: t, falhas: 0, abertas: 0, indisp: [], reparo: [] });
-    const g = porTag.get(t);
+    return porTag.get(t);
+  };
+  const horas = (g, f) => {
+    if (f.fim_falha && ms(f.fim_falha) >= ms(f.inicio_falha)) g.indisp.push(corte(ms(f.inicio_falha), ms(f.fim_falha)));
+    if (f.inicio_reparo && f.fim_reparo && ms(f.fim_reparo) >= ms(f.inicio_reparo)) g.reparo.push(corte(ms(f.inicio_reparo), ms(f.fim_reparo)));
+  };
+  for (const f of falhas) {
+    const g = grupo(f);
     g.falhas++;
     if (!f.fim_falha) g.abertas++;
-    else if (ms(f.fim_falha) >= ms(f.inicio_falha)) g.indisp.push(corte(ms(f.inicio_falha), ms(f.fim_falha)));
-    if (f.inicio_reparo && f.fim_reparo && ms(f.fim_reparo) >= ms(f.inicio_reparo)) g.reparo.push(corte(ms(f.inicio_reparo), ms(f.fim_reparo)));
+    horas(g, f);
   }
+  for (const f of anterioresComHoras) horas(grupo(f), f);
+  const anterioresPorTag = new Map();
+  for (const f of anterioresComHoras) anterioresPorTag.set(f.tag, [...(anterioresPorTag.get(f.tag) ?? []), corte(ms(f.inicio_falha), ms(f.fim_falha))]);
+  const horasAnteriores = arred([...anterioresPorTag.values()].reduce((s, l) => s + uniaoEmHoras(l), 0));
   const ranking = [...porTag.values()].map((g) => ({
     tag: g.tag, equipamento: ativos.get(g.tag)?.descricao_ativo ?? '—', falhas: g.falhas, abertas: g.abertas,
     indisponibilidade: arred(uniaoEmHoras(g.indisp)), reparo: arred(uniaoEmHoras(g.reparo)),
   })).sort((a, b) => b.falhas - a.falhas || b.indisponibilidade - a.indisponibilidade || a.tag.localeCompare(b.tag));
+  const comEvento = ranking.filter((g) => g.falhas > 0);
   const horasIndisp = arred(ranking.reduce((s, g) => s + g.indisponibilidade, 0));
   const horasReparo = arred(ranking.reduce((s, g) => s + g.reparo, 0));
 
-  const semHorasValidas = falhas.length > 0 && abertas.length + invalidas.length === falhas.length;
+  const semHorasValidas = falhas.length > 0 && abertas.length + invalidas.length === falhas.length && !anterioresComHoras.length;
+  const notaAnteriores = anterioresComHoras.length ? ` Inclui ${horasAnteriores.toLocaleString('pt-BR')} h de ${anterioresComHoras.length} falha(s) iniciada(s) antes do período (não contadas como evento).` : '';
   const base = { fonte: FONTE, data: `Início da falha entre ${periodo.inicio} e ${periodo.fim}` };
   const indicadores = {
     falhas: {
       id: 'falhas', titulo: 'Falhas registradas', valor: falhas.length, unidade: 'falhas', estado: falhas.length ? 'ok' : 'zero',
-      formula: 'Contagem de registros com início da falha no período.', populacao: `${ranking.length} ativos com ocorrência.`,
+      formula: 'Contagem de registros com início da falha no período.', populacao: `${comEvento.length} ativos com ocorrência.`,
       exclusoes: 'Registros fora do período ou de ativos fora dos filtros.', ausencias: abertas.length ? `${abertas.length} falha(s) ainda aberta(s).` : '', ...base,
     },
     indisponibilidade: {
       id: 'indisponibilidade', titulo: 'Indisponibilidade registrada', valor: semHorasValidas ? null : horasIndisp, unidade: 'h',
-      estado: semHorasValidas ? 'indefinido' : abertas.length || invalidas.length ? 'parcial' : (falhas.length ? 'ok' : 'zero'),
-      formula: 'Soma, por TAG, do tempo entre início e fim da falha; sobreposições contadas uma vez e intervalos recortados ao período.',
-      populacao: `${falhas.length - abertas.length - invalidas.length} falhas com início e fim válidos.`,
+      estado: semHorasValidas ? 'indefinido' : abertas.length || invalidas.length || anterioresAbertas ? 'parcial' : (falhas.length || anterioresComHoras.length ? 'ok' : 'zero'),
+      formula: 'Soma, por TAG, do tempo entre início e fim da falha que cai dentro do período; sobreposições contadas uma vez. Falhas iniciadas antes do período somam só o trecho dentro dele.',
+      populacao: `${falhas.length - abertas.length - invalidas.length} falhas do período com início e fim válidos.${notaAnteriores}`,
       exclusoes: 'Falhas abertas e intervalos com fim anterior ao início não entram nas horas.',
-      ausencias: abertas.length ? `Incompleto: ${abertas.length} falha(s) aberta(s) sem fim registrado.` : '', ...base,
+      ausencias: [abertas.length && `Incompleto: ${abertas.length} falha(s) aberta(s) sem fim registrado.`,
+        anterioresAbertas && `${anterioresAbertas} falha(s) iniciada(s) antes do período continuam abertas: horas não contadas.`].filter(Boolean).join(' '), ...base,
     },
     reparo: {
-      id: 'reparo', titulo: 'Tempo de reparo registrado', valor: horasReparo, unidade: 'h', estado: semReparo || reparoInvalido ? 'parcial' : (falhas.length ? 'ok' : 'zero'),
+      id: 'reparo', titulo: 'Tempo de reparo registrado', valor: horasReparo, unidade: 'h', estado: semReparo || reparoInvalido ? 'parcial' : (falhas.length || horasReparo > 0 ? 'ok' : 'zero'),
       formula: 'Soma, por TAG, do tempo entre início e fim do reparo; separado da indisponibilidade.',
       populacao: `${falhas.length - semReparo - abertas.length} falhas com reparo registrado.`, exclusoes: 'Reparos sem início ou fim não entram.',
       ausencias: semReparo ? `${semReparo} falha(s) encerrada(s) sem intervalo de reparo.` : '', ...base,
@@ -86,16 +106,18 @@ export function calcularConfiabilidade(fonte, filtro) {
 
   const meses = {};
   for (const f of falhas) meses[dia(f.inicio_falha).slice(0, 7)] = (meses[dia(f.inicio_falha).slice(0, 7)] ?? 0) + 1;
-  const porMes = Object.keys(meses).sort().map((m) => ({ mes: m, falhas: meses[m], parcial: Boolean(metadados.ultimoMesParcial) && m === metadados.referencia.slice(0, 7) }));
-  const topo = ranking.slice(0, 8);
+  const parciais = mesesParciais(periodo);
+  const porMes = Object.keys(meses).sort().map((m) => ({ mes: m, falhas: meses[m], parcial: parciais.has(m) }));
+  // Ranking de eventos: só TAGs com falha iniciada no período (as horas de falhas anteriores já estão nos totais).
+  const topo = comEvento.slice(0, 8);
   const semOS = falhas.filter((f) => !f.numero_os).length;
 
   const frases = {
-    mes: porMes.length ? `${falhas.length} falhas no período, média de ${(falhas.length / porMes.length).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por mês com ocorrência${porMes.some((m) => m.parcial) ? '; o último mês está parcial' : ''}.` : 'Sem falhas no período filtrado.',
-    ativos: ranking.length ? `${topo[0].tag} lidera com ${topo[0].falhas} falhas e ${topo[0].indisponibilidade.toLocaleString('pt-BR')} h de indisponibilidade; os ${topo.length} primeiros somam ${topo.reduce((s, g) => s + g.falhas, 0)} de ${falhas.length} falhas.` : 'Sem ativos com falha no período filtrado.',
+    mes: porMes.length ? `${falhas.length} falhas no período, média de ${(falhas.length / porMes.length).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por mês com ocorrência${porMes.some((m) => m.parcial) ? '; há mês parcial no período' : ''}.` : 'Sem falhas no período filtrado.',
+    ativos: comEvento.length ?`${topo[0].tag} lidera com ${topo[0].falhas} falhas e ${topo[0].indisponibilidade.toLocaleString('pt-BR')} h de indisponibilidade; os ${topo.length} primeiros somam ${topo.reduce((s, g) => s + g.falhas, 0)} de ${falhas.length} falhas.` : 'Sem ativos com falha no período filtrado.',
   };
   const acoes = [];
-  if (ranking.length) acoes.push({ texto: `Analisar ${topo[0].tag} (${topo[0].equipamento}): ${topo[0].falhas} falhas no período.`, evidencia: 'Contagem de registros; não indica causa.' });
+  if (comEvento.length) acoes.push({ texto: `Analisar ${topo[0].tag} (${topo[0].equipamento}): ${topo[0].falhas} falhas no período.`, evidencia: 'Contagem de registros; não indica causa.' });
   const maiorIndisp = [...ranking].sort((a, b) => b.indisponibilidade - a.indisponibilidade)[0];
   if (maiorIndisp && maiorIndisp.indisponibilidade > 0 && maiorIndisp.tag !== topo[0]?.tag) acoes.push({ texto: `Conferir ${maiorIndisp.tag}: maior indisponibilidade registrada (${maiorIndisp.indisponibilidade.toLocaleString('pt-BR')} h).`, evidencia: 'Soma dos intervalos de falha.' });
   if (abertas.length) acoes.push({ texto: `Fechar ou atualizar ${abertas.length} falha(s) aberta(s) para completar as horas.`, evidencia: 'Fim da falha vazio.' });
@@ -108,13 +130,13 @@ export function calcularConfiabilidade(fonte, filtro) {
   if (reparoInvalido) avisos.push(`${reparoInvalido} reparo(s) com fim anterior ao início: horas não contadas.`);
 
   return {
-    referencia: metadados.referencia, periodo, indicadores, graficos: { porMes, topo }, ranking: topo, totalAtivos: ranking.length,
+    referencia: metadados.referencia, periodo, indicadores, graficos: { porMes, topo }, ranking: topo, totalAtivos: comEvento.length,
     frases, acoes: acoes.slice(0, 3), avisos,
     limitacoes: [
       'Indisponibilidade e reparo são lidos como registrados; não são disponibilidade nem MTTR aprovados.',
       'MTBF não é calculado: não há horas de operação por TAG com regra aprovada.',
       'Falhas abertas ficam fora das horas, para não inventar o fim.',
-      'Cada falha entra pelo dia de início: uma falha iniciada antes do período não entra, mesmo que termine dentro dele.',
+      'A contagem usa o dia de início da falha; as horas usam o trecho dentro do período. Uma falha iniciada antes do período não conta como evento, mas suas horas dentro dele entram.',
     ],
   };
 }
