@@ -43,9 +43,37 @@ describe('revisões do plano',()=>{
     expect(idsConcluidos(p,[{ocorrenciaId:o.id,cancelada:true}]).size).toBe(0);
     expect(idsConcluidos(p,[{equipamentoId:'eq1',tarefaId:'t1',dataPrevista:o.dataPrevista,cancelada:false}]).has(o.id)).toBe(true);
   });
-  it('recusa vigência retroativa, metadados vazios, segurança desativada e referências quebradas',()=>{
-    expect(prepararRevisao(criarProgramacao(),dados(),g,meta,'2026-01-06').ok).toBe(false);
-    expect(prepararRevisao(criarProgramacao(),dados(),g,{...meta,elaborador:''},'2026-01-05').ok).toBe(false);
+  it('aceita vigência sete dias antes de hoje e mostra as ocorrências pendentes passadas como vencidas',()=>{
+    const r=prepararRevisao(criarProgramacao(),dados(),g,meta,'2026-01-12');
+    expect(r.ok).toBe(true);
+    expect(r.programacao.revisoes[0]).toMatchObject({vigencia:'2026-01-05',criadaEm:'2026-01-12'});
+    expect(validarProgramacao(r.programacao)).toBe(true);
+    const painel=painelDaSemana(r.programacao,[],'2026-01-12');
+    expect(painel.vencidas.map(o=>o.dataPrevista)).toEqual(['2026-01-05']);
+    expect(painel.nestaSemana.map(o=>o.dataPrevista)).toEqual(['2026-01-12']);
+  });
+  it('recusa vigência anterior à última revisão mesmo quando ambas estão no passado',()=>{
+    const p=primeira();const anterior=structuredClone(p);
+    const r=prepararRevisao(p,dados(),g,{...meta,id:'r2',vigencia:'2026-01-04'},'2026-01-12');
+    expect(r).toEqual({ok:false,motivo:'A vigência não pode anteceder a última revisão.'});
+    expect(p).toEqual(anterior);
+  });
+  it('exige data válida, elaborador e resumo com a mensagem de preenchimento',()=>{
+    const invalidos=[{vigencia:''},{vigencia:'data-invalida'},{vigencia:'2026-02-30'},{elaborador:''},{elaborador:'  '},{resumo:''},{resumo:'  '}];
+    for(const campos of invalidos)expect(prepararRevisao(criarProgramacao(),dados(),g,{...meta,...campos},'2026-01-12')).toEqual({ok:false,motivo:'Informe a data de vigência, o elaborador e o resumo da revisão.'});
+  });
+  it('preserva ocorrências anteriores à vigência e já concluídas ao revisar com vigência passada',()=>{
+    const p=primeira();const concluida=p.ocorrencias[1];
+    const historico=[{id:'h1',equipamentoId:concluida.equipamentoId,tarefaId:concluida.tarefaId,dataPrevista:concluida.dataPrevista,ocorrenciaId:concluida.id,data:'2026-01-13',cancelada:false}];
+    const r=prepararRevisao(p,dados({semanas:[1,2,3,4]}),{...g,historico},{...meta,id:'r2',vigencia:'2026-01-12'},'2026-01-19');
+    expect(r.ok).toBe(true);
+    expect(r.impacto.substituidas).toBe(1);
+    expect(r.programacao.ocorrencias.find(o=>o.id===p.ocorrencias[0].id)).toEqual(p.ocorrencias[0]);
+    expect(r.programacao.ocorrencias.find(o=>o.id===concluida.id)).toEqual(concluida);
+    expect(idsConcluidos(r.programacao,historico).has(concluida.id)).toBe(true);
+    expect(p.ocorrencias.every(o=>o.situacao==='prevista')).toBe(true);
+  });
+  it('recusa segurança desativada e referências quebradas',()=>{
     expect(prepararRevisao(criarProgramacao(),dados({ativa:false}),g,meta,'2026-01-05').ok).toBe(false);
     const p=primeira();p.ocorrencias[0].revisaoId='inexistente';expect(validarProgramacao(p)).toBe(false);
   });

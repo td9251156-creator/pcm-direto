@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "Integrador: atualizar (git fetch)", "type": "shell", "command": "git fetch origin --prune", "problemMatcher": [] },
+    { "label": "Integrador: status", "type": "shell", "command": "node ferramentas/integrador.mjs status", "problemMatcher": [] },
+    { "label": "Integrador: conferir", "type": "shell", "command": "node ferramentas/integrador.mjs conferir", "dependsOn": "Integrador: atualizar (git fetch)", "problemMatcher": [] },
+    { "label": "Integrador: simular merge", "type": "shell", "command": "node ferramentas/integrador.mjs simular", "dependsOn": "Integrador: atualizar (git fetch)", "problemMatcher": [] },
+    { "label": "Integrador: tudo (com testes)", "type": "shell", "command": "node ferramentas/integrador.mjs tudo", "dependsOn": "Integrador: atualizar (git fetch)", "problemMatcher": [] },
+    { "label": "Verificar (lint + testes + build)", "type": "shell", "command": "npm run verificar", "problemMatcher": [] }
+  ]
+}

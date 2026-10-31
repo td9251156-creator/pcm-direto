@@ -39,6 +39,90 @@ e o orçamento exige escopo explícito. Nenhuma migração, push, PR ou publica�
 
 # Fila de evolução
 
+### Orientações dos indicadores — 27/10/2026
+
+O [PR #40](https://github.com/td9251156-creator/pcm-direto/pull/40), integrado após
+revisão independente sem achados, corrigiu os textos de Cadastros, Glossário e
+README que ainda descreviam os indicadores como pendentes. M5 agora dá acesso à
+tela Mensal. A regressão de navegador falhou antes pela ausência do link e passou
+após a correção; metas vazias e cenários anteriores permaneceram preservados.
+Implementador e revisor executaram instalação, lint, 301 testes/38 arquivos,
+build e navegador específico; navegador completo aprovado localmente e na CI.
+Nenhuma fórmula, dado, dependência ou modelo Office foi alterado. As pendências
+de T7/T8 e as limitações de validação humana abaixo continuam válidas.
+
+## T6 — indicadores integrados e publicados — 27/10/2026
+
+Os [PRs #37](https://github.com/td9251156-creator/pcm-direto/pull/37) e
+[#38](https://github.com/td9251156-creator/pcm-direto/pull/38) entregaram a base de
+cálculo e as telas Mensal/Falhas, após aprovação das fórmulas, do exemplo e das
+regras pelo mantenedor. Este registro atualiza a situação histórica da T6 abaixo.
+
+- Consulta por ativo e mês fechado; horas planejadas já excluem paradas programadas.
+- Parada mensal total conferida pelo usuário, contando sobreposições uma vez;
+  as durações individuais de falha não são somadas automaticamente.
+- Uma falha por registro no mês da ocorrência, inclusive com parada zero;
+  corrigir o mesmo registro mantém a contagem.
+- Reparos entram no MTTR pelo mês da conclusão informada, com sua duração total,
+  separada da parada. Dados antigos não recebem conclusão ou duração presumidas.
+  Campos vazios não viram zero; reparo concluído sem duração impede MTTR parcial.
+- Exemplo aprovado: 720 h planejadas, 6 h paradas, três falhas e três reparos
+  concluídos com 6 h totais: 714 h operadas, MTBF 238 h, MTTR 2 h e disponibilidade
+  99,17%. Quocientes sem divisor válido aparecem como não calculados.
+
+**Evidências:** implementador e revisor independente executaram instalação,
+lint, 301 testes em 38 arquivos e build. Navegador completo aprovado localmente
+e na CI; roteiro específico repetido pelo revisor, com backups 1/2/3, falta de
+espaço simulada, recuperação, gravação lenta, teclado e 320/1280 px. Gestão antiga
+permanece aceita; dados novos usam gestão 2, recusada pelo leitor antigo, e a
+sequência do IndexedDB impede sobrescrita por uma aba desatualizada. O formato
+do backup completo continua 3. O revisor aprovou sem bloqueadores.
+
+Merge autorizado ao coordenador e publicação confirmados na
+[execução da main](https://github.com/td9251156-creator/pcm-direto/actions/runs/40572591819).
+O pacote servido por pcmdireto.me contém a nova tela. Modelos Office e dependências
+preservados. Leitor de tela, aparelhos reais e Office não foram conferidos nesta
+entrega. T7 continua aguardando as fichas dos três técnicos; T8 aguarda o teste e
+as regras de privacidade. A aplicação da migração do catálogo no banco real
+continua sem confirmação; nenhum acesso ao Supabase real foi feito nesta tarefa.
+
+## Rodada T0–T4 integrada — 27/10/2026
+
+O mantenedor integrou os PRs na ordem T0 → T2 → T3 → T4 → T1. Este registro
+não acrescenta funcionalidades nem substitui as decisões técnicas pendentes.
+
+| Tarefa | Entrega integrada | PR |
+|---|---|---|
+| T0 | Coordenação paralela autorizada para arquivos sem sobreposição, orientações para agentes e integrador dos ramos. | [#31](https://github.com/td9251156-creator/pcm-direto/pull/31) |
+| T2 | Página de apresentação com 18 modelos em seis grupos, downloads existentes e seis exemplos; botões de acesso corrigidos. | [#32](https://github.com/td9251156-creator/pcm-direto/pull/32) |
+| T3 | Três artigos na trilha de modelos: ordens de serviço, estoque/compras e plano de ação 5W2H, usando as orientações existentes. | [#33](https://github.com/td9251156-creator/pcm-direto/pull/33) |
+| T4 | Catálogo com sete tipos específicos e a opção Outro tipo; nova migração preservando as validações anteriores. | [#34](https://github.com/td9251156-creator/pcm-direto/pull/34) |
+| T1 | Vigência anterior a hoje permitida, mantendo data válida, elaborador, resumo e a ordem das revisões; previsões vigentes anteriores a hoje e sem conclusão aparecem vencidas. | [#35](https://github.com/td9251156-creator/pcm-direto/pull/35) |
+
+**Verificações da rodada:** houve revisão independente por agentes diferentes dos
+implementadores. A última conferência conjunta aprovou lint, 272 testes em 36 arquivos
+e build. As CIs dos PRs executaram a suíte completa de navegador com sucesso. Depois
+de cada merge, os ramos restantes receberam a main e repetiram as verificações.
+Foram usados dados fictícios; o agente executou SQL somente em banco descartável
+na memória, sem acessar ou alterar o banco real.
+
+**Pendências e limites:** a aplicação de
+`supabase/migrations/20261027120000_tipos_catalogo.sql` no Supabase real ainda não
+foi confirmada pelo mantenedor. Até a aplicação, o servidor pode recusar os três
+tipos novos; as instruções manuais estão no PR #34. A suíte local no Windows teve
+falha ao encerrar um recurso após os testes funcionais; essa execução não foi
+declarada aprovada. A suíte completa passou na CI Linux, sem alterar testes ou
+prazos. Leitor de tela, aparelhos reais e conferência no Office não foram refeitos
+nesta rodada. Os modelos Office e as dependências não foram alterados.
+
+### Próximos itens — aguardam o mantenedor
+
+| Tarefa | Situação e próximo passo |
+|---|---|
+| T6 — MTBF, MTTR e disponibilidade | Somente diagnóstico. Aguardar fórmulas e exemplo numérico aprovados. Existem falhas com horas de parada opcionais e execuções com datas e vínculos; as horas previstas das tarefas não são horas de operação. Na base operacional do app, não foram encontrados campos de horas operacionais por período nem de início/fim de reparo. |
+| T7 — Teste com três técnicos | Aguardar as fichas do teste; tratar cada assunto em PR pequeno, com reprodução do problema. |
+| T8 — QR, foto e assinatura | Aguardar o resultado do teste e as regras de privacidade do mantenedor. Essas funções não foram implementadas nesta rodada. |
+
 ## Troca dos modelos pelo novo pacote do mantenedor (25/10/2026)
 
 PCMD-Modelos.zip substitui os seis editáveis e seis exemplos, preservados byte a byte. As 12

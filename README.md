@@ -85,8 +85,10 @@ O separador pode ser ponto e vírgula, vírgula ou tabulação (o padrão ao cop
 Pessoas podem ser editadas e inativadas. Preencha e salve cada formulário; os rascunhos dos demais
 formulários de Cadastros são preservados ao salvar outro cadastro na mesma tela. Remover um ativo
 não apaga os registros anteriores: eles ficam identificados como fora da lista atual.
-Metas não definidas permanecem vazias. O app não calcula MTBF, MTTR ou disponibilidade sem regras
-técnicas aprovadas. Referências começam não verificadas; nenhuma conformidade é certificada.
+Metas não definidas permanecem vazias. Consulte MTBF, MTTR e disponibilidade em Mensal, por ativo
+e mês fechado, com horas planejadas sem paradas programadas, parada total conferida e registros
+de falhas e reparos. Conclusão e duração do reparo são informadas em Falhas; dados ausentes não
+viram zero. Referências começam não verificadas; nenhuma conformidade é certificada.
 
 Os seis modelos Excel e Word recebidos estão em `public/modelos`. Documentos preenche cópias
 com os dados da revisão; a conferência no Excel/LibreOffice continua pendente. Exportações

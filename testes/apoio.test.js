@@ -18,6 +18,23 @@ describe('Central de apoio', () => {
     for (const [id] of TRILHAS) expect(ARTIGOS.some((a) => a[1] === id)).toBe(true);
   });
 
+  it.each([
+    ['ordens-servico', ['PCMD-K02', 'equipamento', 'solicitação', 'prioridade', 'responsável', 'encerramento']],
+    ['estoque-compras', ['PCMD-K04', 'PCMD-K05', 'saldo inicial', 'movimentação', 'pedido', 'recebimento']],
+    ['plano-acao-5w2h', ['PCMD-K07', 'o que', 'por quê', 'onde', 'quando', 'quem', 'como', 'quanto', 'avanço']],
+  ])('orienta o modelo em %s na trilha de modelos', (id, orientacoes) => {
+    const artigo = ARTIGOS.find(([artigoId]) => artigoId === id);
+    expect(artigo).toBeDefined();
+    expect(artigo[1]).toBe('modelos');
+    for (const indice of [2, 3, 5]) expect(artigo[indice].trim()).not.toBe('');
+    const conteudo = artigo.slice(2, 6).join(' ');
+    for (const orientacao of orientacoes) expect(conteudo).toContain(orientacao);
+    expect(artigo[5]).toContain('Mais → Modelos para sua rotina');
+    expect(artigo[5]).toContain('arquivo');
+    expect(artigo[6]).toBe('27/10/2026');
+    expect(conteudo).not.toMatch(/\b(NR|NBR|ISO)[ -]?\d/i);
+  });
+
   it('nenhum texto promete conformidade, aprovação ou ganho', () => {
     const textos = [...ARTIGOS.flat(), ...GLOSSARIO.flat()].join(' ').toLowerCase();
     for (const proibido of ['garante', 'garantido', 'certificado', 'em conformidade com', 'aprovação em auditoria']) {

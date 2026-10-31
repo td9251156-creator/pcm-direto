@@ -4,6 +4,72 @@ Diagnóstico de 20/10/2026, a partir da revisão `18e06e1`. Ordem de trabalho: e
 qualidade, funções novas e melhorias de uso. Um assunto por pull request (PR); o mantenedor
 revisa antes de publicar. Itens ainda não implementados não são promessas de entrega.
 
+## T6 — indicadores por ativo e mês fechado — 27/10/2026
+
+Complemento integrado no [PR #40](https://github.com/td9251156-creator/pcm-direto/pull/40):
+Cadastros, Glossário e README agora orientam para os indicadores disponíveis;
+M5 tem acesso direto a Mensal. Teste de navegador reproduziu a ausência do link
+antes da correção e passou depois, mantendo meta vazia e cenários de dados.
+Revisor independente aprovou sem achados após instalação, lint, 301 testes/38
+arquivos, build e navegador específico próprios; o navegador completo passou
+localmente e na CI. Sem alteração de cálculos, metas, dados, templates ou dependências.
+
+Entregues nos [PRs #37](https://github.com/td9251156-creator/pcm-direto/pull/37) e
+[#38](https://github.com/td9251156-creator/pcm-direto/pull/38), após as aprovações
+do mantenedor. A tela Mensal recebe horas planejadas sem paradas programadas e
+parada total mensal conferida, sem duplicar sobreposições. Cada registro de Falhas
+conta no mês da ocorrência; corrigir o registro não duplica a falha. Conclusão e
+tempo total de reparo são campos separados: MTTR considera os reparos pelo mês
+de conclusão e não presume dados a partir da parada antiga.
+
+O exemplo aprovado resulta em MTBF 238 h, MTTR 2 h e disponibilidade 99,17% para
+720 h planejadas, 6 h paradas, três falhas e três reparos concluídos com 6 h totais.
+Ausência de informação permanece desconhecida; divisões indefinidas e MTTR com
+reparos concluídos sem duração não produzem estimativas parciais.
+
+Instalação, lint, 301 testes/38 arquivos e build aprovados pelo implementador e
+pelo revisor independente. Navegador completo passou localmente e na CI;
+o revisor repetiu o roteiro específico de backups 1/2/3, persistência, quota,
+navegação, teclado e 320/1280 px. Provas extras confirmaram a recusa de gestão 2
+pelo leitor antigo e a proteção contra sobrescrita por sequência antiga no
+IndexedDB. O backup completo mantém formato 3; gestão 1 continua aceita.
+
+Revisão independente: aprovada sem bloqueadores. Merge autorizado e
+[publicação concluída](https://github.com/td9251156-creator/pcm-direto/actions/runs/40572591819),
+com o novo conteúdo confirmado no pacote público. Templates e dependências
+preservados; aparelho real, leitor de tela e Office não conferidos. T7/T8 e a
+confirmação da migração real do catálogo continuam pendentes conforme a fila.
+Esta entrega substitui apenas a situação histórica dos indicadores registrada
+na rodada anterior abaixo.
+
+## Entregas T0–T4 — 27/10/2026
+
+Integradas pelo mantenedor, na ordem combinada:
+
+- [T0 / #31](https://github.com/td9251156-creator/pcm-direto/pull/31): autorização condicional para agentes em arquivos separados, orientações e integrador. Foram corrigidos, com autorização, os nomes dos ramos, a chamada do npm no Windows, a identidade Git limitada ao comando e uma variável não utilizada.
+- [T2 / #32](https://github.com/td9251156-creator/pcm-direto/pull/32): apresentação dos 18 modelos por finalidade, com links apenas para arquivos existentes e seis exemplos reais.
+- [T3 / #33](https://github.com/td9251156-creator/pcm-direto/pull/33): guias curtos de ordens de serviço, estoque/compras e 5W2H, sem regras técnicas novas ou promessa de módulos operacionais no app.
+- [T4 / #34](https://github.com/td9251156-creator/pcm-direto/pull/34): inclusão de transportador de correia, ventilador/exaustor e unidade hidráulica no catálogo, mantendo Outro tipo. A nova migração altera somente a função de validação; as migrações anteriores permanecem intactas.
+- [T1 / #35](https://github.com/td9251156-creator/pcm-direto/pull/35): aceitação de vigência anterior a hoje, mantendo os campos obrigatórios e a recusa de data anterior à última revisão. Testes cobrem vencidas sem registro e preservação de ocorrências realizadas ou anteriores à vigência.
+
+Nas tarefas T1, T3 e T4, novos testes falharam antes das correções. Cada tarefa
+passou por revisão independente de outro agente. A última conferência conjunta aprovou lint, 272 testes em
+36 arquivos e build; as CIs dos cinco PRs concluíram a suíte completa de navegador.
+Os ramos restantes foram atualizados e verificados após cada merge. A migração
+também passou em PostgreSQL descartável na memória, com as regras de autoria,
+permissões, PDFs e moderação preservadas. O agente não acessou o banco real.
+
+A aplicação da migração no Supabase real permanece **pendente de confirmação do
+mantenedor**; os tipos novos podem ser recusados pelo servidor até essa etapa.
+A falha local de encerramento de recurso no Windows permanece registrada, sem
+enfraquecer testes ou prazos; a suíte completa passou na CI Linux. Leitor de tela,
+aparelhos reais e conferência no Office não foram refeitos nesta rodada. Não houve
+alteração dos modelos Office, das dependências ou do formato dos backups.
+
+Indicadores, correções do teste com três técnicos e QR/foto/assinatura continuam
+aguardando as decisões e os materiais descritos na [fila](FILA.md); não foram
+declarados entregues.
+
 ## Verificação inicial
 
 - Leitura de README, decisões, roteiro, biblioteca, contribuição, segurança, código e testes.
