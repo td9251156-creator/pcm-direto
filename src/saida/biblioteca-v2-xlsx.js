@@ -186,6 +186,34 @@ export async function preencherPcmMan001(bytes, dados) {
   return fecharPacote(p);
 }
 
+// Data com hora opcional (AAAA-MM-DD[THH:MM:SS]) → número de série do Excel.
+const serialDataHora = (v) => (v ? serialData(v.slice(0, 10)) + (v.length > 10 ? (Date.parse(`1970-01-01T${v.slice(11, 19)}Z`) / 86400000) : 0) : null);
+
+function cadastrosLadoALado(p, dados) {
+  const maior = Math.max(dados.ativos.length, dados.pessoas.length, dados.familias.length, dados.setores.length);
+  inserirLinhas(p, 'Cadastros', 29, maior - 25);
+  const cad = [];
+  dados.ativos.forEach((a, i) => ['tag', 'descricao', 'familia', 'setor'].forEach((c, j) => cad.push([`${'ABCD'[j]}${5 + i}`, a[c] || null])));
+  dados.pessoas.forEach((n, i) => cad.push([`F${5 + i}`, n]));
+  dados.familias.forEach((n, i) => cad.push([`H${5 + i}`, n]));
+  dados.setores.forEach((n, i) => cad.push([`J${5 + i}`, n]));
+  escrever(p, 'Cadastros', cad);
+}
+
+/**
+ * PCM-MAN-008: Leia-me (elaborado/aprovado), Registro de falhas e Cadastros. Ficha de falha e Pareto ficam para a equipe.
+ * @param dados resultado de dadosPcmMan008 (src/logica/biblioteca-v2-dados.js)
+ */
+export async function preencherPcmMan008(bytes, dados) {
+  await conferirOriginal(bytes, 'PCM-MAN-008');
+  const p = await abrirPacote(bytes);
+  cadastrosLadoALado(p, dados);
+  preencherTabela(p, 'Registro de falhas', 29, dados.falhas.map((f) => ({ A: f.referencia, B: f.tag, D: f.os || null, E: f.descricao || null,
+    F: f.causa || null, G: f.acao || null, H: serialDataHora(f.inicio), I: serialDataHora(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo) })));
+  escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
+  return fecharPacote(p);
+}
+
 /**
  * PCM-MAN-002: Leia-me (elaborado/aprovado), Cadastros, Plano ("Outras atividades") e Cronograma.
  * Criticidade e FMECA ficam em branco: dependem de análise humana e de escala própria do modelo.
@@ -197,14 +225,7 @@ export async function preencherPcmMan002(bytes, dados) {
   for (const nome of ['Plano', 'Cronograma', 'Cadastros']) p.abas.get(nome).xml = expandirCompartilhadas(p.abas.get(nome).xml);
 
   // Cadastros: quatro tabelas lado a lado nas linhas 5 a 29 (25 linhas).
-  const maiorCadastro = Math.max(dados.ativos.length, dados.pessoas.length, dados.familias.length, dados.setores.length);
-  inserirLinhas(p, 'Cadastros', 29, maiorCadastro - 25);
-  const cad = [];
-  dados.ativos.forEach((a, i) => ['tag', 'descricao', 'familia', 'setor'].forEach((c, j) => cad.push([`${'ABCD'[j]}${5 + i}`, a[c] || null])));
-  dados.pessoas.forEach((n, i) => cad.push([`F${5 + i}`, n]));
-  dados.familias.forEach((n, i) => cad.push([`H${5 + i}`, n]));
-  dados.setores.forEach((n, i) => cad.push([`J${5 + i}`, n]));
-  escrever(p, 'Cadastros', cad);
+  cadastrosLadoALado(p, dados);
 
   // Plano: "Outras atividades" nas linhas 21 a 30; o Cronograma espelha o Plano nas linhas 8 a 33.
   const extra = dados.atividades.length - 10;

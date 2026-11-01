@@ -7,8 +7,8 @@ import { montarDados } from '../src/logica/pacote.js';
 import { criarGestao } from '../src/logica/gestao.js';
 import { criarProgramacao, prepararRevisao } from '../src/logica/programacao.js';
 import { prepararEmissao } from '../src/saida/pcmd.js';
-import { dadosPcmMan002, dadosPcmMan001 } from '../src/logica/biblioteca-v2-dados.js';
-import { preencherPcmMan002, preencherPcmMan001, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
+import { dadosPcmMan002, dadosPcmMan001, dadosPcmMan008 } from '../src/logica/biblioteca-v2-dados.js';
+import { preencherPcmMan002, preencherPcmMan001, preencherPcmMan008, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
 import { abrirWorkbookBibliotecaV2 } from '../src/integracao/biblioteca-pcm-v2.js';
 
 const ORIGINAL = 'public/modelos/biblioteca-v2/PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx';
@@ -130,7 +130,47 @@ describe('PCM-MAN-002 preenchido', () => {
   });
 });
 
-const ORIGINAL_001 = 'public/modelos/biblioteca-v2/PCM-MAN-001_Controle-Documental_R00.xlsx';
+describe('PCM-MAN-008 preenchido', () => {
+  function emissao008(qtdApp = 2) {
+    const e = emissao(2);
+    const g = e.estado.gestao;
+    e.falhas = Array.from({ length: qtdApp }, (_, i) => ({ id: 'fa' + i, equipamentoId: 'eq0', tag: 'PRD-MOT-001', data: '2026-05-0' + (1 + (i % 9)),
+      sintoma: 'Vibração fictícia ' + i, causa: 'Folga', acao: 'Reaperto', peca: i ? '' : 'Rolamento fictício', responsavelId: 'p1',
+      horasParada: i ? null : 2.5, dataConclusao: '', horasReparo: null }));
+    g.versao = 3;
+    g.operacao = { versao: 1, ativos: [{ tag: 'IMP-01', descricao_ativo: 'Ativo importado', familia: 'Bomba', setor: 'UTL', importacao: 'i1' }],
+      ordens_servico: [], custos_manutencao: [], orcamento: [], importacoes: [],
+      falhas: [{ referencia_falha: 'F-IMP-1', tag: 'IMP-01', equipamento: null, numero_os: 'OS-1', descricao_falha: 'Falha importada', causa: null, acao: null,
+        inicio_falha: '2026-04-10T08:30:00', fim_falha: '2026-04-10T12:00:00', inicio_reparo: '2026-04-10T09:00:00', fim_reparo: '2026-04-10T12:00:00', importacao: 'i1' },
+      { referencia_falha: 'F-IMP-2', tag: 'IMP-01', equipamento: null, numero_os: null, descricao_falha: 'Depois do corte', causa: null, acao: null,
+        inicio_falha: '2026-07-10T08:30:00', fim_falha: null, inicio_reparo: null, fim_reparo: null, importacao: 'i1' }] };
+    return e;
+  }
+
+  it('junta falhas importadas (com hora) e do app (só data), sem inventar horários', () => {
+    const d = dadosPcmMan008(emissao008());
+    expect(d.falhas.map((f) => f.referencia)).toEqual(['F-IMP-1', 'fa0', 'fa1']); // F-IMP-2 é posterior ao corte
+    expect(d.falhas[1]).toMatchObject({ inicio: '2026-05-01', fim: null, acao: 'Reaperto · Peça: Rolamento fictício · Parada: 2,5 h · Responsável: Técnica Fictícia' });
+    expect(d.ativos.map((a) => a.tag)).toContain('IMP-01');
+  });
+
+  it('amplia o registro e grava data e hora como valores do Excel', async () => {
+    const d = dadosPcmMan008(emissao008(40));
+    const saida = await preencherPcmMan008(readFileSync('public/modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx'), d);
+    const zip = await JSZip.loadAsync(saida);
+    const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
+    const reg = wb.getWorksheet('Registro de falhas');
+    expect(await zip.file('xl/tables/table1.xml').async('string')).toContain('ref="A4:K45"');
+    expect(reg.getCell('A5').value).toBe('F-IMP-1');
+    expect(reg.getCell('H5').value).toEqual(new Date('2026-04-10T08:30:00Z'));
+    expect(reg.getCell('I6').value).toBe(null);
+    expect(texto(reg.getCell('A46').value)?.trim() ?? '').toBe('');
+    expect(await zip.file('xl/worksheets/sheet3.xml').async('string')).toContain('<mergeCell ref="A46:K46"/>');
+    expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('IMP-01');
+  });
+});
+
+const ORIGINAL_001 ='public/modelos/biblioteca-v2/PCM-MAN-001_Controle-Documental_R00.xlsx';
 
 describe('PCM-MAN-001 preenchido', () => {
   function emissao001(requisitos = 2) {

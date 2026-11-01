@@ -51,6 +51,42 @@ export function dadosPcmMan001(emissao) {
   };
 }
 
+/**
+ * PCM-MAN-008. Registro de falhas: as falhas importadas do 008 (campos completos) e as do registro do app até a data de
+ * corte. As do app têm só a data (sem hora): o início leva o dia e o fim fica vazio; peça, horas de parada/reparo,
+ * conclusão e responsável não têm coluna e vão escritos na ação. Pareto e Ficha de falha ficam para a equipe.
+ */
+export function dadosPcmMan008(emissao) {
+  const { estado: e, revisao: r, meta: m, falhas } = emissao;
+  const nomeTipo = new Map(e.biblioteca.tipos.map((t) => [t.id, t.nome]));
+  const pessoa = new Map(e.gestao.pessoas.map((p) => [p.id, p.nome]));
+  const num = (n) => Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+  const op = e.gestao.operacao;
+  const importadas = (op?.falhas ?? []).filter((f) => f.inicio_falha.slice(0, 10) <= m.dataCorte).map((f) => ({
+    referencia: f.referencia_falha, tag: f.tag, os: f.numero_os ?? '', descricao: f.descricao_falha ?? '', causa: f.causa ?? '', acao: f.acao ?? '',
+    inicio: f.inicio_falha, fim: f.fim_falha, inicioReparo: f.inicio_reparo, fimReparo: f.fim_reparo,
+  }));
+  const vistas = new Set(importadas.map((f) => f.referencia));
+  const doApp = falhas.filter((f) => !vistas.has(f.id)).map((f) => {
+    const extras = [f.peca && `Peça: ${f.peca}`, Number.isFinite(f.horasParada) && `Parada: ${num(f.horasParada)} h`,
+      Number.isFinite(f.horasReparo) && `Reparo: ${num(f.horasReparo)} h`, f.dataConclusao && `Concluída em ${f.dataConclusao.split('-').reverse().join('/')}`,
+      pessoa.get(f.responsavelId) && `Responsável: ${pessoa.get(f.responsavelId)}`].filter(Boolean);
+    return { referencia: f.id, tag: f.tag, os: '', descricao: f.sintoma, causa: f.causa, acao: [f.acao, ...extras].filter(Boolean).join(' · '),
+      inicio: f.data, fim: null, inicioReparo: null, fimReparo: null };
+  });
+  const registros = [...importadas, ...doApp].sort((a, b) => a.inicio.localeCompare(b.inicio) || a.referencia.localeCompare(b.referencia));
+  const ativos = r.equipamentos.map((a) => ({ tag: a.tag, descricao: a.descricao, familia: nomeTipo.get(a.tipo) ?? a.tipo, setor: a.setor }));
+  const doPlano = new Set(ativos.map((a) => a.tag));
+  for (const a of op?.ativos ?? []) if (!doPlano.has(a.tag)) ativos.push({ tag: a.tag, descricao: a.descricao_ativo ?? '', familia: a.familia ?? '', setor: a.setor ?? '' });
+  ativos.sort((a, b) => a.tag.localeCompare(b.tag, 'pt-BR'));
+  return {
+    elaborado: m.elaborador, aprovado: m.aprovador, falhas: registros, ativos,
+    setores: unicos([...e.gestao.organizacao.setores, ...ativos.map((a) => a.setor)]),
+    familias: unicos(ativos.map((a) => a.familia)),
+    pessoas: unicos([...e.gestao.pessoas.filter((p) => p.ativo).map((p) => p.nome), ...falhas.map((f) => pessoa.get(f.responsavelId))]),
+  };
+}
+
 const unicos = (lista) => [...new Set(lista.map((s) => String(s ?? '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
 
 /**

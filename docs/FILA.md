@@ -16,7 +16,8 @@ humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta
 | P6 | Preencher PCM-MAN-002 (plano) | Alta | **Verificado** (parcial) + **Validação humana** no Office | D2 para Criticidade | Cópia integral; 100 ativos/940 atividades abertos no Excel sem reparo e sem erro de fórmula. Criticidade/FMECA em branco. |
 | P7 | Retirar PCMD-02 e PCMD-03/04 | Média | **Bloqueado** | D2 e D3 | O 002 ainda não leva notas de criticidade, ocorrências nem execuções. |
 | P8a | Preencher PCM-MAN-001 | Média | **Verificado** + **Validação humana** no Office | — | Documentos (este controle, emitidos pelo app, referências), revisões e pessoas; 32 documentos abertos no Excel sem erro. PCMD-01 mantido até D6. |
-| P8b | Preencher PCM-MAN-008, 018 e 019 e retirar PCMD-05, W1, W2 | Média | **Adiado** para a próxima etapa | — | Um modelo por vez, com o mesmo gerador; Word: só controles de metadados (contrato `camposDocumento`). |
+| P8b | Preencher PCM-MAN-008 | Média | **Verificado** + **Validação humana** no Office | — | Falhas importadas (com hora) e do app (só data; peça e horas na ação); 41 falhas abertas no Excel, só os #N/D do Pareto vazio (iguais ao original). PCMD-05 mantido até D7. |
+| P8c | Preencher os Word 018 e 019 e retirar PCMD-W1, W2 | Média | **Adiado** para a próxima etapa | — | Só controles de metadados (contrato `camposDocumento`); corpo depende de texto humano. |
 | P9 | "Preencher um modelo" (5 refeitos) só com v2 | Média | **Adiado** | P8 | Página de modelos já usa só v2; o preenchimento individual ainda usa 5 arquivos anteriores. |
 | P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais` (horas planejadas e de parada por ativo/mês fechado). |
 | P11 | Janelas de parada e agrupamento | Baixa | **Bloqueado** | D4 | Nenhuma regra presumida; tarefas de segurança nunca adiadas. |
@@ -41,6 +42,10 @@ humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta
   histórico no PCMD-03/04 até haver modelo v2 equivalente (o 006 de check-list ou o 011 de indicadores não são histórico).
 - **D6 — Retirar o PCMD-01.** O PCM-MAN-001 não tem lugar para função/especialidade das pessoas, referencial e metas da
   organização (continuam no app e no backup). Proposta: aceitar essa diferença e retirar o PCMD-01. Pergunta: aceita?
+- **D7 — Retirar o PCMD-05.** O PCM-MAN-008 pede início e fim com hora; as falhas registradas no app têm só a data e as
+  horas de parada/reparo. Exemplo: falha de 05/05 com 2,5 h de parada vira início 05/05 (sem hora), fim vazio e
+  "Parada: 2,5 h" na ação. Proposta: no registro de falhas do app, passar a pedir hora de início e fim (opcionais) e só
+  depois retirar o PCMD-05. Pergunta: aceita, ou retira já com a parada escrita na ação?
 - **D4 — Janelas de parada:** limites de agrupamento, capacidade e o que nunca pode mudar de data.
 - **D5 — QR, fotos e assinaturas:** finalidade, tamanho máximo por foto, retenção, e que "assinatura" é registro de ciência,
   sem validade jurídica.

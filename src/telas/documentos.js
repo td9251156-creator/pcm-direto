@@ -8,7 +8,7 @@ import {esc,baixar,avisar} from '../ui.js';
 import {dataExibida} from '../logica/consulta-execucao.js';
 import {guiaModelo} from '../dados/guias-modelos.js';
 import {MODELOS_V2,VERSAO_BIBLIOTECA_V2} from '../dados/modelos-v2.js';
-import {dadosPcmMan001,dadosPcmMan002} from '../logica/biblioteca-v2-dados.js';
+import {dadosPcmMan001,dadosPcmMan002,dadosPcmMan008} from '../logica/biblioteca-v2-dados.js';
 
 // Modelos da Biblioteca v2 que o app já preenche. O gerador só é carregado ao gerar.
 const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
@@ -18,7 +18,11 @@ const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-002'),
   preenche:'Cadastros (ativos, setores, famílias e pessoas), Plano com as tarefas da revisão ativa (a cada quantos dias, responsável, duração e 1ª execução) e o Cronograma ligado ao Plano. Tarefas de segurança vêm marcadas.',
   branco:'Criticidade e FMECA (análise da equipe; a escala do modelo é diferente da criticidade do app), componente, tipo de tarefa e se exige parada.',
-  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan002(bytes,dadosPcmMan002(emissao))}];
+  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan002(bytes,dadosPcmMan002(emissao))},
+  {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-008'),
+  preenche:'Registro de falhas até a data de corte: as importadas do 008, com data e hora, e as do registro do app (só a data; peça, horas de parada e reparo vão escritas na ação), além dos cadastros.',
+  branco:'Hora de início e fim das falhas registradas no app, a Ficha de falha e o Pareto (escolha das categorias pela equipe).',
+  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan008(bytes,dadosPcmMan008(emissao))}];
 
 const rascunhoEmissao={dataCorte:null,elaborador:null,aprovado:false,aprovador:'',gerando:false,codigo:'',mensagem:''};
 let refletirEmissao=()=>{};
