@@ -36,6 +36,7 @@ await executarComRecursos({ limiteTotal: 240000,
     await p.locator('#form-ciencia input[name="declaro"]').check(); await p.locator('#form-ciencia button').click();
     await p.locator('.ciencia li').first().waitFor();
     const lerCiencias = () => p.evaluate(async () => (await import('/src/estado.js')).estado.gestao.historico.find((h) => !h.cancelada).ciencias);
+    assert.equal(await p.locator('dialog.painel-execucao').count(), 1, 'um único painel aberto');
     const c1 = await lerCiencias();
     assert.equal(c1.length, 1); assert.equal(c1[0].nome, 'Supervisora Fictícia'); assert.match(c1[0].conteudo, /Execução fictícia/); assert.ok(Date.parse(c1[0].em));
     await p.locator('#ciencia-nome').fill('Gestor Fictício'); await p.locator('#form-ciencia input[name="declaro"]').check(); await p.locator('#form-ciencia button').click();

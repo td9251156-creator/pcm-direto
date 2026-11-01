@@ -28,19 +28,26 @@ export function abrirExecucao(id, atualizar = () => {}) {
   dialogo.addEventListener('click', e => { if (e.target === dialogo && !gravando) { const r=dialogo.getBoundingClientRect(); if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialogo.close(); } });
   dialogo.addEventListener('close', () => { dialogo.remove(); if(location.hash!==rota)return; if(anterior?.isConnected)anterior.focus();else if(!document.activeElement||document.activeElement===document.body||document.activeElement===dialogo)document.querySelector('#conteudo')?.focus(); }, {once:true});
   dialogo.querySelectorAll('[data-data]').forEach(b=>b.onclick=()=>{dialogo.querySelector('[name=data]').value=b.dataset.data;});
-  const formCiencia = dialogo.querySelector('#form-ciencia');
-  if (formCiencia) formCiencia.onsubmit = async e => {
-    e.preventDefault(); if (gravando) return; gravando = true; const botao = formCiencia.querySelector('button'); botao.disabled = true;
-    try {
-      const nova = copiaGestao(); const i = nova.historico.findIndex(h => h.id === feita.id);
-      const r = i < 0 ? { ok: false, motivo: 'Execução não encontrada.' } : acrescentarCiencia(nova.historico[i], formCiencia.elements.nome.value, novoId());
-      if (!r.ok) { formCiencia.querySelector('#erro-ciencia').textContent = r.motivo; return; }
-      nova.historico[i] = r.execucao; nova.versao = Math.max(nova.versao, 2); // nunca rebaixa uma base com dados da operação
-      const s = await atualizarGestao(nova);
-      if (!s.ok) { formCiencia.querySelector('#erro-ciencia').textContent = s.motivo; return; }
-      gravando = false; dialogo.close(); abrirExecucao(id, atualizar); avisar(s.guardado ? 'Ciência registrada neste aparelho.' : 'Não foi possível guardar; baixe um backup antes de sair.');
-    } finally { gravando = false; botao.disabled = false; }
+  // Ciência: atualiza só a seção, no mesmo painel (reabrir criaria dois painéis com os mesmos campos).
+  const ligarCiencia = () => {
+    const formCiencia = dialogo.querySelector('#form-ciencia'); if (!formCiencia) return;
+    formCiencia.onsubmit = async e => {
+      e.preventDefault(); if (gravando) return; gravando = true; const botao = formCiencia.querySelector('button'); botao.disabled = true;
+      try {
+        const nova = copiaGestao(); const i = nova.historico.findIndex(h => h.id === feita.id);
+        const r = i < 0 ? { ok: false, motivo: 'Execução não encontrada.' } : acrescentarCiencia(nova.historico[i], formCiencia.elements.nome.value, novoId());
+        if (!r.ok) { formCiencia.querySelector('#erro-ciencia').textContent = r.motivo; return; }
+        nova.historico[i] = r.execucao; nova.versao = Math.max(nova.versao, 2); // nunca rebaixa uma base com dados da operação
+        const s = await atualizarGestao(nova);
+        if (!dialogo.isConnected) return;
+        if (!s.ok) { formCiencia.querySelector('#erro-ciencia').textContent = s.motivo; return; }
+        dialogo.querySelector('.ciencia').outerHTML = blocoCiencia(estado.gestao.historico.find(h => h.id === feita.id));
+        ligarCiencia(); dialogo.querySelector('#ciencia-nome')?.focus();
+        avisar(s.guardado ? 'Ciência registrada neste aparelho.' : 'Não foi possível guardar; baixe um backup antes de sair.');
+      } finally { gravando = false; if (botao.isConnected) botao.disabled = false; }
+    };
   };
+  ligarCiencia();
   const form = dialogo.querySelector('form:not(#form-ciencia)');
   if (form) form.onsubmit=async e=>{
     e.preventDefault(); if(gravando)return; gravando=true;
