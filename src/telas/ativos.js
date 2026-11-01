@@ -13,8 +13,9 @@ export function telaAtivos(main, ir) {
   // Etiqueta QR (D5): #ativos?ativo=<id> abre direto o ativo lido pela câmera do celular.
   const pedido=new URLSearchParams(location.hash.split('?')[1]||'').get('ativo');
   let selecionado=equipamentos.some(e=>e.id===pedido)?pedido:equipamentos[0]?.id; let setor=''; let busca='';
-  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Neste aparelho</p><h2>Ativos da fábrica</h2><p class="origem">Consulte equipamentos, ocorrências e falhas. <a href="#equipamentos">Cadastrar ou editar ativos</a></p></header><div class="ativos-paineis"><section class="cartao ativos-lista"><label for="buscar-ativos">Buscar por TAG ou descrição</label><input id="buscar-ativos" type="search" placeholder="Ex.: motor, UTL…"><div class="chips" id="setores-ativos" role="group" aria-label="Filtrar por setor"></div><p id="contagem-ativos" role="status"></p><div id="lista-ativos"></div></section><section class="cartao" id="detalhe-ativo" aria-label="Detalhes do ativo"></section></div>`;
+  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Neste aparelho</p><h2>Ativos da fábrica</h2><p class="origem">Consulte equipamentos, ocorrências e falhas. <a href="#equipamentos">Cadastrar ou editar ativos</a></p>${equipamentos.length?'<button type="button" class="secundario" id="baixar-etiquetas">Baixar etiquetas QR de todos (folha A4)</button>':''}</header><div class="ativos-paineis"><section class="cartao ativos-lista"><label for="buscar-ativos">Buscar por TAG ou descrição</label><input id="buscar-ativos" type="search" placeholder="Ex.: motor, UTL…"><div class="chips" id="setores-ativos" role="group" aria-label="Filtrar por setor"></div><p id="contagem-ativos" role="status"></p><div id="lista-ativos"></div></section><section class="cartao" id="detalhe-ativo" aria-label="Detalhes do ativo"></section></div>`;
   const detalhe=main.querySelector('#detalhe-ativo');
+  main.querySelector('#baixar-etiquetas')?.addEventListener('click',()=>baixar(folhaEtiquetas(equipamentos),'etiquetas-qr-ativos.html','text/html'));
   function ficha(){
     const eq=equipamentos.find(e=>e.id===selecionado);
     if(!eq){detalhe.innerHTML='<p>Selecione um ativo para consultar.</p>';return;}
@@ -56,4 +57,10 @@ export function etiquetaSvg(eq){
   const qr=qrSvg(enderecoAtivo(eq.id),1).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');const lado=Number(/viewBox="0 0 (\d+)/.exec(qrSvg(enderecoAtivo(eq.id),1))[1]);
   const x=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="60mm" height="40mm" viewBox="0 0 60 40"><rect width="60" height="40" fill="#fff"/><g transform="translate(1 4) scale(${32/lado})">${qr}</g><text x="35" y="15" font-family="Arial,sans-serif" font-size="3.2" font-weight="700"${eq.tag.length>12?' textLength="23.5" lengthAdjust="spacingAndGlyphs"':''}>${x(eq.tag)}</text><foreignObject x="35" y="18" width="24" height="20"><div xmlns="http://www.w3.org/1999/xhtml" style="font:3px Arial,sans-serif">${x(eq.descricao)}</div></foreignObject></svg>`;
+}
+
+/** Folha A4 para imprimir: 3 × 7 etiquetas de 60 × 40 mm por página, na ordem da TAG. Abra o arquivo e imprima em 100%. */
+export function folhaEtiquetas(equipamentos){
+  const ordem=[...equipamentos].sort((a,b)=>a.tag.localeCompare(b.tag,'pt-BR'));
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Etiquetas QR · PCM Direto</title><style>@page{size:A4;margin:8mm 15mm}body{margin:0;font-family:Arial,sans-serif}.folha{display:grid;grid-template-columns:repeat(3,60mm);grid-auto-rows:40mm;gap:0}.folha>div{width:60mm;height:40mm;outline:0.2mm dashed #999;overflow:hidden;break-inside:avoid}.folha svg{display:block;width:60mm;height:40mm}p{font-size:3mm;color:#555}@media print{p{display:none}}</style></head><body><p>Imprima em tamanho real (100%), papel A4. Linhas tracejadas = corte. ${ordem.length} etiqueta(s).</p><div class="folha">${ordem.map(e=>`<div>${etiquetaSvg(e)}</div>`).join('')}</div></body></html>`;
 }

@@ -17,13 +17,13 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P7 | Retirar todos os modelos anteriores (PCMD e "refeitos") | Alta | **Verificado** | — | Site sem arquivos PCMD/refeitos; Documentos só com v2; `#entrega-modelos` leva a Documentos; testes impedem PCMD nas telas. |
 | P8 | Preencher 001, 004, 008, 018 e 019 | Alta | **Verificado** + **Validação humana** no Office | — | 004 com 3.256 OS e 008 com 1.101 falhas abertos no Excel sem erro (só os #N/D do Pareto vazio, iguais ao original). |
 | P9 | "Preencher um modelo" | — | **Retirado** | — | Tudo é gerado em Documentos da revisão ativa. |
-| P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais`. |
+| P10 | Horas de operação e indicadores por ativo e mês | Média | **Verificado** + **Validação humana** | — | HP digitada no Mensal; HI calculada pelas falhas (procedimento 017); botão no Mensal gera o PCM-MAN-011 do ativo (12 meses) — no Excel, BMB-01 de janeiro dá MTBF 197 h e disponibilidade 98,5%, como no procedimento. |
 | P11 | Janelas de parada | Baixa | **Verificado** + **Validação humana** | — | D4 opção 1 (±2 dias) em Mais → Janelas de parada: só sugere, não muda datas; segurança nunca adiada; conflito de segurança apontado. Testes + roteiro de navegador. |
 | P12 | QR code, fotos e ciência | Baixa | **Verificado** + **Validação humana** | — | D5 concluído: QR por ativo (gerador próprio); fotos na falha (até 3, 1.280 px, ≤ 500 KB, sem EXIF/GPS, aviso a 20 MB, backup com tamanho); registro de ciência na execução (nome, data/hora, conteúdo confirmado; sem promessa de validade jurídica). |
 | P13 | Catálogo da comunidade no banco real | Baixa | **Validação humana** | Acesso do mantenedor | Roteiro em VALIDACAO-REFORMULACAO.md. |
 | P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | LibreOffice não está instalado nesta máquina. |
 | P15 | Revisões nos modelos para integrar melhor (lista abaixo) | Média | **Aguardando arquivos do mantenedor** | M1–M11 | Cada arquivo novo: hash no manifesto, testes e conferência no Excel. |
-| P16 | Publicar `coord/pcm-man-001` | — | Aguardando autorização | Mantenedor | Nada publicado; nenhum PR aberto. |
+| P16 | Publicações de 01/11/2026 | — | **Publicado** | — | PRs #45 a #51: só Biblioteca v2, modelos revisados, D1, IAs, D4 e D5. |
 
 ### Decisões do mantenedor (01/11/2026)
 
@@ -91,6 +91,9 @@ e registrar na aba Revisões. Cada arquivo novo exige atualizar o manifesto (has
 - **M8 — 004:** coluna `observacao` (hoje a observação vai junto com o serviço).
 - **M9 — 008:** colunas `peca` e `responsavel` (hoje vão escritas na ação).
 - **M10 — 012:** grade de orçamento por setor, se quiser comparar por setor.
+- **M12 — 011, MTTR:** a fórmula do modelo divide as horas de reparo pelo nº de falhas (L = E ÷ D); o procedimento 017 divide
+  pelo nº de **reparos completos**. Sugestão: acrescentar a coluna "Reparos completos" e usar L = E ÷ essa coluna. Enquanto isso,
+  o app grava em E só os reparos completos (os valores coincidem quando todas as falhas do mês têm reparo completo).
 - **M11 — Indicadores (D1):** origem das horas planejadas, parada digitada ou calculada pelas falhas, falha sem fim,
   e em qual modelo publicar (011?).
 

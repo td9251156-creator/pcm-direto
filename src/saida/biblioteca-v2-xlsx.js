@@ -341,3 +341,19 @@ export async function preencherPcmMan002(bytes, dados) {
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
+
+/**
+ * PCM-MAN-011: um ativo, 12 meses (linhas 8 a 19), metas no cabeçalho e pessoas nos Cadastros. As fórmulas do modelo
+ * calculam MTBF, MTTR, disponibilidade e cumprimento. @param dados resultado de dadosPcmMan011 (biblioteca-v2-dados.js)
+ */
+export async function preencherPcmMan011(bytes, dados) {
+  await conferirOriginal(bytes, 'PCM-MAN-011');
+  const p = await abrirPacote(bytes);
+  const v = (n) => (Number.isFinite(n) ? n : null);
+  escrever(p, 'Indicadores', [['A4', dados.ativo], ['D4', serialData(`${dados.ano}-01-01`)], ['F4', v(dados.metaDisponibilidade)], ['H4', v(dados.metaCumprimento)],
+    ...dados.meses.flatMap((m, i) => (m.aberto ? [] : [['B', m.horasProgramadas], ['C', m.horasOperacao], ['D', m.falhas], ['E', m.horasReparo],
+      ['F', m.pmPlanejadas], ['G', m.pmFeitas], ['H', m.horasCorretiva], ['I', m.horasPreventiva]].map(([c, x]) => [`${c}${8 + i}`, v(x)])))]);
+  preencherTabela(p, 'Cadastros', 29, dados.pessoas.map((n) => ({ A: n })));
+  escrever(p, 'Leia-me', [['D13', dados.elaborado || null]]);
+  return fecharPacote(p);
+}

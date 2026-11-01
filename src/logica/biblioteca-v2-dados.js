@@ -1,7 +1,8 @@
 // Dados dos modelos da Biblioteca PCM v2 preenchidos pelo app, a partir do retrato de uma emissão
 // (prepararEmissao em src/logica/emissao.js). Só leitura; não inventa campos sem equivalente no app.
 import { MODELOS_V2 } from '../dados/modelos-v2.js';
-import { idsConcluidos } from './programacao.js';
+import { idsConcluidos, ocorrenciasVigentes } from './programacao.js';
+import { falhasDoAtivo, indicadores017 } from './indicadores-017.js';
 
 // "A cada (dias)" do modelo 002. Convenção do app (a confirmar com o mantenedor): Diária = 1 dia;
 // meses e anos em dias corridos aproximados. A periodicidade original continua no plano do app.
@@ -200,4 +201,29 @@ export function dadosPcmMan002(emissao) {
     pessoas: unicos([...e.gestao.pessoas.filter((p) => p.ativo).map((p) => p.nome), ...responsaveis]),
     atividades,
   };
+}
+
+/**
+ * PCM-MAN-011 (um ativo, 12 meses do ano), pelo procedimento PCM-MAN-017: horas programadas = HP digitada no Mensal;
+ * horas de operação = HO; nº de falhas = N; horas de reparo = soma dos reparos completos; PM planejadas/feitas e horas
+ * em preventiva = ocorrências do plano no mês (feitas pelas execuções registradas); horas em corretiva = horas de reparo.
+ * Meses ainda não encerrados ficam em branco. Sem dado nunca vira zero.
+ */
+export function dadosPcmMan011(estado, equipamento, ano, hoje, elaborado = '') {
+  const g = estado.gestao; const feitas = idsConcluidos(estado.programacao, g.historico);
+  const falhas = falhasDoAtivo(g, equipamento.id, equipamento.tag);
+  const meses = Array.from({ length: 12 }, (_, i) => {
+    const mes = `${ano}-${String(i + 1).padStart(2, '0')}`;
+    if (mes >= hoje.slice(0, 7)) return { mes, aberto: true };
+    const total = (g.indicadoresMensais ?? []).find((r) => r.equipamentoId === equipamento.id && r.mes === mes);
+    const r = indicadores017(falhas, mes, total?.horasPlanejadas ?? null, `${hoje}T00:00:00`);
+    const pms = ocorrenciasVigentes(estado.programacao).filter((o) => o.equipamentoId === equipamento.id && o.dataPrevista.slice(0, 7) === mes);
+    const pmFeitas = pms.filter((o) => feitas.has(o.id));
+    return { mes, horasProgramadas: r.hp, horasOperacao: r.ho, falhas: r.n, horasReparo: r.somaReparos, pmPlanejadas: pms.length,
+      pmFeitas: pmFeitas.length, horasCorretiva: r.somaReparos, horasPreventiva: pmFeitas.length ? pmFeitas.reduce((s, o) => s + o.horas, 0) : null,
+      provisorio: r.provisoria, alertas: r.alertas };
+  });
+  const meta = (v) => (Number.isFinite(v) ? v / 100 : null);
+  return { ativo: `${equipamento.tag} · ${equipamento.descricao}`, ano, metaDisponibilidade: meta(g.metas.disponibilidade), metaCumprimento: meta(g.metas.aderencia),
+    elaborado, pessoas: unicos(g.pessoas.filter((p) => p.ativo).map((p) => p.nome)), meses };
 }
