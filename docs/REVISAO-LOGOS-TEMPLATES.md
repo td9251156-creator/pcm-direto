@@ -1,5 +1,7 @@
 # Logo oficial nos templates
 
+> **Nota (01/11/2026):** os seis modelos de gestão (PCMD) e os 18 modelos adicionais ("refeitos") foram retirados; consulte `docs/FILA.md`. Este documento permanece como histórico.
+
 Atualização autorizada pelo mantenedor em 26/10/2026. Versão publicada dos seis modelos de gestão: 2.0.1-marca.
 
 ## Escopo

@@ -1,5 +1,7 @@
 # Interface funcional e modelos a fornecer
 
+> **Nota (01/11/2026):** os modelos PCMD-01 a 05, W1/W2 e os "refeitos" foram retirados, e a criticidade passou a notas de 1 a 5. Este documento permanece como histórico; consulte `docs/FILA.md`.
+
 ## Nova direção
 
 O mantenedor criará os modelos Excel e Word e os enviará depois. Esta entrega desenvolve os

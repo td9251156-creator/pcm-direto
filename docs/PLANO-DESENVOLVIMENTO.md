@@ -13,6 +13,8 @@ Direção: uma fábrica com até 100 ativos, interface Gestão, dados operaciona
 | Apoio | Comunidade, biblioteca de tarefas, guias locais e guias de uso. |
 | Qualidade | Testes unitários, fluxos de navegador, geração offline, atualização da PWA e integridade dos templates. |
 
+> **Nota (01/11/2026):** os 18 modelos adicionais ("refeitos") e o preenchimento individual ("Preencher um modelo") foram retirados; consulte `docs/FILA.md`.
+
 ## Rodada de uso diário
 
 1. Corrigir o avanço do assistente: uma gravação por etapa, confirmação após persistir, falha mantendo os campos e navegação sem resposta atrasada substituindo a tela.
@@ -45,7 +47,7 @@ Nenhuma atividade é prometida após o fim da sessão sem um executor persistent
 
 ## Ajustes da experiência de documentos
 
-O manual da marca e o Design System são referências internas. Downloads separados, explicações por modelo e preenchimento individual substituem os pacotes ZIP nas telas. A revisão geral do uso identificou nomenclatura interna exposta, duplicidade de ações, aviso antigo sobre modelos indisponíveis, links de download sem contexto e falta de filtro por finalidade. Esses pontos foram tratados nesta rodada. Os critérios de validação humana e as ampliações acima continuam válidos.
+O manual da marca e o Design System são referências internas. Downloads separados, explicações por modelo e preenchimento individual substituem os pacotes ZIP nas telas. A revisão geral do uso identificou nomenclatura interna exposta, duplicidade de ações, aviso antigo sobre modelos indisponíveis, links de download sem contexto e falta de filtro por finalidade. Esses pontos foram tratados nesta rodada. O preenchimento individual ("Preencher um modelo") foi retirado em 01/11/2026; consulte `docs/FILA.md`. Os critérios de validação humana e as ampliações acima continuam válidos.
 
 ## Identidade do Figma e orientação de navegação — 26/10/2026
 
