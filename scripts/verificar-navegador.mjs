@@ -14,3 +14,5 @@ await import('./verificar-dashboards.mjs');
 await import('./verificar-importacao-operacao.mjs');
 await import('./verificar-janelas.mjs');
 await import('./verificar-qr.mjs');
+await import('./verificar-fotos.mjs');
+await import('./verificar-ciencia.mjs');

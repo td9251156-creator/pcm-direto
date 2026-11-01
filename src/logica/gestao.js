@@ -2,6 +2,8 @@
 import { dataDaSemana, textoData } from './cronograma.js';
 import { validarOperacao } from './operacao.js';
 import { janelaValida } from './janelas.js';
+import { fotosValidas } from './fotos.js';
+import { cienciasValidas } from './ciencia.js';
 
 const objeto = valor => valor !== null && typeof valor === 'object' && !Array.isArray(valor) &&
   [Object.prototype, null].includes(Object.getPrototypeOf(valor));
@@ -110,9 +112,9 @@ export function validarGestao(g) {
     if (!objeto(g.responsaveis) || !Object.entries(g.responsaveis).every(([chave, valor]) => chaveTarefa(chave) && pessoaOpcional(valor))) return false;
     if (!registrosValidos(g.historico, h => id(h.equipamentoId) && id(h.tarefaId) && texto(h.tag, Number.MAX_SAFE_INTEGER) && texto(h.descricao, Number.MAX_SAFE_INTEGER) &&
         dataValida(h.data) && (h.dataPrevista === '' || dataValida(h.dataPrevista)) && texto(h.observacao, 2000) &&
-        pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean')) return false;
-    const novo = f => ['dataConclusao', 'horasReparo', 'horaInicio', 'horaFim'].some(c => Object.hasOwn(f, c));
-    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || Object.hasOwn(g, 'janelasParada') || g.falhas.some(novo))) return false;
+        pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean' && cienciasValidas(h.ciencias))) return false;
+    const novo = f => ['dataConclusao', 'horasReparo', 'horaInicio', 'horaFim', 'fotos'].some(c => Object.hasOwn(f, c));
+    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || Object.hasOwn(g, 'janelasParada') || g.falhas.some(novo) || g.historico.some(h => Object.hasOwn(h, 'ciencias')))) return false;
     if (g.versao >= 2) {
       // Janelas de parada (D4): opcionais; só datas, horas disponíveis e descrição.
       if (g.janelasParada !== undefined && (!lista(g.janelasParada) || !g.janelasParada.every(janelaValida) ||
@@ -134,7 +136,7 @@ export function validarGestao(g) {
       const hora = v => v === undefined || v === '' || (typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v));
       if (!g.falhas.every(f => !novo(f) || ((f.dataConclusao === undefined || f.dataConclusao === '' || (dataValida(f.dataConclusao) && f.dataConclusao >= f.data)) &&
           (f.horasReparo === undefined || f.horasReparo === null || (Number.isFinite(f.horasReparo) && f.horasReparo >= 0)) &&
-          hora(f.horaInicio) && hora(f.horaFim) && (!f.horaFim || !!f.dataConclusao) &&
+          hora(f.horaInicio) && hora(f.horaFim) && (!f.horaFim || !!f.dataConclusao) && fotosValidas(f.fotos) &&
           (!f.horaFim || !f.horaInicio || f.dataConclusao > f.data || f.horaFim >= f.horaInicio)))) return false;
     }
     return registrosValidos(g.falhas, f => id(f.equipamentoId) && texto(f.tag, Number.MAX_SAFE_INTEGER) && dataValida(f.data) &&

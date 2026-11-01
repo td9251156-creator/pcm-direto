@@ -19,7 +19,7 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P9 | "Preencher um modelo" | — | **Retirado** | — | Tudo é gerado em Documentos da revisão ativa. |
 | P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais`. |
 | P11 | Janelas de parada | Baixa | **Verificado** + **Validação humana** | — | D4 opção 1 (±2 dias) em Mais → Janelas de parada: só sugere, não muda datas; segurança nunca adiada; conflito de segurança apontado. Testes + roteiro de navegador. |
-| P12 | QR code, fotos e ciência | Baixa | **QR verificado** + **Validação humana**; fotos e ciência a seguir | — | QR por ativo (gerador próprio, sem dependência; lido por leitor independente): etiqueta 60×40 mm em Ativos e endereço que abre o ativo. Próximo: backup com fotos, depois fotos e ciência (limites aprovados no D5). |
+| P12 | QR code, fotos e ciência | Baixa | **Verificado** + **Validação humana** | — | D5 concluído: QR por ativo (gerador próprio); fotos na falha (até 3, 1.280 px, ≤ 500 KB, sem EXIF/GPS, aviso a 20 MB, backup com tamanho); registro de ciência na execução (nome, data/hora, conteúdo confirmado; sem promessa de validade jurídica). |
 | P13 | Catálogo da comunidade no banco real | Baixa | **Validação humana** | Acesso do mantenedor | Roteiro em VALIDACAO-REFORMULACAO.md. |
 | P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | LibreOffice não está instalado nesta máquina. |
 | P15 | Revisões nos modelos para integrar melhor (lista abaixo) | Média | **Aguardando arquivos do mantenedor** | M1–M11 | Cada arquivo novo: hash no manifesto, testes e conferência no Excel. |
