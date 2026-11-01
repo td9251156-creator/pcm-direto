@@ -14,6 +14,7 @@ const grupos=[
     ['equipamentos','Equipamentos','Cadastrar e importar a lista de ativos'],
     ['cadastros','Cadastros','Organização, setores, pessoas e referências'],
     ['criticidade','Criticidade','Notas de 1 a 5 e classe A/B/C, sem alterar as frequências'],
+    ['janelas','Janelas de parada','Sugerir o que cabe em cada parada, sem adiar segurança'],
     ['mensal','Mensal','Consultar previsões e realizações por mês'],
   ]],
   ['Documentos',[

@@ -13,6 +13,7 @@ import { telaImpressao } from './telas/impressao.js';
 import { telaExecucao } from './telas/execucao.js';
 import { telaCadastros } from './telas/cadastros.js';
 import { telaCriticidade } from './telas/criticidade.js';
+import { telaJanelas } from './telas/janelas.js';
 import { telaPlano, telaMensal } from './telas/planejamento.js';
 import { telaFalhas } from './telas/falhas.js';
 import { telaBoasVindas,telaAssistente,telaPlanejar,telaSemana,telaOcorrencias,telaMais,telaMeusDados } from './telas/gestao-diaria.js';
@@ -44,6 +45,7 @@ const TELAS = {
   execucao: { titulo: 'Checklist de execução', desenhar: telaExecucao },
   cadastros: { titulo: 'Cadastros mestre', desenhar: telaCadastros },
   criticidade: { titulo: 'Criticidade', desenhar: telaCriticidade },
+  janelas: { titulo: 'Janelas de parada', desenhar: telaJanelas },
   plano: { titulo: 'Plano Mestre', desenhar: telaPlano },
   mensal: { titulo: 'Planejamento mensal', desenhar: telaMensal },
   falhas: { titulo: 'Registro de falhas', desenhar: telaFalhas },

@@ -10,7 +10,7 @@ await executarComRecursos({limiteTotal:240000,criarServidor:async()=>{const s=aw
   assert.equal(await page.locator('.modelo-documental').count(),19);assert.equal(await page.locator('.modelo-documental a[download]').count(),19);assert.equal(await page.locator('.modelo-documental a[href*="/previas/"]').count(),0);
   await page.locator('#grupo-documentos').selectOption('Materiais e custos');assert.equal(await page.locator('.modelo-documental').count(),2);
   await page.locator('#buscar-documentos').fill('estoque peças');assert.equal(await page.locator('.modelo-documental').count(),1);
-  await page.evaluate(()=>{location.hash='mais';});await page.locator('#buscar-ferramentas').waitFor();assert.equal(await page.locator('#ferramentas .modulo').count(),18);
+  await page.evaluate(()=>{location.hash='mais';});await page.locator('#buscar-ferramentas').waitFor();assert.equal(await page.locator('#ferramentas .modulo').count(),19);
   await page.evaluate(()=>{location.hash='modelos';});await page.locator('#buscar-documentos').waitFor();assert.equal(await page.locator('#buscar-documentos').inputValue(),'estoque peças');assert.equal(await page.locator('#grupo-documentos').inputValue(),'Materiais e custos');
   await page.locator('#buscar-documentos').fill('inexistentexyz');await page.locator('#limpar-documentos').click();assert.equal(await page.locator('.modelo-documental').count(),19);assert.equal(await page.locator('#buscar-documentos').evaluate(e=>e===document.activeElement),true);
   // O preenchimento individual dos modelos anteriores foi retirado: o endereço antigo leva a Documentos, só com modelos v2.

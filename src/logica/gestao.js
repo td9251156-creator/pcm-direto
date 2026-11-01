@@ -1,6 +1,7 @@
 // Cadastros e movimentos locais; não cria documentos nem altera as regras do plano.
 import { dataDaSemana, textoData } from './cronograma.js';
 import { validarOperacao } from './operacao.js';
+import { janelaValida } from './janelas.js';
 
 const objeto = valor => valor !== null && typeof valor === 'object' && !Array.isArray(valor) &&
   [Object.prototype, null].includes(Object.getPrototypeOf(valor));
@@ -111,8 +112,11 @@ export function validarGestao(g) {
         dataValida(h.data) && (h.dataPrevista === '' || dataValida(h.dataPrevista)) && texto(h.observacao, 2000) &&
         pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean')) return false;
     const novo = f => ['dataConclusao', 'horasReparo', 'horaInicio', 'horaFim'].some(c => Object.hasOwn(f, c));
-    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || g.falhas.some(novo))) return false;
+    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || Object.hasOwn(g, 'janelasParada') || g.falhas.some(novo))) return false;
     if (g.versao >= 2) {
+      // Janelas de parada (D4): opcionais; só datas, horas disponíveis e descrição.
+      if (g.janelasParada !== undefined && (!lista(g.janelasParada) || !g.janelasParada.every(janelaValida) ||
+          new Set(g.janelasParada.map(j => j.id)).size !== g.janelasParada.length)) return false;
       if (g.indicadoresMensais !== undefined) {
         if (!lista(g.indicadoresMensais)) return false;
         const vistos = new Set();
