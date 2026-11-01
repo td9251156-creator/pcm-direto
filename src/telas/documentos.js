@@ -8,10 +8,14 @@ import {esc,baixar,avisar} from '../ui.js';
 import {dataExibida} from '../logica/consulta-execucao.js';
 import {guiaModelo} from '../dados/guias-modelos.js';
 import {MODELOS_V2,VERSAO_BIBLIOTECA_V2} from '../dados/modelos-v2.js';
-import {dadosPcmMan002} from '../logica/biblioteca-v2-dados.js';
+import {dadosPcmMan001,dadosPcmMan002} from '../logica/biblioteca-v2-dados.js';
 
 // Modelos da Biblioteca v2 que o app já preenche. O gerador só é carregado ao gerar.
-const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-002'),
+const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
+  preenche:'Lista de documentos (este controle, os documentos já emitidos pelo app e as referências técnicas), revisões do plano e da emissão e as pessoas para as listas ▼.',
+  branco:'Validade, situação e aprovação dos documentos já emitidos (o app não registra a aprovação deles), além de função e especialidade das pessoas.',
+  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan001(bytes,dadosPcmMan001(emissao))},
+  {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-002'),
   preenche:'Cadastros (ativos, setores, famílias e pessoas), Plano com as tarefas da revisão ativa (a cada quantos dias, responsável, duração e 1ª execução) e o Cronograma ligado ao Plano. Tarefas de segurança vêm marcadas.',
   branco:'Criticidade e FMECA (análise da equipe; a escala do modelo é diferente da criticidade do app), componente, tipo de tarefa e se exige parada.',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan002(bytes,dadosPcmMan002(emissao))}];

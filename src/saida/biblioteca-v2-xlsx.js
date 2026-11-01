@@ -77,7 +77,9 @@ async function abrirPacote(bytes) {
   const rels = await ler('xl/_rels/workbook.xml.rels');
   const abas = new Map();
   for (const [, nome, rid] of workbook.matchAll(/<sheet\b[^>]*\bname="([^"]+)"[^>]*\br:id="([^"]+)"/g)) {
-    const alvo = 'xl/' + new RegExp(`Id="${rid}"[^>]*Target="([^"]+)"`).exec(rels)[1].replace(/^\/?xl\//, '');
+    // A ordem dos atributos varia conforme a ferramenta que gerou o modelo.
+    const rel = [...rels.matchAll(/<Relationship\b[^>]*>/g)].map((m) => m[0]).find((r) => r.includes(`Id="${rid}"`));
+    const alvo = 'xl/' + /Target="([^"]+)"/.exec(rel)[1].replace(/^\/?xl\//, '');
     const relsAba = zip.file(alvo.replace('worksheets/', 'worksheets/_rels/') + '.rels');
     const tabelas = relsAba ? [...(await relsAba.async('string')).matchAll(/Target="([^"]*tables\/[^"]+)"/g)].map((m) => 'xl/tables/' + m[1].split('/').pop()) : [];
     abas.set(nome.replace(/&amp;/g, '&'), { arquivo: alvo, xml: await ler(alvo), tabelas });
@@ -160,6 +162,28 @@ async function conferirOriginal(bytes, codigo) {
   const modelo = contrato.modelos.find((m) => m.codigo === codigo);
   const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((n) => n.toString(16).padStart(2, '0')).join('');
   if (hash !== modelo.sha256) throw new Error(`Modelo ${codigo} diferente do esperado por esta versão do app. Recarregue o aplicativo; seus dados não foram alterados.`);
+}
+
+/** Preenche uma tabela de linhas 5..`ultima` (modelo), ampliando antes se faltar espaço. `linhas`: [{A: v, B: v, ...}]. */
+function preencherTabela(p, aba, ultima, linhas) {
+  inserirLinhas(p, aba, ultima, linhas.length - (ultima - 4));
+  escrever(p, aba, linhas.flatMap((l, i) => Object.entries(l).map(([col, v]) => [`${col}${5 + i}`, v ?? null])));
+}
+
+/**
+ * PCM-MAN-001: Leia-me (elaborado/aprovado), Documentos, Revisões de documentos e pessoas (Cadastros).
+ * @param dados resultado de dadosPcmMan001 (src/logica/biblioteca-v2-dados.js)
+ */
+export async function preencherPcmMan001(bytes, dados) {
+  await conferirOriginal(bytes, 'PCM-MAN-001');
+  const p = await abrirPacote(bytes);
+  const data = (iso) => (iso ? serialData(iso) : null);
+  preencherTabela(p, 'Documentos', 29, dados.documentos.map((d) => ({ A: d.codigo, B: d.titulo, C: d.tipo, D: d.responsavel, E: d.status,
+    F: data(d.validade), G: d.revisao, H: data(d.data), I: d.aprovado, J: d.observacoes })));
+  preencherTabela(p, 'Revisões de documentos', 29, dados.revisoes.map((r) => ({ A: r.codigo, B: r.revisao, C: data(r.data), D: r.descricao, E: r.elaborado, F: r.aprovado })));
+  preencherTabela(p, 'Cadastros', 29, dados.pessoas.map((n) => ({ A: n })));
+  escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
+  return fecharPacote(p);
 }
 
 /**

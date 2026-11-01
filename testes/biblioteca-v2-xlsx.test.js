@@ -7,8 +7,8 @@ import { montarDados } from '../src/logica/pacote.js';
 import { criarGestao } from '../src/logica/gestao.js';
 import { criarProgramacao, prepararRevisao } from '../src/logica/programacao.js';
 import { prepararEmissao } from '../src/saida/pcmd.js';
-import { dadosPcmMan002 } from '../src/logica/biblioteca-v2-dados.js';
-import { preencherPcmMan002, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
+import { dadosPcmMan002, dadosPcmMan001 } from '../src/logica/biblioteca-v2-dados.js';
+import { preencherPcmMan002, preencherPcmMan001, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
 import { abrirWorkbookBibliotecaV2 } from '../src/integracao/biblioteca-pcm-v2.js';
 
 const ORIGINAL = 'public/modelos/biblioteca-v2/PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx';
@@ -127,5 +127,53 @@ describe('PCM-MAN-002 preenchido', () => {
     const tarefaSeg = emissao(3).revisao.plano.find((t) => t.seguranca);
     expect(Boolean(seg)).toBe(Boolean(tarefaSeg));
     expect(d.atividades.every((t) => !('tipo' in t) && !('componente' in t))).toBe(true);
+  });
+});
+
+const ORIGINAL_001 = 'public/modelos/biblioteca-v2/PCM-MAN-001_Controle-Documental_R00.xlsx';
+
+describe('PCM-MAN-001 preenchido', () => {
+  function emissao001(requisitos = 2) {
+    const e = emissao(2);
+    e.estado.programacao.emissoes.push(
+      { id: 'em1', modelo: 'PCM-MAN-002', versaoModelo: 'x', revisaoId: 'rev1', dataCorte: '2026-03-01' },
+      { id: 'em2', modelo: 'PCM-MAN-002', versaoModelo: 'x', revisaoId: 'rev1', dataCorte: '2026-04-01' },
+      { id: 'em3', modelo: 'PCMD-05', versaoModelo: 'x', revisaoId: 'rev1', dataCorte: '2026-02-01' });
+    for (let i = 0; i < requisitos; i++) {
+      e.estado.gestao.requisitos.push({ id: 'q' + i, referencia: `Manual fictício ${i} <b>`, versao: 'v1', data: '2025-01-10', fonte: 'https://exemplo.invalid/manual', status: i ? 'nao_verificado' : 'verificado' });
+    }
+    return e;
+  }
+
+  it('lista o próprio controle, os documentos já emitidos e as referências, sem inventar aprovação', () => {
+    const d = dadosPcmMan001(emissao001());
+    expect(d.documentos.map((x) => [x.codigo, x.tipo, x.status])).toEqual([
+      ['PCM-MAN-001', 'REGISTRO', 'RASCUNHO'], ['PCM-MAN-002', 'PLANO', ''], ['PCMD-05', 'FORMULARIO', ''],
+      ['Manual fictício 0 <b>', 'OUTRO', ''], ['Manual fictício 1 <b>', 'OUTRO', '']]);
+    expect(d.documentos[1].data).toBe('2026-04-01'); // última emissão
+    expect(d.documentos[0].aprovado).toBe('');
+    expect(d.revisoes.map((r) => r.codigo)).toEqual(['PCM-MAN-002', 'PCM-MAN-001']);
+    expect(d.pessoas).toContain('Técnico fictício');
+  });
+
+  it('amplia a tabela de documentos sem sobrescrever o rodapé e o Excel lê o conteúdo', async () => {
+    const d = dadosPcmMan001(emissao001(30));
+    expect(d.documentos).toHaveLength(33);
+    const saida = await preencherPcmMan001(readFileSync(ORIGINAL_001), d);
+    const zip = await JSZip.loadAsync(saida);
+    const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
+    const docs = wb.getWorksheet('Documentos');
+    expect(await zip.file('xl/tables/table3.xml').async('string')).toContain('ref="A4:J37"');
+    expect(docs.getCell('A5').value).toBe('PCM-MAN-001');
+    expect(docs.getCell('E5').value).toBe('RASCUNHO');
+    expect(docs.getCell('A37').value).toBe('Manual fictício 29 <b>'); // texto como dado, escapado no XML
+    expect(texto(docs.getCell('A38').value)).toMatch(/●/);
+    const xml = await zip.file('xl/worksheets/sheet2.xml').async('string');
+    expect(xml).toContain('<mergeCell ref="A38:J38"/>');
+    expect(xml).toContain('sqref="C5:C37"');
+    expect(xml).not.toContain('<b>');
+    expect(await zip.file('xl/workbook.xml').async('string')).toContain("'Documentos'!$A$1:$J$38");
+    expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnico fictício');
+    expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('Técnica Fictícia');
   });
 });
