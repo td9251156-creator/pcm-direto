@@ -3,7 +3,6 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import manifesto from '../src/dados/biblioteca-pcm-v2.json';
 import { MODELOS_V2, GRUPOS_V2 } from '../src/dados/modelos-v2.js';
-import { MODELOS_DOCUMENTAIS } from '../src/dados/modelos-anteriores.js';
 
 it('oferece para download exatamente os 19 modelos da Biblioteca PCM v2, conferidos por hash', () => {
   expect(MODELOS_V2).toHaveLength(19);
@@ -20,13 +19,19 @@ it('oferece para download exatamente os 19 modelos da Biblioteca PCM v2, conferi
   }
 });
 
-it('retira exemplos e prévias antigos; mantém só os arquivos do preenchimento automático', () => {
+it('o site só publica os modelos da Biblioteca v2: nenhum PCMD, refeito, exemplo ou prévia antiga', () => {
   expect(existsSync('public/modelos/previas')).toBe(false);
-  expect(existsSync('public/modelos/refeitos/previas')).toBe(false);
-  const raiz = readdirSync('public/modelos').filter((n) => /\.(xlsx|docx)$/.test(n));
-  expect(raiz.some((n) => /Exemplo/.test(n))).toBe(false);
-  expect(raiz.sort()).toEqual(MODELOS_DOCUMENTAIS.map(([, , , a, ext]) => `${a}.${ext}`).sort());
-  expect(readdirSync('public/modelos/refeitos').filter((n) => /\.(xlsx|docx)$/.test(n))).toHaveLength(5);
+  expect(existsSync('public/modelos/refeitos')).toBe(false);
+  expect(readdirSync('public/modelos').filter((n) => /\.(xlsx|docx)$/i.test(n))).toEqual([]);
+  expect(readdirSync('public/modelos/biblioteca-v2').every((n) => n.startsWith('PCM-MAN-'))).toBe(true);
+});
+
+it('as telas usam o padrão PCM-MAN, sem código PCMD', () => {
+  for (const pasta of ['src/telas', 'src/saida', 'src/dados']) {
+    for (const nome of readdirSync(pasta).filter((n) => n.endsWith('.js'))) {
+      expect(readFileSync(`${pasta}/${nome}`, 'utf8'), nome).not.toMatch(/PCMD|entrega-modelos/);
+    }
+  }
 });
 
 it('a página Conheça o projeto lista os 19 modelos v2 e nenhum arquivo removido', () => {

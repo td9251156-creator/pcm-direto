@@ -5,7 +5,7 @@ Toda contribuição aceita entra nesta página, programando ou não.
 
 ## Autor e mantenedor
 
-- **Thiago Oliveira Lima**: ideia, regras de PCM, modelos PCMD e revisão de todo o conteúdo.
+- **Thiago Oliveira Lima**: ideia, regras de PCM, modelos da Biblioteca PCM v2 (PCM-MAN) e revisão de todo o conteúdo.
   [linkedin.com/in/thiagooliveiralima94](https://linkedin.com/in/thiagooliveiralima94)
 
 ## Quem ajudou
@@ -36,7 +36,7 @@ O PCM Direto usa estas bibliotecas abertas, cada uma com a sua licença:
 | Ferramenta | Para que serve | Licença |
 |---|---|---|
 | [Vite](https://vite.dev/) | Montar a versão final do app | MIT |
-| [ExcelJS](https://github.com/exceljs/exceljs) | Ler e preencher as planilhas PCMD | MIT |
+| [ExcelJS](https://github.com/exceljs/exceljs) | Ler as planilhas da Biblioteca PCM v2 e gerar a planilha do planejamento | MIT |
 | [docx](https://github.com/dolanmiu/docx) | Preencher os manuais em Word | MIT |
 | [JSZip](https://stuk.github.io/jszip/) | Ler e montar arquivos compactados | MIT ou GPL-3.0 (usada sob MIT) |
 | [supabase-js](https://github.com/supabase/supabase-js) | Catálogo online da comunidade | MIT |

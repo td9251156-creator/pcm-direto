@@ -136,9 +136,28 @@ Gerador `src/saida/biblioteca-v2-xlsx.js` (edita só o XML das células de uma c
 Cadastros A–D (ativos da revisão ativa), F (pessoas), H (famílias = tipo da biblioteca), J (setores); Plano a partir da linha 21
 (TAG, atividade — com "(tarefa de segurança)" quando for —, A cada (dias), responsável, duração, 1ª execução); Cronograma
 A4 = ano da data de corte. Periodicidade → dias: Diária 1, Semanal 7, Quinzenal 14, Mensal 30, Bimestral 60, Trimestral 90,
-Semestral 180, Anual 365 (convenção a confirmar). Em branco: Criticidade, FMECA, componente, tipo de tarefa, exige parada.
+Semestral 180, Anual 365 (convenção a confirmar). Em branco: FMECA, componente, tipo de tarefa, exige parada
+(a Criticidade passou a ser preenchida em 01/11, ver abaixo).
 Ampliação: linhas abaixo deslocadas; fórmulas de todas as abas, nomes, impressão, tabelas, validações, formatação condicional
 e mesclagens ajustadas. Conferência: teste com 100 ativos e Excel local (940 atividades, 0 erro de fórmula).
+
+## Documentos preenchidos pelo app: só Biblioteca v2 (01/11/2026)
+
+Os modelos anteriores (PCMD-01 a 05, W1/W2 e os 5 "refeitos") foram retirados do site e do app. Documentos da revisão
+ativa gera seis modelos (retrato em `src/logica/emissao.js`; dados em `biblioteca-v2-dados.js`; geradores em
+`biblioteca-v2-xlsx.js` e `biblioteca-v2-docx.js`):
+
+| Modelo | Abas preenchidas | Origem no app |
+|---|---|---|
+| 001 | Documentos, Revisões de documentos, Cadastros (pessoas), Leia-me | este controle; últimas emissões até o corte (PCMD antigos como OBSOLETO); referências externas como OUTRO; revisões do plano |
+| 002 | Criticidade (linhas 8+), Plano (linha 21+), Cronograma, Cadastros, Leia-me | notas S/Q/P/frequência 1–5 (`gestao.criticidade`, escala 5); tarefas da revisão ativa |
+| 004 | Ordens de Serviço (linha 5+), Cadastros (setor em H, família em J), Leia-me | execuções (CONCLUIDA/CANCELADA), ocorrências vencidas até o corte (PROGRAMADA), OS importadas |
+| 008 | Registro de falhas (linha 5+), Cadastros, Leia-me | falhas importadas; falhas do app com início/fim = data + hora opcional |
+| 018, 019 | metadados (customXml e campos) | revisão, data de corte, organização, elaborado, aprovado |
+
+Ao ampliar a Criticidade, as linhas novas copiam só as colunas A–K: os quadros mesclados à direita (matriz, notas e
+estratégia) não são copiados nem esticados. Conferência no Excel local com 100 ativos, 3.256 OS e 1.101 falhas: 0 erro
+de fórmula (o Pareto vazio do 008 mantém os mesmos #N/D do original).
 
 ## Próxima implementação
 

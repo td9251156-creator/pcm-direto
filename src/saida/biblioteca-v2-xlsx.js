@@ -94,13 +94,19 @@ async function abrirPacote(bytes) {
 // Abertura de elemento com conteúdo (exclui <f .../> das fórmulas compartilhadas filhas).
 const FORMULAS = /(<(f|formula|formula1|formula2)(?:\s[^>]*?)?(?<!\/)>)([\s\S]*?)(<\/\2>)/g;
 
-function inserirLinhas(pacote, alvo, R, k) {
+// `ate`: última coluna da tabela quando a mesma linha tem outros quadros à direita (eles não são copiados nem reestilizados).
+function inserirLinhas(pacote, alvo, R, k, ate = null) {
   if (k <= 0) return;
+  const naTabela = (c) => !ate || numCol(/\br="([A-Z]+)\d+"/.exec(c)[1]) <= numCol(ate);
   const aba = pacote.abas.get(alvo);
   // 1) Referências primeiro (todas as abas, nomes, tabelas); 2) depois as linhas, clonando a linha modelo já ajustada.
   const mover = (t, propria) => moverReferencias(t, alvo, propria, R, k);
   for (const [nome, outra] of pacote.abas) outra.xml = outra.xml.replace(FORMULAS, (_, a, _t, texto, b) => a + mover(texto, nome === alvo) + b);
-  aba.xml = aba.xml.replace(/(<(?:mergeCell|dimension|hyperlink)\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`)
+  // Quadros mesclados à direita da tabela (colunas depois de `ate`) só descem se estiverem abaixo de R; não esticam.
+  const aDireita = (r) => ate && numCol(/^\$?([A-Z]+)/.exec(r)[1]) > numCol(ate);
+  const fixo = (r) => r.replace(/^(\$?[A-Z]+\$?)(\d+)(:\$?[A-Z]+\$?)(\d+)$/, (t, c1, a, c2, b) => (Number(a) > R ? `${c1}${Number(a) + k}${c2}${Number(b) + k}` : t));
+  aba.xml = aba.xml.replace(/(<mergeCell\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${aDireita(r) ? fixo(r) : mover(r, true)}"`)
+    .replace(/(<(?:dimension|hyperlink)\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`)
     .replace(/(<(?:dataValidation|conditionalFormatting)\b[^>]*\bsqref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`);
   pacote.workbook = pacote.workbook.replace(/(<definedName\b[^>]*>)([^<]*)(<\/definedName>)/g, (_, a, t, b) => a + mover(t, false) + b);
   for (const t of aba.tabelas) pacote.tabelas.set(t, pacote.tabelas.get(t).replace(/(<(?:table|autoFilter)\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`));
@@ -113,16 +119,17 @@ function inserirLinhas(pacote, alvo, R, k) {
   const estilos = (l) => new Map([...(l?.match(CELULA) ?? [])].map((c) => [/\br="([A-Z]+)\d+"/.exec(c)[1], /^<c\b[^>]*?\bs="(\d+)"/.exec(c)?.[1]]));
   const doMeio = estilos(linhas.find((l) => numLinha(l) === R - 1));
   const comEstiloDoMeio = (l) => (doMeio.size ? l.replace(/<c\b[^>]*?>|<c\b[^>]*?\/>/g, (c) => {
-    const s = doMeio.get(/\br="([A-Z]+)\d+"/.exec(c)?.[1]);
+    const s = naTabela(c) && doMeio.get(/\br="([A-Z]+)\d+"/.exec(c)?.[1]);
     return s ? c.replace(/\bs="\d+"/, `s="${s}"`) : c;
   }) : l);
+  const daTabela = ate ? modelo.replace(CELULA, (c) => (naTabela(c) ? c : '')).replace(/\sspans="[^"]*"/, '') : modelo;
   const novas = [];
   for (const l of linhas) {
     const n = numLinha(l);
     novas.push(n > R ? renumerar(l, n + k) : n === R ? comEstiloDoMeio(l) : l);
     if (n === R) {
       for (let i = 1; i <= k; i++) {
-        const clone = renumerar(modelo, R + i).replace(/<f>([\s\S]*?)<\/f>/g, (_, t) => `<f>${deslocarFormula(t, i)}</f>`);
+        const clone = renumerar(daTabela, R + i).replace(/<f>([\s\S]*?)<\/f>/g, (_, t) => `<f>${deslocarFormula(t, i)}</f>`);
         novas.push(i < k ? comEstiloDoMeio(clone) : clone);
       }
     }
@@ -207,15 +214,33 @@ export async function preencherPcmMan001(bytes, dados) {
 // Data com hora opcional (AAAA-MM-DD[THH:MM:SS]) → número de série do Excel.
 const serialDataHora = (v) => (v ? serialData(v.slice(0, 10)) + (v.length > 10 ? (Date.parse(`1970-01-01T${v.slice(11, 19)}Z`) / 86400000) : 0) : null);
 
-function cadastrosLadoALado(p, dados) {
+// A maioria dos modelos traz famílias em H e setores em J; o 004 traz o inverso (`setoresEmH`).
+function cadastrosLadoALado(p, dados, setoresEmH = false) {
   const maior = Math.max(dados.ativos.length, dados.pessoas.length, dados.familias.length, dados.setores.length);
   inserirLinhas(p, 'Cadastros', 29, maior - 25);
   const cad = [];
   dados.ativos.forEach((a, i) => ['tag', 'descricao', 'familia', 'setor'].forEach((c, j) => cad.push([`${'ABCD'[j]}${5 + i}`, a[c] || null])));
   dados.pessoas.forEach((n, i) => cad.push([`F${5 + i}`, n]));
-  dados.familias.forEach((n, i) => cad.push([`H${5 + i}`, n]));
-  dados.setores.forEach((n, i) => cad.push([`J${5 + i}`, n]));
+  dados.familias.forEach((n, i) => cad.push([`${setoresEmH ? 'J' : 'H'}${5 + i}`, n]));
+  dados.setores.forEach((n, i) => cad.push([`${setoresEmH ? 'H' : 'J'}${5 + i}`, n]));
   escrever(p, 'Cadastros', cad);
+}
+
+/**
+ * PCM-MAN-004: Leia-me (elaborado/aprovado), Ordens de Serviço e Cadastros. A ficha "Ordem de serviço" fica para a equipe.
+ * @param dados resultado de dadosPcmMan004 (src/logica/biblioteca-v2-dados.js)
+ */
+export async function preencherPcmMan004(bytes, dados) {
+  await conferirOriginal(bytes, 'PCM-MAN-004');
+  const p = await abrirPacote(bytes);
+  for (const nome of ['Ordens de Serviço', 'Cadastros']) p.abas.get(nome).xml = expandirCompartilhadas(p.abas.get(nome).xml);
+  cadastrosLadoALado(p, dados, true);
+  const data = (iso) => (iso ? serialData(iso) : null);
+  preencherTabela(p, 'Ordens de Serviço', 29, dados.ordens.map((o) => ({ A: o.numero, B: o.tag, D: o.atividade || null, E: o.tipo || null,
+    F: o.prioridade || null, G: o.status || null, H: o.responsavel || null, I: data(o.abertura), J: data(o.prazo), K: data(o.conclusao),
+    L: o.estimadas, M: o.restantes })));
+  escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
+  return fecharPacote(p);
 }
 
 /**
@@ -226,27 +251,35 @@ export async function preencherPcmMan008(bytes, dados) {
   await conferirOriginal(bytes, 'PCM-MAN-008');
   const p = await abrirPacote(bytes);
   cadastrosLadoALado(p, dados);
-  // Falha do app tem só a data: usa os estilos dd/mm/aaaa do próprio modelo (147 e 149) para não exibir "00:00".
+  // Falha do app sem hora: usa os estilos dd/mm/aaaa do próprio modelo (147 e 149) para não exibir "00:00".
   const SO_DATA = { 81: '147', 88: '149' };
-  const inicio = (v) => (v && v.length === 10 ? { valor: serialData(v), estilos: SO_DATA } : serialDataHora(v));
+  const quando = (v) => (v && v.length === 10 ? { valor: serialData(v), estilos: SO_DATA } : serialDataHora(v));
   preencherTabela(p, 'Registro de falhas', 29, dados.falhas.map((f) => ({ A: f.referencia, B: f.tag, D: f.os || null, E: f.descricao || null,
-    F: f.causa || null, G: f.acao || null, H: inicio(f.inicio), I: serialDataHora(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo) })));
+    F: f.causa || null, G: f.acao || null, H: quando(f.inicio), I: quando(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo) })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
 
 /**
- * PCM-MAN-002: Leia-me (elaborado/aprovado), Cadastros, Plano ("Outras atividades") e Cronograma.
- * Criticidade e FMECA ficam em branco: dependem de análise humana e de escala própria do modelo.
+ * PCM-MAN-002: Leia-me (elaborado/aprovado), Cadastros, Criticidade (notas), Plano ("Outras atividades") e Cronograma.
+ * Classe, matriz e FMECA são calculadas ou preenchidas na própria planilha.
  * @param dados resultado de dadosPcmMan002 (src/logica/biblioteca-v2-dados.js)
  */
 export async function preencherPcmMan002(bytes, dados) {
   await conferirOriginal(bytes, 'PCM-MAN-002');
   const p = await abrirPacote(bytes);
-  for (const nome of ['Plano', 'Cronograma', 'Cadastros']) p.abas.get(nome).xml = expandirCompartilhadas(p.abas.get(nome).xml);
+  for (const nome of ['Criticidade', 'Plano', 'Cronograma', 'Cadastros']) p.abas.get(nome).xml = expandirCompartilhadas(p.abas.get(nome).xml);
 
   // Cadastros: quatro tabelas lado a lado nas linhas 5 a 29 (25 linhas).
   cadastrosLadoALado(p, dados);
+
+  // Criticidade: linhas 8 a 27 (20 ativos); Nº em A, TAG em B, S/Q/P em E a G e frequência em I.
+  const criticidade = dados.criticidade ?? [];
+  inserirLinhas(p, 'Criticidade', 27, criticidade.length - 20, 'K');
+  escrever(p, 'Criticidade', criticidade.flatMap((c, i) => {
+    const l = 8 + i;
+    return [[`A${l}`, i + 1], [`B${l}`, c.tag], [`E${l}`, c.s ?? null], [`F${l}`, c.q ?? null], [`G${l}`, c.p ?? null], [`I${l}`, c.f ?? null]];
+  }));
 
   // Plano: "Outras atividades" nas linhas 21 a 30; o Cronograma espelha o Plano nas linhas 8 a 33.
   const extra = dados.atividades.length - 10;

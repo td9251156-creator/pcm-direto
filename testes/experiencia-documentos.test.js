@@ -8,7 +8,7 @@ it('mantém as referências internas da marca e o pacote de modelos fora da dist
 });
 
 it('não oferece manual da marca nem downloads de modelos agrupados nas telas',()=>{
-  const arquivos=['index.html','src/main.js','src/telas/mais.js','src/telas/modelos.js','src/telas/entrega-modelos.js','src/telas/documentos.js','src/telas/comunidade.js'];
+  const arquivos=['index.html','src/main.js','src/telas/mais.js','src/telas/modelos.js','src/telas/documentos.js','src/telas/comunidade.js'];
   for(const arquivo of arquivos){
     const texto=readFileSync(arquivo,'utf8');
     expect(texto,arquivo).not.toMatch(/href=["']#marca["']|telaMarca|Manual da marca|\.zip/i);

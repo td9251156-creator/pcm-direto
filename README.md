@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://pcmdireto.me/"><strong>Abrir o app</strong></a> ·
   <a href="https://pcmdireto.me/conheca.html">Conheça o projeto</a> ·
-  <a href="https://pcmdireto.me/#comunidade">Modelos PCMD gratuitos</a> ·
+  <a href="https://pcmdireto.me/#comunidade">Modelos PCM-MAN gratuitos</a> ·
   <a href="#como-contribuir">Como contribuir</a>
 </p>
 
@@ -23,7 +23,7 @@ de graça, em português e com os dados guardados só no seu aparelho. Para fáb
 
 <p align="center"><img src="public/apresentacao/semana-pc.webp" alt="Visão geral da manutenção com realizado da semana, vencidas, carga e prioridades, usando dados fictícios" width="820"></p>
 
-| Executar no celular | Criticidade A/B/C | Documentos PCMD |
+| Executar no celular | Criticidade A/B/C | Documentos PCM-MAN |
 |---|---|---|
 | <img src="public/apresentacao/executar-cel.webp" alt="Tela Executar no celular com o botão Feito hoje" width="220"> | <img src="public/apresentacao/criticidade-pc.webp" alt="Tela de criticidade com cinco critérios" width="300"> | <img src="public/apresentacao/entrega-pc.jpg" alt="Tela de geração individual dos documentos da revisão ativa" width="300"> |
 
@@ -31,7 +31,7 @@ de graça, em português e com os dados guardados só no seu aparelho. Para fáb
 
 Ferramenta aberta de Planejamento e Controle de Manutenção, em português, para uma fábrica com até 100 ativos. Interface Gestão, com comunidade na abertura e tema claro.
 
-- **Comunidade:** modelos PCMD, exemplos e biblioteca técnica para download; catálogo online com publicações, curtidas, comentários, denúncias e moderação no Supabase.
+- **Comunidade:** modelos da Biblioteca PCM v2 (PCM-MAN-001 a 019), biblioteca técnica para download; catálogo online com publicações, curtidas, comentários, denúncias e moderação no Supabase.
 - **Máquinas e tarefas:** fichas PDF da biblioteca para baixar offline. Na comunidade, é possível anexar PDF pronto de até 5 MB e 200 páginas; fica privado até a aprovação do modelo. JSON continua em Outros formatos.
 - **Gerar minha ficha:** no formulário do catálogo ou em um tipo da Biblioteca técnica, use Gerar ficha em PDF. A prévia abre em outra aba; escolha Imprimir / salvar PDF e selecione Salvar como PDF. A geração funciona localmente e não envia os campos ao servidor.
 - **Fábrica privada:** cadastros, planos, criticidade, execuções e falhas ficam no IndexedDB deste navegador, sem sincronização da base operacional.

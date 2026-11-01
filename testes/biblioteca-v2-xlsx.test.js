@@ -6,9 +6,9 @@ import biblioteca from '../src/dados/biblioteca.json';
 import { montarDados } from '../src/logica/pacote.js';
 import { criarGestao } from '../src/logica/gestao.js';
 import { criarProgramacao, prepararRevisao } from '../src/logica/programacao.js';
-import { prepararEmissao } from '../src/saida/pcmd.js';
-import { dadosPcmMan002, dadosPcmMan001, dadosPcmMan008 } from '../src/logica/biblioteca-v2-dados.js';
-import { preencherPcmMan002, preencherPcmMan001, preencherPcmMan008, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
+import { prepararEmissao } from '../src/logica/emissao.js';
+import { dadosPcmMan002, dadosPcmMan001, dadosPcmMan004, dadosPcmMan008 } from '../src/logica/biblioteca-v2-dados.js';
+import { preencherPcmMan002, preencherPcmMan001, preencherPcmMan004, preencherPcmMan008, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
 import { abrirWorkbookBibliotecaV2 } from '../src/integracao/biblioteca-pcm-v2.js';
 
 const ORIGINAL = 'public/modelos/biblioteca-v2/PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx';
@@ -69,7 +69,8 @@ describe('PCM-MAN-002 preenchido', () => {
     expect(texto(plano.getCell('A31').value)).toMatch(/^Cinza = vem da FMECA/);
     expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnico fictício');
     expect(wb.getWorksheet('Leia-me').getCell('D14').value).toBe(null); // sem aprovação informada
-    expect(wb.getWorksheet('Criticidade').getCell('B8').value).toBe(null); // não preenchido pelo app
+    expect(wb.getWorksheet('Criticidade').getCell('B8').value).toBe('PRD-MOT-001'); // ativo listado, notas ainda não avaliadas
+    expect(wb.getWorksheet('Criticidade').getCell('E8').value).toBe(null);
   });
 
   it('100 ativos e plano anual: amplia Cadastros, Plano e Cronograma sem truncar nem sobrescrever o rodapé', async () => {
@@ -121,6 +122,31 @@ describe('PCM-MAN-002 preenchido', () => {
     for (const nAba of [1, 2, 3, 4, 5, 6, 7]) expect(await aba(nAba)).not.toMatch(/<\/f><v[\s>/]/); // valor antigo + tipo retirado = célula inválida no Excel
   });
 
+  it('Criticidade com 100 ativos: notas 1 a 5 do app, matriz ampliada e quadros à direita intactos', async () => {
+    const e = emissao(100);
+    e.estado.gestao.criticidade.notas = { eq0: [5, 1, 1, 1], eq1: [2, 3, 1, 4] };
+    const d = dadosPcmMan002(e);
+    expect(d.criticidade).toHaveLength(100);
+    expect(d.criticidade.find((c) => c.tag === 'PRD-MOT-001')).toEqual({ tag: 'PRD-MOT-001', s: 5, q: 1, p: 1, f: 1 });
+    const saida = await preencherPcmMan002(bytes(), d);
+    const { zip, aba, wb } = await abrirSaida(saida);
+    const crit = wb.getWorksheet('Criticidade');
+    expect(crit.getCell('B8').value).toBe('PRD-MOT-001');
+    expect(crit.getCell('E8').value).toBe(5);
+    expect(crit.getCell('A107').value).toBe(100);
+    expect(crit.getCell('B107').value).toBe(d.criticidade[99].tag);
+    const xml = await aba(2);
+    expect(xml).toContain('COUNTIFS($H$8:$H$107,5,$I$8:$I$107,1)');
+    expect(xml).toContain('<f>IF(OR(H107="",I107=""),"",IF(E107=5,"A",MID(CHOOSE(H107,');
+    expect(/sqref="[^"]*\bE8:G107\b/.test(xml)).toBe(true);
+    expect(xml).toContain('<mergeCell ref="N27:R27"/>'); // quadro de estratégia não estica
+    expect(xml).toContain('<mergeCell ref="M26:M27"/>');
+    expect(xml).toContain('<mergeCell ref="A108:R108"/>'); // legenda desce
+    expect(xml.match(/Ou operar até falhar/g) ?? []).toHaveLength(0); // texto vem de sharedStrings, nunca copiado inline
+    expect(/<c r="N(2[89]|[3-9]\d|10[0-7])"/.test(xml)).toBe(false); // linhas novas (28–107) só com as colunas da tabela
+    expect(await zip.file('xl/workbook.xml').async('string')).toContain('Criticidade!$A$1:$X$108');
+  });
+
   it('marca tarefa de segurança e não inventa campos sem equivalente', () => {
     const d = dadosPcmMan002(emissao(3));
     const seg = d.atividades.find((t) => t.atividade.endsWith('(tarefa de segurança)'));
@@ -154,6 +180,21 @@ describe('PCM-MAN-008 preenchido', () => {
     expect(d.ativos.map((a) => a.tag)).toContain('IMP-01');
   });
 
+  it('falha do app com hora de início e conclusão vira data e hora; conclusão sem hora fica só com a data', async () => {
+    const e = emissao008(2);
+    Object.assign(e.falhas[0], { horaInicio: '07:45', dataConclusao: '2026-05-02', horaFim: '10:30' });
+    Object.assign(e.falhas[1], { dataConclusao: '2026-05-03', horaInicio: '', horaFim: '' });
+    const d = dadosPcmMan008(e);
+    expect(d.falhas[1]).toMatchObject({ inicio: '2026-05-01T07:45:00', fim: '2026-05-02T10:30:00' });
+    expect(d.falhas[2]).toMatchObject({ inicio: '2026-05-02', fim: '2026-05-03' });
+    const saida = await preencherPcmMan008(readFileSync('public/modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx'), d);
+    const reg = (await abrirWorkbookBibliotecaV2(saida, ExcelJS)).getWorksheet('Registro de falhas');
+    expect(reg.getCell('H6').value).toEqual(new Date('2026-05-01T07:45:00Z'));
+    expect(reg.getCell('I6').value).toEqual(new Date('2026-05-02T10:30:00Z'));
+    const xml3 = await (await JSZip.loadAsync(saida)).file('xl/worksheets/sheet3.xml').async('string');
+    expect(xml3).toMatch(/<c r="I7" s="147">/); // conclusão sem hora: estilo só data
+  });
+
   it('amplia o registro e grava data e hora como valores do Excel', async () => {
     const d = dadosPcmMan008(emissao008(40));
     const saida = await preencherPcmMan008(readFileSync('public/modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx'), d);
@@ -177,6 +218,62 @@ describe('PCM-MAN-008 preenchido', () => {
   });
 });
 
+describe('PCM-MAN-004 preenchido (histórico como ordens de serviço)', () => {
+  function emissao004() {
+    const e = emissao(3);
+    const [o1, o2] = e.ocorrencias.filter((o) => o.dataPrevista <= '2026-06-30').slice(0, 2);
+    const base = { equipamentoId: o1.equipamentoId, tarefaId: o1.tarefaId, tag: o1.tag, descricao: o1.descricao, responsavelId: 'p1', origem: 'app', cancelada: false };
+    e.historico = [
+      { ...base, id: 'h1', data: '2026-01-03', dataPrevista: o1.dataPrevista, observacao: 'Feito antes' },
+      { ...base, id: 'h2', equipamentoId: o2.equipamentoId, tarefaId: o2.tarefaId, tag: o2.tag, descricao: o2.descricao, data: o2.dataPrevista, dataPrevista: o2.dataPrevista, observacao: '', cancelada: true },
+      { ...base, id: 'h3', data: '2026-02-20', dataPrevista: '', observacao: '' },
+    ];
+    const g = e.estado.gestao; g.versao = 3;
+    g.operacao = { versao: 1, ativos: [], falhas: [], custos_manutencao: [], orcamento: [], importacoes: [],
+      ordens_servico: [{ numero_os: 'OS-9', tag: 'IMP-02', equipamento: null, atividade: 'Corretiva importada', tipo_manutencao: 'CORRETIVA', prioridade: 'ALTA', status: 'ABERTA',
+        responsavel: 'Fulano fictício', data_abertura: '2026-03-01', data_prevista: '2026-03-05', data_conclusao: null, horas_estimadas: 4, horas_restantes: 4, importacao: 'i1' },
+      { numero_os: 'OS-10', tag: 'IMP-02', equipamento: null, atividade: 'Depois do corte', tipo_manutencao: 'CORRETIVA', prioridade: 'ALTA', status: 'ABERTA',
+        responsavel: null, data_abertura: '2026-08-01', data_prevista: null, data_conclusao: null, horas_estimadas: null, horas_restantes: null, importacao: 'i1' }] };
+    return { e, o1, o2 };
+  }
+
+  it('execuções concluídas/canceladas, ocorrências vencidas programadas e OS importadas, sem inventar prioridade', () => {
+    const { e, o1, o2 } = emissao004();
+    const d = dadosPcmMan004(e);
+    const por = new Map(d.ordens.map((o) => [o.numero, o]));
+    expect(por.get('APP-h1')).toMatchObject({ status: 'CONCLUIDA', tipo: 'PREVENTIVA', prioridade: '', abertura: '2026-01-03', prazo: o1.dataPrevista, conclusao: '2026-01-03', restantes: 0, responsavel: 'Técnica Fictícia' });
+    expect(por.get('APP-h1').atividade).toContain('Obs.: Feito antes');
+    expect(por.get('APP-h2')).toMatchObject({ status: 'CANCELADA', conclusao: null });
+    expect(por.get('APP-h3')).toMatchObject({ abertura: '2026-02-20', prazo: null });
+    expect(por.get('OS-9')).toMatchObject({ prioridade: 'ALTA', status: 'ABERTA' });
+    expect(por.has('OS-10')).toBe(false); // aberta depois do corte
+    expect(por.has(`APP-${o1.id}`)).toBe(false); // executada: não fica programada
+    expect(por.has(`APP-${o2.id}`)).toBe(true); // cancelada: continua pendente
+    const programadas = d.ordens.filter((o) => o.status === 'PROGRAMADA');
+    expect(programadas.length).toBeGreaterThan(0);
+    expect(programadas.every((o) => o.prazo <= '2026-06-30' && o.restantes === o.estimadas)).toBe(true);
+  });
+
+  it('amplia a aba Ordens de Serviço e grava setores em H e famílias em J nos Cadastros do 004', async () => {
+    const { e } = emissao004();
+    const d = dadosPcmMan004(e);
+    expect(d.ordens.length).toBeGreaterThan(25);
+    const saida = await preencherPcmMan004(readFileSync('public/modelos/biblioteca-v2/PCM-MAN-004_Ordens-de-Servico_R00.xlsx'), d);
+    const zip = await JSZip.loadAsync(saida);
+    const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
+    const ultima = 4 + d.ordens.length;
+    expect(await zip.file('xl/tables/table4.xml').async('string')).toContain(`ref="A4:M${ultima}"`);
+    const os = wb.getWorksheet('Ordens de Serviço');
+    expect(os.getCell('A5').value).toBe(d.ordens[0].numero);
+    expect(os.getCell(`A${ultima}`).value).toBe(d.ordens.at(-1).numero);
+    expect(texto(os.getCell(`A${ultima + 1}`).value)).toMatch(/^Prioridade:/);
+    const cad = wb.getWorksheet('Cadastros');
+    expect(cad.getCell('H5').value).toBe('PRD');
+    expect(cad.getCell('J5').value).toBe(d.familias[0]);
+    expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnico fictício');
+  });
+});
+
 const ORIGINAL_001 ='public/modelos/biblioteca-v2/PCM-MAN-001_Controle-Documental_R00.xlsx';
 
 describe('PCM-MAN-001 preenchido', () => {
@@ -195,7 +292,7 @@ describe('PCM-MAN-001 preenchido', () => {
   it('lista o próprio controle, os documentos já emitidos e as referências, sem inventar aprovação', () => {
     const d = dadosPcmMan001(emissao001());
     expect(d.documentos.map((x) => [x.codigo, x.tipo, x.status])).toEqual([
-      ['PCM-MAN-001', 'REGISTRO', 'RASCUNHO'], ['PCM-MAN-002', 'PLANO', ''], ['PCMD-05', 'FORMULARIO', ''],
+      ['PCM-MAN-001', 'REGISTRO', 'RASCUNHO'], ['PCM-MAN-002', 'PLANO', ''], ['PCMD-05', 'OUTRO', 'OBSOLETO'],
       ['Manual fictício 0 <b>', 'OUTRO', ''], ['Manual fictício 1 <b>', 'OUTRO', '']]);
     expect(d.documentos[1].data).toBe('2026-04-01'); // última emissão
     expect(d.documentos[0].aprovado).toBe('');

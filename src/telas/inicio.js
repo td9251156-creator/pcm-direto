@@ -38,7 +38,7 @@ export function telaInicio(main, ir) {
     <section class="cartao" aria-labelledby="titulo-gestao">
       <h3 id="titulo-gestao">Seu PCM em um só lugar</h3>
       <p>${esc(estado.gestao.organizacao.nome || 'Organização ainda não informada')} · ${estado.gestao.pessoas.filter(p => p.ativo).length} pessoas ativas ·
-        ${estado.equipamentos.filter(e => criticidadeAtivo(estado.gestao.criticidade.notas[e.id], estado.gestao.criticidade.limites).classe !== 'Pendente').length} ativos avaliados.</p>
+        ${estado.equipamentos.filter(e => criticidadeAtivo(estado.gestao.criticidade.notas[e.id]).classe !== 'Pendente').length} ativos avaliados.</p>
       <div class="painel-modulos">
         <a class="modulo" href="#cadastros"><strong>Cadastros mestre</strong><span>Organização, pessoas, metas e requisitos.</span></a>
         <a class="modulo" href="#criticidade"><strong>Criticidade</strong><span>Avaliação por ativo, sem alterar segurança.</span></a>

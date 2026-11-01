@@ -13,7 +13,7 @@ import { verificarBackup, criarBackup } from './logica/backup.js';
 import { abrirRepositorio } from './repositorio.js';
 import { criarProgramacao, prepararRevisao, ocorrenciasVigentes, idsConcluidos } from './logica/programacao.js';
 import { recuperarTransacao, lerDadoLocal, guardarBackupLocal } from './armazenamento.js';
-import { criarGestao, validarGestao, migrarExecucoesAntigas, ocorrenciasPlanejadas } from './logica/gestao.js';
+import { criarGestao, validarGestao, migrarExecucoesAntigas, migrarParaBibliotecaV2, ocorrenciasPlanejadas } from './logica/gestao.js';
 import { marcarExecucao } from './logica/execucao.js';
 import { aplicarImportacao } from './logica/operacao.js';
 import { chaveAjuste } from './logica/plano.js';
@@ -141,7 +141,7 @@ export function carregar() {
     estado.ajustes = {};
     estado.exemplo = !local;
   }
-  estado.gestao = migrarExecucoesAntigas(estado.gestao, estado.execucoes, estado.equipamentos, dadosAtuais().plano);
+  estado.gestao = migrarParaBibliotecaV2(migrarExecucoesAntigas(estado.gestao, estado.execucoes, estado.equipamentos, dadosAtuais().plano));
   atualizarUltimasExecucoes();
 }
 
@@ -304,7 +304,7 @@ export async function limpar() {
   estado.equipamentos = [];
   estado.ajustes = {};
   estado.execucoes = {};
-  estado.gestao.criticidade.notas = {};
+  estado.gestao.criticidade = { escala: 5, notas: {}, convertidas: [] };
   estado.gestao.responsaveis = {};
   estado.exemplo = false;
   return salvar();
@@ -316,7 +316,7 @@ export async function carregarExemplo() {
   estado.equipamentos = listaExemplo();
   estado.ajustes = {};
   estado.execucoes = {};
-  estado.gestao.criticidade.notas = {};
+  estado.gestao.criticidade = { escala: 5, notas: {}, convertidas: [] };
   estado.gestao.responsaveis = {};
   estado.exemplo = true;
   return salvar();
@@ -395,7 +395,7 @@ function aplicarDados(r) {
     bibliotecaEditada: true, programacao: copia(r.rascunho.programacao ?? criarProgramacao()),
     metadados: copia(r.rascunho.metadados ?? { ultimoBackup: '', alteradoEm: '', passo: 1 }),
     gestao: copia(r.rascunho.gestao ?? criarGestao()) });
-  estado.gestao = migrarExecucoesAntigas(estado.gestao, estado.execucoes, estado.equipamentos, dadosAtuais().plano);
+  estado.gestao = migrarParaBibliotecaV2(migrarExecucoesAntigas(estado.gestao, estado.execucoes, estado.equipamentos, dadosAtuais().plano));
   atualizarUltimasExecucoes();
 }
 

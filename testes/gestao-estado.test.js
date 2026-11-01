@@ -48,7 +48,7 @@ describe('gestão e preservação dos dados', () => {
     const app = await abrir(); const g = criarGestao();
     g.organizacao.nome = 'Indústria Exemplo';
     g.pessoas.push({ id: 'pessoa-a', nome: 'Pessoa A', funcao: 'Responsável', especialidade: 'Elétrica', ativo: true });
-    g.criticidade.notas.eq1 = [3, 1, 1, 1, 1];
+    g.criticidade.notas.eq1 = [5, 1, 1, 1];
     g.metas.aderencia = 90;
     expect((await app.atualizarGestao(g)).ok).toBe(true);
     app.carregar(); expect(app.estado.gestao).toEqual(g);
@@ -59,6 +59,13 @@ describe('gestão e preservação dos dados', () => {
     expect(verificarBackup(antigo, padrao).ok).toBe(true);
     app.estado.gestao = criarGestao(); expect((await app.restaurarBackup(backup)).ok).toBe(true);
     expect(app.estado.gestao).toEqual(g);
+    // Backup com a criticidade antiga (1 a 3) e prefixo PCMD abre convertido para 1 a 5 e PCM-MAN.
+    const anterior = structuredClone(backup);
+    anterior.rascunho.gestao.criticidade = { limites: { a: 12, b: 9 }, notas: { eq1: [3, 1, 2, 1, 1] } };
+    anterior.rascunho.gestao.organizacao.padraoCodigo = 'PCMD';
+    expect((await app.restaurarBackup(anterior)).ok).toBe(true);
+    expect(app.estado.gestao.criticidade).toEqual({ escala: 5, notas: { eq1: [5, 1, 3, 1] }, convertidas: ['eq1'] });
+    expect(app.estado.gestao.organizacao.padraoCodigo).toBe('PCM-MAN');
   });
   it('não troca os dados quando o backup tem novos cadastros inválidos', async () => {
     const app = await abrir(); (await app.salvar()); const antes = new Map(dados);

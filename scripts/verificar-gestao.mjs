@@ -1,4 +1,4 @@
-// Roteiro real de navegador para a base IndexedDB e os documentos PCMD.
+// Roteiro real de navegador para a base IndexedDB e os documentos da Biblioteca PCM v2.
 import assert from 'node:assert/strict';
 import { readFile,mkdir,writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -75,7 +75,7 @@ await executarComRecursos({
   await ir('dados');await page.locator('#restaurar-backup').setInputFiles({name:'antigo.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(v1))});await page.locator('#confirmar-backup').click();await page.waitForURL('**/#semana');assert.equal((await rascunho()).equipamentos.length,equipamentos.length);
   await ir('equipamentos');await page.locator('.pular').focus();await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>document.activeElement.id),'conteudo');assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await ir('cadastros');await page.locator('#g-nome').fill('Indústria Exemplo');await page.locator('#g-pessoa-nome').fill('Pessoa A');await page.locator('#g-funcao').fill('Responsável fictício');await page.locator('#g-especialidade').fill('Elétrica');await page.locator('#salvar-pessoa').click();await page.getByRole('button',{name:'Editar Pessoa A',exact:true}).waitFor();assert.equal(await page.locator('#g-nome').inputValue(),'Indústria Exemplo');await page.locator('#salvar-organizacao').click();
-  await ir('criticidade');for(const [i,nota]of [3,1,1,1,1].entries())await page.locator('.avaliacao').first().locator(`[name="nota-${i}"]`).selectOption(String(nota));await page.locator('.avaliacao').first().getByRole('button').click();await page.waitForFunction(()=>document.querySelector('.avaliacao')?.textContent.includes('Classe: A'));
+  await ir('criticidade');assert.equal(await page.locator('.avaliacao').first().locator('select').count(),4);for(const [i,nota]of [5,1,1,1].entries())await page.locator('.avaliacao').first().locator(`[name="nota-${i}"]`).selectOption(String(nota));await page.locator('.avaliacao').first().getByRole('button').click();await page.waitForFunction(()=>document.querySelector('.avaliacao')?.textContent.includes('Classe: A'));
   await ir('revisao');const cap=page.locator('.capacidade').first();await cap.focus();const capId=await cap.getAttribute('id');await cap.press('ArrowUp');await page.waitForFunction(id=>document.activeElement?.id===id,capId);await cap.press('ArrowUp');await page.waitForFunction(id=>document.activeElement?.id===id,capId);assert.equal(Number(await cap.inputValue()),1);
   // Atrasa a confirmação da próxima escrita para sair da tela durante o salvamento.
   await page.evaluate(()=>{const prototipo=IDBTransaction.prototype;const original=Object.getOwnPropertyDescriptor(prototipo,'oncomplete');Object.defineProperty(prototipo,'oncomplete',{...original,set(callback){if(this.mode==='readwrite'){Object.defineProperty(prototipo,'oncomplete',original);original.set.call(this,event=>setTimeout(()=>callback.call(this,event),300));}else original.set.call(this,callback);}});});
@@ -133,13 +133,13 @@ await executarComRecursos({
   assert.equal(fichaLocalPdf.subarray(0,5).toString(),'%PDF-');
   await fichaLocal.close();
   await ir('entrega');
-  await mkdir('artifacts/pcmd',{recursive:true});
+  await mkdir('artifacts/documentos-v2',{recursive:true});
   const emissoesAntes=(await rascunho()).programacao.emissoes.length;
-  const botoes=page.locator('[data-documento]');assert.equal(await botoes.count(),11);
-  for(let i=0;i<11;i++){
+  const botoes=page.locator('[data-documento]');assert.equal(await botoes.count(),6);
+  for(let i=0;i<6;i++){
     const [download]=await Promise.all([page.waitForEvent('download',{timeout:90000}),botoes.nth(i).click()]);
     const nome=download.suggestedFilename();assert.match(nome,/\.(xlsx|docx)$/);const bytes=await readFile(await download.path());
-    await writeFile('artifacts/pcmd/'+nome,bytes);const gerado=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(await readFile('public/modelos/'+(nome.startsWith('PCM-MAN-')?'biblioteca-v2/':'')+nome.replace('-Preenchido','')));
+    await writeFile('artifacts/documentos-v2/'+nome,bytes);const gerado=await JSZip.loadAsync(bytes);const original=await JSZip.loadAsync(await readFile('public/modelos/biblioteca-v2/'+nome.replace('-Preenchido','')));
     for(const parte of Object.keys(original.files).filter(n=>/\/(media|drawings)\//.test(n)&&!original.files[n].dir))assert.deepEqual(await gerado.file(parte).async('nodebuffer'),await original.file(parte).async('nodebuffer'),nome+' preserva mídia e desenhos');
     if(nome.endsWith('.docx')){for(const parte of Object.keys(gerado.files).filter(n=>/^word\/.*\.xml$/.test(n)))assert.ok(!(await gerado.file(parte).async('string')).includes('{{'),'Marcador pendente em '+nome+'/'+parte);assert.ok((await gerado.file('word/document.xml').async('string')).includes('Indústria Exemplo'));}
     else{assert.ok((await gerado.file('xl/workbook.xml').async('string')).includes('fullCalcOnLoad="1"'));assert.ok(Object.keys(gerado.files).some(n=>n.startsWith('xl/worksheets/')));}
@@ -159,6 +159,6 @@ await executarComRecursos({
   const recuperacao=await browser.newContext();await recuperacao.addInitScript(()=>localStorage.setItem('pcm-direto:rascunho:v1','{'));const rec=await recuperacao.newPage();await rec.goto('http://127.0.0.1:4175/');await rec.getByRole('button',{name:'Baixar dados originais para recuperação'}).waitFor();assert.equal(await rec.evaluate(()=>localStorage.getItem('pcm-direto:rascunho:v1')),'{');await recuperacao.close();
   const quota=await browser.newContext();await quota.addInitScript(()=>{const original=IDBObjectStore.prototype.put;IDBObjectStore.prototype.put=function(...args){if(sessionStorage.getItem('simular-quota')){this.transaction.abort();throw new DOMException('Quota de teste excedida','QuotaExceededError');}return original.apply(this,args);};});
   const q=await quota.newPage();await q.goto('http://127.0.0.1:4175/#cadastros');await q.locator('#g-nome').waitFor();const salvo=await rascunho(q);await q.evaluate(()=>sessionStorage.setItem('simular-quota','1'));await q.locator('#g-nome').fill('Não deve ser persistido');await q.locator('#salvar-organizacao').click();await q.locator('#aviso-armazenamento').waitFor({state:'visible'});assert.deepEqual(await rascunho(q),salvo);await quota.close();
-  assert.deepEqual(erros,[]);console.log('Aprovado: comunidade inicial, tema claro, modelos originais, exemplo isolado, migração v1→v3, cadastros, criticidade, capacidade/teclado, importação inválida, revisão, execução/cancelamento, falha, backup, onze documentos offline (inclui PCM-MAN-001, 002, 008, 018 e 019 v2), concorrência e recuperação.');
+  assert.deepEqual(erros,[]);console.log('Aprovado: comunidade inicial, tema claro, modelos originais, exemplo isolado, migração v1→v3, cadastros, criticidade, capacidade/teclado, importação inválida, revisão, execução/cancelamento, falha, backup, seis documentos offline da Biblioteca v2 (PCM-MAN-001, 002, 004, 008, 018 e 019), concorrência e recuperação.');
  },
 });

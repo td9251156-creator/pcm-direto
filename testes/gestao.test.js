@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { criarGestao, validarGestao, criticidadeAtivo, migrarExecucoesAntigas, ocorrenciasPlanejadas, resumoMensal } from '../src/logica/gestao.js';
+import { criarGestao, validarGestao, criticidadeAtivo, migrarExecucoesAntigas, migrarParaBibliotecaV2, ocorrenciasPlanejadas, resumoMensal } from '../src/logica/gestao.js';
 
 const historico = (mudancas = {}) => ({ id: 'h1', equipamentoId: 'eq1', tarefaId: 'MOT-01', tag: 'PRS-MOT-001', descricao: 'Inspeção fictícia', data: '2026-01-08', dataPrevista: '', observacao: '', responsavelId: '', origem: 'app', cancelada: false, ...mudancas });
 const item = (mudancas = {}) => ({ equipamentoId: 'eq1', tarefaId: 'MOT-01', tag: 'PRS-MOT-001', descricao: 'Inspeção fictícia', especialidade: 'Elétrica', duracaoHoras: 0.5, vezesAno: 52, semanas: [1, 2], ...mudancas });
@@ -18,7 +18,7 @@ describe('cadastros e movimentos de gestão', () => {
     const g = criarGestao();
     g.pessoas.push({ id: 'p1', nome: 'Pessoa A', funcao: 'Responsável', especialidade: 'Elétrica', ativo: true });
     g.metas = { disponibilidade: 0, aderencia: 100 };
-    g.criticidade.notas.eq1 = [null, 1, 2, 3, 1];
+    g.criticidade.notas.eq1 = [null, 1, 4, 5];
     g.responsaveis['eq1|MOT-01'] = 'p1';
     expect(validarGestao(g)).toBe(true);
     for (const alterar of [
@@ -26,8 +26,11 @@ describe('cadastros e movimentos de gestão', () => {
       x => { x.pessoas[0].id = 'p"1'; },
       x => { x.metas.aderencia = 101; },
       x => { x.metas.disponibilidade = '90'; },
-      x => { x.criticidade.limites = { a: 9, b: 9 }; },
-      x => { x.criticidade.notas.eq1 = [1, 1, 1, '2', 1]; },
+      x => { x.criticidade.limites = { a: 12, b: 9 }; },
+      x => { x.criticidade.notas.eq1 = [1, 1, '2', 1]; },
+      x => { x.criticidade.notas.eq1 = [1, 1, 6, 1]; },
+      x => { x.criticidade.notas.eq1 = [1, 1, 1, 1, 1]; },
+      x => { x.criticidade.convertidas = ['eq 1']; },
       x => { x.responsaveis['chave inválida'] = 'p1'; },
     ]) { const copia = structuredClone(g); alterar(copia); expect(validarGestao(copia)).toBe(false); }
     const perigoso = JSON.parse(JSON.stringify(g));
@@ -55,13 +58,33 @@ describe('cadastros e movimentos de gestão', () => {
     g.falhas[0].horasParada = 1.5; expect(validarGestao(g)).toBe(true);
     g.historico[0].data = '2026-02-30'; expect(validarGestao(g)).toBe(false);
   });
-  it('classifica fronteiras e segurança sem presumir notas ausentes', () => {
-    for (const [notas, classe] of [[[1, 1, 2, 2, 2], 'C'], [[1, 2, 2, 2, 2], 'B'], [[2, 2, 2, 2, 3], 'B'], [[2, 2, 2, 3, 3], 'A'], [[3, 1, 1, 1, 1], 'A']]) {
-      expect(criticidadeAtivo(notas).classe).toBe(classe);
+  it('classifica pela matriz do PCM-MAN-002 sem presumir notas ausentes', () => {
+    // Matriz do modelo: CHOOSE(consequência,"CCCBB","CCBBA","CBBAA","BBAAA","BAAAA") na posição da frequência; S=5 → A.
+    for (const [notas, classe, consequencia] of [[[1, 1, 1, 1], 'C', 1], [[1, 1, 1, 4], 'B', 1], [[1, 2, 1, 5], 'A', 2], [[1, 3, 2, 2], 'B', 3],
+      [[2, 1, 3, 1], 'C', 3], [[4, 1, 1, 1], 'B', 4], [[1, 1, 5, 1], 'B', 5], [[5, 1, 1, 1], 'A', 5], [[1, 4, 1, 3], 'A', 4]]) {
+      expect(criticidadeAtivo(notas)).toEqual({ consequencia, classe });
     }
-    for (const notas of [undefined, [], [3, null, 1, 1, 1], [2, 2, '2', 2, 2], new Array(5)]) expect(criticidadeAtivo(notas)).toEqual({ pontuacao: null, classe: 'Pendente' });
-    expect(criticidadeAtivo([2, 2, 2, 2, 2], { a: 10, b: 7 }).classe).toBe('A');
-    expect(criticidadeAtivo([3, 1, 1, 1, 1], { a: 9, b: 9 }).classe).toBe('Pendente');
+    for (const notas of [undefined, [], [3, null, 1, 1], [2, 2, '2', 2], [1, 1, 1, 6], [1, 1, 1, 1, 1], new Array(4)]) expect(criticidadeAtivo(notas)).toEqual({ consequencia: null, classe: 'Pendente' });
+  });
+  it('converte a criticidade antiga de 1 a 3 (1→1, 2→3, 3→5), marca para conferência e troca o prefixo PCMD', () => {
+    const antiga = { ...criarGestao(), criticidade: { limites: { a: 12, b: 9 }, notas: { eq1: [3, 2, 1, 2, 3], eq2: [null, null, null, null, 2], eq3: [1, null, 2, 1, 1] } } };
+    antiga.organizacao.padraoCodigo = 'PCMD';
+    expect(validarGestao(antiga)).toBe(true);
+    const nova = migrarParaBibliotecaV2(antiga);
+    expect(nova.criticidade).toEqual({ escala: 5, notas: { eq1: [5, 3, 1, 3], eq2: [null, null, null, null], eq3: [1, null, 3, 1] }, convertidas: ['eq1', 'eq3'] });
+    expect(nova.organizacao.padraoCodigo).toBe('PCM-MAN');
+    expect(validarGestao(nova)).toBe(true);
+    expect(criticidadeAtivo(nova.criticidade.notas.eq1).classe).toBe('A');
+    expect(migrarParaBibliotecaV2(nova)).toBe(nova);
+    expect(antiga.criticidade.notas.eq1).toEqual([3, 2, 1, 2, 3]);
+  });
+  it('aceita hora de início e de conclusão da falha só com conclusão e em ordem', () => {
+    const g = { ...criarGestao(), versao: 2 };
+    const f = { id: 'f1', equipamentoId: 'eq1', tag: 'PRS-MOT-001', data: '2026-10-20', sintoma: 'Ruído fictício', causa: '', acao: '', horasParada: null, peca: '', responsavelId: '', dataConclusao: '2026-10-20', horasReparo: null, horaInicio: '08:15', horaFim: '10:00' };
+    g.falhas = [f]; expect(validarGestao(g)).toBe(true);
+    for (const m of [{ horaFim: '08:00' }, { horaInicio: '24:00' }, { horaFim: '9:00' }, { dataConclusao: '', horaFim: '10:00' }]) expect(validarGestao({ ...g, falhas: [{ ...f, ...m }] })).toBe(false);
+    expect(validarGestao({ ...g, falhas: [{ ...f, dataConclusao: '2026-10-21', horaFim: '07:00' }] })).toBe(true);
+    expect(validarGestao({ ...g, versao: 1, falhas: [{ ...f }] })).toBe(false);
   });
 });
 

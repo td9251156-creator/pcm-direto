@@ -22,7 +22,7 @@ await executarComRecursos({limiteTotal:180000,criarServidor:async()=>{const s=aw
   await p.waitForFunction(async()=>(await import('/src/estado.js')).estado.metadados.passo===2);assert.equal(await p.locator('#buscar-ferramentas').count(),1,'Gravação atrasada não substitui outra tela');
   await p.evaluate(()=>{location.hash='assistente';});await p.getByRole('heading',{name:'Prepare seu PCM · passo 2 de 4'}).waitFor();await p.reload();await p.getByRole('heading',{name:'Prepare seu PCM · passo 2 de 4'}).waitFor();
   await p.evaluate(()=>{location.hash='mais';});const busca=p.locator('#buscar-ferramentas');await busca.fill('backup');assert.equal(await p.locator('#ferramentas .modulo').count(),1);assert.equal(await p.locator('#ferramentas a[href="#dados"]').count(),1);
-  await busca.fill('modelo equipamentos');assert.equal(await p.locator('#ferramentas a[href="#entrega-modelos"]').count(),1);await busca.fill('zzzinexistente');assert.equal(await p.locator('#ferramentas .modulo').count(),0);await busca.fill('');assert.ok(await p.locator('#ferramentas .modulo').count()===19);
+  await busca.fill('modelo rotina');assert.equal(await p.locator('#ferramentas a[href="#modelos"]').count(),1);assert.equal(await p.locator('#ferramentas a[href="#entrega-modelos"]').count(),0);await busca.fill('zzzinexistente');assert.equal(await p.locator('#ferramentas .modulo').count(),0);await busca.fill('');assert.ok(await p.locator('#ferramentas .modulo').count()===18);
   for(const width of [320,390,820,1280]){await p.setViewportSize({width,height:900});assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));}
   assert.deepEqual(erros,[]);await c.close();
 
