@@ -41,7 +41,20 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
   início = data + hora; fim = conclusão + hora; sem hora, só a data (estilo dd/mm/aaaa do modelo).
 - **D8 — Manuais antigos retirados.** **D9 — Revisão dos documentos = revisão do plano.**
 - **D1 — Indicadores:** o mantenedor vai revisar os procedimentos e definir o cálculo.
-- **D4 — Janelas de parada** e **D5 — QR, fotos e assinaturas:** continuam pendentes.
+- **D4 — Janelas de parada (pendente; opções levantadas em 01/11/2026, consulta ao ChatGPT).** Regras comuns: segurança
+  nunca é adiada nem fica menos frequente (se antecipada, o próximo vencimento conta da execução antecipada); data e
+  capacidade da janela são conferidas à parte; o vencimento original fica guardado; conflito de segurança é apontado, não
+  resolvido sozinho. Opções: (1) tolerância fixa em dias (ex.: ±2), a mais simples; (2) percentual do intervalo (ex.: 10%);
+  (3) tolerância por classe de criticidade (A/B/C), que prioriza a janela quando falta tempo. Dados: tarefa, segurança,
+  vencimento original, intervalo, última execução, duração, tolerância e calendário das janelas. Decisão do mantenedor:
+  qual opção e quais limites.
+- **D5 — QR, fotos e ciência (pendente; opções levantadas em 01/11/2026).** QR: só um identificador do ativo (sem dados
+  pessoais; não é controle de acesso). Fotos: lado maior 1.280 px, 150–300 KB (teto 500 KB), até 3 por falha, aviso a
+  20 MB por ativo, sem localização embutida, evitando rostos, crachás e placas. Ciência: nome + confirmação + data/hora
+  da versão da execução ("Declaro que tomei ciência das informações desta execução"); não prometer identidade comprovada
+  nem validade jurídica garantida (pode servir como evidência; MP 2.200-2/2001, art. 10, § 2º). Backup: completo com fotos
+  e tamanho estimado antes de baixar; exportação sem fotos marcada como incompleta; nunca apagar em silêncio.
+  Ordem sugerida: conferir backup/restauração com anexos → QR → foto → ciência. Decisão do mantenedor: aprovar limites e ordem.
 
 ### Modelos revisados recebidos e integrados (01/11/2026)
 

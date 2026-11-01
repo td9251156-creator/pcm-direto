@@ -264,3 +264,26 @@ Use apenas dados fictícios.
 5. **Sem PCMD:** em Documentos só aparecem seis modelos PCM-MAN; o endereço `#entrega-modelos` abre Documentos; Mais
    mostra 18 ferramentas e nenhum "Preencher um modelo".
 6. **Office:** abra 001, 002, 004 e 008 gerados no Excel e no LibreOffice; confira recálculo, impressão e listas ▼.
+
+## Roteiro de campo — 3 técnicos, celular, 30 minutos (01/11/2026)
+
+Base: rascunho do ChatGPT (consulta), ajustado às telas reais do app. Use só dados fictícios. Um técnico usa o app,
+outro confere e o terceiro anota; revezem. Marque **S** ou **N** e anote dificuldades e mensagens.
+
+| Passo | O que fazer | Resultado esperado | Deu certo? (S/N) | Observação |
+|---|---|---|---|---|
+| 1 · 2 min | Abrir o app e achar: Planejar → Equipamentos, Mais → Criticidade, Executar, Falhas, Mais → Mensal, Documentos e Meus dados. | O grupo encontra onde fará cada tarefa. | | |
+| 2 · 4 min | Cada técnico cadastra um equipamento em Planejar → Equipamentos: setor **TST**, tipos Bomba centrífuga, Transportador de correia e Ventilador/exaustor, descrição "… Teste". | Três equipamentos na lista, cada um com TAG gerada pelo app (ex.: TST-BOM-001), sem repetição. | | Anotar as TAGs. |
+| 3 · 3 min | Em Mais → Criticidade, dar as notas (segurança / qualidade / produção / frequência): Bomba **5/3/4/2**; Correia **2/4/5/3**; Ventilador **1/1/2/1**. Salvar cada um. | Classes: Bomba **A** (segurança 5), Correia **A** (consequência 5 com frequência 3), Ventilador **C**. | | |
+| 4 · 1 min | Sair e voltar à Criticidade. | Notas e classes continuam salvas. | | |
+| 5 · 3 min | Em Planejar → Tarefas e capacidade, conferir e **ativar a revisão** do plano. | Revisão ativa; Executar mostra ocorrências previstas. | | |
+| 6 · 2 min | Em Executar, registrar uma ocorrência da Bomba com **Data e observação**: "Inspeção de teste, sem intervenção real". | Registro aparece no histórico da Bomba com a data e a observação. | | A execução não tem hora de início e fim. |
+| 7 · 3 min | Em Falhas, registrar na Bomba uma falha com data **no mês anterior**, hora de início **09:00**, conclusão no mesmo dia às **09:30** e tempo total do reparo **0,5 h**. | Falha salva na Bomba, com as horas no histórico. | | |
+| 8 · 3 min | Em Mais → Mensal, escolher a Bomba e o **mês anterior**; informar horas planejadas (HP) **200** e guardar. | HI 0,5 h; HO 199,5 h; N 1; MTBF 199,5 h; MTTR 0,5 h; disponibilidade 99,75%. | | Anotar os valores mostrados. |
+| 9 · 5 min | Em Documentos, preencher "Elaborado por" e gerar **PCM-MAN-002**, **004** e **008**; abrir cada um no Excel do celular. | 002 com a Criticidade e o Plano; 004 com a execução como OS concluída; 008 com a falha e as horas. Abrem sem erro. | | |
+| 10 · 1 min | Em Meus dados, baixar o backup completo e achar o arquivo nos downloads. | Arquivo .json baixado, com nome e tamanho visíveis. | | Anotar o nome. |
+| 11 · 3 min | Responder às perguntas abaixo; cada técnico comenta ao menos uma dificuldade. | Opiniões registradas. | | |
+
+Perguntas: 1) Em qual etapa houve mais dificuldade e o que aconteceu? 2) Quais nomes, campos ou instruções ficaram
+difíceis? 3) Como foi dar as notas de criticidade e as horas da falha no celular? 4) O que faltou para entender o Mensal
+e usar os documentos no Excel? 5) O que mudariam primeiro para o dia a dia?
