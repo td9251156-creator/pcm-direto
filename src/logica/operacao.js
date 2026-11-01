@@ -61,7 +61,9 @@ function conferirRegistro(base, r) {
     if (campo in r && !vazio(r[campo]) && !permitidos.includes(r[campo])) motivos.push(`${campo}: código fora da lista padronizada.`);
   }
   if (base === 'ordens_servico') {
-    for (const campo of ['tipo_manutencao', 'prioridade']) if (vazio(r[campo])) motivos.push(`${campo}: obrigatório.`);
+    // Prioridade pode ficar vazia só em preventiva (o app não registra prioridade das tarefas do plano).
+    if (vazio(r.tipo_manutencao)) motivos.push('tipo_manutencao: obrigatório.');
+    if (vazio(r.prioridade) && r.tipo_manutencao !== 'PREVENTIVA') motivos.push('prioridade: obrigatório.');
     if (vazio(r.tag) || vazio(r.status) || vazio(r.data_abertura)) motivos.push('OS sem TAG, status ou data de abertura.');
     if (r.data_conclusao && r.data_abertura && r.data_conclusao < r.data_abertura) motivos.push('Conclusão anterior à abertura.');
     if (r.status === 'CONCLUIDA' && !r.data_conclusao) motivos.push('OS concluída sem data de conclusão.');

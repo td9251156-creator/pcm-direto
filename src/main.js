@@ -1,6 +1,5 @@
 import { telaModelos } from './telas/modelos.js';
 import { telaImportarOperacao } from './telas/importar-operacao.js';
-import { telaEntregaModelos } from './telas/entrega-modelos.js';
 // Ponto de entrada: carrega o rascunho, troca de tela pelo endereço (#inicio, #equipamentos...)
 // e registra o service worker para funcionar como aplicativo e sem internet.
 import { inicializarPersistencia, recuperacao, estado } from './estado.js';
@@ -26,7 +25,6 @@ import { acessoAtual } from './navegacao.js';
 
 const TELAS = {
   modelos: { titulo: 'Modelos para sua rotina', desenhar: telaModelos },
-  'entrega-modelos': { titulo: 'Preencher um modelo', desenhar: telaEntregaModelos },
   comunidade: { titulo: 'Comunidade e modelos', desenhar: telaComunidade },
   catalogo: { titulo: 'Catálogo colaborativo', desenhar: telaCatalogo },
   inicio: { titulo: 'Início', desenhar: telaBoasVindas },
@@ -83,6 +81,8 @@ function mostrar() {
   const nome = location.hash.slice(1).split('?')[0];
   // Endereços antigos de material interno levam ao catálogo útil para o usuário.
   if(nome==='marca'){location.replace('#modelos');return;}
+  // O preenchimento individual dos modelos anteriores foi retirado: tudo é gerado em Documentos.
+  if(nome==='entrega-modelos'){location.replace('#entrega');return;}
   document.body.dataset.tela = nome;
   main.classList.remove('ativo-aberto');
   document.querySelectorAll('dialog.painel-execucao, dialog[data-dialogo-app]').forEach(d=>d.close());

@@ -2,7 +2,7 @@
 const grupos = {
   equipamentos: 'planejar', cadastros: 'planejar', criticidade: 'planejar',
   revisao: 'planejar', plano: 'planejar', mensal: 'planejar', impressao: 'planejar',
-  execucao: 'executar', modelos: 'entrega', 'entrega-modelos': 'entrega',
+  execucao: 'executar', modelos: 'entrega',
   catalogo: 'comunidade', inicio: 'mais', dashboards: 'mais', 'importar-operacao': 'dados', assistente: 'mais', apoio: 'mais',
 };
 const diretas = ['comunidade','semana','executar','ativos','falhas','planejar','biblioteca','entrega','dados','mais'];

@@ -13,12 +13,11 @@ const grupos=[
     ['planejar','Planejar','Conferir o rascunho e ativar revisões do plano'],
     ['equipamentos','Equipamentos','Cadastrar e importar a lista de ativos'],
     ['cadastros','Cadastros','Organização, setores, pessoas e referências'],
-    ['criticidade','Criticidade','Avaliar A/B/C sem alterar as frequências'],
+    ['criticidade','Criticidade','Notas de 1 a 5 e classe A/B/C, sem alterar as frequências'],
     ['mensal','Mensal','Consultar previsões e realizações por mês'],
   ]],
   ['Documentos',[
     ['entrega','Documentos da revisão ativa','Gerar um documento com o plano ativo, execuções e falhas'],
-    ['entrega-modelos','Preencher um modelo','Escolher um arquivo e inserir os equipamentos em edição'],
     ['modelos','Modelos para sua rotina','Entender cada modelo da Biblioteca PCM v2 e baixar Excel ou Word'],
   ]],
   ['Dados e apoio',[

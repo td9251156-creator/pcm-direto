@@ -1,46 +1,69 @@
 > Atualização 24/10/2026: decisões atuais em [Reformulação](REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
-## Lista única de pendências — situação em 31/10/2026
+## Lista única de pendências — situação em 01/11/2026
 
-Conferida contra o código e os testes do ramo `coord/operacao-dashboards` (sobre `coord/modelos-v2-downloads`).
-Situações: **Verificado** = implementado e verificado; **Validação humana** = implementado, aguardando validação
-humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta rodada, com justificativa.
+Conferida contra o código e os testes do ramo `coord/pcm-man-001`. Situações: **Verificado** = implementado e
+verificado; **Validação humana** = implementado, aguardando validação humana; **Bloqueado** = depende de definição
+técnica; **Adiado** = fora desta rodada, com justificativa.
 
 | # | Item | Prioridade | Situação | Depende de | Critério de aceite |
 |---|---|---|---|---|---|
-| P1 | Importar OS e ativos (004), falhas (008), custos e orçamento (012) | Alta | **Verificado** | — | Prévia com aceitos/sem mudança/conflitos/recusados por linha; confirmação; reimportar não duplica; falha mantém a base. 10 testes + roteiro de navegador. |
-| P2 | Dashboards com os dados da base local | Alta | **Verificado** (demo separada em `?fonte=demo`) | P1 | Mesmo cálculo em cartões, gráficos, tabelas e HTML; zero/vazio/parcial/indefinido; HTML offline sem selo demo. |
-| P3 | Mês parcial no início do filtro e falha iniciada antes do período | Alta | **Verificado** | — | Contagem pelo início; horas recortadas ao período; mês inicial/final parcial marcado. |
-| P4 | Orçamento do 012 | Alta | **Verificado** com escopo restrito | — | Grade anual só como orçamento geral (setor vazio); com setor em B4 é recusada; sem rateio por setor; meses sem orçamento = parcial. |
-| P5 | MTBF, MTTR e disponibilidade nos dashboards | Média | **Bloqueado** | Decisão D1 abaixo | Fórmulas de 27/10 já existem no Mensal (falhas do app + horas mensais); não transferidas para as falhas importadas (outra população). |
-| P6 | Preencher PCM-MAN-002 (plano) | Alta | **Verificado** (parcial) + **Validação humana** no Office | D2 para Criticidade | Cópia integral; 100 ativos/940 atividades abertos no Excel sem reparo e sem erro de fórmula. Criticidade/FMECA em branco. |
-| P7 | Retirar PCMD-02 e PCMD-03/04 | Média | **Bloqueado** | D2 e D3 | O 002 ainda não leva notas de criticidade, ocorrências nem execuções. |
-| P8 | Preencher PCM-MAN-001, 008, 018 e 019 e retirar PCMD-01, 05, W1, W2 | Média | **Adiado** para a próxima rodada | — | Um modelo por vez, com o mesmo gerador (`src/saida/biblioteca-v2-xlsx.js`); Word: só controles de metadados (contrato `camposDocumento`). |
-| P9 | "Preencher um modelo" (5 refeitos) só com v2 | Média | **Adiado** | P8 | Página de modelos já usa só v2; o preenchimento individual ainda usa 5 arquivos anteriores. |
-| P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais` (horas planejadas e de parada por ativo/mês fechado). |
-| P11 | Janelas de parada e agrupamento | Baixa | **Bloqueado** | D4 | Nenhuma regra presumida; tarefas de segurança nunca adiadas. |
-| P12 | QR code, fotos e assinaturas | Baixa | **Bloqueado** | D5 | Definir privacidade, espaço, offline e backup antes de implementar. |
-| P13 | Catálogo da comunidade no banco real | Baixa | **Validação humana** | Acesso do mantenedor | Roteiro em VALIDACAO-REFORMULACAO.md; nenhuma alteração online feita. |
-| P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | Roteiros em VALIDACAO-REFORMULACAO.md. LibreOffice não está instalado nesta máquina. |
-| P15 | Publicar `coord/modelos-v2-downloads` e `coord/operacao-dashboards` | — | Aguardando autorização | Mantenedor | Nada publicado; nenhum PR aberto. |
+| P1 | Importar OS e ativos (004), falhas (008), custos e orçamento (012) | Alta | **Verificado** | — | Prévia por linha, confirmação, reimportação sem duplicar, falha mantém a base. |
+| P2 | Dashboards com os dados da base local | Alta | **Verificado** (demo em `?fonte=demo`) | P1 | Mesmo cálculo em cartões, gráficos, tabelas e HTML. |
+| P3 | Mês parcial e falha iniciada antes do período | Alta | **Verificado** | — | Contagem pelo início; horas recortadas ao período. |
+| P4 | Orçamento do 012 | Alta | **Verificado** com escopo restrito | — | Só orçamento geral (setor vazio); sem rateio. |
+| P5 | MTBF, MTTR e disponibilidade nos dashboards | Média | **Bloqueado** | D1 (mantenedor vai revisar os procedimentos) | Não transferir fórmulas entre populações. |
+| P6 | Preencher PCM-MAN-002 | Alta | **Verificado** + **Validação humana** no Office | — | Criticidade (notas 1 a 5), Plano, Cronograma e Cadastros; 100 ativos abertos no Excel sem erro. |
+| P7 | Retirar todos os modelos anteriores (PCMD e "refeitos") | Alta | **Verificado** | — | Site sem arquivos PCMD/refeitos; Documentos só com v2; `#entrega-modelos` leva a Documentos; testes impedem PCMD nas telas. |
+| P8 | Preencher 001, 004, 008, 018 e 019 | Alta | **Verificado** + **Validação humana** no Office | — | 004 com 3.256 OS e 008 com 1.101 falhas abertos no Excel sem erro (só os #N/D do Pareto vazio, iguais ao original). |
+| P9 | "Preencher um modelo" | — | **Retirado** | — | Tudo é gerado em Documentos da revisão ativa. |
+| P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais`. |
+| P11 | Janelas de parada e agrupamento | Baixa | **Bloqueado** | D4 | Nenhuma regra presumida; segurança nunca adiada. |
+| P12 | QR code, fotos e assinaturas | Baixa | **Bloqueado** | D5 | Definir privacidade, espaço, offline e backup antes. |
+| P13 | Catálogo da comunidade no banco real | Baixa | **Validação humana** | Acesso do mantenedor | Roteiro em VALIDACAO-REFORMULACAO.md. |
+| P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | LibreOffice não está instalado nesta máquina. |
+| P15 | Revisões nos modelos para integrar melhor (lista abaixo) | Média | **Aguardando arquivos do mantenedor** | M1–M11 | Cada arquivo novo: hash no manifesto, testes e conferência no Excel. |
+| P16 | Publicar `coord/pcm-man-001` | — | Aguardando autorização | Mantenedor | Nada publicado; nenhum PR aberto. |
 
-### Decisões técnicas pendentes (cada uma bloqueia só o seu trecho)
+### Decisões do mantenedor (01/11/2026)
 
-- **D1 — MTBF/MTTR/disponibilidade nos dashboards.** Hoje: o Mensal calcula por ativo e mês fechado com as falhas
-  registradas no app e as horas planejadas/de parada digitadas. As falhas importadas do 008 têm início e fim com hora.
-  Exemplo: motor DEMO-01, outubro, 600 h planejadas, 2 falhas importadas com 6 h e 4 h de indisponibilidade e 3 h e 2 h
-  de reparo. Proposta: horas operadas = 600 − 10 = 590 h; MTBF = 590 ÷ 2 = 295 h; MTTR = (3 + 2) ÷ 2 = 2,5 h;
-  disponibilidade = 590 ÷ 600 = 98,3 %. Pergunta: as horas de parada do Mensal podem ser substituídas pela
-  indisponibilidade das falhas importadas, ou continuam digitadas à parte (e o dashboard só calcula quando houver as duas)?
-- **D2 — Criticidade do PCM-MAN-002.** O app usa 5 notas de 1 a 3 (classe A/B/C por soma); o modelo usa consequência
-  S/Q/P e frequência de 1 a 5 (matriz). Exemplo: notas do app [3,2,2,1,1] → classe A (segurança 3). Proposta: não converter;
-  levar só a TAG para a Criticidade e a classe do app numa coluna de observação. Pergunta: aceita, ou prefere uma tabela
-  de conversão aprovada (ex.: 1→1, 2→3, 3→5)?
-- **D3 — Ocorrências e execuções.** O 002 não tem abas de ocorrências/execuções como o PCMD-03/04. Proposta: manter o
-  histórico no PCMD-03/04 até haver modelo v2 equivalente (o 006 de check-list ou o 011 de indicadores não são histórico).
-- **D4 — Janelas de parada:** limites de agrupamento, capacidade e o que nunca pode mudar de data.
-- **D5 — QR, fotos e assinaturas:** finalidade, tamanho máximo por foto, retenção, e que "assinatura" é registro de ciência,
-  sem validade jurídica.
+- **Padrão de código:** PCM-MAN, nunca PCMD. O prefixo `PCMD` guardado em bases antigas vira `PCM-MAN` ao abrir.
+  Emissões antigas de documentos PCMD aparecem no PCM-MAN-001 como **OBSOLETO**, com o substituto (registro histórico).
+- **D2 — Criticidade de 1 a 5.** O app usa o método da aba Criticidade do 002: S, Q, P e frequência de 1 a 5;
+  consequência = maior entre S, Q e P; classe pela matriz do modelo; S = 5 → A. Notas antigas convertidas
+  1→1, 2→3, 3→5 (a nota de custo/tempo de reparo não existe no novo método) e marcadas "convertida: confira" até
+  serem salvas de novo. As notas vão para a aba Criticidade do 002.
+- **D3 — Histórico no PCM-MAN-004.** Cada execução vira uma OS ("APP-" + ID): CONCLUIDA ou CANCELADA; ocorrência
+  prevista até a data de corte sem execução vira PROGRAMADA; tipo PREVENTIVA; abertura = data prevista (ou a da
+  execução, se feita antes); prioridade em branco. OS importadas do 004 entram como vieram.
+- **D6 — PCMD-01 retirado.** O mantenedor vai acrescentar ao 001 os campos que faltam (M1–M3).
+- **D7 — PCMD-05 retirado.** O registro de falhas pede hora de início e hora da conclusão (opcionais); no 008,
+  início = data + hora; fim = conclusão + hora; sem hora, só a data (estilo dd/mm/aaaa do modelo).
+- **D8 — Manuais antigos retirados.** **D9 — Revisão dos documentos = revisão do plano.**
+- **D1 — Indicadores:** o mantenedor vai revisar os procedimentos e definir o cálculo.
+- **D4 — Janelas de parada** e **D5 — QR, fotos e assinaturas:** continuam pendentes.
+
+### Revisões sugeridas nos modelos (para o mantenedor)
+
+Manter nomes de tabela (`tb_pcm_...`), nomes de campo da linha 4 e nomes de aba; subir a revisão no arquivo (`_R01`)
+e registrar na aba Revisões. Cada arquivo novo exige atualizar o manifesto (hash) e o preenchimento.
+
+- **M1 — 001, Pessoas:** acrescentar `funcao`, `especialidade` e `ativo` (Sim/Não).
+- **M2 — 001, Organização:** `organizacao`, `referencial`, `meta_disponibilidade` (%) e `meta_aderencia` (%).
+- **M3 — 001, Referências externas:** tabela própria com `referencia`, `versao`, `data`, `fonte` e `situacao`
+  (hoje entram na lista de documentos como OUTRO).
+- **M4 — 002:** coluna para o 5º critério (custo/tempo de reparo), se quiser mantê-lo.
+- **M5 — 002:** confirmar "A cada (dias)": Diária 1, Semanal 7, Quinzenal 14, Mensal 30, Bimestral 60, Trimestral 90,
+  Semestral 180, Anual 365; ou criar coluna com a periodicidade escrita.
+- **M6 — Cadastros:** padronizar a ordem das colunas H/J (família/setor). 004, 013 e 014 têm setor em H e família
+  em J; 012 e 015 têm outra disposição; os demais têm família em H e setor em J.
+- **M7 — 004, Prioridade: decidido em 01/11/2026.** A importação aceita prioridade vazia só em OS PREVENTIVA (o app
+  não inventa prioridade); corretiva, preditiva e inspeção continuam exigindo prioridade. Nenhuma mudança no modelo.
+- **M8 — 004:** coluna `observacao` (hoje a observação vai junto com o serviço).
+- **M9 — 008:** colunas `peca` e `responsavel` (hoje vão escritas na ação).
+- **M10 — 012:** grade de orçamento por setor, se quiser comparar por setor.
+- **M11 — Indicadores (D1):** origem das horas planejadas, parada digitada ou calculada pelas falhas, falha sem fim,
+  e em qual modelo publicar (011?).
 
 ## Troca dos downloads pela Biblioteca PCM v2 (31/10/2026)
 

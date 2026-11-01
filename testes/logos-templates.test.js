@@ -15,7 +15,8 @@ function normalizar(texto,ids){
 
 it('todos os templates e exemplos públicos usam a imagem oficial do modelo',async()=>{
   expect(sha(logo)).toBe(relatorio.logoSha256);
-  for(const pasta of ['public/modelos','public/modelos/refeitos']){
+  // Os modelos do formato anterior (PCMD) foram retirados; os da Biblioteca v2 têm conferência própria por hash.
+  for(const pasta of ['public/modelos']){
     for(const nome of readdirSync(pasta).filter(n=>/\.(xlsx|docx)$/.test(n))){
       const zip=await JSZip.loadAsync(readFileSync(pasta+'/'+nome));
       const imagens=Object.keys(zip.files).filter(n=>/\/media\//.test(n)&&!zip.files[n].dir);
@@ -27,9 +28,9 @@ it('todos os templates e exemplos públicos usam a imagem oficial do modelo',asy
 
 it('troca dos logos preserva todas as partes funcionais e o conteúdo do Word',async()=>{
   expect(Object.keys(relatorio.arquivos)).toHaveLength(12);
-  // O relatório guarda o histórico dos 12 arquivos; exemplos foram retirados na troca pela Biblioteca PCM v2.
+  // O relatório guarda o histórico dos 12 arquivos; todos foram retirados na troca pela Biblioteca PCM v2.
   const publicados=Object.entries(relatorio.arquivos).filter(([nome])=>existsSync('public/modelos/'+nome));
-  expect(publicados.map(([n])=>n).some(n=>/Exemplo/.test(n))).toBe(false);expect(publicados).toHaveLength(6);
+  expect(publicados).toHaveLength(0);
   for(const [nome,info] of publicados){
     const bytes=readFileSync('public/modelos/'+nome);expect(sha(bytes),nome).toBe(info.sha256Atual);
     const zip=await JSZip.loadAsync(bytes);

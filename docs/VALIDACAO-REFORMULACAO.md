@@ -249,3 +249,18 @@ Repetir no LibreOffice Calc (Ferramentas → Recalcular, se preciso). Word: só 
 **5. Comunidade e catálogo (online)** — com conta de teste do mantenedor, não pessoal: entrar; enviar um PDF fictício;
 moderar e publicar; baixar como outro usuário; conferir que arquivo privado não abre por link direto; confirmar no banco que
 os novos tipos de equipamento do catálogo foram aplicados. Nada disso foi executado nesta rodada (sem autorização online).
+## Só Biblioteca v2, criticidade 1 a 5, hora das falhas e histórico no 004 — roteiros (01/11/2026)
+
+Use apenas dados fictícios.
+
+1. **Criticidade:** em Mais → Criticidade, dê S=5 a um ativo (classe A) e S=1, Q=3, P=2, frequência=2 a outro (classe B).
+   No 002 gerado, aba Criticidade, confira as mesmas classes calculadas pelo Excel/LibreOffice e a matriz contando os ativos.
+2. **Base antiga:** restaure um backup anterior com notas de 1 a 3. Confira o aviso "convertida", as notas 1→1, 2→3,
+   3→5 e que o aviso some ao salvar a avaliação.
+3. **Falhas com hora:** registre uma falha com hora de início e conclusão. Gere o 008: início e fim com data e hora.
+   Uma falha sem hora deve aparecer só com a data (sem "00:00").
+4. **004:** registre uma execução, cancele outra e deixe uma ocorrência vencida. Gere o 004: CONCLUIDA, CANCELADA e
+   PROGRAMADA, com prazo e horas; prioridade em branco; Cadastros com setor em H e família em J.
+5. **Sem PCMD:** em Documentos só aparecem seis modelos PCM-MAN; o endereço `#entrega-modelos` abre Documentos; Mais
+   mostra 18 ferramentas e nenhum "Preencher um modelo".
+6. **Office:** abra 001, 002, 004 e 008 gerados no Excel e no LibreOffice; confira recálculo, impressão e listas ▼.

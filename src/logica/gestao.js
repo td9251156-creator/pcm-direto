@@ -12,6 +12,41 @@ const chaveTarefa = valor => typeof valor === 'string' && /^[A-Za-z0-9_-]+\|[A-Z
 const lista = valor => Array.isArray(valor) && valor.length <= 100_000;
 const limiteValido = limites => objeto(limites) && Number.isInteger(limites.a) && Number.isInteger(limites.b) &&
   limites.b >= 5 && limites.b < limites.a && limites.a <= 15;
+const nota = (n, max) => n === null || (Number.isInteger(n) && n >= 1 && n <= max);
+
+// Criticidade no método do PCM-MAN-002: S, Q e P (consequência) e frequência de falha, de 1 a 5.
+export const CRITERIOS_CRITICIDADE = ['Segurança', 'Qualidade', 'Produção', 'Frequência de falha'];
+// Matriz do modelo (linha = consequência, posição = frequência). Segurança 5 vira A em qualquer quadrado.
+const MATRIZ = ['CCCBB', 'CCBBA', 'CBBAA', 'BBAAA', 'BAAAA'];
+// Conversão aprovada pelo mantenedor (D2) da escala antiga de 1 a 3.
+const DA_ESCALA_3 = { 1: 1, 2: 3, 3: 5 };
+
+function criticidadeValida(c) {
+  if (!objeto(c) || !objeto(c.notas)) return false;
+  // Formato antigo (5 notas de 1 a 3 e limites): ainda aceito em backups e convertido ao abrir.
+  if (c.escala === undefined) return limiteValido(c.limites) && Object.entries(c.notas).every(([chave, ns]) => id(chave) &&
+    Array.isArray(ns) && ns.length === 5 && Array.from(ns).every(n => nota(n, 3)));
+  return c.escala === 5 && !Object.hasOwn(c, 'limites') && Array.isArray(c.convertidas) && c.convertidas.every(id) &&
+    new Set(c.convertidas).size === c.convertidas.length &&
+    Object.entries(c.notas).every(([chave, ns]) => id(chave) && Array.isArray(ns) && ns.length === 4 && Array.from(ns).every(n => nota(n, 5)));
+}
+
+/**
+ * Ajusta dados do formato anterior ao padrão da Biblioteca v2: prefixo PCM-MAN e criticidade de 1 a 3 convertida
+ * para 1 a 5 (a nota de custo/tempo de reparo não tem lugar no 002). As convertidas ficam marcadas para conferência.
+ */
+export function migrarParaBibliotecaV2(gestao) {
+  let nova = gestao;
+  if (nova.organizacao.padraoCodigo === 'PCMD') nova = { ...nova, organizacao: { ...nova.organizacao, padraoCodigo: 'PCM-MAN' } };
+  const c = nova.criticidade;
+  if (c.escala === 5) return nova;
+  const notas = {}; const convertidas = [];
+  for (const [chave, ns] of Object.entries(c.notas)) {
+    notas[chave] = ns.slice(0, 4).map(n => (n === null ? null : DA_ESCALA_3[n]));
+    if (ns.some(n => n !== null)) convertidas.push(chave); // inclui quem só tinha a nota de custo, que deixa de existir
+  }
+  return { ...nova, criticidade: { escala: 5, notas, convertidas } };
+}
 
 function dataValida(valor) {
   if (typeof valor !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
@@ -47,9 +82,9 @@ function registrosValidos(registros, verificar) {
 export function criarGestao() {
   return {
     versao: 1,
-    organizacao: { nome: '', setores: [], elaborador: '', aprovador: '', padraoCodigo: 'PCMD', referencial: 'GERAL (sem norma)' },
+    organizacao: { nome: '', setores: [], elaborador: '', aprovador: '', padraoCodigo: 'PCM-MAN', referencial: 'GERAL (sem norma)' },
     pessoas: [], metas: { disponibilidade: null, aderencia: null }, requisitos: [],
-    criticidade: { limites: { a: 12, b: 9 }, notas: {} },
+    criticidade: { escala: 5, notas: {}, convertidas: [] },
     responsaveis: {}, historico: [], falhas: [],
   };
 }
@@ -70,14 +105,12 @@ export function validarGestao(g) {
     if (!registrosValidos(g.requisitos, r => texto(r.referencia, 2000, true) && texto(r.versao) &&
         (r.data === '' || dataValida(r.data)) && fonteValida(r.fonte) && ['nao_verificado', 'verificado'].includes(r.status) &&
         (r.status !== 'verificado' || (!!r.versao.trim() && !!r.data && !!r.fonte)))) return false;
-    if (!objeto(g.criticidade) || !limiteValido(g.criticidade.limites) || !objeto(g.criticidade.notas) ||
-        !Object.entries(g.criticidade.notas).every(([chave, ns]) => id(chave) && Array.isArray(ns) && ns.length === 5 &&
-          Array.from(ns).every(n => n === null || (Number.isInteger(n) && n >= 1 && n <= 3)))) return false;
+    if (!criticidadeValida(g.criticidade)) return false;
     if (!objeto(g.responsaveis) || !Object.entries(g.responsaveis).every(([chave, valor]) => chaveTarefa(chave) && pessoaOpcional(valor))) return false;
     if (!registrosValidos(g.historico, h => id(h.equipamentoId) && id(h.tarefaId) && texto(h.tag, Number.MAX_SAFE_INTEGER) && texto(h.descricao, Number.MAX_SAFE_INTEGER) &&
         dataValida(h.data) && (h.dataPrevista === '' || dataValida(h.dataPrevista)) && texto(h.observacao, 2000) &&
         pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean')) return false;
-    const novo = f => Object.hasOwn(f, 'dataConclusao') || Object.hasOwn(f, 'horasReparo');
+    const novo = f => ['dataConclusao', 'horasReparo', 'horaInicio', 'horaFim'].some(c => Object.hasOwn(f, c));
     if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || g.falhas.some(novo))) return false;
     if (g.versao >= 2) {
       if (g.indicadoresMensais !== undefined) {
@@ -93,8 +126,12 @@ export function validarGestao(g) {
           vistos.add(chave);
         }
       }
-      if (!g.falhas.every(f => !novo(f) || ((f.dataConclusao === '' || (dataValida(f.dataConclusao) && f.dataConclusao >= f.data)) &&
-          (f.horasReparo === null || (Number.isFinite(f.horasReparo) && f.horasReparo >= 0))))) return false;
+      // Horas opcionais (D7): início no dia da falha; fim no dia da conclusão, que precisa existir.
+      const hora = v => v === undefined || v === '' || (typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v));
+      if (!g.falhas.every(f => !novo(f) || ((f.dataConclusao === undefined || f.dataConclusao === '' || (dataValida(f.dataConclusao) && f.dataConclusao >= f.data)) &&
+          (f.horasReparo === undefined || f.horasReparo === null || (Number.isFinite(f.horasReparo) && f.horasReparo >= 0)) &&
+          hora(f.horaInicio) && hora(f.horaFim) && (!f.horaFim || !!f.dataConclusao) &&
+          (!f.horaFim || !f.horaInicio || f.dataConclusao > f.data || f.horaFim >= f.horaInicio)))) return false;
     }
     return registrosValidos(g.falhas, f => id(f.equipamentoId) && texto(f.tag, Number.MAX_SAFE_INTEGER) && dataValida(f.data) &&
       texto(f.sintoma, 2000, true) && texto(f.causa, 2000) && texto(f.acao, 2000) && texto(f.peca) && pessoaOpcional(f.responsavelId) &&
@@ -102,13 +139,13 @@ export function validarGestao(g) {
   } catch { return false; }
 }
 
-export function criticidadeAtivo(notas, limites = { a: 12, b: 9 }) {
-  if (!Array.isArray(notas) || notas.length !== 5 || !Array.from(notas).every(n => Number.isInteger(n) && n >= 1 && n <= 3)) {
-    return { pontuacao: null, classe: 'Pendente' };
+/** Mesma regra da aba Criticidade do PCM-MAN-002: consequência = maior nota entre S, Q e P; classe pela matriz. */
+export function criticidadeAtivo(notas) {
+  if (!Array.isArray(notas) || notas.length !== 4 || !Array.from(notas).every(n => Number.isInteger(n) && n >= 1 && n <= 5)) {
+    return { consequencia: null, classe: 'Pendente' };
   }
-  const pontuacao = notas.reduce((total, nota) => total + nota, 0);
-  if (!limiteValido(limites)) return { pontuacao, classe: 'Pendente' };
-  return { pontuacao, classe: notas[0] === 3 || pontuacao >= limites.a ? 'A' : pontuacao >= limites.b ? 'B' : 'C' };
+  const [s, q, p, f] = notas; const consequencia = Math.max(s, q, p);
+  return { consequencia, classe: s === 5 ? 'A' : MATRIZ[consequencia - 1][f - 1] };
 }
 
 /** Converte a última marcação antiga sem inventar a ocorrência que foi executada. */

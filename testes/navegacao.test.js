@@ -7,7 +7,6 @@ describe('localização na navegação',()=>{
     expect(acessoAtual('execucao',false)).toBe('executar');
     expect(acessoAtual('catalogo',false)).toBe('comunidade');
     expect(acessoAtual('modelos',false)).toBe('entrega');
-    expect(acessoAtual('entrega-modelos',false)).toBe('entrega');
     for(const rota of ['semana','executar','ativos','falhas','planejar','biblioteca','entrega','dados'])expect(acessoAtual(rota,false)).toBe(rota);
   });
   it('indica Mais para os acessos que ficam fora da barra do celular',()=>{

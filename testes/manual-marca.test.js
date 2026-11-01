@@ -1,5 +1,4 @@
 import {it,expect} from 'vitest';
-import JSZip from 'jszip';
 import {readFileSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {MARCA} from '../src/marca.js';
@@ -21,7 +20,5 @@ it('usa a assinatura completa do modelo no aplicativo e na apresentação',async
   for(const nome of ['index.html','public/conheca.html']){
     const html=readFileSync(nome,'utf8');expect(html).toContain('./marca/logo/PCM-Direto_horizontal-slogan_cor.svg');expect(html).not.toContain('<span class="marca-slogan">');
   }
-  const modelo=await JSZip.loadAsync(readFileSync('public/modelos/refeitos/PCMD-01-Controle-Documental.xlsx'));
-  expect(await modelo.file('xl/media/image1.png').async('nodebuffer')).toEqual(readFileSync('public/marca/logo/PCM-Direto_modelo-slogan.png'));
   expect(readFileSync('public/icones/logo-horizontal-slogan.svg','utf8')).toBe(readFileSync('public/marca/logo/PCM-Direto_horizontal-slogan_cor.svg','utf8'));
 });

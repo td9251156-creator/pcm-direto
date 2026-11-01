@@ -18,7 +18,5 @@ artifacts/
 supabase/.temp/
 
 .env.local
-!public/modelos/refeitos/*.xlsx
-!public/modelos/refeitos/*.docx
 !public/modelos/biblioteca-v2/*.xlsx
 !public/modelos/biblioteca-v2/*.docx
