@@ -3,6 +3,7 @@ import { dataDaSemana, textoData } from './cronograma.js';
 import { validarOperacao } from './operacao.js';
 import { janelaValida } from './janelas.js';
 import { fotosValidas } from './fotos.js';
+import { cienciasValidas } from './ciencia.js';
 
 const objeto = valor => valor !== null && typeof valor === 'object' && !Array.isArray(valor) &&
   [Object.prototype, null].includes(Object.getPrototypeOf(valor));
@@ -111,9 +112,9 @@ export function validarGestao(g) {
     if (!objeto(g.responsaveis) || !Object.entries(g.responsaveis).every(([chave, valor]) => chaveTarefa(chave) && pessoaOpcional(valor))) return false;
     if (!registrosValidos(g.historico, h => id(h.equipamentoId) && id(h.tarefaId) && texto(h.tag, Number.MAX_SAFE_INTEGER) && texto(h.descricao, Number.MAX_SAFE_INTEGER) &&
         dataValida(h.data) && (h.dataPrevista === '' || dataValida(h.dataPrevista)) && texto(h.observacao, 2000) &&
-        pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean')) return false;
+        pessoaOpcional(h.responsavelId) && ['app', 'legado'].includes(h.origem) && typeof h.cancelada === 'boolean' && cienciasValidas(h.ciencias))) return false;
     const novo = f => ['dataConclusao', 'horasReparo', 'horaInicio', 'horaFim', 'fotos'].some(c => Object.hasOwn(f, c));
-    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || Object.hasOwn(g, 'janelasParada') || g.falhas.some(novo))) return false;
+    if (g.versao === 1 && (Object.hasOwn(g, 'indicadoresMensais') || Object.hasOwn(g, 'janelasParada') || g.falhas.some(novo) || g.historico.some(h => Object.hasOwn(h, 'ciencias')))) return false;
     if (g.versao >= 2) {
       // Janelas de parada (D4): opcionais; só datas, horas disponíveis e descrição.
       if (g.janelasParada !== undefined && (!lista(g.janelasParada) || !g.janelasParada.every(janelaValida) ||
