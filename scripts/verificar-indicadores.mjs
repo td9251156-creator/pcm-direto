@@ -50,6 +50,7 @@ await executarComRecursos({
     assert.equal((await persistido()).gestao.falhas.length, 3);
     await ir('mensal'); await p.locator('#indicador-ativo').selectOption('eq1'); await p.locator('#indicador-mes').fill('2026-09');
     const resultado = await p.locator('#resultado-indicadores').innerText(); assert.match(resultado, /238/); assert.match(resultado, /99,17%/); assert.match(resultado, /MTTR\s+2 h/);
+    const [arq011] = await Promise.all([p.waitForEvent('download'), p.locator('#gerar-011').click()]); assert.match(arq011.suggestedFilename(), /^PCM-MAN-011_.+_2026\.xlsx$/);
     await ir('dados'); const [d] = await Promise.all([p.waitForEvent('download'), p.locator('#baixar-backup').click()]); const b = JSON.parse(await readFile(await d.path(), 'utf8')); assert.equal(b.versao, 3); await restaurar(b); assert.deepEqual((await persistido()).gestao, b.rascunho.gestao);
     await ir('mensal'); await p.locator('#indicador-ativo').selectOption('eq1'); await p.locator('#indicador-mes').fill('2026-09');
     await p.evaluate(() => new Promise(resolve => { const q = indexedDB.open('pcm-direto:base:v3', 1); q.onsuccess = () => { const db = q.result; const t = db.transaction('base', 'readwrite'); const store = t.objectStore('base'); const manter = () => { const r = store.get('principal'); r.onsuccess = () => { if (!sessionStorage.getItem('liberar-indicadores')) manter(); }; }; t.oncomplete = () => db.close(); manter(); resolve(); }; }));

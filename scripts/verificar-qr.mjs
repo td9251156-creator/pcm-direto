@@ -35,6 +35,12 @@ await executarComRecursos({ limiteTotal: 180000,
     await p.locator('.etiqueta-qr summary').click();
     const [d2] = await Promise.all([p.waitForEvent('download'), p.locator('#baixar-etiqueta').click()]);
     const svg2 = await readFile(await d2.path(), 'utf8'); assert.ok(svg2.includes('Motor &lt;fictício&gt; &amp; 1')); assert.ok(!svg2.includes('<fictício>'));
+    // Folha A4 com as etiquetas de todos os ativos.
+    const [d3] = await Promise.all([p.waitForEvent('download'), p.locator('#baixar-etiquetas').click()]);
+    const folha = await readFile(await d3.path(), 'utf8');
+    assert.equal(d3.suggestedFilename(), 'etiquetas-qr-ativos.html');
+    assert.equal((folha.match(/<svg /g) ?? []).length, await p.evaluate(async () => (await import('/src/estado.js')).estado.equipamentos.length));
+    assert.ok(folha.includes('@page{size:A4') && folha.includes('Motor &lt;fictício&gt; &amp; 1') && !folha.includes('<fictício>'));
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'sem rolagem lateral em 390 px');
     assert.deepEqual(erros, []); await contexto.close();
     console.log('Etiqueta QR: endereço abre a ficha certa no celular, etiqueta 60×40 mm baixada com texto escapado, sem rolagem lateral.');

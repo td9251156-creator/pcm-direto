@@ -83,7 +83,8 @@ export function indicadores017(falhas, mes, hp, agora) {
   // MTTR: reparos completos das falhas iniciadas no mês; falha aberta fica fora.
   const reparos = doMes.filter((f) => f.reparo !== null && !f.aberta).map((f) => f.reparo);
   return {
-    hp: hpValida, hi, ho, n, reparos: reparos.length, provisoria, alertas: [...new Set(alertas)],
+    hp: hpValida, hi, ho, n, reparos: reparos.length, somaReparos: incoerente || !reparos.length ? null : arred(reparos.reduce((s, r) => s + r, 0)),
+    provisoria, alertas: [...new Set(alertas)],
     mtbf: ho !== null && n > 0 ? arred(ho / n) : null,
     mttr: !incoerente && reparos.length ? arred(reparos.reduce((s, r) => s + r, 0) / reparos.length) : null,
     disponibilidade: ho !== null && hpValida > 0 ? arred((ho / hpValida) * 100) : null,
