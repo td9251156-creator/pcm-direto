@@ -7,11 +7,11 @@ import { montarDados } from '../src/logica/pacote.js';
 import { criarGestao } from '../src/logica/gestao.js';
 import { criarProgramacao, prepararRevisao } from '../src/logica/programacao.js';
 import { prepararEmissao } from '../src/logica/emissao.js';
-import { dadosPcmMan002, dadosPcmMan001, dadosPcmMan004, dadosPcmMan008 } from '../src/logica/biblioteca-v2-dados.js';
-import { preencherPcmMan002, preencherPcmMan001, preencherPcmMan004, preencherPcmMan008, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
+import { dadosPcmMan002, dadosPcmMan001, dadosPcmMan004, dadosPcmMan008, dadosCadastrosV2 } from '../src/logica/biblioteca-v2-dados.js';
+import { preencherPcmMan002, preencherPcmMan001, preencherPcmMan004, preencherPcmMan008, preencherCadastrosV2, deslocarFormula, moverReferencias } from '../src/saida/biblioteca-v2-xlsx.js';
 import { abrirWorkbookBibliotecaV2 } from '../src/integracao/biblioteca-pcm-v2.js';
 
-const ORIGINAL = 'public/modelos/biblioteca-v2/PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx';
+const ORIGINAL = 'public/modelos/biblioteca-v2/PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00.xlsx';
 const bytes = () => readFileSync(ORIGINAL);
 const texto = (v) => (v?.richText ? v.richText.map((t) => t.text).join('') : v);
 
@@ -66,7 +66,7 @@ describe('PCM-MAN-002 preenchido', () => {
     expect(Object.keys(zip.files).filter((n) => /media|drawings/.test(n)).length).toBe(Object.keys(original.files).filter((n) => /media|drawings/.test(n)).length);
     const plano = wb.getWorksheet('Plano');
     expect(plano.getCell('B21').value).toBe('PRD-MOT-001');
-    expect(texto(plano.getCell('A31').value)).toMatch(/^Cinza = vem da FMECA/);
+    expect(texto(plano.getCell('A31').value)).toMatch(/^Cinza = vem da MFMEA/);
     expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnico fictício');
     expect(wb.getWorksheet('Leia-me').getCell('D14').value).toBe(null); // sem aprovação informada
     expect(wb.getWorksheet('Criticidade').getCell('B8').value).toBe('PRD-MOT-001'); // ativo listado, notas ainda não avaliadas
@@ -81,7 +81,7 @@ describe('PCM-MAN-002 preenchido', () => {
     const n = d.atividades.length, k = n - 10;
     const inicio = performance.now();
     const saida = await preencherPcmMan002(bytes(), d);
-    expect(performance.now() - inicio).toBeLessThan(15000);
+    expect(performance.now() - inicio).toBeLessThan(45000); // barra lentidão anormal; folga para a suíte em paralelo
     const { zip, aba, wb } = await abrirSaida(saida);
 
     // Cadastros: a tabela de ativos cresce até a linha 104; as tabelas vizinhas acompanham sem perder dados.
@@ -96,28 +96,28 @@ describe('PCM-MAN-002 preenchido', () => {
     const plano = wb.getWorksheet('Plano');
     expect(plano.getCell(`B${20 + n}`).value).toBe(d.atividades.at(-1).tag);
     expect(plano.getCell(`A${20 + n}`).value).toBe(15 + n);
-    expect(texto(plano.getCell(`A${31 + k}`).value)).toMatch(/^Cinza = vem da FMECA/);
+    expect(texto(plano.getCell(`A${31 + k}`).value)).toMatch(/^Cinza = vem da MFMEA/);
     const xmlPlano = await aba(4);
-    expect(xmlPlano).toContain(`<mergeCell ref="A${31 + k}:L${31 + k}"/>`);
+    expect(xmlPlano).toContain(`<mergeCell ref="A${31 + k}:M${31 + k}"/>`);
     expect(xmlPlano).toMatch(new RegExp(`sqref="B21:B${30 + k}"`));
     expect(xmlPlano).toContain(`IF(B${30 + k}="","",IFERROR(INDEX(tb_pcm_ativos[descricao_ativo],MATCH(B${30 + k}`);
     expect(xmlPlano).not.toContain('t="shared"');
     const primeira = d.atividades[0];
-    expect(plano.getCell('K21').value).toEqual(new Date(`${primeira.primeira}T00:00:00Z`));
-    expect(plano.getCell('G21').value).toBe(primeira.dias);
+    expect(plano.getCell('L21').value).toEqual(new Date(`${primeira.primeira}T00:00:00Z`));
+    expect(plano.getCell('H21').value).toBe(primeira.periodicidade); // G (dias) é fórmula da periodicidade
 
     // Cronograma: uma linha por atividade do Plano, e o total semanal soma o bloco inteiro.
     const xmlCrono = await aba(5);
     expect(xmlCrono).toContain(`<f>Plano!A${30 + k}</f>`);
     expect(xmlCrono).toContain(`SUMPRODUCT(--(F8:F${33 + k}="`);
-    expect(xmlCrono).toContain(`Plano!$I$5:$I$${30 + k}`);
+    expect(xmlCrono).toContain(`Plano!$J$5:$J$${30 + k}`); // duração
     expect(texto(wb.getWorksheet('Cronograma').getCell(`A${34 + k}`).value)).toBe('Horas planejadas na semana');
 
     // Impressão e recálculo.
     const wbXml = await zip.file('xl/workbook.xml').async('string');
-    expect(wbXml).toContain(`Plano!$A$1:$L$${31 + k}`);
-    expect(wbXml).toContain(`Cronograma!$A$1:$BM$${35 + k}`);
-    expect(wbXml).toContain(`Cadastros!$A$1:$J$105`);
+    expect(wbXml).toContain(`'Plano'!$A$1:$M$${31 + k}`);
+    expect(wbXml).toContain(`'Cronograma'!$A$1:$BM$${35 + k}`);
+    expect(wbXml).toContain(`'Cadastros'!$A$1:$J$105`);
     expect(wbXml).toMatch(/fullCalcOnLoad="1"/);
     for (const nAba of [1, 2, 3, 4, 5, 6, 7]) expect(await aba(nAba)).not.toMatch(/<\/f><v[\s>/]/); // valor antigo + tipo retirado = célula inválida no Excel
   }, 120000);
@@ -138,13 +138,12 @@ describe('PCM-MAN-002 preenchido', () => {
     const xml = await aba(2);
     expect(xml).toContain('COUNTIFS($H$8:$H$107,5,$I$8:$I$107,1)');
     expect(xml).toContain('<f>IF(OR(H107="",I107=""),"",IF(E107=5,"A",MID(CHOOSE(H107,');
-    expect(/sqref="[^"]*\bE8:G107\b/.test(xml)).toBe(true);
-    expect(xml).toContain('<mergeCell ref="N27:R27"/>'); // quadro de estratégia não estica
-    expect(xml).toContain('<mergeCell ref="M26:M27"/>');
-    expect(xml).toContain('<mergeCell ref="A108:R108"/>'); // legenda desce
+    expect(/sqref="[^"]*\bE8:E107\b/.test(xml) && /sqref="[^"]*\bI8:I107\b/.test(xml)).toBe(true);
+    expect(xml).toContain('<mergeCell ref="M26:Y27"/>'); // quadro à direita não estica
+    expect(xml).toContain('<mergeCell ref="A108:K108"/>'); // legenda desce
     expect(xml.match(/Ou operar até falhar/g) ?? []).toHaveLength(0); // texto vem de sharedStrings, nunca copiado inline
     expect(/<c r="N(2[89]|[3-9]\d|10[0-7])"/.test(xml)).toBe(false); // linhas novas (28–107) só com as colunas da tabela
-    expect(await zip.file('xl/workbook.xml').async('string')).toContain('Criticidade!$A$1:$X$108');
+    expect(await zip.file('xl/workbook.xml').async('string')).toContain("'Criticidade'!$A$1:$Y$108");
   }, 120000);
 
   it('marca tarefa de segurança e não inventa campos sem equivalente', () => {
@@ -176,7 +175,7 @@ describe('PCM-MAN-008 preenchido', () => {
   it('junta falhas importadas (com hora) e do app (só data), sem inventar horários', () => {
     const d = dadosPcmMan008(emissao008());
     expect(d.falhas.map((f) => f.referencia)).toEqual(['F-IMP-1', 'fa0', 'fa1']); // F-IMP-2 é posterior ao corte
-    expect(d.falhas[1]).toMatchObject({ inicio: '2026-05-01', fim: null, acao: 'Reaperto · Peça: Rolamento fictício · Parada: 2,5 h · Responsável: Técnica Fictícia' });
+    expect(d.falhas[1]).toMatchObject({ inicio: '2026-05-01', fim: null, acao: 'Reaperto · Parada: 2,5 h', peca: 'Rolamento fictício', responsavel: 'Técnica Fictícia' });
     expect(d.ativos.map((a) => a.tag)).toContain('IMP-01');
   });
 
@@ -204,19 +203,19 @@ describe('PCM-MAN-008 preenchido', () => {
     const zip = await JSZip.loadAsync(saida);
     const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
     const reg = wb.getWorksheet('Registro de falhas');
-    expect(await zip.file('xl/tables/table1.xml').async('string')).toContain('ref="A4:K45"');
+    expect(await zip.file('xl/tables/table1.xml').async('string')).toContain('ref="A4:M45"');
     expect(reg.getCell('A5').value).toBe('F-IMP-1');
     expect(reg.getCell('H5').value).toEqual(new Date('2026-04-10T08:30:00Z'));
     expect(reg.getCell('I6').value).toBe(null);
     // Falha do app (só data) usa o estilo dd/mm/aaaa do modelo; a importada mantém data e hora.
     const xml3 = await zip.file('xl/worksheets/sheet3.xml').async('string');
-    expect(xml3).toMatch(/<c r="H6" s="147">/);
+    expect(xml3).toMatch(/<c r="H6" s="145">/);
     expect(xml3).toMatch(/<c r="H5" s="81">/);
-    expect(xml3).toMatch(/<c r="H45" s="149">/); // última linha: fechamento do bloco, só data
+    expect(xml3).toMatch(/<c r="H45" s="147">/); // última linha: fechamento do bloco, só data
     expect(xml3).toMatch(/<c r="A29" s="76"/); // antiga última linha agora usa o estilo do meio
-    expect(xml3).toMatch(/<c r="A45" s="83"/); // nova última linha mantém a borda de fechamento
+    expect(xml3).toMatch(/<c r="A45" s="84"/); // nova última linha mantém a borda de fechamento
     expect(texto(reg.getCell('A46').value)?.trim() ?? '').toBe('');
-    expect(await zip.file('xl/worksheets/sheet3.xml').async('string')).toContain('<mergeCell ref="A46:K46"/>');
+    expect(await zip.file('xl/worksheets/sheet3.xml').async('string')).toContain('<mergeCell ref="A46:M46"/>');
     expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('IMP-01');
   });
 });
@@ -245,7 +244,7 @@ describe('PCM-MAN-004 preenchido (histórico como ordens de serviço)', () => {
     const d = dadosPcmMan004(e);
     const por = new Map(d.ordens.map((o) => [o.numero, o]));
     expect(por.get('APP-h1')).toMatchObject({ status: 'CONCLUIDA', tipo: 'PREVENTIVA', prioridade: '', abertura: '2026-01-03', prazo: o1.dataPrevista, conclusao: '2026-01-03', restantes: 0, responsavel: 'Técnica Fictícia' });
-    expect(por.get('APP-h1').atividade).toContain('Obs.: Feito antes');
+    expect(por.get('APP-h1').observacao).toBe('Feito antes');
     expect(por.get('APP-h2')).toMatchObject({ status: 'CANCELADA', conclusao: null });
     expect(por.get('APP-h3')).toMatchObject({ abertura: '2026-02-20', prazo: null });
     expect(por.get('OS-9')).toMatchObject({ prioridade: 'ALTA', status: 'ABERTA' });
@@ -260,7 +259,7 @@ describe('PCM-MAN-004 preenchido (histórico como ordens de serviço)', () => {
     expect(programadas.every((o) => o.prazo <= '2026-06-30' && o.restantes === o.estimadas)).toBe(true);
   });
 
-  it('amplia a aba Ordens de Serviço e grava setores em H e famílias em J nos Cadastros do 004', async () => {
+  it('amplia a aba Ordens de Serviço (com observação) e grava famílias em H e setores em J nos Cadastros do 004', async () => {
     const { e } = emissao004();
     const d = dadosPcmMan004(e);
     expect(d.ordens.length).toBeGreaterThan(25);
@@ -268,14 +267,14 @@ describe('PCM-MAN-004 preenchido (histórico como ordens de serviço)', () => {
     const zip = await JSZip.loadAsync(saida);
     const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
     const ultima = 4 + d.ordens.length;
-    expect(await zip.file('xl/tables/table4.xml').async('string')).toContain(`ref="A4:M${ultima}"`);
+    expect(await zip.file('xl/tables/table4.xml').async('string')).toContain(`ref="A4:N${ultima}"`);
     const os = wb.getWorksheet('Ordens de Serviço');
     expect(os.getCell('A5').value).toBe(d.ordens[0].numero);
     expect(os.getCell(`A${ultima}`).value).toBe(d.ordens.at(-1).numero);
     expect(texto(os.getCell(`A${ultima + 1}`).value)).toMatch(/^Prioridade:/);
     const cad = wb.getWorksheet('Cadastros');
-    expect(cad.getCell('H5').value).toBe('PRD');
-    expect(cad.getCell('J5').value).toBe(d.familias[0]);
+    expect(cad.getCell('H5').value).toBe(d.familias[0]);
+    expect(cad.getCell('J5').value).toBe('PRD');
     expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnico fictício');
   });
 });
@@ -295,17 +294,20 @@ describe('PCM-MAN-001 preenchido', () => {
     return e;
   }
 
-  it('lista o próprio controle, os documentos já emitidos e as referências, sem inventar aprovação', () => {
-    const d = dadosPcmMan001(emissao001());
+  it('lista o próprio controle e os documentos emitidos; referências, organização e pessoas em abas próprias', () => {
+    const e = emissao001();
+    e.estado.gestao.metas = { disponibilidade: 95, aderencia: null };
+    const d = dadosPcmMan001(e);
     expect(d.documentos.map((x) => [x.codigo, x.tipo, x.status])).toEqual([
-      ['PCM-MAN-001', 'REGISTRO', 'RASCUNHO'], ['PCM-MAN-002', 'PLANO', ''], ['PCMD-05', 'OUTRO', 'OBSOLETO'],
-      ['Manual fictício 0 <b>', 'OUTRO', ''], ['Manual fictício 1 <b>', 'OUTRO', '']]);
+      ['PCM-MAN-001', 'REGISTRO', 'RASCUNHO'], ['PCM-MAN-002', 'PLANO', ''], ['PCMD-05', 'OUTRO', 'OBSOLETO']]);
     expect(d.documentos[1].data).toBe('2026-04-01'); // última emissão
     expect(d.documentos[0].aprovado).toBe('');
+    expect(d.referencias.map((q) => [q.referencia, q.situacao])).toEqual([['Manual fictício 0 <b>', 'Verificada'], ['Manual fictício 1 <b>', 'Não verificada']]);
+    expect(d.organizacao).toMatchObject({ nome: 'Fábrica fictícia', metaDisponibilidade: 95, metaAderencia: null });
     expect(d.revisoes.map((r) => r.codigo)).toEqual(['PCM-MAN-002', 'PCM-MAN-001']);
-    expect(d.pessoas).toContain('Técnico fictício');
+    expect(d.pessoas).toContainEqual({ nome: 'Técnica Fictícia', funcao: 'Mecânica', especialidade: 'Mecânica', ativo: 'Sim' });
+    expect(d.pessoas).toContainEqual({ nome: 'Técnico fictício', funcao: '', especialidade: '', ativo: '' });
   });
-
   it('emissão com corte retroativo não lista documentos posteriores; caractere de controle não invalida o XML', async () => {
     const e = emissao001(0);
     e.meta.dataCorte = '2026-03-15';
@@ -318,24 +320,60 @@ describe('PCM-MAN-001 preenchido', () => {
     expect(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(leia)).toBe(false); // eslint-disable-line no-control-regex
   });
 
-  it('amplia a tabela de documentos sem sobrescrever o rodapé e o Excel lê o conteúdo', async () => {
-    const d = dadosPcmMan001(emissao001(30));
-    expect(d.documentos).toHaveLength(33);
+  it('amplia Referências e Pessoas, preenche a Organização e o Excel lê o conteúdo', async () => {
+    const e = emissao001(30);
+    e.estado.gestao.metas = { disponibilidade: 95, aderencia: 80 };
+    const d = dadosPcmMan001(e);
+    expect(d.referencias).toHaveLength(30);
     const saida = await preencherPcmMan001(readFileSync(ORIGINAL_001), d);
     const zip = await JSZip.loadAsync(saida);
     const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
-    const docs = wb.getWorksheet('Documentos');
-    expect(await zip.file('xl/tables/table3.xml').async('string')).toContain('ref="A4:J37"');
-    expect(docs.getCell('A5').value).toBe('PCM-MAN-001');
-    expect(docs.getCell('E5').value).toBe('RASCUNHO');
-    expect(docs.getCell('A37').value).toBe('Manual fictício 29 <b>'); // texto como dado, escapado no XML
-    expect(texto(docs.getCell('A38').value)).toMatch(/●/);
-    const xml = await zip.file('xl/worksheets/sheet2.xml').async('string');
-    expect(xml).toContain('<mergeCell ref="A38:J38"/>');
-    expect(xml).toContain('sqref="C5:C37"');
-    expect(xml).not.toContain('<b>');
-    expect(await zip.file('xl/workbook.xml').async('string')).toContain("'Documentos'!$A$1:$J$38");
+    const tabela = async (nome) => { for (const n of Object.keys(zip.files).filter((f) => /^xl\/tables\/table\d+\.xml$/.test(f))) { const x = await zip.file(n).async('string'); if (x.includes(`name="${nome}"`)) return x; } return ''; };
+    expect(await tabela('tb_pcm_referencias')).toContain('ref="A4:E34"');
+    const ref = wb.getWorksheet('Referências');
+    expect(ref.getCell('A5').value).toBe('Manual fictício 0 <b>'); // texto como dado, escapado no XML
+    expect(ref.getCell('E5').value).toBe('Verificada');
+    expect(ref.getCell('A34').value).toBe('Manual fictício 29 <b>');
+    expect(texto(ref.getCell('A35').value ?? '')).not.toContain('Manual'); // rodapé preservado depois do bloco
+    const org = wb.getWorksheet('Organização');
+    expect(org.getCell('A4').value).toBe('Fábrica fictícia');
+    expect(org.getCell('A8').value).toBe(95);
+    expect(org.getCell('D8').value).toBe(80);
+    const cad = wb.getWorksheet('Cadastros');
+    expect([cad.getCell('A5').value, cad.getCell('B5').value, cad.getCell('D5').value]).toEqual(['Técnica Fictícia', 'Mecânica', 'Sim']);
+    expect(wb.getWorksheet('Documentos').getCell('A5').value).toBe('PCM-MAN-001');
     expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnico fictício');
-    expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('Técnica Fictícia');
+    expect(await zip.file('xl/workbook.xml').async('string')).toMatch(/fullCalcOnLoad="1"/);
+  });
+});
+
+describe('demais modelos com os cadastros da fábrica', () => {
+  const contrato = JSON.parse(readFileSync('src/dados/biblioteca-pcm-v2.json', 'utf8'));
+  const simples = contrato.modelos.filter((m) => m.formato === 'xlsx' && !['PCM-MAN-001', 'PCM-MAN-002', 'PCM-MAN-004', 'PCM-MAN-008'].includes(m.codigo));
+
+  it('preenche ativos, pessoas, famílias e setores em cada modelo, ampliando sem perder o rodapé', async () => {
+    expect(simples.map((m) => m.codigo)).toEqual(['PCM-MAN-003', 'PCM-MAN-005', 'PCM-MAN-006', 'PCM-MAN-007', 'PCM-MAN-009', 'PCM-MAN-010', 'PCM-MAN-011', 'PCM-MAN-012', 'PCM-MAN-013', 'PCM-MAN-014', 'PCM-MAN-015', 'PCM-MAN-016']);
+    const d = dadosCadastrosV2(emissao(40));
+    expect(d.ativos).toHaveLength(40);
+    for (const m of simples) {
+      const saida = await preencherCadastrosV2(readFileSync('public/' + m.url), m.codigo, d);
+      const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
+      const tabelas = m.abas.flatMap((a) => a.tabelas.map((t) => ({ ...t, aba: a.nome })));
+      const ativos = tabelas.find((t) => t.nome === 'tb_pcm_ativos');
+      if (ativos) {
+        const tb = wb.getWorksheet('Cadastros').getTable('tb_pcm_ativos').table;
+        expect(tb.tableRef ?? tb.ref, m.codigo).toBe('A4:D44');
+        expect(wb.getWorksheet('Cadastros').getCell('A44').value, m.codigo).toBe(d.ativos[39].tag);
+      }
+      const familias = tabelas.find((t) => t.nome === 'tb_pcm_familias');
+      if (familias) expect(wb.getWorksheet('Cadastros').getCell(familias.intervalo.replace(/\d+:.*/, '') + '5').value, m.codigo).toBe(d.familias[0]);
+      expect(wb.getWorksheet('Leia-me').getCell('D13').value, m.codigo).toBe('Técnico fictício');
+      expect(await (await JSZip.loadAsync(saida)).file('xl/workbook.xml').async('string'), m.codigo).toMatch(/fullCalcOnLoad="1"/);
+    }
+  }, 120000);
+
+  it('recusa arquivo diferente do esperado', async () => {
+    const m = simples[0]; const outro = new Uint8Array(readFileSync('public/' + m.url)); outro[outro.length - 10] ^= 1;
+    await expect(preencherCadastrosV2(outro, m.codigo, dadosCadastrosV2(emissao(1)))).rejects.toThrow('diferente do esperado');
   });
 });

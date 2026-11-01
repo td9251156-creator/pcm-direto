@@ -12,7 +12,7 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P2 | Dashboards com os dados da base local | Alta | **Verificado** (demo em `?fonte=demo`) | P1 | Mesmo cálculo em cartões, gráficos, tabelas e HTML. |
 | P3 | Mês parcial e falha iniciada antes do período | Alta | **Verificado** | — | Contagem pelo início; horas recortadas ao período. |
 | P4 | Orçamento do 012 | Alta | **Verificado** com escopo restrito | — | Só orçamento geral (setor vazio); sem rateio. |
-| P5 | MTBF, MTTR e disponibilidade nos dashboards | Média | **Bloqueado** | D1 (mantenedor vai revisar os procedimentos) | Não transferir fórmulas entre populações. |
+| P5 | MTBF, MTTR e disponibilidade | Média | **Verificado** + **Validação humana** | — | Procedimento PCM-MAN-017 implementado no Mensal (HP digitada; HI pelas falhas do app e importadas; exemplo numérico do procedimento como teste). Dashboards apontam para o Mensal. |
 | P6 | Preencher PCM-MAN-002 | Alta | **Verificado** + **Validação humana** no Office | — | Criticidade (notas 1 a 5), Plano, Cronograma e Cadastros; 100 ativos abertos no Excel sem erro. |
 | P7 | Retirar todos os modelos anteriores (PCMD e "refeitos") | Alta | **Verificado** | — | Site sem arquivos PCMD/refeitos; Documentos só com v2; `#entrega-modelos` leva a Documentos; testes impedem PCMD nas telas. |
 | P8 | Preencher 001, 004, 008, 018 e 019 | Alta | **Verificado** + **Validação humana** no Office | — | 004 com 3.256 OS e 008 com 1.101 falhas abertos no Excel sem erro (só os #N/D do Pareto vazio, iguais ao original). |
@@ -42,6 +42,22 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 - **D8 — Manuais antigos retirados.** **D9 — Revisão dos documentos = revisão do plano.**
 - **D1 — Indicadores:** o mantenedor vai revisar os procedimentos e definir o cálculo.
 - **D4 — Janelas de parada** e **D5 — QR, fotos e assinaturas:** continuam pendentes.
+
+### Modelos revisados recebidos e integrados (01/11/2026)
+
+Os 19 arquivos novos (R00, em desenvolvimento) substituíram os anteriores; manifesto e carga do banco atualizados.
+- **Aplicado pelo mantenedor e integrado:** M1 e M3 (001: pessoas com função/especialidade/ativo; aba Referências),
+  M2 (001: aba Organização com nome, referencial e metas), M5 (002: coluna Periodicidade, com "A cada (dias)"
+  calculado), M6 (Cadastros padronizados: família em H, setor em J; 015 reorganizado), M8 (004: observação), M9 (008:
+  peça e responsável). 002 passou a chamar a análise de MFMEA. M7 decidido (prioridade vazia só em preventiva).
+- **Importação:** planilhas do modelo anterior, sem as colunas novas, continuam aceitas (as colunas ficam vazias).
+- **Demais modelos** (003, 005–007, 009–016): em Documentos, saem com os cadastros da fábrica (ativos, pessoas,
+  famílias e setores) e elaborado/aprovado, prontos para as listas ▼. O 017 (procedimento) recebe os metadados.
+- **D1:** o mantenedor enviou o procedimento "PCM-MAN-017 MTBF, MTTR e Disponibilidade" (HP digitada no 011; HI
+  calculada pelas falhas, cortada na virada do mês; N pelo mês de início; MTTR só com reparo completo; "sem dado" nunca
+  é zero). **Implementado no Mensal** (src/logica/indicadores-017.js). Falha do app sem hora usa as horas de parada da
+  própria falha (aviso); sem nenhuma hora, HI fica sem dado. O documento está no site em "Procedimentos prontos".
+- Pendentes: M4 (5º critério da criticidade, opcional), M10 (orçamento por setor, opcional), M11 (resolvido pelo procedimento D1).
 
 ### Revisões sugeridas nos modelos (para o mantenedor)
 

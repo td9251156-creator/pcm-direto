@@ -39,9 +39,9 @@ export const ARTIGOS = [
 export const GLOSSARIO = [
   ['Backlog', 'Serviços de manutenção pendentes, normalmente medidos em horas de trabalho.'],
   ['Criticidade', 'Classificação da importância do ativo (A, B ou C) para segurança, qualidade, produção e custo.'],
-  ['Disponibilidade', 'Parte do tempo em que o equipamento está apto a operar. Consulte em Mensal por ativo e mês fechado, após informar horas planejadas sem paradas programadas e parada total conferida.'],
-  ['MTBF', 'Tempo médio entre falhas. Consulte em Mensal por ativo e mês fechado, com horas planejadas, parada total conferida e registros de falhas no mês.'],
-  ['MTTR', 'Tempo médio para reparo. Consulte em Mensal por ativo e mês fechado, com conclusão e duração total dos reparos informadas em Falhas.'],
+  ['Disponibilidade', 'HO ÷ HP × 100, pelo procedimento PCM-MAN-017. HP = horas planejadas digitadas; HI = indisponibilidade das falhas no mês; HO = HP − HI. Consulte em Mensal por ativo e mês fechado.'],
+  ['MTBF', 'Tempo médio entre falhas: HO ÷ N (falhas com início no mês), pelo procedimento PCM-MAN-017. Sem falha ou sem HP fica sem dado. Consulte em Mensal por ativo e mês fechado.'],
+  ['MTTR', 'Tempo médio de reparo: soma dos reparos completos ÷ nº de reparos completos das falhas iniciadas no mês (falha aberta fica fora), pelo procedimento PCM-MAN-017. Consulte em Mensal por ativo e mês fechado.'],
   ['OS', 'Ordem de serviço: o pedido ou registro de um trabalho de manutenção.'],
   ['Periodicidade', 'Intervalo entre duas execuções de uma tarefa preventiva.'],
   ['TAG', 'Código curto e único que identifica o ativo, como UTL-CMP-001.'],

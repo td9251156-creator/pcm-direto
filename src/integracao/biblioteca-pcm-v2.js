@@ -6,6 +6,8 @@ const numeros = new Set(['horas_estimadas', 'horas_restantes', 'valor_realizado'
 const datas = new Set(['data_abertura', 'data_prevista', 'data_conclusao', 'data_lancamento']);
 const horarios = new Set(['inicio_falha', 'fim_falha', 'inicio_reparo', 'fim_reparo']);
 const vazio = valor => valor === '' || valor === null || valor === undefined;
+// Colunas acrescentadas aos modelos 004 (observacao) e 008 (peca, responsavel) em 01/11/2026.
+const CAMPOS_NOVOS_OPCIONAIS = ['observacao', 'peca', 'responsavel'];
 const dataValida = texto => {
   const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}):(\d{2}))?$/.exec(texto);
   if (!m) return false;
@@ -102,14 +104,16 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
     const header = sheet.getCell(match[1] + match[2]);
     const start = header.col, rowHeader = +match[2], end = +match[4];
     const fields = table.table.columns.map(c => c.name);
-    if (fields.length !== esquema.campos.length || new Set(fields).size !== fields.length || esquema.campos.some(f => !fields.includes(f))) {
+    // Planilhas do modelo anterior (sem as colunas acrescentadas em 01/11/2026) continuam aceitas; elas ficam vazias.
+    const faltam = esquema.campos.filter(f => !fields.includes(f));
+    if (new Set(fields).size !== fields.length || fields.some(f => !esquema.campos.includes(f)) || faltam.some(f => !CAMPOS_NOVOS_OPCIONAIS.includes(f))) {
       erro(base, rowHeader, null, 'Campos incompatíveis com a biblioteca v2.', true); continue;
     }
     const chaves = new Set();
     for (let row = rowHeader + 1; row <= end; row++) {
       const entrada = fields.map((f, i) => ({f, cell: sheet.getCell(row, start + i)}));
       if (!entrada.some(({f, cell}) => f !== 'equipamento' && !vazio(cell.value))) continue;
-      const record = {};
+      const record = Object.fromEntries(faltam.map(f => [f, null]));
       for (const {f, cell} of entrada) record[f] = valorCelula(cell, f, base, row);
       const key = fonte.chave.map(f => record[f]);
       if (key.some(vazio)) erro(base, row, fonte.chave.join(', '), 'Chave obrigatória ausente.');

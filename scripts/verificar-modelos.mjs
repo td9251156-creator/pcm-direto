@@ -51,11 +51,12 @@ await executarComRecursos({limiteTotal:300000,criarServidor:async()=>{const serv
     gerados[codigo]={wb,tabelas};
   }
   // Volumes esperados: 41 pessoas (+ elaborador), 100 ativos, 100 linhas de criticidade, 3101 execuções, 1101 falhas.
-  assert.equal(gerados['PCM-MAN-001'].tabelas.tb_pcm_documentos,'A4:J47'); // este controle + 42 referências
+  assert.equal(gerados['PCM-MAN-001'].tabelas.tb_pcm_referencias,'A4:E46'); // 42 referências
+  assert.equal(gerados['PCM-MAN-001'].tabelas.tb_pcm_pessoas,'A4:D46'); // 41 pessoas + elaborador
   assert.equal(gerados['PCM-MAN-002'].tabelas.tb_pcm_ativos,'A4:D104');
-  assert.match(gerados['PCM-MAN-002'].wb,/Criticidade!\$A\$1:\$X\$108/);
-  assert.equal(gerados['PCM-MAN-008'].tabelas.tb_pcm_falhas??Object.values(gerados['PCM-MAN-008'].tabelas).find(v=>v.startsWith('A4:K')),'A4:K1105');
-  const os=gerados['PCM-MAN-004'].tabelas.tb_pcm_os;const linhasOs=Number(os.split(':M')[1])-4;assert.ok(linhasOs>=3101,'004 com todas as execuções: '+os);
+  assert.match(gerados['PCM-MAN-002'].wb,/'Criticidade'!\$A\$1:\$Y\$108/);
+  assert.equal(gerados['PCM-MAN-008'].tabelas.tb_pcm_falhas??Object.values(gerados['PCM-MAN-008'].tabelas).find(v=>v.startsWith('A4:K')),'A4:M1105');
+  const os=gerados['PCM-MAN-004'].tabelas.tb_pcm_os;const linhasOs=Number(/(\d+)$/.exec(os)[1])-4;assert.ok(linhasOs>=3101,'004 com todas as execuções: '+os);
   assert.deepEqual(erros,[]);await contexto.close();
   console.log(`Aprovado: Biblioteca v2 (001, 002, 004 e 008) com 100 ativos, criticidade 1 a 5, ${linhasOs} OS (3101 execuções), 1101 falhas, 42 referências, imagens preservadas, recálculo ao abrir e modelo diferente recusado.`);
 }});

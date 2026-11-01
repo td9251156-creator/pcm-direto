@@ -19,8 +19,9 @@ de manutenção bloqueia apenas o trecho que depende dela; avance no restante au
 
 ## Regras do produto
 
-- Tudo roda no navegador, sem servidor, login, banco de dados, analytics ou rastreamento.
-  Nenhum dado do usuário deve sair do navegador. Não acrescente API ou serviço pago.
+- O app roda no navegador, sem servidor próprio, analytics ou rastreamento. Nenhum dado do usuário sai do navegador.
+  A única exceção é o catálogo público da comunidade (e, quando autorizado, a Biblioteca v2) no Supabase, que guarda
+  apenas conteúdo público, nunca dados operacionais. Não acrescente API ou serviço pago.
 - Mantenha HTML, CSS e JavaScript simples, sem framework, TypeScript ou reescrita grande.
   Só acrescente dependência se indispensável e com licença compatível com MIT.
 - Interface, mensagens, comentários e documentação devem ser em português do Brasil.
@@ -92,13 +93,31 @@ não modifica o produto e não abre PRs de implementação. Não prometa agentes
 do encerramento da sessão sem um executor persistente efetivamente configurado e verificado.
 
 O fluxo separado de implementação no Actions está documentado em `docs/AGENTES-GITHUB-ACTIONS.md`.
-O mantenedor escolheu desenvolver em tarefas do Codex com login do ChatGPT Plus e pausar
-as chamadas de IA pela API do Actions. Não reative a API nem sua agenda sem novo pedido.
+As chamadas de IA pela API do Actions estão pausadas. Não reative a API nem sua agenda sem novo pedido.
 O fluxo de API preservado no repositório gera PRs em rascunho e não integra ou publica sozinho.
-O Actions continua executando testes e publicação. Não prometa execução permanente com a cota do Plus.
+O Actions continua executando testes e publicação.
 
-## Direção atual: Gestão, comunidade e documentos
+## Ferramentas de IA usadas pelo mantenedor (papéis)
 
-O plano aprovado está em docs/REFORMULACAO.md. O mantenedor escolheu interface B Gestão,
-comunidade como abertura e apenas tema claro. Modelos originais recebidos estão em public/modelos;
-preencha cópias OOXML e preserve os originais. Não prometa validação humana ou documental sem evidência.
+| Ferramenta | Papel | Ramo |
+|---|---|---|
+| Claude Code | Coordena e integra: geradores OOXML, armazenamento e backup, importação, banco, revisão final, verificação completa e preparo da publicação | `coord/...` |
+| GitHub Copilot | No editor: ajustes pequenos e testes simples. No GitHub: revisão automática dos PRs | `ia/copilot/...` |
+| OpenCode + DeepSeek | Tarefas mecânicas e delimitadas: textos, documentação, testes extras, scripts de conferência e capturas | `ia/opencode/...`, em `git worktree` separado |
+| ChatGPT | Apenas consulta: procedimentos, opções e revisão de texto. Não edita o repositório nem os modelos | — |
+
+- **Arquivos protegidos** (só o coordenador altera, com pedido explícito): `src/logica/gestao.js`, `src/estado.js`,
+  `src/repositorio.js`, `src/logica/operacao.js`, `src/integracao/`, `src/saida/biblioteca-v2-*.js`,
+  `src/dados/biblioteca-pcm-v2.json`, `public/modelos/**` e `supabase/**`.
+- Nenhum dado da fábrica, backup real, chave ou `.env` vai para qualquer ferramenta de IA ou serviço externo.
+- Toda entrega informa o ramo, os arquivos alterados, a saída real de `npm run verificar` e o que ficou pendente.
+
+## Direção atual: Gestão, comunidade e Biblioteca PCM v2
+
+O plano aprovado está em docs/REFORMULACAO.md: interface B Gestão, comunidade como abertura e apenas tema claro.
+O site e o app usam **somente** os modelos da Biblioteca PCM v2 (padrão PCM-MAN), em `public/modelos/biblioteca-v2/`,
+conferidos por SHA-256 (`src/dados/biblioteca-pcm-v2.json`). Os modelos PCMD e "refeitos" foram retirados; não os
+reintroduza. Preencha cópias OOXML integrais e preserve os originais; não renomeie abas, tabelas `tb_pcm_...` nem
+campos da linha 4. Os modelos estão em desenvolvimento (R00): não mude a revisão sem pedido. Pendências e decisões
+ficam em docs/FILA.md; o banco da biblioteca está descrito em docs/BANCO-BIBLIOTECA.md (não aplicado online).
+Não prometa validação humana ou documental sem evidência.

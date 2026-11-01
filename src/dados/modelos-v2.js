@@ -4,7 +4,7 @@ import manifesto from './biblioteca-pcm-v2.json';
 
 const TEXTOS = {
   'PCM-MAN-001': ['Controle documental', 'Documentação', 'Para saber quais documentos estão em uso, em que revisão e quem responde por eles.'],
-  'PCM-MAN-002': ['Criticidade, FMECA e plano', 'Planejamento', 'Para avaliar a importância dos ativos, analisar modos de falha e montar o plano e o cronograma.'],
+  'PCM-MAN-002': ['Criticidade, MFMEA e plano', 'Planejamento', 'Para avaliar a importância dos ativos, analisar modos de falha (MFMEA) e montar o plano e o cronograma.'],
   'PCM-MAN-003': ['Planner de manutenção', 'Planejamento', 'Para distribuir o trabalho nas visões semanal, mensal e anual.'],
   'PCM-MAN-004': ['Ordens de serviço', 'Execução', 'Para abrir, acompanhar e encerrar ordens de serviço com o cadastro de ativos.'],
   'PCM-MAN-005': ['Checklist de preventiva', 'Execução', 'Para registrar os itens conferidos em uma inspeção ou preventiva.'],
@@ -36,3 +36,11 @@ export const MODELOS_V2 = manifesto.modelos.map((m) => {
   const revisao = /_(R\d+)\.(xlsx|docx)$/.exec(m.arquivo)?.[1] ?? '';
   return { codigo: m.codigo, titulo, grupo, quando, formato, arquivo: m.arquivo, revisao, abas, url: `./${m.url}` };
 });
+
+// Procedimentos já escritos pelo mantenedor a partir do modelo PCM-MAN-017 (fora da contagem dos 19 modelos).
+export const PROCEDIMENTOS_PRONTOS = [
+  { codigo: 'PCM-MAN-017', titulo: 'Procedimento: MTBF, MTTR e disponibilidade', formato: 'Word',
+    quando: 'Para calcular, por ativo e mês, MTBF, MTTR e disponibilidade sempre pelo mesmo critério. É o critério usado na tela Mensal do app.',
+    arquivo: 'PCM-MAN-017_Procedimento-MTBF-MTTR-Disponibilidade_R00.docx', sha256: '202c4b0c6ccae50901dc8dec9b70e9216a03c8fd0a82ba716f27f4bc4e041e8c',
+    url: './modelos/biblioteca-v2/PCM-MAN-017_Procedimento-MTBF-MTTR-Disponibilidade_R00.docx' },
+];

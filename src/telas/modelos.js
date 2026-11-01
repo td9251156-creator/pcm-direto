@@ -1,4 +1,4 @@
-import {MODELOS_V2,GRUPOS_V2,VERSAO_BIBLIOTECA_V2} from '../dados/modelos-v2.js';
+import {MODELOS_V2,GRUPOS_V2,VERSAO_BIBLIOTECA_V2,PROCEDIMENTOS_PRONTOS} from '../dados/modelos-v2.js';
 import {esc} from '../ui.js';
 import {correspondeBusca} from '../logica/texto.js';
 
@@ -11,9 +11,10 @@ export function cartaoModeloV2(m,classe='modelo-documental'){
 }
 
 export function telaModelos(main){
-  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Modelos para sua rotina</p><h2>Escolha o modelo que precisa</h2><p>Biblioteca PCM v2: ${MODELOS_V2.length} modelos em Excel e Word. Veja para que serve cada um e baixe somente o arquivo que vai usar. Downloads gratuitos, sem conta.</p><p class="origem">Os arquivos são baixados em branco. O preenchimento automático com os dados do aplicativo está em transição para estes modelos; enquanto isso, <a href="#entrega">Documentos da revisão ativa</a> continua gerando os documentos no formato anterior.</p></header>
+  main.innerHTML=`<header class="cabecalho-tela"><p class="sobretitulo">Modelos para sua rotina</p><h2>Escolha o modelo que precisa</h2><p>Biblioteca PCM v2: ${MODELOS_V2.length} modelos em Excel e Word. Veja para que serve cada um e baixe somente o arquivo que vai usar. Downloads gratuitos, sem conta.</p><p class="origem">Aqui os arquivos são baixados em branco. Para receber os dados do aplicativo (plano, falhas, execuções e cadastros), use <a href="#entrega">Documentos da revisão ativa</a>.</p></header>
     <div class="grade duas filtros-documentos"><div><label for="buscar-documentos">O que você precisa organizar?</label><input type="search" id="buscar-documentos" value="${esc(filtros.busca)}" placeholder="Ex.: estoque, checklist, falha…" aria-controls="lista-documentos"></div><div><label for="grupo-documentos">Finalidade</label><select id="grupo-documentos" aria-controls="lista-documentos"><option value="">Todas as finalidades</option>${GRUPOS_V2.map(g=>`<option ${filtros.grupo===g?'selected':''}>${esc(g)}</option>`).join('')}</select></div></div>
     <p id="resultado-documentos" class="origem" role="status" aria-live="polite" aria-atomic="true"></p><div id="lista-documentos"></div>
+    <section aria-labelledby="procedimentos-prontos"><h3 id="procedimentos-prontos">Procedimentos prontos</h3><p class="origem">Escritos a partir do modelo PCM-MAN-017. Ajuste responsáveis e locais à sua fábrica antes de aprovar.</p><div class="grade duas">${PROCEDIMENTOS_PRONTOS.map(m=>`<article class="cartao modelo-procedimento"><p class="sobretitulo">${esc(m.codigo)} · ${m.formato}</p><h4>${esc(m.titulo)}</h4><p>${esc(m.quando)}</p><div class="acoes"><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)}">Baixar Word</a></div></article>`).join('')}</div></section>
     <details class="cartao"><summary>Como usar os arquivos</summary><p>Abra o Excel no Excel ou LibreOffice e o Word em um editor compatível. Cada arquivo tem uma aba Leia-me com as orientações. Recalcule as fórmulas e confira a impressão.</p><p>Os arquivos baixados não sincronizam com o aplicativo nem entre si. Escolha onde manter cada controle e confira o conteúdo antes de usar. Gerar ou baixar um documento não o torna aprovado.</p><p class="origem">Biblioteca ${esc(VERSAO_BIBLIOTECA_V2)} · PCM Direto · MIT.</p></details>`;
   const input=main.querySelector('#buscar-documentos');const grupo=main.querySelector('#grupo-documentos');const lista=main.querySelector('#lista-documentos');
   function render(){

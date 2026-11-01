@@ -4,6 +4,7 @@
 // Não usa a cópia simplificada do leitor (sem desenhos) nem DOM: roda no navegador e nos testes.
 import JSZip from 'jszip';
 import contrato from '../dados/biblioteca-pcm-v2.json';
+import { DIAS_POR_PERIODICIDADE } from '../logica/biblioteca-v2-dados.js';
 
 // Caracteres de controle (ex.: \v colado do Excel) são proibidos em XML 1.0 e invalidariam o arquivo: são retirados.
 const semControle = (s) => [...String(s)].filter((c) => c >= ' ' || c === '\t' || c === '\n' || c === '\r').join('');
@@ -208,7 +209,11 @@ export async function preencherPcmMan001(bytes, dados) {
   preencherTabela(p, 'Documentos', 29, dados.documentos.map((d) => ({ A: d.codigo, B: d.titulo, C: d.tipo, D: d.responsavel, E: d.status,
     F: data(d.validade), G: d.revisao, H: data(d.data), I: d.aprovado, J: d.observacoes })));
   preencherTabela(p, 'Revisões de documentos', 29, dados.revisoes.map((r) => ({ A: r.codigo, B: r.revisao, C: data(r.data), D: r.descricao, E: r.elaborado, F: r.aprovado })));
-  preencherTabela(p, 'Cadastros', 29, dados.pessoas.map((n) => ({ A: n })));
+  preencherTabela(p, 'Cadastros', 29, dados.pessoas.map((x) => ({ A: x.nome, B: x.funcao || null, C: x.especialidade || null, D: x.ativo || null })));
+  preencherTabela(p, 'Referências', 29, dados.referencias.map((q) => ({ A: q.referencia, B: q.versao || null, C: data(q.data), D: q.fonte || null, E: q.situacao })));
+  const o = dados.organizacao;
+  // Nomes definidos do modelo: organizacao (A4), referencial (A6), meta_disponibilidade (A8) e meta_aderencia (D8).
+  escrever(p, 'Organização', [['A4', o.nome || null], ['A6', o.referencial || null], ['A8', o.metaDisponibilidade ?? null], ['D8', o.metaAderencia ?? null]]);
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
@@ -216,7 +221,7 @@ export async function preencherPcmMan001(bytes, dados) {
 // Data com hora opcional (AAAA-MM-DD[THH:MM:SS]) → número de série do Excel.
 const serialDataHora = (v) => (v ? serialData(v.slice(0, 10)) + (v.length > 10 ? (Date.parse(`1970-01-01T${v.slice(11, 19)}Z`) / 86400000) : 0) : null);
 
-// A maioria dos modelos traz famílias em H e setores em J; o 004 traz o inverso (`setoresEmH`).
+// Padrão dos Cadastros (desde 01/11/2026 em todos os modelos com essas tabelas): famílias em H e setores em J.
 function cadastrosLadoALado(p, dados, setoresEmH = false) {
   const maior = Math.max(dados.ativos.length, dados.pessoas.length, dados.familias.length, dados.setores.length);
   inserirLinhas(p, 'Cadastros', 29, maior - 25);
@@ -228,6 +233,42 @@ function cadastrosLadoALado(p, dados, setoresEmH = false) {
   escrever(p, 'Cadastros', cad);
 }
 
+// Tabelas de cadastro conhecidas e o campo de dados que preenche cada coluna.
+const CADASTROS = { tb_pcm_ativos: 'ativos', tb_pcm_pessoas: 'pessoas', tb_pcm_familias: 'familias', tb_pcm_setores: 'setores' };
+const COLUNA_ATIVO = { tag: 'tag', descricao_ativo: 'descricao', familia: 'familia', setor: 'setor' };
+
+/**
+ * Qualquer modelo .xlsx da Biblioteca v2: preenche só o Leia-me (elaborado/aprovado) e as tabelas de cadastro
+ * (ativos, pessoas, famílias, setores) que o modelo tiver, nas posições do manifesto. Deixa o modelo pronto para as
+ * listas ▼, sem inventar registros. @param dados resultado de dadosCadastrosV2 (src/logica/biblioteca-v2-dados.js)
+ */
+export async function preencherCadastrosV2(bytes, codigo, dados) {
+  await conferirOriginal(bytes, codigo);
+  const p = await abrirPacote(bytes);
+  const modelo = contrato.modelos.find((m) => m.codigo === codigo);
+  const tabelas = modelo.abas.flatMap((a) => a.tabelas.filter((t) => CADASTROS[t.nome]).map((t) => ({ ...t, aba: a.nome })));
+  for (const aba of new Set(tabelas.map((t) => t.aba))) {
+    const daAba = tabelas.filter((t) => t.aba === aba);
+    const fim = Number(/(\d+)$/.exec(daAba[0].intervalo)[1]);
+    // Só amplia quando todas as tabelas da aba terminam na mesma linha (padrão dos modelos); senão, não cabe com segurança.
+    if (daAba.some((t) => Number(/(\d+)$/.exec(t.intervalo)[1]) !== fim)) throw new Error(`Cadastros de ${codigo} com tabelas desalinhadas.`);
+    p.abas.get(aba).xml = expandirCompartilhadas(p.abas.get(aba).xml);
+    const maior = Math.max(...daAba.map((t) => dados[CADASTROS[t.nome]].length));
+    inserirLinhas(p, aba, fim, maior - (fim - daAba[0].linhaDados + 1));
+    const valores = [];
+    for (const t of daAba) {
+      const [, col0] = /^([A-Z]+)/.exec(t.intervalo);
+      dados[CADASTROS[t.nome]].forEach((item, i) => t.campos.forEach((campo, j) => {
+        const v = typeof item === 'string' ? (j === 0 ? item : null) : item[COLUNA_ATIVO[campo] ?? campo];
+        valores.push([`${letraCol(numCol(col0) + j)}${t.linhaDados + i}`, v || null]);
+      }));
+    }
+    escrever(p, aba, valores);
+  }
+  escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
+  return fecharPacote(p);
+}
+
 /**
  * PCM-MAN-004: Leia-me (elaborado/aprovado), Ordens de Serviço e Cadastros. A ficha "Ordem de serviço" fica para a equipe.
  * @param dados resultado de dadosPcmMan004 (src/logica/biblioteca-v2-dados.js)
@@ -236,11 +277,11 @@ export async function preencherPcmMan004(bytes, dados) {
   await conferirOriginal(bytes, 'PCM-MAN-004');
   const p = await abrirPacote(bytes);
   for (const nome of ['Ordens de Serviço', 'Cadastros']) p.abas.get(nome).xml = expandirCompartilhadas(p.abas.get(nome).xml);
-  cadastrosLadoALado(p, dados, true);
+  cadastrosLadoALado(p, dados);
   const data = (iso) => (iso ? serialData(iso) : null);
   preencherTabela(p, 'Ordens de Serviço', 29, dados.ordens.map((o) => ({ A: o.numero, B: o.tag, D: o.atividade || null, E: o.tipo || null,
     F: o.prioridade || null, G: o.status || null, H: o.responsavel || null, I: data(o.abertura), J: data(o.prazo), K: data(o.conclusao),
-    L: o.estimadas, M: o.restantes })));
+    L: o.estimadas, M: o.restantes, N: o.observacao || null })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
@@ -253,18 +294,20 @@ export async function preencherPcmMan008(bytes, dados) {
   await conferirOriginal(bytes, 'PCM-MAN-008');
   const p = await abrirPacote(bytes);
   cadastrosLadoALado(p, dados);
-  // Falha do app sem hora: usa os estilos dd/mm/aaaa do próprio modelo (147 e 149) para não exibir "00:00".
-  const SO_DATA = { 81: '147', 88: '149' };
+  // Falha do app sem hora: usa os estilos dd/mm/aaaa do próprio modelo (145 e 147, mesmas bordas de 81 e 89)
+  // para não exibir "00:00".
+  const SO_DATA = { 81: '145', 89: '147' };
   const quando = (v) => (v && v.length === 10 ? { valor: serialData(v), estilos: SO_DATA } : serialDataHora(v));
   preencherTabela(p, 'Registro de falhas', 29, dados.falhas.map((f) => ({ A: f.referencia, B: f.tag, D: f.os || null, E: f.descricao || null,
-    F: f.causa || null, G: f.acao || null, H: quando(f.inicio), I: quando(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo) })));
+    F: f.causa || null, G: f.acao || null, H: quando(f.inicio), I: quando(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo),
+    L: f.peca || null, M: f.responsavel || null })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
 
 /**
  * PCM-MAN-002: Leia-me (elaborado/aprovado), Cadastros, Criticidade (notas), Plano ("Outras atividades") e Cronograma.
- * Classe, matriz e FMECA são calculadas ou preenchidas na própria planilha.
+ * Classe, matriz e MFMEA são calculadas ou preenchidas na própria planilha.
  * @param dados resultado de dadosPcmMan002 (src/logica/biblioteca-v2-dados.js)
  */
 export async function preencherPcmMan002(bytes, dados) {
@@ -287,10 +330,12 @@ export async function preencherPcmMan002(bytes, dados) {
   const extra = dados.atividades.length - 10;
   inserirLinhas(p, 'Plano', 30, extra);
   inserirLinhas(p, 'Cronograma', 33, extra);
+  // Colunas do Plano: G "A cada (dias)" é fórmula da Periodicidade (H). Periodicidade fora da lista do modelo:
+  // grava os dias direto em G e deixa H vazia.
   escrever(p, 'Plano', dados.atividades.flatMap((t, i) => {
-    const l = 21 + i;
-    return [[`A${l}`, 16 + i], [`B${l}`, t.tag], [`E${l}`, t.atividade], [`G${l}`, t.dias], [`H${l}`, t.responsavel || null],
-      [`I${l}`, t.duracao], [`K${l}`, t.primeira ? serialData(t.primeira) : null]];
+    const l = 21 + i; const naLista = t.periodicidade in DIAS_POR_PERIODICIDADE;
+    return [[`A${l}`, 16 + i], [`B${l}`, t.tag], [`E${l}`, t.atividade], ...(naLista ? [[`H${l}`, t.periodicidade]] : [[`G${l}`, t.dias]]),
+      [`I${l}`, t.responsavel || null], [`J${l}`, t.duracao], [`L${l}`, t.primeira ? serialData(t.primeira) : null]];
   }));
   if (dados.ano) escrever(p, 'Cronograma', [['A4', dados.ano]]);
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);

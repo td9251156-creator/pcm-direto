@@ -11,7 +11,7 @@ const textoDoControle = (xml, tag) => [...xml.matchAll(/<w:sdt>[\s\S]*?<\/w:sdt>
 const emissao = (aprovador = '') => ({ estado: { gestao: { organizacao: { nome: 'Fábrica fictícia & Cia' } } }, meta: { revisao: '03', dataCorte: '2026-06-30', elaborador: 'Técnico fictício', aprovador } });
 
 describe('manuais Word 018 e 019: só metadados', () => {
-  for (const codigo of ['PCM-MAN-018', 'PCM-MAN-019']) {
+  for (const codigo of ['PCM-MAN-017', 'PCM-MAN-018', 'PCM-MAN-019']) {
     it(`${codigo}: atualiza dados ligados e texto dos campos, sem tocar no restante`, async () => {
       const valores = metadadosWord(emissao());
       expect(valores).toMatchObject({ revisao: '03', data: '30/06/2026', aprovado: 'A definir', situacao: 'Em elaboração' });

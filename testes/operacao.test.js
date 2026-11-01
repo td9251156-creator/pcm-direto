@@ -35,6 +35,19 @@ async function previa004(ordens = [os('OS-0001'), os('OS-0002')], ativos = ATIVO
 const importar = (op, plano, opcoes = {}) => aplicarImportacao(op, plano, { id: 'imp' + Math.random().toString(36).slice(2, 8), data: '2026-10-31T10:00:00.000Z', ...opcoes }).operacao;
 
 describe('importação dos dados da operação', () => {
+  it('aceita planilha do 004 no formato anterior (sem a coluna observação), com observação vazia', async () => {
+    const wb = await abrir('PCM-MAN-004');
+    const sheet = wb.worksheets.find(s => s.getTable('tb_pcm_os'));
+    const tb = sheet.getTable('tb_pcm_os');
+    // Simula o modelo anterior: tabela sem a última coluna (observacao), A4:M29.
+    tb.table.columns.pop(); if (tb.table.tableRef) tb.table.tableRef = 'A4:M29'; tb.table.ref = 'A4:M29';
+    preencher(wb, 'ativos', 'tb_pcm_ativos', ATIVOS);
+    CAMPOS.ordens_servico.filter(c => c !== 'observacao').forEach((campo, j) => { const v = os('OS-ANT')[campo]; if (campo !== 'equipamento' && v !== undefined) sheet.getCell(5, 1 + j).value = v; });
+    const plano = prepararImportacao(prepararPreviaBibliotecaV2(wb, 'PCM-MAN-004'), null, null, [], { arquivo: 'antigo.xlsx' });
+    expect(plano.apto, JSON.stringify(plano.recusados ?? plano)).toBe(true);
+    const op = importar(null, plano);
+    expect(op.ordens_servico.find(o => o.numero_os === 'OS-ANT')).toMatchObject({ observacao: null, prioridade: 'MEDIA' });
+  });
   it('aceita prioridade vazia só em OS preventiva (como sai do 004 gerado pelo app)', async () => {
     const previa = await previa004([os('APP-h1', { prioridade: null, status: 'CONCLUIDA', data_conclusao: new Date('2026-10-02T00:00:00Z') }),
       os('OS-COR', { tipo_manutencao: 'CORRETIVA', prioridade: null })]);

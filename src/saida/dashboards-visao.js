@@ -188,7 +188,7 @@ export function visaoConfiabilidade(r) {
       [ind.falhas, { icone: 'alerta', contexto: `${r.totalAtivos} ${r.totalAtivos === 1 ? 'ativo' : 'ativos'} com ocorrência` }],
       [ind.indisponibilidade, { icone: 'parada', contexto: 'Soma por TAG, sem contar sobreposição duas vezes' }],
       [ind.reparo, { icone: 'chave', contexto: 'Medido à parte da indisponibilidade' }],
-      [ind.mtbf, { icone: 'pulso', contexto: 'Aguarda definição técnica e horas de operação' }],
+      [ind.mtbf, { icone: 'pulso', contexto: 'Por ativo e mês, na tela Mensal (PCM-MAN-017)' }],
     ],
     graficos: [
       graficoLinhas({

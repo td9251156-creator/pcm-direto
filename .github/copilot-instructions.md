@@ -1,14 +1,22 @@
 # Instruções para o GitHub Copilot
 
-Siga o AGENTS.md e leia os documentos obrigatórios antes de trabalhar. Explique resultados e decisões em português simples.
+Siga o AGENTS.md (regras do produto, papéis das ferramentas e arquivos protegidos). Explique resultados e decisões em
+português simples; o mantenedor é especialista em manutenção, não programador.
 
-- Preserve o trabalho existente; use um ramo por tarefa e respeite a lista de arquivos permitidos.
-- Trabalho paralelo depende de autorização do mantenedor e de listas de arquivos sem sobreposição. A revisão independente cabe a outro agente. O integrador atualiza docs/FILA.md e docs/MELHORIAS.md depois dos merges.
-- Mantenha HTML, CSS e JavaScript simples e a licença MIT. Não acrescente dependências sem autorização.
-- Preserve dados locais, rascunhos e backups antigos; não descarte dados danificados silenciosamente. Não acrescente servidor, login, analytics ou rastreamento, nem envie dados operacionais.
-- Use português do Brasil na interface, mensagens, comentários e documentação, com dados fictícios em exemplos e testes.
-- Não invente regras técnicas, periodicidades, indicadores ou normas. Preserve travas de segurança, avisos, logo, acessibilidade, teclado e celular.
-- Não altere os modelos da Biblioteca PCM v2 (PCM-MAN) sem autorização. Não divulgue credenciais ou dados reais.
-- Para erros, primeiro reproduza com teste que falha. Não enfraqueça testes.
-- Execute `npm ci` e `npm run verificar`. Para telas, dados, offline ou arquivos gerados, execute também `npm run test:navegador`, conforme docs/TESTES-NAVEGADOR.md. Informe a saída real e o que não foi conferido.
-- PRs devem explicar Antes, Depois, Como testar e Riscos, com evidências da revisão independente. Não faça merge, push na main ou publicação sem autorização explícita.
+## No editor
+- Ajustes pequenos e testes simples, no estilo do arquivo aberto. JavaScript puro com Vite, sem frameworks e sem
+  dependências novas. Textos da interface e comentários em português do Brasil, com acentos.
+- Não altere os arquivos protegidos listados no AGENTS.md (armazenamento, backup, importação, geradores OOXML,
+  manifesto e arquivos da Biblioteca PCM v2, Supabase). Proponha a mudança em texto se ela for necessária.
+- Use apenas dados fictícios. Nunca inclua credenciais, dados reais da fábrica ou backups.
+- Não invente regras técnicas, periodicidades, indicadores ou normas. Preserve travas de segurança, avisos, logo,
+  acessibilidade, teclado e celular. Só modelos PCM-MAN da Biblioteca v2; não reintroduza PCMD.
+- Para erros, primeiro um teste que falha. Não enfraqueça testes. Antes de propor PR: `npm run verificar`
+  (e `npm run test:navegador` para telas, dados, offline ou arquivos gerados), informando a saída real.
+
+## Na revisão de PR
+Aponte, com arquivo e linha: bug de correção, perda ou corrupção de dados (rascunho, backup, IndexedDB), quebra de
+compatibilidade com backups antigos, exposição de dados ou credenciais, regressão de acessibilidade, teclado ou celular,
+texto sem acento ou em outro idioma e alteração de arquivo protegido sem justificativa. Ignore preferências de estilo.
+
+PRs explicam Antes, Depois, Como testar e Riscos. Não faça merge, push na main ou publicação sem autorização explícita.
