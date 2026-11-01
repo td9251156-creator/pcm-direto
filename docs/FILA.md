@@ -57,7 +57,8 @@ e registrar na aba Revisões. Cada arquivo novo exige atualizar o manifesto (has
   Semestral 180, Anual 365; ou criar coluna com a periodicidade escrita.
 - **M6 — Cadastros:** padronizar a ordem das colunas H/J (família/setor). 004, 013 e 014 têm setor em H e família
   em J; 012 e 015 têm outra disposição; os demais têm família em H e setor em J.
-- **M7 — 004, Prioridade:** definir valor padrão para preventivas ou permitir vazio na importação (hoje recusada).
+- **M7 — 004, Prioridade: decidido em 01/11/2026.** A importação aceita prioridade vazia só em OS PREVENTIVA (o app
+  não inventa prioridade); corretiva, preditiva e inspeção continuam exigindo prioridade. Nenhuma mudança no modelo.
 - **M8 — 004:** coluna `observacao` (hoje a observação vai junto com o serviço).
 - **M9 — 008:** colunas `peca` e `responsavel` (hoje vão escritas na ação).
 - **M10 — 012:** grade de orçamento por setor, se quiser comparar por setor.

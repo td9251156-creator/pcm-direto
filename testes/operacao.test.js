@@ -35,6 +35,17 @@ async function previa004(ordens = [os('OS-0001'), os('OS-0002')], ativos = ATIVO
 const importar = (op, plano, opcoes = {}) => aplicarImportacao(op, plano, { id: 'imp' + Math.random().toString(36).slice(2, 8), data: '2026-10-31T10:00:00.000Z', ...opcoes }).operacao;
 
 describe('importação dos dados da operação', () => {
+  it('aceita prioridade vazia só em OS preventiva (como sai do 004 gerado pelo app)', async () => {
+    const previa = await previa004([os('APP-h1', { prioridade: null, status: 'CONCLUIDA', data_conclusao: new Date('2026-10-02T00:00:00Z') }),
+      os('OS-COR', { tipo_manutencao: 'CORRETIVA', prioridade: null })]);
+    const plano = prepararImportacao(previa, null, null, [], { arquivo: 'os.xlsx' });
+    expect(plano.novos.map(n => n.chave)).toContain('APP-h1');
+    expect(plano.novos.map(n => n.chave)).not.toContain('OS-COR');
+    const op = importar(null, plano);
+    expect(validarOperacao(op)).toBe(true);
+    expect(op.ordens_servico.find(o => o.numero_os === 'APP-h1').prioridade).toBe(null);
+  });
+
   it('importa ativos e OS do 004 e não duplica ao reimportar o mesmo arquivo', async () => {
     const previa = await previa004();
     const plano = prepararImportacao(previa, null, null, [], { arquivo: 'os.xlsx' });

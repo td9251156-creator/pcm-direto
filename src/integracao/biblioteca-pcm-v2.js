@@ -121,6 +121,7 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
   if (!Object.keys(bases).length) avisos.push('Este modelo não possui leitor operacional nesta etapa. Grades, formulários e consolidados exigem adaptação específica.');
   for (const o of bases.ordens_servico ?? []) {
     for (const [campo, permitidos] of Object.entries({tipo_manutencao: ['PREVENTIVA', 'CORRETIVA', 'PREDITIVA', 'INSPECAO'], prioridade: ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'], status: ['ABERTA', 'PLANEJADA', 'PROGRAMADA', 'EM_EXECUCAO', 'CONCLUIDA', 'CANCELADA']})) {
+      if (campo === 'prioridade' && vazio(o.prioridade) && o.tipo_manutencao === 'PREVENTIVA') continue; // vazia só em preventiva
       if (!permitidos.includes(o[campo])) erro('ordens_servico', null, campo, 'Código fora da lista padronizada.');
     }
     if (!o.tag || !o.status || !o.data_abertura) erro('ordens_servico', null, 'tag/status/data_abertura', 'OS incompleta.');
