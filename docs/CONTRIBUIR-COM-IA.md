@@ -70,6 +70,13 @@ Só consulta. Para levar o resultado ao projeto, cole a resposta numa issue ou m
 3. Testes de todas as combinações da criticidade 1 a 5 contra a fórmula do PCM-MAN-002 em `testes/criticidade-matriz.test.js`.
    Pode alterar: só esse arquivo.
 
+## Agente do banco de máquinas (Copilot)
+
+Para acrescentar máquinas ou tarefas preventivas à biblioteca técnica: no chat do Copilot (VS Code), escolha o agente
+**banco-maquinas** ou digite `/alimentar-banco-maquinas`, diga a máquina e a fonte (manual com modelo, revisão e data, ou
+"nenhuma"). Ele só cria uma proposta em `propostas-maquinas/`, roda o validador e mostra a tabela para você conferir.
+Depois peça ao Claude Code para integrar. Detalhes em `propostas-maquinas/README.md`.
+
 ## Se algo der errado
 - A ferramenta mexeu em arquivo protegido ou "quebrou" testes: não integre. Peça para desfazer ou apague a pasta da tarefa.
 - Dúvida de manutenção (regra técnica, indicador, norma): a decisão é sua; a IA não deve inventar.

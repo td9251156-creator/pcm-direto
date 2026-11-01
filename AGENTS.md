@@ -102,7 +102,7 @@ O Actions continua executando testes e publicação.
 | Ferramenta | Papel | Ramo |
 |---|---|---|
 | Claude Code | Coordena e integra: geradores OOXML, armazenamento e backup, importação, banco, revisão final, verificação completa e preparo da publicação | `coord/...` |
-| GitHub Copilot | No editor: ajustes pequenos e testes simples. No GitHub: revisão automática dos PRs | `ia/copilot/...` |
+| GitHub Copilot | No editor: ajustes pequenos e testes simples. Agente **banco-maquinas**: propostas de máquinas/tarefas só em `propostas-maquinas/`. No GitHub: revisão automática dos PRs | `ia/copilot/...` |
 | OpenCode + DeepSeek | Tarefas mecânicas e delimitadas: textos, documentação, testes extras, scripts de conferência e capturas | `ia/opencode/...`, em `git worktree` separado |
 | ChatGPT | Apenas consulta: procedimentos, opções e revisão de texto. Não edita o repositório nem os modelos | — |
 
