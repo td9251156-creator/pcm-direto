@@ -1,4 +1,4 @@
-// Dashboard de Confiabilidade. MTBF, MTTR e disponibilidade seguem como "Definição pendente":
+// Dashboard de Confiabilidade. MTBF, MTTR e disponibilidade são calculados no Mensal (procedimento PCM-MAN-017):
 // dependem de operação por TAG e de definições aprovadas pelo mantenedor (F-005).
 import { tagsPermitidas, filtroPorAtivo, noPeriodo, dia, mesesParciais } from './filtros.js';
 import { periodoEfetivo } from './manutencao.js';
@@ -98,9 +98,9 @@ export function calcularConfiabilidade(fonte, filtro) {
       ausencias: semReparo ? `${semReparo} falha(s) encerrada(s) sem intervalo de reparo.` : '', ...base,
     },
     mtbf: {
-      id: 'mtbf', titulo: 'MTBF, MTTR e disponibilidade', valor: null, unidade: '', estado: 'pendente', fonte: 'Definição técnica do mantenedor (F-005) e horas de operação por TAG',
-      formula: 'Não calculados: falta definição aprovada e exposição operacional válida.', data: '—',
-      populacao: '—', exclusoes: 'Não se usa horas de calendário no lugar da operação.', ausencias: 'Dados insuficientes / definição pendente.',
+      id: 'mtbf', titulo: 'MTBF, MTTR e disponibilidade', valor: null, unidade: '', estado: 'pendente', fonte: 'Procedimento PCM-MAN-017 (MTBF, MTTR e disponibilidade) — tela Mensal',
+      formula: 'Calculados por ativo e mês em Mais → Mensal: HO = HP − HI; MTBF = HO ÷ N; MTTR = reparos completos ÷ nº; disponibilidade = HO ÷ HP × 100.', data: '—',
+      populacao: '—', exclusoes: 'Não se usa horas de calendário no lugar da operação.', ausencias: 'Aqui o período pode ter vários meses; o procedimento é por ativo e mês. Consulte o Mensal (precisa das horas planejadas).',
     },
   };
 
@@ -134,7 +134,7 @@ export function calcularConfiabilidade(fonte, filtro) {
     frases, acoes: acoes.slice(0, 3), avisos,
     limitacoes: [
       'Indisponibilidade e reparo são lidos como registrados; não são disponibilidade nem MTTR aprovados.',
-      'MTBF não é calculado: não há horas de operação por TAG com regra aprovada.',
+      'MTBF, MTTR e disponibilidade ficam no Mensal, por ativo e mês, pelo procedimento PCM-MAN-017.',
       'Falhas abertas ficam fora das horas, para não inventar o fim.',
       'A contagem usa o dia de início da falha; as horas usam o trecho dentro do período. Uma falha iniciada antes do período não conta como evento, mas suas horas dentro dele entram.',
     ],

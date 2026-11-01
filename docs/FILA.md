@@ -12,7 +12,7 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P2 | Dashboards com os dados da base local | Alta | **Verificado** (demo em `?fonte=demo`) | P1 | Mesmo cálculo em cartões, gráficos, tabelas e HTML. |
 | P3 | Mês parcial e falha iniciada antes do período | Alta | **Verificado** | — | Contagem pelo início; horas recortadas ao período. |
 | P4 | Orçamento do 012 | Alta | **Verificado** com escopo restrito | — | Só orçamento geral (setor vazio); sem rateio. |
-| P5 | MTBF, MTTR e disponibilidade nos dashboards | Média | **Bloqueado** | D1 (mantenedor vai revisar os procedimentos) | Não transferir fórmulas entre populações. |
+| P5 | MTBF, MTTR e disponibilidade | Média | **Verificado** + **Validação humana** | — | Procedimento PCM-MAN-017 implementado no Mensal (HP digitada; HI pelas falhas do app e importadas; exemplo numérico do procedimento como teste). Dashboards apontam para o Mensal. |
 | P6 | Preencher PCM-MAN-002 | Alta | **Verificado** + **Validação humana** no Office | — | Criticidade (notas 1 a 5), Plano, Cronograma e Cadastros; 100 ativos abertos no Excel sem erro. |
 | P7 | Retirar todos os modelos anteriores (PCMD e "refeitos") | Alta | **Verificado** | — | Site sem arquivos PCMD/refeitos; Documentos só com v2; `#entrega-modelos` leva a Documentos; testes impedem PCMD nas telas. |
 | P8 | Preencher 001, 004, 008, 018 e 019 | Alta | **Verificado** + **Validação humana** no Office | — | 004 com 3.256 OS e 008 com 1.101 falhas abertos no Excel sem erro (só os #N/D do Pareto vazio, iguais ao original). |
@@ -55,7 +55,8 @@ Os 19 arquivos novos (R00, em desenvolvimento) substituíram os anteriores; mani
   famílias e setores) e elaborado/aprovado, prontos para as listas ▼. O 017 (procedimento) recebe os metadados.
 - **D1:** o mantenedor enviou o procedimento "PCM-MAN-017 MTBF, MTTR e Disponibilidade" (HP digitada no 011; HI
   calculada pelas falhas, cortada na virada do mês; N pelo mês de início; MTTR só com reparo completo; "sem dado" nunca
-  é zero). Ainda não implementado nos dashboards; o documento fica fora do catálogo (o 017 do site é o modelo genérico).
+  é zero). **Implementado no Mensal** (src/logica/indicadores-017.js). Falha do app sem hora usa as horas de parada da
+  própria falha (aviso); sem nenhuma hora, HI fica sem dado. O documento está no site em "Procedimentos prontos".
 - Pendentes: M4 (5º critério da criticidade, opcional), M10 (orçamento por setor, opcional), M11 (resolvido pelo procedimento D1).
 
 ### Revisões sugeridas nos modelos (para o mantenedor)

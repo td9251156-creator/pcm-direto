@@ -2,7 +2,7 @@ import { it, expect } from 'vitest';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import manifesto from '../src/dados/biblioteca-pcm-v2.json';
-import { MODELOS_V2, GRUPOS_V2 } from '../src/dados/modelos-v2.js';
+import { MODELOS_V2, GRUPOS_V2, PROCEDIMENTOS_PRONTOS } from '../src/dados/modelos-v2.js';
 
 it('oferece para download exatamente os 19 modelos da Biblioteca PCM v2, conferidos por hash', () => {
   expect(MODELOS_V2).toHaveLength(19);
@@ -46,5 +46,14 @@ it('nenhuma tela aponta para arquivos antigos removidos', () => {
       const texto = readFileSync(`${pasta}/${nome}`, 'utf8');
       expect(texto, nome).not.toMatch(/-Exemplo\.|modelos\/previas|refeitos\/previas|COMO-USAR/);
     }
+  }
+});
+
+it('o procedimento pronto de MTBF, MTTR e disponibilidade é publicado íntegro, fora da contagem dos 19 modelos', () => {
+  expect(PROCEDIMENTOS_PRONTOS).toHaveLength(1);
+  for (const m of PROCEDIMENTOS_PRONTOS) {
+    expect(createHash('sha256').update(readFileSync(`public/modelos/biblioteca-v2/${m.arquivo}`)).digest('hex')).toBe(m.sha256);
+    expect(m.url).toBe(`./modelos/biblioteca-v2/${m.arquivo}`);
+    expect(MODELOS_V2.some((x) => x.arquivo === m.arquivo)).toBe(false);
   }
 });

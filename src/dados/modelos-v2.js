@@ -36,3 +36,11 @@ export const MODELOS_V2 = manifesto.modelos.map((m) => {
   const revisao = /_(R\d+)\.(xlsx|docx)$/.exec(m.arquivo)?.[1] ?? '';
   return { codigo: m.codigo, titulo, grupo, quando, formato, arquivo: m.arquivo, revisao, abas, url: `./${m.url}` };
 });
+
+// Procedimentos já escritos pelo mantenedor a partir do modelo PCM-MAN-017 (fora da contagem dos 19 modelos).
+export const PROCEDIMENTOS_PRONTOS = [
+  { codigo: 'PCM-MAN-017', titulo: 'Procedimento: MTBF, MTTR e disponibilidade', formato: 'Word',
+    quando: 'Para calcular, por ativo e mês, MTBF, MTTR e disponibilidade sempre pelo mesmo critério. É o critério usado na tela Mensal do app.',
+    arquivo: 'PCM-MAN-017_Procedimento-MTBF-MTTR-Disponibilidade_R00.docx', sha256: '202c4b0c6ccae50901dc8dec9b70e9216a03c8fd0a82ba716f27f4bc4e041e8c',
+    url: './modelos/biblioteca-v2/PCM-MAN-017_Procedimento-MTBF-MTTR-Disponibilidade_R00.docx' },
+];
