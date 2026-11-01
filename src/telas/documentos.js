@@ -22,7 +22,11 @@ const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-008'),
   preenche:'Registro de falhas até a data de corte: as importadas do 008, com data e hora, e as do registro do app (só a data; peça, horas de parada e reparo vão escritas na ação), além dos cadastros.',
   branco:'Hora de início e fim das falhas registradas no app, a Ficha de falha e o Pareto (escolha das categorias pela equipe).',
-  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan008(bytes,dadosPcmMan008(emissao))}];
+  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan008(bytes,dadosPcmMan008(emissao))},
+  ...['PCM-MAN-018','PCM-MAN-019'].map(codigo=>({...MODELOS_V2.find(m=>m.codigo===codigo),
+  preenche:'Identificação no cabeçalho, no rodapé e na capa: revisão, data de corte, organização, elaborado e aprovado (só se a aprovação for informada).',
+  branco:'Todo o texto do manual: é orientação para a equipe escrever com as regras da fábrica. O app não inventa conteúdo técnico, aprovação ou evidência.',
+  preencher:async(bytes,emissao)=>{const m=await import('../saida/biblioteca-v2-docx.js');return m.preencherManualWord(bytes,codigo,m.metadadosWord(emissao));}}))];
 
 const rascunhoEmissao={dataCorte:null,elaborador:null,aprovado:false,aprovador:'',gerando:false,codigo:'',mensagem:''};
 let refletirEmissao=()=>{};
@@ -34,7 +38,7 @@ export function telaDocumentos(main){
     <details ${rascunhoEmissao.aprovado?'open':''}><summary>Informar aprovação já realizada (opcional)</summary><label class="caixa caixa-bloco"><input name="aprovado" type="checkbox" id="emissao-aprovada" ${rascunhoEmissao.aprovado?'checked':''}> Estes documentos já foram aprovados pelo responsável</label><label for="emissao-aprovador">Aprovador</label><input id="emissao-aprovador" name="aprovador" maxlength="120" value="${esc(rascunhoEmissao.aprovador)}"><p class="origem">Sem essa confirmação, o documento fica “Em elaboração”, com aprovador “A definir”.</p></details>
     <p id="bloqueio-pcmd" class="origem">${revisao?'Escolha um documento abaixo.':'A geração será liberada após ativar uma revisão em Planejar.'}</p><p id="progresso-pcmd" role="status" aria-live="polite"></p></form></section>
     <section aria-labelledby="escolher-documento"><h3 id="escolher-documento">2. Escolha o documento</h3>
-    <h4>Biblioteca PCM v2</h4><div class="grade duas">${PREENCHIDOS_V2.map(m=>`<article class="cartao"><p class="sobretitulo">${m.codigo} · Excel</p><h4>${esc(m.titulo)}</h4><p>${esc(m.preenche)}</p><p class="origem"><strong>Fica em branco para a equipe:</strong> ${esc(m.branco)}</p><div class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${m.codigo}" data-documento="${m.codigo}" aria-label="Gerar ${esc(m.titulo)} da revisão ativa" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar Excel</button><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em branco">Modelo em branco</a></div></article>`).join('')}</div>
+    <h4>Biblioteca PCM v2</h4><div class="grade duas">${PREENCHIDOS_V2.map(m=>`<article class="cartao"><p class="sobretitulo">${m.codigo} · ${m.formato}</p><h4>${esc(m.titulo)}</h4><p>${esc(m.preenche)}</p><p class="origem"><strong>Fica em branco para a equipe:</strong> ${esc(m.branco)}</p><div class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${m.codigo}" data-documento="${m.codigo}" aria-label="Gerar ${esc(m.titulo)} da revisão ativa" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar ${m.formato}</button><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em branco">Modelo em branco</a></div></article>`).join('')}</div>
     <h4>Formato anterior (em transição)</h4><div class="grade duas">${MODELOS_DOCUMENTAIS.map(([c,n,,a,ext])=>{const guia=guiaModelo(c);return `<article class="cartao"><p class="sobretitulo">${c} · ${ext==='xlsx'?'Excel':'Word'}</p><h4>${n}</h4><p>${esc(guia.quando)}</p><p class="origem"><strong>Comece assim:</strong> ${esc(guia.comecar)}</p><div class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${c}" data-documento="${c}" aria-label="Gerar ${n} da revisão ativa" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar ${ext==='xlsx'?'Excel':'Word'}</button><a href="./modelos/${a}.${ext}" download aria-label="Baixar ${n} em branco">Modelo em branco</a></div></article>`;}).join('')}</div></section>
     <details class="cartao"><summary>Outros formatos do planejamento em edição</summary><p class="origem">Exportações anteriores, sem o histórico completo da revisão ativa. Para guardar toda a base, use <a href="#dados">Meus dados → Backup completo</a>.</p><div id="formatos-anteriores"></div></details>
     <section class="cartao"><h3>Depois do download</h3><p>Abra o arquivo diretamente no Excel, LibreOffice ou Word. Recalcule as fórmulas das planilhas e confira impressão, pendências e campos “A definir”. As periodicidades devem ser confirmadas com o manual do fabricante.</p><a href="#apoio">Ajuda para usar os documentos</a></section>`;
@@ -46,13 +50,13 @@ export function telaDocumentos(main){
     for(const i of form.querySelectorAll('input'))i.disabled=rascunhoEmissao.gerando;
     form.elements.aprovador.disabled=rascunhoEmissao.gerando||!rascunhoEmissao.aprovado;form.elements.aprovador.required=rascunhoEmissao.aprovado;
     form.setAttribute('aria-busy',String(rascunhoEmissao.gerando));
-    for(const b of main.querySelectorAll('[data-documento]')){b.disabled=rascunhoEmissao.gerando||!revisao;b.textContent=rascunhoEmissao.gerando&&rascunhoEmissao.codigo===b.value?'Preparando…':b.value.startsWith('PCMD-W')?'Gerar Word':'Gerar Excel';}
+    for(const b of main.querySelectorAll('[data-documento]')){b.disabled=rascunhoEmissao.gerando||!revisao;b.textContent=rascunhoEmissao.gerando&&rascunhoEmissao.codigo===b.value?'Preparando…':(b.value.startsWith('PCMD-W')||PREENCHIDOS_V2.some(m=>m.codigo===b.value&&m.formato==='Word'))?'Gerar Word':'Gerar Excel';}
     form.querySelector('#progresso-pcmd').textContent=rascunhoEmissao.mensagem;
   };
   for(const i of form.querySelectorAll('input'))i.addEventListener('input',()=>{rascunhoEmissao[i.name]=i.type==='checkbox'?i.checked:i.value;refletirEmissao();});refletirEmissao();
   form.onsubmit=async e=>{
     e.preventDefault();const v2=PREENCHIDOS_V2.find(m=>m.codigo===e.submitter?.value);
-    const modelo=v2?[v2.codigo,v2.titulo,'',v2.url.replace(/^\.\/modelos\//,'').replace(/\.xlsx$/,''),'xlsx']:MODELOS_DOCUMENTAIS.find(m=>m[0]===e.submitter?.value);
+    const modelo=v2?[v2.codigo,v2.titulo,'',v2.url.replace(/^\.\/modelos\//,'').replace(/\.(xlsx|docx)$/,''),v2.formato==='Word'?'docx':'xlsx']:MODELOS_DOCUMENTAIS.find(m=>m[0]===e.submitter?.value);
     if(!modelo||!revisao||rascunhoEmissao.gerando)return;
     const fd=new FormData(form);const [codigo,nome,,arquivo,ext]=modelo;
     rascunhoEmissao.gerando=true;rascunhoEmissao.codigo=codigo;rascunhoEmissao.mensagem=`Preparando ${nome}…`;refletirEmissao();

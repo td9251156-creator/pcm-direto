@@ -17,7 +17,7 @@ humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta
 | P7 | Retirar PCMD-02 e PCMD-03/04 | Média | **Bloqueado** | D2 e D3 | O 002 ainda não leva notas de criticidade, ocorrências nem execuções. |
 | P8a | Preencher PCM-MAN-001 | Média | **Verificado** + **Validação humana** no Office | — | Documentos (este controle, emitidos pelo app, referências), revisões e pessoas; 32 documentos abertos no Excel sem erro. PCMD-01 mantido até D6. |
 | P8b | Preencher PCM-MAN-008 | Média | **Verificado** + **Validação humana** no Office | — | Falhas importadas (com hora) e do app (só data; peça e horas na ação); 41 falhas abertas no Excel, só os #N/D do Pareto vazio (iguais ao original). PCMD-05 mantido até D7. |
-| P8c | Preencher os Word 018 e 019 e retirar PCMD-W1, W2 | Média | **Adiado** para a próxima etapa | — | Só controles de metadados (contrato `camposDocumento`); corpo depende de texto humano. |
+| P8c | Preencher os Word 018 e 019 | Média | **Verificado** + **Validação humana** (LibreOffice) | — | Só metadados: parte de dados ligada e texto dos campos; corpo intacto. Abertos no Word: campos de capa, cabeçalho e rodapé corretos. PCMD-W1/W2 mantidos até D8. |
 | P9 | "Preencher um modelo" (5 refeitos) só com v2 | Média | **Adiado** | P8 | Página de modelos já usa só v2; o preenchimento individual ainda usa 5 arquivos anteriores. |
 | P10 | Horas de operação/paradas por ativo e período | Média | **Bloqueado** | D1 | Contrato existente: `gestao.indicadoresMensais` (horas planejadas e de parada por ativo/mês fechado). |
 | P11 | Janelas de parada e agrupamento | Baixa | **Bloqueado** | D4 | Nenhuma regra presumida; tarefas de segurança nunca adiadas. |
@@ -46,6 +46,9 @@ humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta
   horas de parada/reparo. Exemplo: falha de 05/05 com 2,5 h de parada vira início 05/05 (sem hora), fim vazio e
   "Parada: 2,5 h" na ação. Proposta: no registro de falhas do app, passar a pedir hora de início e fim (opcionais) e só
   depois retirar o PCMD-05. Pergunta: aceita, ou retira já com a parada escrita na ação?
+- **D8 — Retirar PCMD-W1 e W2.** Os manuais antigos recebiam tabelas de pessoas, setores, ativos, criticidade e tarefas;
+  os manuais 018/019 da Biblioteca v2 só têm campos de identificação e corpo para a equipe escrever. Proposta: retirar os
+  antigos, porque essas tabelas já saem nos modelos 001, 002 e 008. Pergunta: aceita?
 - **D4 — Janelas de parada:** limites de agrupamento, capacidade e o que nunca pode mudar de data.
 - **D5 — QR, fotos e assinaturas:** finalidade, tamanho máximo por foto, retenção, e que "assinatura" é registro de ciência,
   sem validade jurídica.
