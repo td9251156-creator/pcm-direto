@@ -19,10 +19,15 @@
       "id": "redutor_velocidade",
       "nome": "Redutor de velocidade",
       "sigla": "RED",
+      "fabricante": "Fabricante fictício",
+      "modelo": "Modelo de exemplo",
       "tarefas": [
         {
           "id": "RED-01",
           "descricao": "Inspeção visual de vazamentos de óleo e da fixação na base",
+          "componente": "Carcaça e base",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
           "periodicidade": "Mensal",
           "especialidade": "Mecânica",
           "duracao_horas": 0.25,
@@ -35,6 +40,9 @@
         {
           "id": "RED-02",
           "descricao": "Conferir o nível de óleo pelo visor ou vareta, com o equipamento parado",
+          "componente": "Lubrificação",
+          "tipo_tarefa": "LUBRIFICACAO",
+          "exige_parada": true,
           "periodicidade": "Mensal",
           "especialidade": "Lubrificação",
           "duracao_horas": 0.25,
@@ -44,6 +52,22 @@
           "observacao": "Tipo e volume de óleo conforme o manual do fabricante.",
           "fonte": "F1"
         }
+      ],
+      "modos_falha": [
+        {
+          "componente": "Vedação do eixo",
+          "modo": "Vazamento de óleo",
+          "efeito": "Nível baixo e desgaste das engrenagens",
+          "causa": "Retentor gasto",
+          "controle": "Inspeção mensal de vazamentos (RED-01)"
+        }
+      ],
+      "itens_checklist": [
+        { "item": "Sem vazamento visível na carcaça e no eixo", "criterio": "Sem óleo escorrendo ou acumulado" },
+        { "item": "Nível de óleo no visor", "criterio": "Entre as marcas de mínimo e máximo" }
+      ],
+      "pecas_criticas": [
+        { "peca": "Retentor do eixo de saída", "especificacao": "Conforme o manual do fabricante", "quantidade_sugerida": 1 }
       ]
     }
   ],

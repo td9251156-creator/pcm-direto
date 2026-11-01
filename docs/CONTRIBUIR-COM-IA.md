@@ -61,21 +61,47 @@ Não faça push, merge nem PR. Ao terminar, mostre os arquivos alterados e a sa�
 ### ChatGPT
 Só consulta. Para levar o resultado ao projeto, cole a resposta numa issue ou mande ao Claude Code.
 
-## Tarefas boas para começar (OpenCode)
+## Tarefas para o OpenCode
+As tarefas iniciais (captura da Criticidade, docs retirados, testes da criticidade) já foram feitas e integradas em
+01/11/2026. Para novas tarefas, use os itens "Pronto" da fila do coordenador (`.github/prompts/coordenar.prompt.md`)
+que não mexem em arquivos protegidos.
 
-1. Nova captura da tela de Criticidade para `public/conheca.html` (`public/apresentacao/criticidade-pc.webp`), com o
-   exemplo fictício do app. Pode alterar: `scripts/`, `public/apresentacao/criticidade-pc.webp`, `public/conheca.html`.
-2. Marcar em `docs/` o que foi retirado em 01/11/2026 (PCMD, refeitos, "Preencher um modelo"), sem apagar o histórico.
-   Pode alterar: só `docs/`.
-3. Testes de todas as combinações da criticidade 1 a 5 contra a fórmula do PCM-MAN-002 em `testes/criticidade-matriz.test.js`.
-   Pode alterar: só esse arquivo.
+## Agentes e prompts prontos
 
-## Agente do banco de máquinas (Copilot)
+| Para quê | Onde usar | Arquivo | Saída |
+|---|---|---|---|
+| Desenvolver um item da fila por vez | Codex (nuvem), Claude Code ou Copilot (modo agente) | `.github/prompts/coordenar.prompt.md` | PR para você aprovar |
+| Cadastrar máquinas reais, com você | Copilot → agente **banco-maquinas**, ou `/alimentar-banco-maquinas` | `.github/agents/banco-maquinas.agent.md` | Proposta em `propostas-maquinas/` |
+| Criar conteúdos de redes sociais, com você | Copilot → agente **redes-sociais**, ou `/redes-sociais`; ou cole o arquivo no ChatGPT | `.github/agents/redes-sociais.agent.md` | Rascunhos em `divulgacao/` |
 
-Para acrescentar máquinas ou tarefas preventivas à biblioteca técnica: no chat do Copilot (VS Code), escolha o agente
-**banco-maquinas** ou digite `/alimentar-banco-maquinas`, diga a máquina e a fonte (manual com modelo, revisão e data, ou
-"nenhuma"). Ele só cria uma proposta em `propostas-maquinas/`, roda o validador e mostra a tabela para você conferir.
-Depois peça ao Claude Code para integrar. Detalhes em `propostas-maquinas/README.md`.
+Os mesmos atalhos existem como prompts (`.github/prompts/*.prompt.md`) e como skills do Copilot (`.github/skills/`).
+
+### Banco de máquinas: do manual ao modelo preenchido
+1. No Copilot, escolha o agente **banco-maquinas** e diga a máquina (fabricante e modelo) e a fonte (manual, revisão e data).
+2. O agente propõe uma seção por vez: identificação, componentes, tarefas, modos de falha, checklist, peças e fontes.
+   Você confirma cada uma.
+3. Ele grava a proposta em `propostas-maquinas/` e roda o validador. Os campos já correspondem às colunas dos modelos
+   002 (Plano e MFMEA), 005 (Checklist) e 010 (Peças críticas).
+4. Peça ao Claude Code: "integre a proposta propostas-maquinas/<arquivo>.json".
+5. Quando o item 14 da fila estiver pronto, o usuário escolhe a máquina e baixa o modelo preenchido em Excel, Word ou PDF.
+
+### Redes sociais: um conteúdo por vez
+1. No Copilot, escolha o agente **redes-sociais** e informe o canal, o pilar e o objetivo.
+2. Escolha um entre três ganchos e aprove o texto, as peças visuais e o checklist.
+3. O rascunho fica em `divulgacao/rascunhos/` e a linha em `divulgacao/calendario.md`. Quem publica é você.
+
+### Codex: configuração (uma vez)
+- GitHub: conecte o repositório, com permissão para criar ramos e PRs. O merge continua com você.
+- Internet: ligada só na preparação. Segredos: nenhum. Variável de ambiente: `PCM_SEM_SANDBOX=1`.
+- Script de preparação:
+  ```bash
+  npm ci
+  npm ci --prefix ferramentas/navegador
+  node ferramentas/navegador/node_modules/playwright/cli.js install --with-deps chromium
+  sudo apt-get update && sudo apt-get install -y postgresql
+  ```
+- Em cada tarefa, cole `.github/prompts/coordenar.prompt.md` e escreva "Faça o item N". Não conecte Supabase, Drive,
+  Notion nem Figma ao Codex.
 
 ## Se algo der errado
 - A ferramenta mexeu em arquivo protegido ou "quebrou" testes: não integre. Peça para desfazer ou apague a pasta da tarefa.

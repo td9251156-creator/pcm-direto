@@ -49,3 +49,18 @@ it('tarefas novas só para tipo existente, com o código na sequência da sigla 
   p.tarefasNovas.pop();
   expect(conferirProposta(p, biblioteca).erros).toEqual([]);
 });
+
+it('aceita os campos alinhados aos modelos (componente, tipo, parada, MFMEA, checklist, peças) e recusa valores fora do formato', () => {
+  const r = conferirProposta(exemplo(), biblioteca);
+  expect(r.erros).toEqual([]);
+  const tipo = r.resultado.tipos.at(-1);
+  expect(tipo).toMatchObject({ fabricante: 'Fabricante fictício', modos_falha: [expect.objectContaining({ modo: 'Vazamento de óleo' })] });
+  expect(tipo.tarefas[1]).toMatchObject({ componente: 'Lubrificação', tipo_tarefa: 'LUBRIFICACAO', exige_parada: true });
+  const p = exemplo(); const t = p.tipos[0];
+  t.tarefas[0].tipo_tarefa = 'QUALQUER'; t.tarefas[1].exige_parada = 'sim';
+  t.modos_falha = [{ efeito: 'sem modo' }]; t.itens_checklist = [{ criterio: 'sem item' }]; t.pecas_criticas = [{ peca: 'Retentor', quantidade_sugerida: -1 }];
+  const e = conferirProposta(p, biblioteca).erros.join(' ');
+  for (const trecho of ['tipo_tarefa deve ser', 'exige_parada deve ser', 'modos_falha precisa', 'itens_checklist precisa', 'pecas_criticas precisa']) expect(e).toContain(trecho);
+  const q = exemplo(); q.tipos[0].itens_checklist = [{ item: 'Conferir conforme NR-12', criterio: '' }];
+  expect(conferirProposta(q, biblioteca).erros.join(' ')).toMatch(/cita norma sem fonte/);
+});

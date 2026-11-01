@@ -103,8 +103,15 @@ O Actions continua executando testes e publicação.
 |---|---|---|
 | Claude Code | Coordena e integra: geradores OOXML, armazenamento e backup, importação, banco, revisão final, verificação completa e preparo da publicação | `coord/...` |
 | GitHub Copilot | No editor: ajustes pequenos e testes simples. Agente **banco-maquinas**: propostas de máquinas/tarefas só em `propostas-maquinas/`. No GitHub: revisão automática dos PRs | `ia/copilot/...` |
+| Codex | Itens prontos da fila, um por vez, pelo prompt `.github/prompts/coordenar.prompt.md` (entrega PR; não integra) | `ia/codex/...` |
 | OpenCode + DeepSeek | Tarefas mecânicas e delimitadas: textos, documentação, testes extras, scripts de conferência e capturas | `ia/opencode/...`, em `git worktree` separado |
 | ChatGPT | Apenas consulta: procedimentos, opções e revisão de texto. Não edita o repositório nem os modelos | — |
+
+**Agentes e prompts prontos** (detalhes em docs/CONTRIBUIR-COM-IA.md):
+- `.github/prompts/coordenar.prompt.md`: coordenação em ciclos de um item por vez (fila com critérios de aceite).
+- `.github/agents/banco-maquinas.agent.md`: máquinas reais com o mantenedor, só em `propostas-maquinas/`, campos alinhados
+  aos modelos; conferido por `scripts/validar-proposta-maquinas.mjs`.
+- `.github/agents/redes-sociais.agent.md`: conteúdos de divulgação com o mantenedor, só em `divulgacao/`; nunca publica.
 
 - **Arquivos protegidos** (só o coordenador altera, com pedido explícito): `src/logica/gestao.js`, `src/estado.js`,
   `src/repositorio.js`, `src/logica/operacao.js`, `src/integracao/`, `src/saida/biblioteca-v2-*.js`,
