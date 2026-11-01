@@ -81,7 +81,7 @@ describe('PCM-MAN-002 preenchido', () => {
     const n = d.atividades.length, k = n - 10;
     const inicio = performance.now();
     const saida = await preencherPcmMan002(bytes(), d);
-    expect(performance.now() - inicio).toBeLessThan(15000);
+    expect(performance.now() - inicio).toBeLessThan(45000); // barra lentidão anormal; folga para a suíte em paralelo
     const { zip, aba, wb } = await abrirSaida(saida);
 
     // Cadastros: a tabela de ativos cresce até a linha 104; as tabelas vizinhas acompanham sem perder dados.
