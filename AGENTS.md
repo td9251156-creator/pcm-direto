@@ -110,7 +110,7 @@ O Actions continua executando testes e publicação.
   `src/repositorio.js`, `src/logica/operacao.js`, `src/integracao/`, `src/saida/biblioteca-v2-*.js`,
   `src/dados/biblioteca-pcm-v2.json`, `public/modelos/**` e `supabase/**`.
 - Nenhum dado da fábrica, backup real, chave ou `.env` vai para qualquer ferramenta de IA ou serviço externo.
-- Toda entrega informa o ramo, os arquivos alterados, a saída real de `npm run verificar` e o que ficou pendente.
+- Toda entrega informa o ramo, os arquivos alterados, a saída real de `npm run verificar` e de`n  `node scripts/conferir-entrega-ia.mjs` e o que ficou pendente. Passo a passo para o mantenedor: docs/CONTRIBUIR-COM-IA.md.
 
 ## Direção atual: Gestão, comunidade e Biblioteca PCM v2
 
