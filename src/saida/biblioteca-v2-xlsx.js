@@ -102,9 +102,11 @@ function inserirLinhas(pacote, alvo, R, k, ate = null) {
   // 1) Referências primeiro (todas as abas, nomes, tabelas); 2) depois as linhas, clonando a linha modelo já ajustada.
   const mover = (t, propria) => moverReferencias(t, alvo, propria, R, k);
   for (const [nome, outra] of pacote.abas) outra.xml = outra.xml.replace(FORMULAS, (_, a, _t, texto, b) => a + mover(texto, nome === alvo) + b);
-  // Quadros mesclados à direita da tabela (colunas depois de `ate`) só descem se estiverem abaixo de R; não esticam.
+  // Mesclagens à direita da tabela (colunas depois de `ate`): as que terminam em R não esticam; as que passam de R
+  // acompanham as células de baixo (que descem k linhas), para o quadro não se partir.
   const aDireita = (r) => ate && numCol(/^\$?([A-Z]+)/.exec(r)[1]) > numCol(ate);
-  const fixo = (r) => r.replace(/^(\$?[A-Z]+\$?)(\d+)(:\$?[A-Z]+\$?)(\d+)$/, (t, c1, a, c2, b) => (Number(a) > R ? `${c1}${Number(a) + k}${c2}${Number(b) + k}` : t));
+  const fixo = (r) => r.replace(/^(\$?[A-Z]+\$?)(\d+)(:\$?[A-Z]+\$?)(\d+)$/, (t, c1, a, c2, b) =>
+    `${c1}${Number(a) > R ? Number(a) + k : a}${c2}${Number(b) > R ? Number(b) + k : b}`);
   aba.xml = aba.xml.replace(/(<mergeCell\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${aDireita(r) ? fixo(r) : mover(r, true)}"`)
     .replace(/(<(?:dimension|hyperlink)\b[^>]*\bref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`)
     .replace(/(<(?:dataValidation|conditionalFormatting)\b[^>]*\bsqref=")([^"]+)"/g, (_, a, r) => `${a}${mover(r, true)}"`);

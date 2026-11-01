@@ -1,5 +1,5 @@
 // Dados dos modelos da Biblioteca PCM v2 preenchidos pelo app, a partir do retrato de uma emissão
-// (prepararEmissao em src/saida/pcmd.js). Só leitura; não inventa campos sem equivalente no app.
+// (prepararEmissao em src/logica/emissao.js). Só leitura; não inventa campos sem equivalente no app.
 import { MODELOS_V2 } from '../dados/modelos-v2.js';
 import { idsConcluidos } from './programacao.js';
 
@@ -59,7 +59,7 @@ export function dadosPcmMan001(emissao) {
 
 /**
  * PCM-MAN-008. Registro de falhas: as falhas importadas do 008 (campos completos) e as do registro do app até a data de
- * corte. As do app levam início (data e hora, se informada) e fim = conclusão do reparo (data e hora, se informadas);
+ * corte. As do app levam início (data e hora, se informada) e fim = conclusão do reparo com hora (sem hora: na ação);
  * peça, horas de parada/reparo e responsável não têm coluna e vão escritos na ação. Pareto e Ficha de falha ficam para a equipe.
  */
 export function dadosPcmMan008(emissao) {
@@ -75,12 +75,15 @@ export function dadosPcmMan008(emissao) {
   const vistas = new Set(importadas.map((f) => f.referencia));
   const comHora = (d, h) => (d && h ? `${d}T${h}:00` : d || null);
   const doApp = falhas.filter((f) => !vistas.has(f.id)).map((f) => {
+    // Fim da falha = conclusão com hora. Sem a hora, o fim fica vazio (um dia sem hora seria lido como 00:00, antes do
+    // início ou com indisponibilidade encurtada) e a data da conclusão vai escrita na ação.
+    const fim = f.dataConclusao && f.horaFim ? comHora(f.dataConclusao, f.horaFim) : null;
     const extras = [f.peca && `Peça: ${f.peca}`, Number.isFinite(f.horasParada) && `Parada: ${num(f.horasParada)} h`,
       Number.isFinite(f.horasReparo) && `Reparo: ${num(f.horasReparo)} h`,
+      f.dataConclusao && !fim && `Concluída em ${f.dataConclusao.split('-').reverse().join('/')} (sem hora)`,
       pessoa.get(f.responsavelId) && `Responsável: ${pessoa.get(f.responsavelId)}`].filter(Boolean);
-    // Fim da falha = conclusão do reparo informada no app (máquina liberada); sem hora, só o dia.
     return { referencia: f.id, tag: f.tag, os: '', descricao: f.sintoma, causa: f.causa, acao: [f.acao, ...extras].filter(Boolean).join(' · '),
-      inicio: comHora(f.data, f.horaInicio), fim: comHora(f.dataConclusao, f.horaFim), inicioReparo: null, fimReparo: null };
+      inicio: comHora(f.data, f.horaInicio), fim, inicioReparo: null, fimReparo: null };
   });
   const registros = [...importadas, ...doApp].sort((a, b) => a.inicio.localeCompare(b.inicio) || a.referencia.localeCompare(b.referencia));
   const ativos = r.equipamentos.map((a) => ({ tag: a.tag, descricao: a.descricao, familia: nomeTipo.get(a.tipo) ?? a.tipo, setor: a.setor }));
@@ -106,7 +109,8 @@ export function dadosPcmMan004(emissao) {
   const nomeTipo = new Map(e.biblioteca.tipos.map((t) => [t.id, t.nome]));
   const pessoa = new Map(e.gestao.pessoas.map((p) => [p.id, p.nome]));
   const op = e.gestao.operacao;
-  const importadas = (op?.ordens_servico ?? []).filter((o) => !o.data_abertura || o.data_abertura <= m.dataCorte).map((o) => ({
+  // OS "APP-…" reimportadas são cópias de registros do próprio app: vale sempre o estado atual do app, não a cópia.
+  const importadas = (op?.ordens_servico ?? []).filter((o) => !o.numero_os.startsWith('APP-') && (!o.data_abertura || o.data_abertura <= m.dataCorte)).map((o) => ({
     numero: o.numero_os, tag: o.tag, atividade: o.atividade ?? '', tipo: o.tipo_manutencao ?? '', prioridade: o.prioridade ?? '', status: o.status ?? '',
     responsavel: o.responsavel ?? '', abertura: o.data_abertura ?? null, prazo: o.data_prevista ?? null, conclusao: o.data_conclusao ?? null,
     estimadas: o.horas_estimadas ?? null, restantes: o.horas_restantes ?? null,

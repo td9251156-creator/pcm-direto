@@ -77,7 +77,7 @@ O separador pode ser ponto e vírgula, vírgula ou tabulação (o padrão ao cop
 ## Interface de gestão
 
 - **Cadastros:** organização/setores, pessoas/funções, consulta das frequências e tipos, metas e requisitos.
-- **Criticidade:** cinco notas por ativo, limites A/B editáveis, sem alterar tarefas de segurança.
+- **Criticidade:** método do PCM-MAN-002 (segurança, qualidade, produção e frequência de 1 a 5; classe A/B/C pela matriz), sem alterar tarefas de segurança.
 - **Plano Mestre:** tarefas ativas e responsáveis, com busca e próximas ocorrências do cronograma atual.
 - **Mensal:** janeiro a dezembro do ano consultado; horas, previsto e realizado com vínculo explícito.
 - **Falhas:** registro e correção de sintoma, causa provável, ação, parada e responsável.

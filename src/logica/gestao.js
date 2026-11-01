@@ -43,7 +43,7 @@ export function migrarParaBibliotecaV2(gestao) {
   const notas = {}; const convertidas = [];
   for (const [chave, ns] of Object.entries(c.notas)) {
     notas[chave] = ns.slice(0, 4).map(n => (n === null ? null : DA_ESCALA_3[n]));
-    if (notas[chave].some(n => n !== null)) convertidas.push(chave);
+    if (ns.some(n => n !== null)) convertidas.push(chave); // inclui quem só tinha a nota de custo, que deixa de existir
   }
   return { ...nova, criticidade: { escala: 5, notas, convertidas } };
 }

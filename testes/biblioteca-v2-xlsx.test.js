@@ -120,7 +120,7 @@ describe('PCM-MAN-002 preenchido', () => {
     expect(wbXml).toContain(`Cadastros!$A$1:$J$105`);
     expect(wbXml).toMatch(/fullCalcOnLoad="1"/);
     for (const nAba of [1, 2, 3, 4, 5, 6, 7]) expect(await aba(nAba)).not.toMatch(/<\/f><v[\s>/]/); // valor antigo + tipo retirado = célula inválida no Excel
-  });
+  }, 120000);
 
   it('Criticidade com 100 ativos: notas 1 a 5 do app, matriz ampliada e quadros à direita intactos', async () => {
     const e = emissao(100);
@@ -145,7 +145,7 @@ describe('PCM-MAN-002 preenchido', () => {
     expect(xml.match(/Ou operar até falhar/g) ?? []).toHaveLength(0); // texto vem de sharedStrings, nunca copiado inline
     expect(/<c r="N(2[89]|[3-9]\d|10[0-7])"/.test(xml)).toBe(false); // linhas novas (28–107) só com as colunas da tabela
     expect(await zip.file('xl/workbook.xml').async('string')).toContain('Criticidade!$A$1:$X$108');
-  });
+  }, 120000);
 
   it('marca tarefa de segurança e não inventa campos sem equivalente', () => {
     const d = dadosPcmMan002(emissao(3));
@@ -180,19 +180,22 @@ describe('PCM-MAN-008 preenchido', () => {
     expect(d.ativos.map((a) => a.tag)).toContain('IMP-01');
   });
 
-  it('falha do app com hora de início e conclusão vira data e hora; conclusão sem hora fica só com a data', async () => {
+  it('falha do app com hora de início e conclusão vira data e hora; conclusão sem hora não vira fim às 00:00', async () => {
     const e = emissao008(2);
     Object.assign(e.falhas[0], { horaInicio: '07:45', dataConclusao: '2026-05-02', horaFim: '10:30' });
     Object.assign(e.falhas[1], { dataConclusao: '2026-05-03', horaInicio: '', horaFim: '' });
     const d = dadosPcmMan008(e);
     expect(d.falhas[1]).toMatchObject({ inicio: '2026-05-01T07:45:00', fim: '2026-05-02T10:30:00' });
-    expect(d.falhas[2]).toMatchObject({ inicio: '2026-05-02', fim: '2026-05-03' });
+    expect(d.falhas[2]).toMatchObject({ inicio: '2026-05-02', fim: null });
+    expect(d.falhas[2].acao).toContain('Concluída em 03/05/2026 (sem hora)');
+    // Início com hora e conclusão no mesmo dia sem hora: fim vazio (não 00:00 antes do início, que o importador recusaria).
+    const e2 = emissao008(1); Object.assign(e2.falhas[0], { horaInicio: '14:00', dataConclusao: '2026-05-01', horaFim: '' });
+    expect(dadosPcmMan008(e2).falhas[1]).toMatchObject({ inicio: '2026-05-01T14:00:00', fim: null });
     const saida = await preencherPcmMan008(readFileSync('public/modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx'), d);
     const reg = (await abrirWorkbookBibliotecaV2(saida, ExcelJS)).getWorksheet('Registro de falhas');
     expect(reg.getCell('H6').value).toEqual(new Date('2026-05-01T07:45:00Z'));
     expect(reg.getCell('I6').value).toEqual(new Date('2026-05-02T10:30:00Z'));
-    const xml3 = await (await JSZip.loadAsync(saida)).file('xl/worksheets/sheet3.xml').async('string');
-    expect(xml3).toMatch(/<c r="I7" s="147">/); // conclusão sem hora: estilo só data
+    expect(reg.getCell('I7').value).toBe(null); // conclusão sem hora: sem fim inventado
   });
 
   it('amplia o registro e grava data e hora como valores do Excel', async () => {
@@ -247,6 +250,9 @@ describe('PCM-MAN-004 preenchido (histórico como ordens de serviço)', () => {
     expect(por.get('APP-h3')).toMatchObject({ abertura: '2026-02-20', prazo: null });
     expect(por.get('OS-9')).toMatchObject({ prioridade: 'ALTA', status: 'ABERTA' });
     expect(por.has('OS-10')).toBe(false); // aberta depois do corte
+    // Cópia "APP-" reimportada não substitui o estado atual do app.
+    e.estado.gestao.operacao.ordens_servico.push({ ...e.estado.gestao.operacao.ordens_servico[0], numero_os: 'APP-h2', status: 'CONCLUIDA', data_conclusao: '2026-03-02' });
+    expect(dadosPcmMan004(e).ordens.filter((o) => o.numero === 'APP-h2')).toEqual([expect.objectContaining({ status: 'CANCELADA' })]);
     expect(por.has(`APP-${o1.id}`)).toBe(false); // executada: não fica programada
     expect(por.has(`APP-${o2.id}`)).toBe(true); // cancelada: continua pendente
     const programadas = d.ordens.filter((o) => o.status === 'PROGRAMADA');

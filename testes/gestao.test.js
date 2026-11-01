@@ -71,7 +71,8 @@ describe('cadastros e movimentos de gestão', () => {
     antiga.organizacao.padraoCodigo = 'PCMD';
     expect(validarGestao(antiga)).toBe(true);
     const nova = migrarParaBibliotecaV2(antiga);
-    expect(nova.criticidade).toEqual({ escala: 5, notas: { eq1: [5, 3, 1, 3], eq2: [null, null, null, null], eq3: [1, null, 3, 1] }, convertidas: ['eq1', 'eq3'] });
+    // eq2 só tinha a nota de custo (que deixa de existir): também fica marcada para conferência.
+    expect(nova.criticidade).toEqual({ escala: 5, notas: { eq1: [5, 3, 1, 3], eq2: [null, null, null, null], eq3: [1, null, 3, 1] }, convertidas: ['eq1', 'eq2', 'eq3'] });
     expect(nova.organizacao.padraoCodigo).toBe('PCM-MAN');
     expect(validarGestao(nova)).toBe(true);
     expect(criticidadeAtivo(nova.criticidade.notas.eq1).classe).toBe('A');
