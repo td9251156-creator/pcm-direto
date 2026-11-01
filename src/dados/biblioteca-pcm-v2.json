@@ -12,8 +12,8 @@
       "codigo": "PCM-MAN-001",
       "arquivo": "PCM-MAN-001_Controle-Documental_R00.xlsx",
       "titulo": "Controle Documental",
-      "sha256": "062e6ced473adb773e6cefe61ca87ff8593e6e82dd53b5e28b7116b9786b1f65",
-      "bytes": 320401,
+      "sha256": "b76da47aa7168195dc10b67771ff684d92a1d928de79b2237c1ff952171ac999",
+      "bytes": 426692,
       "url": "modelos/biblioteca-v2/PCM-MAN-001_Controle-Documental_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -36,6 +36,22 @@
               "campos": [
                 "status_documento",
                 "rotulo_status"
+              ]
+            },
+            {
+              "nome": "tb_pcm_situacoes_referencia",
+              "intervalo": "O11:O13",
+              "linhaDados": 12,
+              "campos": [
+                "situacao_referencia"
+              ]
+            },
+            {
+              "nome": "tb_pcm_sim_nao",
+              "intervalo": "Q11:Q13",
+              "linhaDados": 12,
+              "campos": [
+                "sim_nao"
               ]
             }
           ]
@@ -81,14 +97,38 @@
           ]
         },
         {
+          "nome": "Organização",
+          "tabelas": []
+        },
+        {
+          "nome": "Referências",
+          "tabelas": [
+            {
+              "nome": "tb_pcm_referencias",
+              "intervalo": "A4:E29",
+              "linhaDados": 5,
+              "campos": [
+                "referencia",
+                "versao",
+                "data",
+                "fonte",
+                "situacao"
+              ]
+            }
+          ]
+        },
+        {
           "nome": "Cadastros",
           "tabelas": [
             {
               "nome": "tb_pcm_pessoas",
-              "intervalo": "A4:A29",
+              "intervalo": "A4:D29",
               "linhaDados": 5,
               "campos": [
-                "nome_pessoa"
+                "nome_pessoa",
+                "funcao",
+                "especialidade",
+                "ativo"
               ]
             }
           ]
@@ -115,11 +155,11 @@
     },
     {
       "codigo": "PCM-MAN-002",
-      "arquivo": "PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx",
-      "titulo": "Criticidade FMECA e Plano",
-      "sha256": "385e67eb33d611459b87a52be8d6f67cc0f1729de677861677c81bd4e6680003",
-      "bytes": 138309,
-      "url": "modelos/biblioteca-v2/PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx",
+      "arquivo": "PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00.xlsx",
+      "titulo": "Criticidade, MFMEA e Plano",
+      "sha256": "1e694cf6606594d42db0f5264941a55d9d9be70f72970652381a3f49d81f41c3",
+      "bytes": 459321,
+      "url": "modelos/biblioteca-v2/PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00.xlsx",
       "formato": "xlsx",
       "abas": [
         {
@@ -131,7 +171,7 @@
           "tabelas": []
         },
         {
-          "nome": "FMECA",
+          "nome": "MFMEA",
           "tabelas": []
         },
         {
@@ -157,11 +197,11 @@
               ]
             },
             {
-              "nome": "tb_pcm_setores",
-              "intervalo": "J4:J29",
+              "nome": "tb_pcm_pessoas",
+              "intervalo": "F4:F29",
               "linhaDados": 5,
               "campos": [
-                "nome_setor"
+                "nome_pessoa"
               ]
             },
             {
@@ -173,11 +213,11 @@
               ]
             },
             {
-              "nome": "tb_pcm_pessoas",
-              "intervalo": "F4:F29",
+              "nome": "tb_pcm_setores",
+              "intervalo": "J4:J29",
               "linhaDados": 5,
               "campos": [
-                "nome_pessoa"
+                "nome_setor"
               ]
             }
           ]
@@ -207,8 +247,8 @@
       "codigo": "PCM-MAN-003",
       "arquivo": "PCM-MAN-003_Planner-de-Manutencao_R00.xlsx",
       "titulo": "Planner de Manutencao",
-      "sha256": "7e59b1e87a1a3099fdc812e57e9216b6edaf0217e49a67c9744c474baa3c1842",
-      "bytes": 390814,
+      "sha256": "1a715f188631d8291e847b0c6c79b8ed3aaf805a962bce593bf5693ef314d1f7",
+      "bytes": 392683,
       "url": "modelos/biblioteca-v2/PCM-MAN-003_Planner-de-Manutencao_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -292,8 +332,8 @@
       "codigo": "PCM-MAN-004",
       "arquivo": "PCM-MAN-004_Ordens-de-Servico_R00.xlsx",
       "titulo": "Ordens de Servico",
-      "sha256": "e78458b0b7d552fcefd349cee663dc343509cc5d8cbd40ace41f067dd2d60253",
-      "bytes": 324207,
+      "sha256": "832790a26529318addfba89e59106eabcb7a5bfa96b0feadb810e16d3cc85984",
+      "bytes": 324370,
       "url": "modelos/biblioteca-v2/PCM-MAN-004_Ordens-de-Servico_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -338,7 +378,7 @@
           "tabelas": [
             {
               "nome": "tb_pcm_os",
-              "intervalo": "A4:M29",
+              "intervalo": "A4:N29",
               "linhaDados": 5,
               "campos": [
                 "numero_os",
@@ -353,7 +393,8 @@
                 "data_prevista",
                 "data_conclusao",
                 "horas_estimadas",
-                "horas_restantes"
+                "horas_restantes",
+                "observacao"
               ]
             }
           ]
@@ -381,19 +422,19 @@
               ]
             },
             {
-              "nome": "tb_pcm_setores",
+              "nome": "tb_pcm_familias",
               "intervalo": "H4:H29",
               "linhaDados": 5,
               "campos": [
-                "nome_setor"
+                "nome_familia"
               ]
             },
             {
-              "nome": "tb_pcm_familias",
+              "nome": "tb_pcm_setores",
               "intervalo": "J4:J29",
               "linhaDados": 5,
               "campos": [
-                "nome_familia"
+                "nome_setor"
               ]
             }
           ]
@@ -422,8 +463,8 @@
       "codigo": "PCM-MAN-005",
       "arquivo": "PCM-MAN-005_Checklist-de-Preventiva_R00.xlsx",
       "titulo": "Checklist de Preventiva",
-      "sha256": "a21151a5ffa9548c1cf1943d72a07111c72b606e6c2538d80d2e845203e0194c",
-      "bytes": 268550,
+      "sha256": "fc267413ef59944ce0c55597a2861ece52e29285e09b5bfc59cf0e8a684f1862",
+      "bytes": 268549,
       "url": "modelos/biblioteca-v2/PCM-MAN-005_Checklist-de-Preventiva_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -499,8 +540,8 @@
       "codigo": "PCM-MAN-006",
       "arquivo": "PCM-MAN-006_Passagem-de-Turno_R00.xlsx",
       "titulo": "Passagem de Turno",
-      "sha256": "b9f5363261b761525fb123bde41c0b48233facaed94db5d802f51869022c27e0",
-      "bytes": 267308,
+      "sha256": "d4136e70020a6478abfb1cd740b04d0554f3ead9e7baa3d2e64d97353ad1f7f4",
+      "bytes": 267304,
       "url": "modelos/biblioteca-v2/PCM-MAN-006_Passagem-de-Turno_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -576,7 +617,7 @@
       "codigo": "PCM-MAN-007",
       "arquivo": "PCM-MAN-007_Seguranca-no-Trabalho_R00.xlsx",
       "titulo": "Seguranca no Trabalho",
-      "sha256": "10a3ca4aabb7ad71df0475702dcc3f7dcf28b78e63b1c4ceab7618de32fcd25c",
+      "sha256": "627888657b205e489fd923bcd624ea869a7fa57f5654897d5f79ef75a8f8950b",
       "bytes": 376085,
       "url": "modelos/biblioteca-v2/PCM-MAN-007_Seguranca-no-Trabalho_R00.xlsx",
       "formato": "xlsx",
@@ -661,8 +702,8 @@
       "codigo": "PCM-MAN-008",
       "arquivo": "PCM-MAN-008_Falhas-e-Pareto_R00.xlsx",
       "titulo": "Falhas e Pareto",
-      "sha256": "ef7548edebfb3dfd0d3cee03baad4510313bd1f4b6c08d46813ddba27b9dd5ea",
-      "bytes": 375413,
+      "sha256": "cbf8b1cc7fdd2ddc376e047f0a9a3c71d84aa2e718c1b17453df70841ed47b3f",
+      "bytes": 375783,
       "url": "modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -679,7 +720,7 @@
           "tabelas": [
             {
               "nome": "tb_pcm_falhas",
-              "intervalo": "A4:K29",
+              "intervalo": "A4:M29",
               "linhaDados": 5,
               "campos": [
                 "referencia_falha",
@@ -692,7 +733,9 @@
                 "inicio_falha",
                 "fim_falha",
                 "inicio_reparo",
-                "fim_reparo"
+                "fim_reparo",
+                "peca",
+                "responsavel"
               ]
             }
           ]
@@ -765,7 +808,7 @@
       "codigo": "PCM-MAN-009",
       "arquivo": "PCM-MAN-009_Acao-Corretiva_R00.xlsx",
       "titulo": "Acao Corretiva",
-      "sha256": "0972200627607a2a2903dde4bcffa56e1ed2ac1018941cf7f47d2a1383e0b43f",
+      "sha256": "44c451a68d3eb54c8c2bfe090f065595c68fbe2b3e1acd398bdd47157da0e3d7",
       "bytes": 268810,
       "url": "modelos/biblioteca-v2/PCM-MAN-009_Acao-Corretiva_R00.xlsx",
       "formato": "xlsx",
@@ -842,8 +885,8 @@
       "codigo": "PCM-MAN-010",
       "arquivo": "PCM-MAN-010_Estoque-e-Pecas-Criticas_R00.xlsx",
       "titulo": "Estoque e Pecas Criticas",
-      "sha256": "f5feecb12dab1463ad9b7f8255e0099bc96f9a9fab64bd7967804cbbd91f6f5d",
-      "bytes": 428101,
+      "sha256": "bcc91433460e613942aadd12d4dac6f7fa54fa5bd56a94551a2fae17a52fa5ed",
+      "bytes": 428098,
       "url": "modelos/biblioteca-v2/PCM-MAN-010_Estoque-e-Pecas-Criticas_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -995,8 +1038,8 @@
       "codigo": "PCM-MAN-011",
       "arquivo": "PCM-MAN-011_Indicadores-Mensais_R00.xlsx",
       "titulo": "Indicadores Mensais",
-      "sha256": "32b5e0590d51af2a6d6749ed4aebc35a018dc5e150d6f903e62e103a19bfc136",
-      "bytes": 268824,
+      "sha256": "6f4079ecec375d263222fdbb2cc4f9c1ce7074ef5df76f6f159552109c1421d1",
+      "bytes": 269023,
       "url": "modelos/biblioteca-v2/PCM-MAN-011_Indicadores-Mensais_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1045,7 +1088,7 @@
       "codigo": "PCM-MAN-012",
       "arquivo": "PCM-MAN-012_Orcamento-e-Custos_R00.xlsx",
       "titulo": "Orcamento e Custos",
-      "sha256": "11e98aae9defdc025b26c8dc76422faee2d72a1cc74baea29477e911d9fb4f1c",
+      "sha256": "f5963a7fd0d18fc447e22411953ac2c7ffed7655d9f12b62a3b87c170ad0c49a",
       "bytes": 324568,
       "url": "modelos/biblioteca-v2/PCM-MAN-012_Orcamento-e-Custos_R00.xlsx",
       "formato": "xlsx",
@@ -1144,8 +1187,8 @@
       "codigo": "PCM-MAN-013",
       "arquivo": "PCM-MAN-013_Auditorias-da-Manutencao_R00.xlsx",
       "titulo": "Auditorias da Manutencao",
-      "sha256": "b20c574a43623bf851071170c326b1da6063380c8ba713482386d865245ac9c5",
-      "bytes": 322394,
+      "sha256": "87601ee1af17806c671683418c1477e31a6fd37a251bf969f46041a2e80fa22a",
+      "bytes": 322389,
       "url": "modelos/biblioteca-v2/PCM-MAN-013_Auditorias-da-Manutencao_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1226,19 +1269,19 @@
               ]
             },
             {
-              "nome": "tb_pcm_setores",
+              "nome": "tb_pcm_familias",
               "intervalo": "H4:H29",
               "linhaDados": 5,
               "campos": [
-                "nome_setor"
+                "nome_familia"
               ]
             },
             {
-              "nome": "tb_pcm_familias",
+              "nome": "tb_pcm_setores",
               "intervalo": "J4:J29",
               "linhaDados": 5,
               "campos": [
-                "nome_familia"
+                "nome_setor"
               ]
             }
           ]
@@ -1267,8 +1310,8 @@
       "codigo": "PCM-MAN-014",
       "arquivo": "PCM-MAN-014_Manutencao-Autonoma_R00.xlsx",
       "titulo": "Manutencao Autonoma",
-      "sha256": "58d726807a276517bdc52391e93a96ba9dcfc03275ef21d65ccbcfe0b76b5284",
-      "bytes": 377404,
+      "sha256": "6b5c32b704063c92a0ade3f8e14cf16770ddb75fc1b1a8d0a10830476c8d2405",
+      "bytes": 377398,
       "url": "modelos/biblioteca-v2/PCM-MAN-014_Manutencao-Autonoma_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1330,19 +1373,19 @@
               ]
             },
             {
-              "nome": "tb_pcm_setores",
+              "nome": "tb_pcm_familias",
               "intervalo": "H4:H29",
               "linhaDados": 5,
               "campos": [
-                "nome_setor"
+                "nome_familia"
               ]
             },
             {
-              "nome": "tb_pcm_familias",
+              "nome": "tb_pcm_setores",
               "intervalo": "J4:J29",
               "linhaDados": 5,
               "campos": [
-                "nome_familia"
+                "nome_setor"
               ]
             }
           ]
@@ -1371,8 +1414,8 @@
       "codigo": "PCM-MAN-015",
       "arquivo": "PCM-MAN-015_Auditoria-5S-e-Melhorias_R00.xlsx",
       "titulo": "Auditoria 5S e Melhorias",
-      "sha256": "395e15fb03f6f9545b6156b14c0abe89032dcaa681f8e3b925afa6c229be91d9",
-      "bytes": 376744,
+      "sha256": "64428779ad8acfeccfd3ea75605363686f63fa6a64e1d319c1164e43bedb3648",
+      "bytes": 376734,
       "url": "modelos/biblioteca-v2/PCM-MAN-015_Auditoria-5S-e-Melhorias_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1396,24 +1439,8 @@
           "nome": "Cadastros",
           "tabelas": [
             {
-              "nome": "tb_pcm_pessoas",
-              "intervalo": "A4:A29",
-              "linhaDados": 5,
-              "campos": [
-                "nome_pessoa"
-              ]
-            },
-            {
-              "nome": "tb_pcm_setores",
-              "intervalo": "C4:C29",
-              "linhaDados": 5,
-              "campos": [
-                "nome_setor"
-              ]
-            },
-            {
               "nome": "tb_pcm_ativos",
-              "intervalo": "E4:H29",
+              "intervalo": "A4:D29",
               "linhaDados": 5,
               "campos": [
                 "tag",
@@ -1423,11 +1450,27 @@
               ]
             },
             {
+              "nome": "tb_pcm_pessoas",
+              "intervalo": "F4:F29",
+              "linhaDados": 5,
+              "campos": [
+                "nome_pessoa"
+              ]
+            },
+            {
               "nome": "tb_pcm_familias",
-              "intervalo": "J4:J29",
+              "intervalo": "H4:H29",
               "linhaDados": 5,
               "campos": [
                 "nome_familia"
+              ]
+            },
+            {
+              "nome": "tb_pcm_setores",
+              "intervalo": "J4:J29",
+              "linhaDados": 5,
+              "campos": [
+                "nome_setor"
               ]
             }
           ]
@@ -1456,8 +1499,8 @@
       "codigo": "PCM-MAN-016",
       "arquivo": "PCM-MAN-016_POP-e-Licao-de-Um-Ponto_R00.xlsx",
       "titulo": "POP e Licao de Um Ponto",
-      "sha256": "5e31330c1e212e61fdfe5b7cae18b1456ef09cd5dcb74ddb21d8944d0f7e994a",
-      "bytes": 319502,
+      "sha256": "a7da662ef728b0602aa74dc99b21510fa5dca480ab5c26070ee17914c4b24845",
+      "bytes": 319507,
       "url": "modelos/biblioteca-v2/PCM-MAN-016_POP-e-Licao-de-Um-Ponto_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1591,8 +1634,8 @@
       "codigo": "PCM-MAN-018",
       "arquivo": "PCM-MAN-018_Manual-de-Gestao-de-Ativos_R00.docx",
       "titulo": "Manual de Gestao de Ativos",
-      "sha256": "82db96bcb6d81e245bc78e645381f6923d6518114b1af191b434dfc15965951a",
-      "bytes": 78452,
+      "sha256": "2ba506951ead76f53999b9ec59d6ffeb681c505ec69de9aa960bf55ef4e889b2",
+      "bytes": 78256,
       "url": "modelos/biblioteca-v2/PCM-MAN-018_Manual-de-Gestao-de-Ativos_R00.docx",
       "formato": "docx",
       "abas": [],
@@ -1645,8 +1688,8 @@
       "codigo": "PCM-MAN-019",
       "arquivo": "PCM-MAN-019_Manual-de-Estrategia-de-Manutencao_R00.docx",
       "titulo": "Manual de Estrategia de Manutencao",
-      "sha256": "6fde4732e333358429d8d49bd361693f4f366ce01e418486f998d90257c61778",
-      "bytes": 76173,
+      "sha256": "84905d8c9797e1a9af608800766297c73af0755395c66aa5470e9702f4b35e62",
+      "bytes": 76169,
       "url": "modelos/biblioteca-v2/PCM-MAN-019_Manual-de-Estrategia-de-Manutencao_R00.docx",
       "formato": "docx",
       "abas": [],

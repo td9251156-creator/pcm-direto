@@ -4,7 +4,7 @@ import manifesto from './biblioteca-pcm-v2.json';
 
 const TEXTOS = {
   'PCM-MAN-001': ['Controle documental', 'Documentação', 'Para saber quais documentos estão em uso, em que revisão e quem responde por eles.'],
-  'PCM-MAN-002': ['Criticidade, FMECA e plano', 'Planejamento', 'Para avaliar a importância dos ativos, analisar modos de falha e montar o plano e o cronograma.'],
+  'PCM-MAN-002': ['Criticidade, MFMEA e plano', 'Planejamento', 'Para avaliar a importância dos ativos, analisar modos de falha (MFMEA) e montar o plano e o cronograma.'],
   'PCM-MAN-003': ['Planner de manutenção', 'Planejamento', 'Para distribuir o trabalho nas visões semanal, mensal e anual.'],
   'PCM-MAN-004': ['Ordens de serviço', 'Execução', 'Para abrir, acompanhar e encerrar ordens de serviço com o cadastro de ativos.'],
   'PCM-MAN-005': ['Checklist de preventiva', 'Execução', 'Para registrar os itens conferidos em uma inspeção ou preventiva.'],

@@ -6,7 +6,7 @@ import {textoData} from '../logica/cronograma.js';
 import {esc,baixar,avisar} from '../ui.js';
 import {dataExibida} from '../logica/consulta-execucao.js';
 import {MODELOS_V2,VERSAO_BIBLIOTECA_V2} from '../dados/modelos-v2.js';
-import {dadosPcmMan001,dadosPcmMan002,dadosPcmMan004,dadosPcmMan008} from '../logica/biblioteca-v2-dados.js';
+import {dadosPcmMan001,dadosPcmMan002,dadosPcmMan004,dadosPcmMan008,dadosCadastrosV2} from '../logica/biblioteca-v2-dados.js';
 
 // Modelos da Biblioteca v2 que o app já preenche. O gerador só é carregado ao gerar.
 const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
@@ -15,7 +15,7 @@ const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan001(bytes,dadosPcmMan001(emissao))},
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-002'),
   preenche:'Cadastros (ativos, setores, famílias e pessoas), Criticidade com as notas de 1 a 5 avaliadas no app, Plano com as tarefas da revisão ativa (a cada quantos dias, responsável, duração e 1ª execução) e o Cronograma ligado ao Plano. Tarefas de segurança vêm marcadas.',
-  branco:'Notas ainda não avaliadas, FMECA (análise da equipe), componente, tipo de tarefa e se exige parada.',
+  branco:'Notas ainda não avaliadas, MFMEA (análise da equipe), componente, tipo de tarefa e se exige parada.',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan002(bytes,dadosPcmMan002(emissao))},
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-004'),
   preenche:'Ordens de Serviço com o histórico até a data de corte: cada execução registrada (concluída ou cancelada), as ocorrências previstas ainda não feitas (programadas) e as OS importadas do 004, além dos cadastros.',
@@ -25,10 +25,14 @@ const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
   preenche:'Registro de falhas até a data de corte: as importadas do 008 e as do registro do app, com início e conclusão (data e hora, quando informadas); peça, horas de parada e reparo vão escritas na ação. Inclui os cadastros.',
   branco:'Hora das falhas registradas sem hora, a Ficha de falha e o Pareto (escolha das categorias pela equipe).',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan008(bytes,dadosPcmMan008(emissao))},
-  ...['PCM-MAN-018','PCM-MAN-019'].map(codigo=>({...MODELOS_V2.find(m=>m.codigo===codigo),
+  ...['PCM-MAN-017','PCM-MAN-018','PCM-MAN-019'].map(codigo=>({...MODELOS_V2.find(m=>m.codigo===codigo),
   preenche:'Identificação no cabeçalho, no rodapé e na capa: revisão, data de corte, organização, elaborado e aprovado (só se a aprovação for informada).',
   branco:'Todo o texto do manual: é orientação para a equipe escrever com as regras da fábrica. O app não inventa conteúdo técnico, aprovação ou evidência.',
-  preencher:async(bytes,emissao)=>{const m=await import('../saida/biblioteca-v2-docx.js');return m.preencherManualWord(bytes,codigo,m.metadadosWord(emissao));}}))];
+  preencher:async(bytes,emissao)=>{const m=await import('../saida/biblioteca-v2-docx.js');return m.preencherManualWord(bytes,codigo,m.metadadosWord(emissao));}})),
+  // Demais planilhas: saem com os cadastros da fábrica (ativos, pessoas, famílias, setores) para as listas ▼.
+  ...MODELOS_V2.filter(m=>m.formato==='Excel'&&!['PCM-MAN-001','PCM-MAN-002','PCM-MAN-004','PCM-MAN-008'].includes(m.codigo)).map(m=>({...m,simples:true,
+  preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherCadastrosV2(bytes,m.codigo,dadosCadastrosV2(emissao))}))];
+const COMPLETOS=PREENCHIDOS_V2.filter(m=>!m.simples),SIMPLES=PREENCHIDOS_V2.filter(m=>m.simples);
 
 const rascunhoEmissao={dataCorte:null,elaborador:null,aprovado:false,aprovador:'',gerando:false,codigo:'',mensagem:''};
 let refletirEmissao=()=>{};
@@ -40,7 +44,9 @@ export function telaDocumentos(main){
     <details ${rascunhoEmissao.aprovado?'open':''}><summary>Informar aprovação já realizada (opcional)</summary><label class="caixa caixa-bloco"><input name="aprovado" type="checkbox" id="emissao-aprovada" ${rascunhoEmissao.aprovado?'checked':''}> Estes documentos já foram aprovados pelo responsável</label><label for="emissao-aprovador">Aprovador</label><input id="emissao-aprovador" name="aprovador" maxlength="120" value="${esc(rascunhoEmissao.aprovador)}"><p class="origem">Sem essa confirmação, o documento fica “Em elaboração”, com aprovador “A definir”.</p></details>
     <p id="bloqueio-pcmd" class="origem">${revisao?'Escolha um documento abaixo.':'A geração será liberada após ativar uma revisão em Planejar.'}</p><p id="progresso-pcmd" role="status" aria-live="polite"></p></form></section>
     <section aria-labelledby="escolher-documento"><h3 id="escolher-documento">2. Escolha o documento</h3>
-    <div class="grade duas">${PREENCHIDOS_V2.map(m=>`<article class="cartao"><p class="sobretitulo">${m.codigo} · ${m.formato}</p><h4>${esc(m.titulo)}</h4><p>${esc(m.preenche)}</p><p class="origem"><strong>Fica em branco para a equipe:</strong> ${esc(m.branco)}</p><div class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${m.codigo}" data-documento="${m.codigo}" aria-label="Gerar ${esc(m.titulo)} da revisão ativa" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar ${m.formato}</button><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em branco">Modelo em branco</a></div></article>`).join('')}</div>
+    <div class="grade duas">${COMPLETOS.map(m=>`<article class="cartao"><p class="sobretitulo">${m.codigo} · ${m.formato}</p><h4>${esc(m.titulo)}</h4><p>${esc(m.preenche)}</p><p class="origem"><strong>Fica em branco para a equipe:</strong> ${esc(m.branco)}</p><div class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${m.codigo}" data-documento="${m.codigo}" aria-label="Gerar ${esc(m.titulo)} da revisão ativa" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar ${m.formato}</button><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em branco">Modelo em branco</a></div></article>`).join('')}</div>
+    <h4 id="outros-modelos">Outros modelos, com os cadastros da fábrica</h4><p class="origem">Saem com ativos, pessoas, famílias e setores para as listas ▼ e com elaborado/aprovado. O restante é preenchido pela equipe no próprio arquivo.</p>
+    <ul class="lista-modelos-simples" aria-labelledby="outros-modelos">${SIMPLES.map(m=>`<li><span><strong>${m.codigo}</strong> · ${esc(m.titulo)}<br><span class="origem">${esc(m.quando)}</span></span><span class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${m.codigo}" data-documento="${m.codigo}" aria-label="Gerar ${esc(m.titulo)} com os cadastros" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar Excel</button><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em branco">Em branco</a></span></li>`).join('')}</ul>
 </section>
     <details class="cartao"><summary>Outros formatos do planejamento em edição</summary><p class="origem">Exportações anteriores, sem o histórico completo da revisão ativa. Para guardar toda a base, use <a href="#dados">Meus dados → Backup completo</a>.</p><div id="formatos-anteriores"></div></details>
     <section class="cartao"><h3>Depois do download</h3><p>Abra o arquivo diretamente no Excel, LibreOffice ou Word. Recalcule as fórmulas das planilhas e confira impressão, pendências e campos “A definir”. As periodicidades devem ser confirmadas com o manual do fabricante.</p><a href="#apoio">Ajuda para usar os documentos</a></section>`;
