@@ -6,6 +6,9 @@ Qual problema a pessoa encontrava? Inclua como reproduzir, usando dados fictíci
 
 O que mudou e qual item de docs/FILA.md esta revisão atende?
 
+Ferramenta usada (Claude Code, Copilot, OpenCode + DeepSeek ou pessoa): 
+Resultado de `node scripts/conferir-entrega-ia.mjs` (arquivos protegidos alterados?): 
+
 ## Como testar
 
 Passos curtos para o mantenedor conferir o resultado no navegador.

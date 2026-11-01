@@ -1,0 +1,44 @@
+name: Tarefa para uma ferramenta de IA
+description: Uma tarefa pequena e verificável para Copilot ou OpenCode (o Claude Code integra).
+title: "[IA] "
+labels: ["tarefa-ia"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Uma tarefa por vez. Use só dados fictícios. A ferramenta segue o AGENTS.md e entrega um ramo `ia/<ferramenta>/<tarefa>`.
+        Nada é integrado ou publicado sem o mantenedor.
+  - type: dropdown
+    id: ferramenta
+    attributes:
+      label: Ferramenta
+      options: ["OpenCode + DeepSeek", "GitHub Copilot", "Claude Code"]
+    validations:
+      required: true
+  - type: textarea
+    id: objetivo
+    attributes:
+      label: O que fazer
+      description: Uma frase com o resultado esperado. Ex.: "Escrever testes da regra de criticidade em testes/criticidade-matriz.test.js".
+    validations:
+      required: true
+  - type: textarea
+    id: arquivos
+    attributes:
+      label: Arquivos que pode alterar
+      description: Liste os caminhos. Os arquivos protegidos do AGENTS.md ficam de fora.
+    validations:
+      required: true
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Como saber que ficou pronto
+      description: Critério que dá para conferir. Sempre inclui `npm run verificar` passando.
+      value: "- [ ] `npm run verificar` passando\n- [ ] "
+    validations:
+      required: true
+  - type: textarea
+    id: fora
+    attributes:
+      label: Fora do escopo
+      description: O que a ferramenta não deve mexer.

@@ -1,5 +1,7 @@
 # Experiência dos documentos — 26/10/2026
 
+> **Nota (01/11/2026):** a tela "Preencher um modelo" e os modelos "refeitos" foram retirados; consulte `docs/FILA.md`. O restante permanece como histórico.
+
 Pedido do mantenedor: identidade como referência interna; modelos separados, explicados e fáceis de usar.
 
 ## Achados e mudanças

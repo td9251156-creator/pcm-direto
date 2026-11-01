@@ -3,7 +3,7 @@
 Fonte recebida: `NEW/Biblioteca-PCM-v2`. Inventário: 16 XLSX e 3 DOCX.
 Os 19 arquivos foram copiados byte a byte para `public/modelos/biblioteca-v2`;
 seus hashes, abas e tabelas estão em `src/dados/biblioteca-pcm-v2.json`.
-Não substituem o catálogo PCMD anterior e não estão ligados à tela de downloads.
+Não substituem o catálogo PCMD anterior (retirado em 01/11/2026; ver a seção de documentos preenchidos abaixo e `docs/FILA.md`) e não estão ligados à tela de downloads.
 Nenhum arquivo original foi modificado. Nenhuma publicação ou migração foi executada.
 
 ## Identidade e compatibilidade

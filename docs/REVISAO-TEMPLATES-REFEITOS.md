@@ -1,5 +1,7 @@
 # Revisão dos modelos refeitos — integração local
 
+> **Nota (01/11/2026):** os modelos "refeitos" e a tela "Preencher um modelo" foram retirados do site e do app. Este documento permanece como histórico; consulte `docs/FILA.md`.
+
 ## Resultado
 
 Os 18 arquivos do PCMD-refeitos.zip estão no banco de documentos local, separados por finalidade,

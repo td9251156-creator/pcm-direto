@@ -1,0 +1,51 @@
+{
+  "proposta": {
+    "titulo": "EXEMPLO DE FORMATO - redutor de velocidade",
+    "autor": "Agente Copilot (banco de máquinas)",
+    "data": "2026-11-01",
+    "fontes": [
+      {
+        "id": "F1",
+        "tipo": "base_generica",
+        "titulo": "Base genérica a validar com manual do fabricante",
+        "referencia": "",
+        "versao": "",
+        "data": ""
+      }
+    ]
+  },
+  "tipos": [
+    {
+      "id": "redutor_velocidade",
+      "nome": "Redutor de velocidade",
+      "sigla": "RED",
+      "tarefas": [
+        {
+          "id": "RED-01",
+          "descricao": "Inspeção visual de vazamentos de óleo e da fixação na base",
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "",
+          "fonte": "F1"
+        },
+        {
+          "id": "RED-02",
+          "descricao": "Conferir o nível de óleo pelo visor ou vareta, com o equipamento parado",
+          "periodicidade": "Mensal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Tipo e volume de óleo conforme o manual do fabricante.",
+          "fonte": "F1"
+        }
+      ]
+    }
+  ],
+  "tarefasNovas": []
+}
