@@ -5,7 +5,9 @@
 import JSZip from 'jszip';
 import contrato from '../dados/biblioteca-pcm-v2.json';
 
-const escXml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+// Caracteres de controle são proibidos em XML 1.0 e invalidariam o documento: são retirados.
+const semControle = (s) => [...String(s)].filter((c) => c >= ' ' || c === '\t' || c === '\n' || c === '\r').join('');
+const escXml = (s) => semControle(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const CAMPOS = ['revisao', 'data', 'organizacao', 'elaborado', 'aprovado', 'situacao'];
 
 /** Valores dos metadados a partir do retrato da emissão (prepararEmissao). "A definir" quando o app não sabe. */
@@ -39,7 +41,8 @@ export async function preencherManualWord(bytes, codigo, valores) {
   let dados = null;
   for (const nome of Object.keys(zip.files).filter((n) => /^customXml\/item\d+\.xml$/.test(n))) {
     const xml = await zip.file(nome).async('string');
-    if (xml.includes('urn:pcm-direto:documento:1')) { dados = nome; zip.file(nome, CAMPOS.reduce((x, c) => x.replace(new RegExp(`(<pcm:${c}>)[^<]*(</pcm:${c}>)`), `$1${escXml(valores[c])}$2`), xml)); }
+    if (xml.includes('urn:pcm-direto:documento:1')) { dados = nome; // Função no replace: um "$" no nome (ex.: "Ana $&") não pode virar padrão de substituição.
+      zip.file(nome, CAMPOS.reduce((x, c) => x.replace(new RegExp(`(<pcm:${c}>)[^<]*(</pcm:${c}>)`), (_, a, b) => a + escXml(valores[c]) + b), xml)); }
   }
   if (!dados) throw new Error('O modelo não tem a parte de metadados esperada.');
 

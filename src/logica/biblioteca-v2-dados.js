@@ -8,7 +8,7 @@ import { MODELOS_DOCUMENTAIS } from '../dados/modelos-anteriores.js';
 export const DIAS_POR_PERIODICIDADE = { 'Diária': 1, Semanal: 7, Quinzenal: 14, Mensal: 30, Bimestral: 60, Trimestral: 90, Semestral: 180, Anual: 365 };
 
 // Tipo (lista fixa do PCM-MAN-001) dos documentos que o app emite. Demais: OUTRO.
-const TIPO_DOCUMENTO = { 'PCM-MAN-001': 'REGISTRO', 'PCM-MAN-002': 'PLANO', 'PCMD-01': 'REGISTRO', 'PCMD-02': 'REGISTRO',
+const TIPO_DOCUMENTO = { 'PCM-MAN-001': 'REGISTRO', 'PCM-MAN-002': 'PLANO', 'PCM-MAN-008': 'REGISTRO', 'PCM-MAN-018': 'PROCEDIMENTO', 'PCM-MAN-019': 'PROCEDIMENTO','PCMD-01': 'REGISTRO', 'PCMD-02': 'REGISTRO',
   'PCMD-03/04': 'PLANO', 'PCMD-05': 'FORMULARIO', 'PCMD-W1': 'PROCEDIMENTO', 'PCMD-W2': 'PROCEDIMENTO' };
 const tituloDe = (codigo) => MODELOS_V2.find((m) => m.codigo === codigo)?.titulo ?? MODELOS_DOCUMENTAIS.find((m) => m[0] === codigo)?.[1] ?? codigo;
 const dia = (v) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}/.test(v) ? v.slice(0, 10) : null);
@@ -30,7 +30,8 @@ export function dadosPcmMan001(emissao) {
     observacoes: `Emitido pelo PCM Direto com o plano rev. ${r.numero}${o.nome ? ` · ${o.nome}` : ''}.`,
   }];
   const ultimas = new Map();
-  for (const x of e.programacao.emissoes) if (x.modelo !== 'PCM-MAN-001' && (!ultimas.has(x.modelo) || x.dataCorte >= ultimas.get(x.modelo).dataCorte)) ultimas.set(x.modelo, x);
+  // Só o que existia até a data de corte (emissão com corte retroativo não lista documentos posteriores).
+  for (const x of e.programacao.emissoes) if (x.modelo !== 'PCM-MAN-001' && x.dataCorte <= m.dataCorte &&(!ultimas.has(x.modelo) || x.dataCorte >= ultimas.get(x.modelo).dataCorte)) ultimas.set(x.modelo, x);
   for (const [codigo, x] of [...ultimas].sort((a, b) => a[0].localeCompare(b[0]))) {
     documentos.push({ codigo, titulo: tituloDe(codigo), tipo: TIPO_DOCUMENTO[codigo] ?? 'OUTRO', responsavel: '', status: '', validade: null,
       revisao: numeroDa.has(x.revisaoId) ? rev(numeroDa.get(x.revisaoId)) : '', data: x.dataCorte, aprovado: '',
@@ -41,7 +42,7 @@ export function dadosPcmMan001(emissao) {
       revisao: q.versao, data: q.data || null, aprovado: '',
       observacoes: `Referência externa · ${q.status === 'verificado' ? 'Verificada' : 'Não verificada'}${q.fonte ? ` · ${q.fonte}` : ''}` });
   }
-  const revisoes = e.programacao.revisoes.map((v) => ({ codigo: 'PCM-MAN-002', revisao: rev(v.numero), data: dia(v.criadaEm) ?? dia(v.vigencia),
+  const revisoes = e.programacao.revisoes.filter((v) => (dia(v.criadaEm) ?? dia(v.vigencia) ?? '') <= m.dataCorte).map((v) => ({ codigo: 'PCM-MAN-002', revisao: rev(v.numero), data: dia(v.criadaEm) ?? dia(v.vigencia),
     descricao: `Revisão ${v.numero} do plano: ${v.resumo}`, elaborado: v.elaborador, aprovado: '' }));
   revisoes.push({ codigo: 'PCM-MAN-001', revisao: m.revisao, data: m.dataCorte, descricao: `Emissão do controle documental com o plano rev. ${r.numero}`,
     elaborado: m.elaborador, aprovado: m.aprovador });

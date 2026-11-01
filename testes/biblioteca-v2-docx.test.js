@@ -37,6 +37,14 @@ describe('manuais Word 018 e 019: só metadados', () => {
       }
     });
   }
+  it('"$" e caracteres de controle no nome não corrompem o documento (revisão independente)', async () => {
+    const valores = { ...metadadosWord(emissao()), organizacao: "Oficina $2 & $' Ltda", elaborado: 'Ana $&\u000b' };
+    const z = await JSZip.loadAsync(await preencherManualWord(original('PCM-MAN-018'), 'PCM-MAN-018', valores));
+    const dados = await z.file('customXml/item1.xml').async('string');
+    expect(dados).toContain("<pcm:organizacao>Oficina $2 &amp; $' Ltda</pcm:organizacao>");
+    expect(dados).toContain('<pcm:elaborado>Ana $&amp;</pcm:elaborado>');
+    expect(textoDoControle(await z.file('word/document.xml').async('string'), 'elaborado')).toEqual(['Ana $&amp;']);
+  });
   it('aprovação só aparece quando informada', () => {
     expect(metadadosWord(emissao('Gestora Fictícia'))).toMatchObject({ aprovado: 'Gestora Fictícia', situacao: 'Aprovado' });
   });

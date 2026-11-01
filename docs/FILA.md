@@ -49,6 +49,9 @@ humana; **Bloqueado** = depende de definição técnica; **Adiado** = fora desta
 - **D8 — Retirar PCMD-W1 e W2.** Os manuais antigos recebiam tabelas de pessoas, setores, ativos, criticidade e tarefas;
   os manuais 018/019 da Biblioteca v2 só têm campos de identificação e corpo para a equipe escrever. Proposta: retirar os
   antigos, porque essas tabelas já saem nos modelos 001, 002 e 008. Pergunta: aceita?
+- **D9 — Número de revisão dos documentos.** Hoje 001, 018 e 019 recebem como revisão o número da revisão do plano
+  (como já faziam os PCMD). Exemplo: plano na revisão 3 → manual "Rev. 03", mesmo que o texto do manual não tenha mudado.
+  Proposta: manter. Pergunta: ou cada documento deve ter a própria contagem de revisões?
 - **D4 — Janelas de parada:** limites de agrupamento, capacidade e o que nunca pode mudar de data.
 - **D5 — QR, fotos e assinaturas:** finalidade, tamanho máximo por foto, retenção, e que "assinatura" é registro de ciência,
   sem validade jurídica.

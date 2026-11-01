@@ -5,7 +5,9 @@
 import JSZip from 'jszip';
 import contrato from '../dados/biblioteca-pcm-v2.json';
 
-const escXml = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+// Caracteres de controle (ex.: \v colado do Excel) são proibidos em XML 1.0 e invalidariam o arquivo: são retirados.
+const semControle = (s) => [...String(s)].filter((c) => c >= ' ' || c === '\t' || c === '\n' || c === '\r').join('');
+const escXml = (s) => semControle(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const numCol = (l) => l.split('').reduce((n, c) => n * 26 + c.charCodeAt(0) - 64, 0);
 const letraCol = (n) => { let s = ''; while (n > 0) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); } return s; };
 const serialData = (iso) => (Date.parse(`${iso}T00:00:00Z`) - Date.UTC(1899, 11, 30)) / 86400000;
@@ -106,11 +108,24 @@ function inserirLinhas(pacote, alvo, R, k) {
   const { antes, linhas, depois } = partesDaAba(aba.xml);
   const modelo = linhas.find((l) => numLinha(l) === R);
   if (!modelo) throw new Error(`Linha modelo ${R} não encontrada em ${alvo}.`);
+  // A última linha do bloco costuma ter a borda de fechamento: as linhas do meio usam o estilo da penúltima,
+  // e só a nova última linha fica com o estilo de fechamento.
+  const estilos = (l) => new Map([...(l?.match(CELULA) ?? [])].map((c) => [/\br="([A-Z]+)\d+"/.exec(c)[1], /^<c\b[^>]*?\bs="(\d+)"/.exec(c)?.[1]]));
+  const doMeio = estilos(linhas.find((l) => numLinha(l) === R - 1));
+  const comEstiloDoMeio = (l) => (doMeio.size ? l.replace(/<c\b[^>]*?>|<c\b[^>]*?\/>/g, (c) => {
+    const s = doMeio.get(/\br="([A-Z]+)\d+"/.exec(c)?.[1]);
+    return s ? c.replace(/\bs="\d+"/, `s="${s}"`) : c;
+  }) : l);
   const novas = [];
   for (const l of linhas) {
     const n = numLinha(l);
-    novas.push(n > R ? renumerar(l, n + k) : l);
-    if (n === R) for (let i = 1; i <= k; i++) novas.push(renumerar(modelo, R + i).replace(/<f>([\s\S]*?)<\/f>/g, (_, t) => `<f>${deslocarFormula(t, i)}</f>`));
+    novas.push(n > R ? renumerar(l, n + k) : n === R ? comEstiloDoMeio(l) : l);
+    if (n === R) {
+      for (let i = 1; i <= k; i++) {
+        const clone = renumerar(modelo, R + i).replace(/<f>([\s\S]*?)<\/f>/g, (_, t) => `<f>${deslocarFormula(t, i)}</f>`);
+        novas.push(i < k ? comEstiloDoMeio(clone) : clone);
+      }
+    }
   }
   aba.xml = antes + novas.join('') + depois;
 }
@@ -120,12 +135,15 @@ function escrever(pacote, nomeAba, valores) {
   const aba = pacote.abas.get(nomeAba);
   const { antes, linhas, depois } = partesDaAba(aba.xml);
   const porLinha = new Map(linhas.map((l) => [numLinha(l), l.replace(/^<row\b([^>]*?)\/>$/, '<row$1></row>')]));
-  for (const [ref, valor] of valores) {
+  for (const [ref, entrada] of valores) {
+    let valor = entrada;
     const [, col, lin] = /^([A-Z]+)(\d+)$/.exec(ref);
     let linha = porLinha.get(Number(lin)) ?? `<row r="${lin}"></row>`;
     const celulas = linha.match(CELULA) ?? [];
     const atual = celulas.find((c) => c.startsWith(`<c r="${ref}"`) || new RegExp(`^<c\\b[^>]*\\br="${ref}"`).test(c));
-    const estilo = atual ? (/^<c\b[^>]*?\bs="(\d+)"/.exec(atual)?.[1] ?? null) : null;
+    let estilo = atual ? (/^<c\b[^>]*?\bs="(\d+)"/.exec(atual)?.[1] ?? null) : null;
+    // { valor, estilos: { atual: novo } } troca o estilo por um equivalente do próprio modelo (ex.: data sem hora).
+    if (valor && typeof valor === 'object') { estilo = valor.estilos?.[estilo] ?? estilo; valor = valor.valor; }
     const s = estilo === null ? '' : ` s="${estilo}"`;
     let nova;
     if (valor === null || valor === undefined || valor === '') nova = `<c r="${ref}"${s}/>`;
@@ -208,8 +226,11 @@ export async function preencherPcmMan008(bytes, dados) {
   await conferirOriginal(bytes, 'PCM-MAN-008');
   const p = await abrirPacote(bytes);
   cadastrosLadoALado(p, dados);
+  // Falha do app tem só a data: usa os estilos dd/mm/aaaa do próprio modelo (147 e 149) para não exibir "00:00".
+  const SO_DATA = { 81: '147', 88: '149' };
+  const inicio = (v) => (v && v.length === 10 ? { valor: serialData(v), estilos: SO_DATA } : serialDataHora(v));
   preencherTabela(p, 'Registro de falhas', 29, dados.falhas.map((f) => ({ A: f.referencia, B: f.tag, D: f.os || null, E: f.descricao || null,
-    F: f.causa || null, G: f.acao || null, H: serialDataHora(f.inicio), I: serialDataHora(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo) })));
+    F: f.causa || null, G: f.acao || null, H: inicio(f.inicio), I: serialDataHora(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo) })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }

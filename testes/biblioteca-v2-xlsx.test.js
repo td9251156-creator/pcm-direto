@@ -164,6 +164,13 @@ describe('PCM-MAN-008 preenchido', () => {
     expect(reg.getCell('A5').value).toBe('F-IMP-1');
     expect(reg.getCell('H5').value).toEqual(new Date('2026-04-10T08:30:00Z'));
     expect(reg.getCell('I6').value).toBe(null);
+    // Falha do app (só data) usa o estilo dd/mm/aaaa do modelo; a importada mantém data e hora.
+    const xml3 = await zip.file('xl/worksheets/sheet3.xml').async('string');
+    expect(xml3).toMatch(/<c r="H6" s="147">/);
+    expect(xml3).toMatch(/<c r="H5" s="81">/);
+    expect(xml3).toMatch(/<c r="H45" s="149">/); // última linha: fechamento do bloco, só data
+    expect(xml3).toMatch(/<c r="A29" s="76"/); // antiga última linha agora usa o estilo do meio
+    expect(xml3).toMatch(/<c r="A45" s="83"/); // nova última linha mantém a borda de fechamento
     expect(texto(reg.getCell('A46').value)?.trim() ?? '').toBe('');
     expect(await zip.file('xl/worksheets/sheet3.xml').async('string')).toContain('<mergeCell ref="A46:K46"/>');
     expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('IMP-01');
@@ -194,6 +201,18 @@ describe('PCM-MAN-001 preenchido', () => {
     expect(d.documentos[0].aprovado).toBe('');
     expect(d.revisoes.map((r) => r.codigo)).toEqual(['PCM-MAN-002', 'PCM-MAN-001']);
     expect(d.pessoas).toContain('Técnico fictício');
+  });
+
+  it('emissão com corte retroativo não lista documentos posteriores; caractere de controle não invalida o XML', async () => {
+    const e = emissao001(0);
+    e.meta.dataCorte = '2026-03-15';
+    e.meta.elaborador = 'Nome\u000bcom VT';
+    const d = dadosPcmMan001(e);
+    expect(d.documentos.map((x) => [x.codigo, x.data])).toEqual([['PCM-MAN-001', '2026-03-15'], ['PCM-MAN-002', '2026-03-01'], ['PCMD-05', '2026-02-01']]);
+    const zip = await JSZip.loadAsync(await preencherPcmMan001(readFileSync(ORIGINAL_001), d));
+    const leia = await zip.file('xl/worksheets/sheet1.xml').async('string');
+    expect(leia).toContain('Nomecom VT');
+    expect(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(leia)).toBe(false); // eslint-disable-line no-control-regex
   });
 
   it('amplia a tabela de documentos sem sobrescrever o rodapé e o Excel lê o conteúdo', async () => {
