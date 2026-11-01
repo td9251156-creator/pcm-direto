@@ -24,4 +24,13 @@ Junta ao `src/dados/biblioteca.json` (com a versão da biblioteca atualizada), g
 `public/modelos/maquinas/`, atualiza os testes e o checklist do `BIBLIOTECA.md`, roda `npm run verificar` e os roteiros
 de navegador, e só então prepara a publicação.
 
-`exemplo-proposta.json` mostra o formato; não é uma proposta real.
+## Campos alinhados aos modelos
+Além dos campos de toda tarefa, a proposta aceita, opcionalmente:
+- na tarefa: `componente`, `tipo_tarefa` (PREVENTIVA, PREDITIVA, INSPECAO, LUBRIFICACAO, AUTONOMA) e `exige_parada`;
+- na máquina: `fabricante`, `modelo`, `modos_falha` (componente, modo, efeito, causa, controle), `itens_checklist`
+  (item, criterio) e `pecas_criticas` (peca, especificacao, quantidade_sugerida).
+
+Eles correspondem às colunas do 002 (Plano e MFMEA), 005 (Checklist) e 010 (Peças críticas), para o modelo sair
+preenchido com a máquina escolhida.
+
+`exemplo-proposta.json` mostra o formato completo; não é uma proposta real.

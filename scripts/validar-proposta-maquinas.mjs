@@ -8,6 +8,10 @@ import { validarBiblioteca } from '../src/logica/plano.js';
 const GENERICA = 'base genérica a validar com manual do fabricante';
 const TIPOS_FONTE = ['manual_fabricante', 'norma', 'base_generica'];
 // Número de norma só com fonte do tipo "norma" que tenha versão e data.
+// Campos opcionais alinhados às colunas dos modelos PCM-MAN (002 Plano e MFMEA, 005 Checklist, 010 Peças críticas).
+export const TIPOS_TAREFA = ['PREVENTIVA', 'PREDITIVA', 'INSPECAO', 'LUBRIFICACAO', 'AUTONOMA'];
+const textoOpcional = (v, max) => v === undefined || (typeof v === 'string' && v.trim().length > 0 && v.length <= max);
+const listaDe = (v, max, item) => v === undefined || (Array.isArray(v) && v.length <= max && v.every((x) => x !== null && typeof x === 'object' && item(x)));
 const CITA_NORMA = /\b(NR|NBR|ISO|IEC|ABNT|API|ASME|DIN|EN)\s*-?\s*\d/i;
 
 export function conferirProposta(proposta, biblioteca) {
@@ -40,7 +44,24 @@ export function conferirProposta(proposta, biblioteca) {
     if (CITA_NORMA.test(texto) && !(fonte.tipo === 'norma' && fonte.versao && fonte.data)) erros.push(`${nome}: cita norma sem fonte do tipo "norma" com versão e data.`);
     if (x.seguranca === true && fonte.tipo === 'base_generica') avisos.push(`${nome}: tarefa de segurança com base genérica — o mantenedor precisa confirmar antes de integrar.`);
     if (x.seguranca === true && !String(x.observacao ?? '').trim()) erros.push(`${nome}: tarefa de segurança precisa explicar na observação o risco que ela controla.`);
+    if (!textoOpcional(x.componente, 120)) erros.push(`${nome}: componente deve ser um texto de até 120 caracteres.`);
+    if (x.tipo_tarefa !== undefined && !TIPOS_TAREFA.includes(x.tipo_tarefa)) erros.push(`${nome}: tipo_tarefa deve ser ${TIPOS_TAREFA.join(', ')}.`);
+    if (x.exige_parada !== undefined && typeof x.exige_parada !== 'boolean') erros.push(`${nome}: exige_parada deve ser true ou false.`);
   }
+  for (const tp of tipos) {
+    const n = tp.id ?? '?';
+    if (!textoOpcional(tp.fabricante, 120) || !textoOpcional(tp.modelo, 120)) erros.push(`${n}: fabricante e modelo devem ser textos de até 120 caracteres.`);
+    if (!listaDe(tp.modos_falha, 100, (m) => ['modo', 'efeito', 'causa', 'controle'].every((c) => textoOpcional(m[c], 500)) && textoOpcional(m.componente, 120) && !!String(m.modo ?? '').trim()))
+      erros.push(`${n}: modos_falha precisa de modo e, opcionalmente, componente, efeito, causa e controle (textos).`);
+    if (!listaDe(tp.itens_checklist, 100, (c) => !!String(c.item ?? '').trim() && textoOpcional(c.item, 300) && textoOpcional(c.criterio, 300)))
+      erros.push(`${n}: itens_checklist precisa de item e, opcionalmente, criterio (textos).`);
+    if (!listaDe(tp.pecas_criticas, 100, (q) => !!String(q.peca ?? '').trim() && textoOpcional(q.peca, 200) && textoOpcional(q.especificacao, 300) &&
+      (q.quantidade_sugerida === undefined || (Number.isFinite(q.quantidade_sugerida) && q.quantidade_sugerida >= 0))))
+      erros.push(`${n}: pecas_criticas precisa de peca e, opcionalmente, especificacao e quantidade_sugerida (número ≥ 0).`);
+    const texto = JSON.stringify([tp.modos_falha, tp.itens_checklist, tp.pecas_criticas]);
+    if (CITA_NORMA.test(texto) && ![...fontes.values()].some((f) => f.tipo === 'norma' && f.versao && f.data)) erros.push(`${n}: cita norma sem fonte do tipo "norma" com versão e data.`);
+  }
+
   // Descrições repetidas (mesmo tipo) costumam ser tarefa duplicada.
   const vistas = new Set();
   const chave = (x) => `${x._tipo?.id}|${String(x.descricao ?? '').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, '')}`;
@@ -53,7 +74,9 @@ export function conferirProposta(proposta, biblioteca) {
   const limpa = (x) => { const { fonte, _tipo, ...resto } = x; void fonte; void _tipo; return resto; };
   const resultado = structuredClone(biblioteca);
   for (const n of tarefasNovas) resultado.tipos.find((t) => t.id === n.tipo)?.tarefas.push(limpa(n.tarefa ?? {}));
-  for (const t of tipos) resultado.tipos.push({ id: t.id, nome: t.nome, sigla: t.sigla, tarefas: (t.tarefas ?? []).map(limpa) });
+  const EXTRAS_TIPO = ['fabricante', 'modelo', 'modos_falha', 'itens_checklist', 'pecas_criticas'];
+  for (const t of tipos) resultado.tipos.push({ id: t.id, nome: t.nome, sigla: t.sigla,
+    ...Object.fromEntries(EXTRAS_TIPO.filter((c) => t[c] !== undefined).map((c) => [c, t[c]])), tarefas: (t.tarefas ?? []).map(limpa) });
   erros.push(...validarBiblioteca(resultado));
   return { ok: erros.length === 0, erros, avisos, resultado, tipos: tipos.length, tarefas: todas.length };
 }
