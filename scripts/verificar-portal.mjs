@@ -19,7 +19,8 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  await p.keyboard.press('Tab');await p.keyboard.press('Enter');assert.equal(await p.locator('#principal').evaluate(e=>e===document.activeElement),true,'Pular leva o foco ao conteúdo');
  const semJs=await navegador.newContext({javaScriptEnabled:false});const leitura=await semJs.newPage();await leitura.goto('http://127.0.0.1:4210/');
  assert.ok(await leitura.getByRole('heading',{name:'O que você precisa agora?'}).isVisible());
- for(const href of ['modelos','apoio','catalogo','inicio'])assert.ok(await leitura.locator(`header a[href="./app.html#${href}"]`).isVisible());
+ assert.ok(await leitura.locator('header a[href="./modelos/"]').isVisible());
+ for(const href of ['apoio','catalogo','inicio'])assert.ok(await leitura.locator(`header a[href="./app.html#${href}"]`).isVisible());
  await semJs.close();
  await p.locator('header nav a[href="./app.html#apoio"]').click();await p.locator('#conteudo h2').first().waitFor();assert.ok((await p.locator('#conteudo').innerText()).includes('guias curtos'),'O CTA Guias abre o apoio existente');
  await p.goto('http://127.0.0.1:4210/?origem=ficticia#falhas?ativo=ficticio');await p.waitForURL('**/app.html?origem=ficticia#falhas?ativo=ficticio');await p.locator('#conteudo h2').first().waitFor();

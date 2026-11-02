@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { portalModelos } from './scripts/portal-modelos.mjs';
 
 /** A versão muda também quando só o conteúdo de um arquivo fixo ou do worker muda. */
 export function versaoDoCache(arquivos) {
@@ -23,12 +24,12 @@ function serviceWorker() {
       // Arquivos gerados pelo build + arquivos fixos da pasta public (manifesto e ícones)
       const publicos = readdirSync('public', { recursive: true })
         .map((f) => String(f).split(path.sep).join('/'))
-        .filter((f) => statSync('public/' + f).isFile() && (/^(icones|marca|fontes|apresentacao|propostas)\//.test(f) || /^modelos\/(biblioteca-v2|maquinas)\//.test(f) || ['manifest.webmanifest','conheca.html','portal.css'].includes(f)));
+        .filter((f) => statSync('public/' + f).isFile() && (/^(icones|marca|fontes|apresentacao|propostas)\//.test(f) || /^modelos\/(biblioteca-v2|maquinas)\//.test(f) || ['manifest.webmanifest','conheca.html','portal.css','portal-modelos.js'].includes(f)));
       const entradaAtual = pacote['app.html'];
       const portal = pacote['index.html'];
       // Entrada no mesmo endereço/origem para recuperar uma aba presa em HTML antigo.
       if (entradaAtual) this.emitFile({ type: 'asset', fileName: 'atualizar.html', source: entradaAtual.source });
-      const arquivos = [...new Set([...Object.keys(pacote), ...publicos, ...(entradaAtual ? ['atualizar.html'] : [])])].filter((f) => !f.endsWith('.map') && !/^(guias|comunidade)\//.test(f) && !/^modelos\/pcm-man-/.test(f) && !/^editorial\//.test(f)).sort();
+      const arquivos = [...new Set([...Object.keys(pacote), ...publicos, ...(entradaAtual ? ['atualizar.html'] : [])])].filter((f) => !f.endsWith('.map') && !/^(guias|comunidade)\//.test(f) && !/^modelos\/(?:index\.html|pcm-man-)/.test(f) && !/^editorial\//.test(f)).sort();
       const worker = readFileSync('src/sw.js', 'utf8');
       const conteudos = arquivos.map((nome) => [nome, nome === 'atualizar.html' && entradaAtual ? entradaAtual.source : pacote[nome]
         ? (pacote[nome].type === 'chunk' ? pacote[nome].code : pacote[nome].source)
@@ -53,7 +54,7 @@ function serviceWorker() {
 // inclusive em https://<usuario>.github.io/pcm-direto/
 export default defineConfig({
   base: './',
-  plugins: [serviceWorker()],
+  plugins: [portalModelos(), serviceWorker()],
   build: {
     // As bibliotecas de planilha e documento são grandes; o aviso padrão não ajuda aqui.
     chunkSizeWarningLimit: 2000,
