@@ -21,10 +21,13 @@ import { telaDashboards } from './telas/dashboards.js';
 import { telaApoio } from './telas/apoio.js';
 import { telaComunidade } from './telas/comunidade.js';
 import { telaCatalogo } from './telas/catalogo.js';
+import { telaContribuir, telaFeedback } from './telas/contribuir.js';
 import { registrarAtualizacao } from './servicos/atualizacao.js';
 import { acessoAtual } from './navegacao.js';
 
 const TELAS = {
+  contribuir: { titulo: 'Como contribuir', desenhar: telaContribuir },
+  feedback: { titulo: 'Sua experiência', desenhar: telaFeedback },
   modelos: { titulo: 'Modelos para sua rotina', desenhar: telaModelos },
   comunidade: { titulo: 'Comunidade e modelos', desenhar: telaComunidade },
   catalogo: { titulo: 'Catálogo colaborativo', desenhar: telaCatalogo },
