@@ -65,13 +65,14 @@ acentos, sempre dizendo o que muda para quem usa o app.
 
 ## 6. Ciclo de cada item
 1. **Plano curto (3 linhas):** resultado para quem usa, como conferir e os arquivos que vai alterar.
-2. **Ramo:** `ia/<ferramenta>/<item>` a partir da `main` atual.
+2. **Ramo e pasta:** no Codex, ramo `ia/codex/<item>` a partir da `main`. Localmente, agentes trabalham em
+   `PCM Direto\agentes\` (criada por `scripts/nova-tarefa-ia.ps1`); só o coordenador usa a pasta `app`, em `coord/<assunto>`.
 3. **Implementar** o mínimo que resolve, no estilo do código ao redor. Para erro: primeiro um teste que falha.
    Para regra nova em `src/logica/`: teste relevante.
 4. **Verificar:**
    - `npm run verificar` (lint, testes e build);
    - `npm run test:navegador` quando mexer em tela, dados, offline ou arquivos gerados (no Codex, com `PCM_SEM_SANDBOX=1`);
-   - `node scripts/conferir-entrega-ia.mjs`.
+   - `node scripts/conferir-entrega-ia.mjs` (aplica o perfil do ramo: área permitida e arquivos protegidos).
 5. **Se algo falhar:** investigue a causa e corrija. Nunca enfraqueça teste para passar. Se não resolver, relate a saída real.
 6. **PR** com:
    - **Antes / Depois / Como testar / Riscos**;
