@@ -1,0 +1,98 @@
+// Plano Mestre: base fictícia de nove ativos, filtros combinados e teclado.
+import assert from 'node:assert/strict';
+import { readFile, mkdir } from 'node:fs/promises';
+import { createServer } from 'vite';
+import { executarComRecursos } from './navegador.mjs';
+import { EXEMPLO } from '../src/dados/exemplo.js';
+import { atribuirTags } from '../src/logica/tag.js';
+import { gerarPlano } from '../src/logica/plano.js';
+const { chromium } = await import(process.env.PCM_PLAYWRIGHT || new URL('../ferramentas/navegador/node_modules/playwright/index.mjs', import.meta.url).href);
+const biblioteca = JSON.parse(await readFile(new URL('../src/dados/biblioteca.json', import.meta.url), 'utf8'));
+const equipamentos = atribuirTags(EXEMPLO.map((e, i) => ({ ...e, id: `eq${i}` })), Object.fromEntries(biblioteca.tipos.map(t => [t.id, t.sigla])));
+const plano = gerarPlano(equipamentos, biblioteca).filter(l => l.ativa);
+const backup = { aplicativo: 'PCM Direto', versao: 1, biblioteca, rascunho: { equipamentos, ajustes: {}, execucoes: {}, exemplo: false, inicio: '2026-11-01', capacidade: {} } };
+await executarComRecursos({
+  criarServidor: async () => { const s = await createServer({ server: { host: '127.0.0.1', port: 4205, strictPort: true } }); await s.listen(); return s; },
+  criarNavegador: () => chromium.launch({ executablePath: process.env.PCM_CHROMIUM || undefined, args: process.env.PCM_SEM_SANDBOX === '1' ? ['--no-sandbox'] : [] }),
+  executar: async ({ navegador }) => {
+    const c = await navegador.newContext({ serviceWorkers: 'block', viewport: { width: 390, height: 844 } });
+    await c.route('**/*', route => new URL(route.request().url()).hostname === '127.0.0.1' ? route.continue() : route.abort());
+    const p = await c.newPage(); const erros = []; p.on('pageerror', e => erros.push(e.message));
+    const ir = async rota => { await p.goto(`http://127.0.0.1:4205/#${rota}`); await p.locator('#conteudo h2').waitFor(); };
+    await ir('plano');
+    assert.equal(await p.locator('#lista-plano details').count(), 0);
+    assert.match(await p.locator('#lista-plano').innerText(), /Nenhuma tarefa ativa/);
+    await ir('dados');
+    await p.locator('#restaurar-backup').setInputFiles({ name: 'exemplo-antigo.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup)) });
+    await p.locator('#confirmar-backup').click(); await p.waitForURL('**/#semana');
+    await ir('cadastros');
+    await p.locator('#g-pessoa-nome').fill('Pessoa fictícia');
+    await p.locator('#g-funcao').fill('Manutenção');
+    await p.locator('#g-especialidade').fill('Elétrica');
+    await p.locator('#salvar-pessoa').click();
+    await p.getByRole('button', { name: 'Editar Pessoa fictícia', exact: true }).waitFor();
+    await ir('plano');
+    assert.equal(await p.locator('#lista-plano details').count(), 9);
+    assert.equal(await p.locator('#lista-plano details[open]').count(), 0);
+    assert.equal(await p.locator('#lista-plano tbody tr').count(), plano.length);
+    await mkdir('artifacts', { recursive: true });
+    for (const width of [390, 1280]) {
+      await p.setViewportSize({ width, height: 844 });
+      const medidas = await p.evaluate(() => ({ altura: document.documentElement.scrollHeight, largura: document.documentElement.scrollWidth }));
+      assert.ok(medidas.largura <= width, 'Sem rolagem horizontal');
+      if (width === 390) assert.ok(medidas.altura < 6000, `Altura de ${medidas.altura} px abaixo de 6.000 px`);
+      console.log(`Plano Mestre: nove ativos em ${width} px, altura ${medidas.altura} px.`);
+      await p.screenshot({ path: `artifacts/plano-ativos-${width}.png`, fullPage: true });
+      const resumo = p.locator('#lista-plano summary').first();
+      await resumo.focus(); await resumo.press('Enter');
+      assert.equal(await p.locator('#lista-plano details').first().getAttribute('open'), '');
+      const sessao = await c.newCDPSession(p);
+      const arvore = await sessao.send('Accessibility.getFullAXTree');
+      const expansivel = arvore.nodes.find(n => n.role?.value === 'DisclosureTriangle' && n.name?.value.includes(equipamentos[0].tag));
+      assert.ok(expansivel, 'Ativo identificado como seção expansível na árvore de acessibilidade');
+      assert.equal(expansivel.properties.find(x => x.name === 'expanded')?.value.value, true);
+      await sessao.detach();
+      assert.equal(await resumo.evaluate(e => getComputedStyle(e).outlineStyle), 'solid', 'Foco visível pelo teclado');
+      const responsavel = p.locator('#lista-plano select').first();
+      assert.ok((await responsavel.getAttribute('id')).startsWith('resp-'));
+      await resumo.press('Tab');
+      assert.equal(await responsavel.evaluate(e => document.activeElement === e), true);
+      await resumo.focus(); await resumo.press('Space');
+      assert.equal(await p.locator('#lista-plano details[open]').count(), 0);
+    }
+    await p.setViewportSize({ width: 390, height: 844 });
+    const especialidade = plano.find(l => l.equipamentoId === 'eq0').especialidade;
+    await p.getByLabel('Setor', { exact: true }).selectOption('UTL');
+    await p.getByLabel('Especialidade', { exact: true }).selectOption(especialidade);
+    await p.getByLabel('Só tarefas sem responsável').check();
+    await p.locator('#busca-plano').fill(equipamentos[0].tag);
+    const esperado = plano.filter(l => l.equipamentoId === 'eq0' && l.especialidade === especialidade);
+    assert.equal(await p.locator('#lista-plano tbody tr').count(), esperado.length, 'Quatro filtros combinados');
+    assert.equal(await p.locator('#lista-plano details').count(), 1);
+    await p.locator('#lista-plano summary').press('Enter');
+    const primeiro = p.locator('#lista-plano select').first(); const id = await primeiro.getAttribute('id');
+    const opcao = await primeiro.locator('option').last().getAttribute('value');
+    await primeiro.focus(); await primeiro.selectOption(opcao);
+    await p.waitForFunction(id => !document.getElementById(id), id);
+    assert.equal(await p.locator('#sem-responsavel-plano').evaluate(e => document.activeElement === e), true, 'Foco preservado ao sair do filtro');
+    assert.equal(await p.locator('#lista-plano tbody tr').count(), esperado.length - 1);
+    await p.getByLabel('Só tarefas sem responsável').uncheck();
+    assert.equal(await p.locator(`#${id}`).inputValue(), opcao);
+    await p.locator('#lista-plano summary').press('Enter');
+    const campo = p.locator(`#${id}`); await campo.focus(); await campo.selectOption('');
+    await p.waitForFunction(id => document.activeElement?.id === id, id);
+    assert.equal(await p.locator('#lista-plano details[open]').count(), 1, 'Salvar mantém ativo aberto');
+    await p.locator('#busca-plano').fill('inexistente');
+    assert.equal(await p.locator('#lista-plano details').count(), 0);
+    assert.match(await p.locator('#lista-plano').innerText(), /Altere a busca/);
+    await p.locator('#busca-plano').fill('');
+    await p.getByLabel('Setor', { exact: true }).selectOption('');
+    await p.getByLabel('Especialidade', { exact: true }).selectOption('');
+    assert.equal(await p.locator('#lista-plano tbody tr').count(), plano.length);
+    assert.equal(await p.locator('#lista-plano .selo-seguranca').count(), plano.filter(l => l.seguranca).length, 'Segurança permanece no plano');
+    await p.reload(); await p.locator('#lista-plano summary').first().waitFor();
+    assert.equal(await p.locator('#lista-plano details[open]').count(), 0, 'Reabertura começa recolhida');
+    assert.deepEqual(erros, []); await c.close();
+    console.log('Plano Mestre: filtros combinados, responsável, foco, teclado, rótulos e segurança aprovados. Leitor de tela real requer conferência manual.');
+  },
+});
