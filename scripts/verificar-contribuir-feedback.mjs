@@ -12,7 +12,9 @@ await executarComRecursos({
     const p=await contexto.newPage();const erros=[];p.on('pageerror',e=>erros.push(e.message));
     const ir=async rota=>{await p.goto('http://127.0.0.1:4202/#'+rota);await p.locator('#conteudo h2').first().waitFor();};
     const navegar=async rota=>{await p.evaluate(rota=>{location.hash=rota;},rota);await p.waitForFunction(rota=>document.body.dataset.tela===rota,rota);};
-    await ir('contribuir');assert.equal(await p.getByRole('link',{name:'Relatar um erro',exact:true}).getAttribute('href'),'https://github.com/td9251156-creator/pcm-direto/issues/new?template=1-relatar-erro.yml');
+    await ir('comunidade');const convite=p.locator('#conteudo .convite-comunidade a[href="#contribuir"]');
+    assert.equal(await convite.count(),1,'A Comunidade oferece acesso próprio à contribuição');await convite.click();await p.locator('#conteudo h2').filter({hasText:'Ajude a tornar o PCM mais simples'}).waitFor();
+    assert.equal(await p.getByRole('link',{name:'Relatar um erro',exact:true}).getAttribute('href'),'https://github.com/td9251156-creator/pcm-direto/issues/new?template=1-relatar-erro.yml');
     assert.ok((await p.locator('#conteudo').innerText()).includes('Ferramentas de IA são opcionais'));
     await p.getByRole('link',{name:'Responder sobre minha experiência'}).click();await p.locator('#form-feedback').waitFor();
     const dificuldade=p.locator('#feedback-dificuldade');const comentario=p.locator('#feedback-comentario');
