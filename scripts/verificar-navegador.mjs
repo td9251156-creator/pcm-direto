@@ -18,3 +18,5 @@ await import('./verificar-qr.mjs');
 await import('./verificar-fotos.mjs');
 await import('./verificar-ciencia.mjs');
 await import('./verificar-contribuir-feedback.mjs');
+
+await import("./verificar-portal.mjs");

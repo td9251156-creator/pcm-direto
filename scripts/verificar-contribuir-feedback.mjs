@@ -10,7 +10,7 @@ await executarComRecursos({
     const contexto=await navegador.newContext({viewport:{width:390,height:844}});
     const externas=[];await contexto.route('**/*',r=>{if(new URL(r.request().url()).hostname==='127.0.0.1')return r.continue();externas.push(r.request().url());return r.abort();});
     const p=await contexto.newPage();const erros=[];p.on('pageerror',e=>erros.push(e.message));
-    const ir=async rota=>{await p.goto('http://127.0.0.1:4202/#'+rota);await p.locator('#conteudo h2').first().waitFor();};
+    const ir=async rota=>{await p.goto('http://127.0.0.1:4202/app.html#'+rota);await p.locator('#conteudo h2').first().waitFor();};
     const navegar=async rota=>{await p.evaluate(rota=>{location.hash=rota;},rota);await p.waitForFunction(rota=>document.body.dataset.tela===rota,rota);};
     await ir('comunidade');const convite=p.locator('#conteudo .convite-comunidade a[href="#contribuir"]');
     assert.equal(await convite.count(),1,'A Comunidade oferece acesso próprio à contribuição');await convite.click();await p.locator('#conteudo h2').filter({hasText:'Ajude a tornar o PCM mais simples'}).waitFor();

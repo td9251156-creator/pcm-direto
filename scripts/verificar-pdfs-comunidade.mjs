@@ -67,10 +67,10 @@ await executarComRecursos({
     });
     const pagina = await contexto.newPage();
     const erros = []; pagina.on('pageerror', e => erros.push(e.message));
-    await pagina.goto('http://127.0.0.1:4178/#catalogo');
+    await pagina.goto('http://127.0.0.1:4178/app.html#catalogo');
     await pagina.locator('[data-login]').waitFor();
     const canal = await pagina.evaluate(() => window.canalPdfTeste);
-    const emissora = await contexto.newPage(); await emissora.goto('http://127.0.0.1:4178/#apoio');
+    const emissora = await contexto.newPage(); await emissora.goto('http://127.0.0.1:4178/app.html#apoio');
     async function entrar(usuario) {
       await emissora.evaluate(({ canal, usuario }) => {
         const c = new BroadcastChannel(canal); c.postMessage({ event: 'SIGNED_IN', session: { user: { id: usuario, email: 'teste@example.invalid' } } }); c.close();

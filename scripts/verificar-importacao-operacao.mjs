@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createServer } from 'vite';
 import { executarComRecursos } from './navegador.mjs';
 const { chromium } = await import(process.env.PCM_PLAYWRIGHT || new URL('../ferramentas/navegador/node_modules/playwright/index.mjs', import.meta.url).href);
-const URL_BASE = 'http://127.0.0.1:4196/';
+const URL_BASE = 'http://127.0.0.1:4196/app.html';
 const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 // Preenche cópias dos modelos v2 em memória (dados fictícios) e devolve os bytes .xlsx.

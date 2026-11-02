@@ -16,7 +16,7 @@ await executarComRecursos({
     const c = await navegador.newContext({ serviceWorkers: 'block', acceptDownloads: true, viewport: { width: 1280, height: 900 } });
     await c.addInitScript(() => { const Original = Date; window.Date = class extends Original { constructor(...a) { super(...(a.length ? a : ['2026-10-27T12:00:00'])); } static now() { return new Original('2026-10-27T12:00:00').getTime(); } }; });
     const p = await c.newPage(); const erros = []; p.on('pageerror', e => erros.push(e.message));
-    const ir = async r => { if (!p.url().startsWith('http://127.0.0.1:4199/')) await p.goto(`http://127.0.0.1:4199/#${r}`); else await p.evaluate(r => { location.hash = r; }, r); await p.locator('#conteudo h2').waitFor(); await p.waitForTimeout(100); };
+    const ir = async r => { if (!p.url().startsWith('http://127.0.0.1:4199/app.html')) await p.goto(`http://127.0.0.1:4199/app.html#${r}`); else await p.evaluate(r => { location.hash = r; }, r); await p.locator('#conteudo h2').waitFor(); await p.waitForTimeout(100); };
     await ir('cadastros');
     const metas = p.locator('#form-metas');
     assert.equal(await metas.locator('a[href="#mensal"]').count(), 1, 'Metas orienta e dá acesso aos indicadores disponíveis');
@@ -32,7 +32,7 @@ await executarComRecursos({
       assert.doesNotMatch(definicao, /ainda não calcula|ainda não definidas/, 'Glossário acompanha a funcionalidade entregue');
     }
     const persistido = () => p.evaluate(() => new Promise((resolve, reject) => { const q = indexedDB.open('pcm-direto:base:v3', 1); q.onerror = () => reject(q.error); q.onsuccess = () => { const db = q.result; const t = db.transaction('base'); const r = t.objectStore('base').get('principal'); t.oncomplete = () => { db.close(); resolve(r.result.dados.rascunho); }; }; }));
-    async function restaurar(b) { await ir('dados'); await p.locator('#restaurar-backup').setInputFiles({ name: 'ficticio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(b)) }); await p.locator('#confirmar-backup').click(); await p.waitForURL('**/#semana'); }
+    async function restaurar(b) { await ir('dados'); await p.locator('#restaurar-backup').setInputFiles({ name: 'ficticio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(b)) }); await p.locator('#confirmar-backup').click(); await p.waitForURL('**/app.html#semana'); }
     for (const versao of [1,2]) { await restaurar(antigo(versao)); assert.equal((await persistido()).gestao.versao, 1); }
     await ir('mensal'); await p.locator('#indicador-ativo').selectOption('eq1'); await p.locator('#indicador-mes').fill('2026-09');
     assert.match(await p.locator('#resultado-indicadores').innerText(), /Sem dado/);
