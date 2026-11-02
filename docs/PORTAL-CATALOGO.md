@@ -1,3 +1,5 @@
+> Continuação: [implementação consolidada do portal](portal/ENTREGA.md). O escopo abaixo registra a primeira parte do PR #67.
+
 # Catálogo público de modelos — próxima entrega
 
 Continuação da fundação do portal: encontrar um arquivo, entender seu conteúdo e baixar o original sem entrar no aplicativo. Esta entrega prepara a etapa 2 do plano aprovado; publicação depende da integração do PR.

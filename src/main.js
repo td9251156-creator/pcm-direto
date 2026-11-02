@@ -1,8 +1,10 @@
+import { lerIntencaoModelo } from './logica/intencao-modelo.js';
+import { mostrarIntencaoModelo } from './telas/intencao-modelo.js';
 import { telaModelos } from './telas/modelos.js';
 import { telaImportarOperacao } from './telas/importar-operacao.js';
 // Ponto de entrada: carrega o rascunho, troca de tela pelo endereço (#inicio, #equipamentos...)
 // e registra o service worker para funcionar como aplicativo e sem internet.
-import { inicializarPersistencia, recuperacao, estado } from './estado.js';
+import { inicializarPersistencia, recuperacao, estado, emDemonstracao } from './estado.js';
 import { baixar, atualizarAvisoArmazenamento } from './ui.js';
 import { telaAtivos } from './telas/ativos.js';
 import { telaEquipamentos } from './telas/equipamentos.js';
@@ -69,6 +71,7 @@ function ir(nome) {
   else location.hash = nome;
 }
 
+let modeloSolicitado = lerIntencaoModelo(location.search);
 let encerrarTela;
 let visitaNavegacao=0;
 
@@ -107,6 +110,7 @@ function mostrar() {
   document.title = `${tela.titulo} · PCM Direto`;
   encerrarTela?.();
   encerrarTela = tela.desenhar(main, ir);
+  mostrarIntencaoModelo(main, modeloSolicitado, estado, emDemonstracao(), () => { modeloSolicitado = null; document.getElementById('intencao-modelo')?.remove(); main.focus(); });
   document.getElementById('lembrete-backup')?.remove();
   const { ultimoBackup, alteradoEm } = estado.metadados;
   if (!estado.exemplo && alteradoEm && (!ultimoBackup ||

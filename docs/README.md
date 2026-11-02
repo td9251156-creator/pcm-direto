@@ -11,6 +11,7 @@ Comece pelo [README](../README.md) e pelo [guia de contribuição](../CONTRIBUTI
 | Participar do projeto | [Governança](GOVERNANCA.md), [Tarefas iniciais](PRIMEIRAS-CONTRIBUICOES.md) |
 | Preparação open source | [Evidências e pendências](PREPARACAO-OPEN-SOURCE.md), [Notas de pré-release](PRE-RELEASE.md) |
 | Recursos e etapas propostos em 18/10 | [Histórico do catálogo A–I](HISTORICO-CATALOGO.md) |
+| Portal completo preparado: guias, continuidade, comunidade e distribuição | [Entrega consolidada](portal/ENTREGA.md) |
 | Próxima entrega: catálogo público de 19 modelos | [Catálogo público](PORTAL-CATALOGO.md) |
 | Decisões e evolução anteriores | [DECISOES](../DECISOES.md), [ROADMAP](../ROADMAP.md), [Reformulação de 24/10](REFORMULACAO.md), [MELHORIAS](MELHORIAS.md) |
 | Ferramentas opcionais de IA | [Guia de IA](CONTRIBUIR-COM-IA.md), [Evolução contínua](EVOLUCAO-CONTINUA.md) |
