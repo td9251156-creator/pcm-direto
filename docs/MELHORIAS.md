@@ -223,3 +223,7 @@ especificidade na borda de erro e hover de botão secundário desabilitado; ambo
 conferidos pelo revisor no Chromium com os CSS reais. Nenhum bloqueador restante no escopo.
 O roteiro específico também confere os dois estados e aguarda o evento de mudança de largura
 antes de verificar a navegação. Evidências locais em artifacts/identidade-figma-*.png.
+
+## Portal público — catálogo integrado, continuação preparada — 02/11/2026
+
+O catálogo do PR #67 foi integrado em `562e292`. A continuação acrescenta guia de OS, intenção de material sem escrita/geração automática, conversas moderadas em esquema privado, descoberta e conteúdo orgânico preparado. Revisão independente concluída; 495 testes/64 arquivos e 24 roteiros de navegador/banco aprovados localmente. Migração e ativação em produção, Auth real, revisão dos três guias em rascunho e publicação nas redes permanecem separados. Evidências e limitações: [Entrega consolidada](portal/ENTREGA.md).

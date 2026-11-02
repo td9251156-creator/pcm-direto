@@ -1,6 +1,6 @@
 # Portal de manutenção prática — implementação consolidada
 
-Direção: encontrar um modelo, entender como usar, aplicar na rotina e trocar experiências sobre o assunto. Continuação da fundação publicada e do catálogo preparado no PR #67. A implementação foi ampliada no mesmo ramo após o pedido do mantenedor para concluir as melhorias; **não significa integração, publicação ou ativação automática**.
+Direção: encontrar um modelo, entender como usar, aplicar na rotina e trocar experiências sobre o assunto. Continuação da fundação e do catálogo do PR #67, já integrado à main. Esta entrega acrescenta guias, continuidade no app, conversas e distribuição no ramo `coord/completar-portal-manutencao`; **não significa integração, publicação ou ativação automática dessas novas partes**.
 
 | Área | Implementado | Verificação / pendência |
 |---|---|---|
