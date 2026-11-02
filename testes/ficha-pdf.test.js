@@ -3,18 +3,19 @@ import { htmlFichaModelo } from '../src/saida/ficha-pdf.js';
 import biblioteca from '../src/dados/biblioteca.json';
 
 describe('Ficha dos campos para impressão e PDF local', () => {
-  it('preserva todas as tarefas, fontes, observações e segurança sem truncar', () => {
+  it('preserva tarefas, observações e segurança sem repetir a origem genérica', () => {
     const tipo = biblioteca.tipos.find(t => t.id === 'ponte_rolante');
     const html = htmlFichaModelo({ titulo: tipo.nome, tarefas: tipo.tarefas, aviso: 'Aviso próprio da biblioteca' }, 'Biblioteca local 0.1.0', 'logo.svg');
     expect(html).toContain('Aviso próprio da biblioteca');
     for (const t of tipo.tarefas) {
       expect(html).toContain(t.id); expect(html).toContain(t.descricao);
-      expect(html).toContain(t.origem); expect(html).toContain(t.observacao);
+      expect(html).not.toContain(t.origem); expect(html).toContain(t.observacao);
     }
     expect(html.match(/· SEGURANÇA/g).length).toBe(tipo.tarefas.filter(t => t.seguranca).length);
     const longa = htmlFichaModelo({ titulo: 'Δ · μm', tarefas: Array.from({ length: 100 }, (_, i) => ({ ...tipo.tarefas[0], id: `ITEM-${i}`, observacao: 'Texto longo '.repeat(500) + `fim-${i}` })) }, 'Versão local', 'logo.svg');
     expect(longa).toContain('fim-99'); expect(longa).toContain('Δ · μm');
     expect(html).toContain('não é um plano aprovado');
+    expect(html).not.toContain('O material apoia a organização do PCM');
   });
   it('texto de colaborador não vira HTML ou script na ficha', () => {
     const malicioso = '</title><script>alert(1)</script><img src=x onerror=alert(1)>';

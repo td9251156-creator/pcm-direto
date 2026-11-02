@@ -710,3 +710,7 @@ Publicação autorizada pelo mantenedor em 02/11/2026: 41 propostas, 40 tipos no
 Bibliotecas personalizadas 0.2.0 recebem somente os acréscimos sem conflito; ajustes anteriores e revisões congeladas são preservados. Havendo conflito de código ou sigla, a biblioteca anterior válida continua operável e sem acréscimos parciais quando não há ambiguidade com tarefas novas de segurança; a tela Biblioteca técnica informa que os códigos precisam ser conciliados para editar ou atualizar. Arquivos inválidos continuam no fluxo de recuperação. A versão 0.2.0 em `src/dados/biblioteca-0.2.0.json` é uma referência de compatibilidade, não o catálogo ativo.
 
 Se uma máquina personalizada antiga coincide com a identidade ou os códigos de tarefas de uma máquina nova com segurança obrigatória, o arquivo pode exigir conciliação manual antes da abertura/restauração. As proteções novas não são ignoradas para resolver essa ambiguidade; os dados originais permanecem disponíveis na recuperação.
+
+## Apresentação das fichas — 02/11/2026
+
+Por solicitação do mantenedor, os PDFs e a prévia pública deixam de repetir origem/versão em cada tarefa e o aviso extenso no rodapé do site e das fichas foi retirado. Fontes, versões e classificações permanecem nos dados editáveis, sem alteração de periodicidades ou proteções. Os arquivos Office originais permanecem intactos.
