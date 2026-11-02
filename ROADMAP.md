@@ -1,4 +1,6 @@
-> Plano atual de continuidade: [PLANO-DESENVOLVIMENTO.md](docs/PLANO-DESENVOLVIMENTO.md). O roteiro abaixo conserva o histórico do MVP.
+> Direção atual (02/11/2026): encontrar um modelo, entender como usar, aplicar na rotina e trocar experiências. Entrada por necessidade (#58), contribuição/questionário (#59) e documentação estão preparados em entregas separadas, sem publicação automática. Consulte o [índice atual](docs/README.md) e a [fila](docs/FILA.md).
+>
+> **Histórico:** o roteiro abaixo conserva as ideias do MVP, não descreve o estado atual nem autoriza refazer funções já entregues. [Catálogo histórico A–I](docs/HISTORICO-CATALOGO.md).
 
 > Atualização 24/10/2026: decisões atuais em [Reformulação](docs/REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
