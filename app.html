@@ -1,0 +1,81 @@
+<!doctype html>
+  <html lang="pt-BR" data-tema="claro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Meu PCM · PCM Direto</title>
+<meta name="robots" content="noindex,follow">
+    <meta name="description" content="Gerador de PCM aberto: lista de equipamentos entra, plano de manutenção sai em planilha e documento." />
+    <meta name="theme-color" content="#0b2a5b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="PCM Direto · Manutenção planejada. Direto ao ponto." />
+    <meta property="og:description" content="Plano preventivo, cronograma, execuções, falhas e documentos PCM-MAN. Gratuito, código aberto e com os dados só no seu aparelho." />
+    <meta property="og:image" content="https://pcmdireto.me/apresentacao/compartilhar.jpg?v=20261026" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icones/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icones/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./src/estilo.css" />
+    <link rel="stylesheet" href="./src/gestao.css" />
+    <link rel="stylesheet" href="/fontes/fontes.css" />
+    <link rel="stylesheet" href="./src/identidade.css" />
+    <link rel="stylesheet" href="./src/comunidade.css" />
+    <!-- Aplica o tema escolhido antes de desenhar a página (evita piscar) -->
+    <script>document.documentElement.dataset.tema = 'claro';</script>
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="topo">
+      <h1 class="marca"><a href="#comunidade" aria-label="PCM Direto — início da comunidade"><img src="./marca/logo/PCM-Direto_horizontal-slogan_cor.svg" alt="PCM Direto — Manutenção planejada. Direto ao ponto." width="2134" height="802" fetchpriority="high"></a></h1>
+      <div class="acoes-cabecalho"><span class="selo-local">Neste aparelho</span><a class="botao secundario" href="#apoio">Central de apoio</a><a class="botao" href="#inicio">Meu PCM</a></div>
+      <nav aria-label="Navegação principal">
+        <ol class="etapas">
+<li class="extra"><a href="#comunidade" data-tela="comunidade"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg><span>Comunidade</span></a></li>
+<li class=""><a href="#semana" data-tela="semana"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z"/></svg><span>Visão geral</span></a></li>
+<li class=""><a href="#executar" data-tela="executar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H5v17h14V4h-4M9 3h6v4H9zM8 13l3 3 5-6"/></svg><span>Executar</span></a></li>
+<li class=""><a href="#ativos" data-tela="ativos"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 7 9-4 9 4-9 4zm0 5 9 4 9-4M3 17l9 4 9-4"/></svg><span>Ativos</span></a></li>
+<li class=""><a href="#falhas" data-tela="falhas"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 10 18H2zm0 6v5m0 3v1"/></svg><span>Falhas</span></a></li>
+<li class="extra"><a href="#planejar" data-tela="planejar"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v15H4zM4 9h16M8 3v4m8-4v4"/></svg><span>Planejar</span></a></li>
+<li class="extra"><a href="#biblioteca" data-tela="biblioteca"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7v16H4zm9 0h7v16h-7z"/></svg><span>Biblioteca técnica</span></a></li>
+<li class="extra"><a href="#entrega" data-tela="entrega"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10l4 4v14H5zm9 0v5h5M8 12h8m-8 4h8"/></svg><span>Documentos</span></a></li>
+<li class="extra"><a href="#dados" data-tela="dados"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zm4 9 4 4 4-4m-4-7v11"/></svg><span>Meus dados</span></a></li>
+<li class=""><a href="#mais" data-tela="mais"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Mais</span></a></li>
+        </ol>
+      </nav>
+      <nav aria-label="Gestão do PCM" class="atalhos" hidden>
+        <a href="#cadastros" data-tela="cadastros">Cadastros</a>
+        <a href="#criticidade" data-tela="criticidade">Criticidade</a>
+        <a href="#plano" data-tela="plano">Plano Mestre</a>
+        <a href="#mensal" data-tela="mensal">Mensal</a>
+        <a href="#execucao" data-tela="execucao">Execuções</a>
+        <a href="#falhas" data-tela="falhas">Falhas</a>
+      </nav>
+    </header>
+
+    <aside class="aviso-teste" aria-label="Situação da versão">
+      <strong>Versão de teste</strong> · Validação técnica e dos documentos em andamento.
+      <a href="#dados">Guarde um backup dos seus dados</a> antes de atualizar.
+    </aside>
+    <aside class="cartao erro" id="aviso-armazenamento" role="alert" hidden>
+      O navegador não conseguiu ler ou guardar todos os dados. As alterações desta sessão podem ser perdidas
+      ao fechar a página. Baixe os arquivos e a biblioteca antes de sair.
+    </aside>
+    <main id="conteudo" tabindex="-1"></main>
+
+    <!-- Mensagens curtas (ex.: "Ajuste salvo"), lidas também por leitores de tela -->
+    <p id="mensagens" class="mensagens" role="status" aria-live="polite"></p>
+
+    <footer class="rodape">
+      <p>PCM Direto · <a href="./conheca.html">Conheça o projeto</a> · <a href="https://github.com/td9251156-creator/pcm-direto" target="_blank" rel="noopener noreferrer">Código aberto · MIT</a> · dados da fábrica somente neste aparelho.</p>
+      <p><a href="#modelos">Modelos para sua rotina</a> · <a href="#apoio">Ajuda para usar o PCM</a> · <a href="#contribuir">Como contribuir</a> · <a href="#feedback">Contar minha experiência</a></p>
+      <!-- Aviso: discreto no rodapé de todas as telas; completo na planilha, no Word e no README -->
+      <p class="aviso-rodape" id="aviso-permanente">
+        O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o
+        texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante.
+      </p>
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
