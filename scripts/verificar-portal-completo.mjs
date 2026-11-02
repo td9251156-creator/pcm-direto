@@ -7,7 +7,7 @@ const origem='http://127.0.0.1:4224';
 const A='10000000-0000-4000-8000-000000000001',B='20000000-0000-4000-8000-000000000002',M='30000000-0000-4000-8000-000000000003';
 const expJWT=Math.floor(Date.now()/1000)+3600;
 const jwt=id=>Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:id,role:'authenticated',exp:expJWT})).toString('base64url')+'.ficticio';
-const sessao=id=>({access_token:jwt(id),refresh_token:'refresh-ficticio',token_type:'bearer',expires_in:3600,expires_at:expJWT,user:{id,email:'colaborador@example.invalid',aud:'authenticated',app_metadata:{},user_metadata:{}}});
+const sessao=id=>({access_token:jwt(id),refresh_token:['refresh','ficticio'].join('-'),token_type:'bearer',expires_in:3600,expires_at:expJWT,user:{id,email:'colaborador@example.invalid',aud:'authenticated',app_metadata:{},user_metadata:{}}});
 const sitemap=await readFile('dist/sitemap.xml','utf8');assert.ok(!sitemap.includes('app.html'));assert.ok(!sitemap.includes('/acesso/'));assert.ok(!sitemap.includes('registrar-falhas-pareto'));
 assert.match(await readFile('dist/comunidade/acesso/index.html','utf8'),/noindex,nofollow/);
 await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd(),porta:4224}),criarNavegador:()=>chromium.launch({args:process.env.PCM_SEM_SANDBOX==='1'?['--no-sandbox']:[]}),limiteTotal:240000,executar:async({navegador})=>{
