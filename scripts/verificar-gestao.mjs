@@ -40,7 +40,7 @@ await executarComRecursos({
   await page.setViewportSize({width:390,height:844});
   await page.locator('#explorar-modelos').click();assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
   await page.locator('#buscar-modelos').fill('criticidade');assert.equal(await page.locator('#banco-modelos article').count(),1);
-  await page.locator('#buscar-modelos').fill('termo-sem-resultados');await page.locator('#limpar-busca').click();assert.equal(await page.locator('#banco-modelos article').count(),19);assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
+  await page.locator('#buscar-modelos').fill('termo-sem-resultados');await page.locator('#limpar-busca').click();assert.equal(await page.locator('#banco-modelos article').count(),3);assert.equal(await page.evaluate(()=>document.activeElement.id),'buscar-modelos');
   await page.locator('#categoria-maquinas').click();assert.equal(await page.locator('#categoria-maquinas').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#banco-modelos article').count(),biblioteca.tipos.length);
   await page.locator('#buscar-modelos').fill('  ELETRICO rolamentos ');
   assert.equal(await page.locator('#banco-modelos article').count(),1);
@@ -60,6 +60,7 @@ await executarComRecursos({
     assert.equal((await readFile(await pdf.path())).subarray(0,5).toString(),'%PDF-');
   }
   await page.locator('#categoria-documentos').click();
+  await page.locator('#ver-todos-modelos').click();
   const [modelo]=await Promise.all([page.waitForEvent('download'),page.getByRole('link',{name:'Baixar Controle documental em Excel',exact:true}).click()]);
   assert.deepEqual(await readFile(await modelo.path()),await readFile('public/modelos/biblioteca-v2/PCM-MAN-001_Controle-Documental_R00.xlsx'));
   // Downloads da Comunidade são os 19 modelos da Biblioteca PCM v2; exemplos e prévias antigos foram retirados.

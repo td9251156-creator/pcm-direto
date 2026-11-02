@@ -19,7 +19,7 @@ import { telaFalhas } from './telas/falhas.js';
 import { telaBoasVindas,telaAssistente,telaPlanejar,telaSemana,telaOcorrencias,telaMais,telaMeusDados } from './telas/gestao-diaria.js';
 import { telaDashboards } from './telas/dashboards.js';
 import { telaApoio } from './telas/apoio.js';
-import { telaComunidade } from './telas/comunidade.js';
+import { telaComunidade, aberturaExemploPendente } from './telas/comunidade.js';
 import { telaCatalogo } from './telas/catalogo.js';
 import { registrarAtualizacao } from './servicos/atualizacao.js';
 import { acessoAtual } from './navegacao.js';
@@ -67,6 +67,7 @@ function ir(nome) {
 }
 
 let encerrarTela;
+let visitaNavegacao=0;
 
 function marcarNavegacao(atual) {
   const mobile = matchMedia('(max-width:1023px)').matches;
@@ -80,6 +81,15 @@ matchMedia('(max-width:1023px)').addEventListener('change',()=>marcarNavegacao(l
 
 /** Desenha a tela indicada no endereço. */
 function mostrar() {
+  const visita=++visitaNavegacao;
+  const abertura=aberturaExemploPendente();
+  if(abertura){
+    // A tela de destino só nasce após restaurar a base real se a exploração foi abandonada.
+    encerrarTela?.();encerrarTela=undefined;
+    const continuar=()=>{if(visita===visitaNavegacao)mostrar();};
+    abertura.then(continuar,continuar);
+    return;
+  }
   const nome = location.hash.slice(1).split('?')[0];
   // Endereços antigos de material interno levam ao catálogo útil para o usuário.
   if(nome==='marca'){location.replace('#modelos');return;}

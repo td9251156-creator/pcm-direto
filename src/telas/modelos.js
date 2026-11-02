@@ -1,13 +1,14 @@
 import {MODELOS_V2,GRUPOS_V2,VERSAO_BIBLIOTECA_V2,PROCEDIMENTOS_PRONTOS} from '../dados/modelos-v2.js';
 import {esc} from '../ui.js';
 import {correspondeBusca} from '../logica/texto.js';
+import {ligarOrientacaoModelos} from './orientacao-modelo.js';
 
 const filtros={busca:'',grupo:''};
 
 /** Cartão de download de um modelo da Biblioteca PCM v2 (também usado na Comunidade). */
 export function cartaoModeloV2(m,classe='modelo-documental'){
   const conteudo=m.abas.length?`<p class="origem"><strong>Contém:</strong> ${esc(m.abas.join(', '))}.</p>`:'<p class="origem"><strong>Contém:</strong> documento Word com controle de título, código, revisão e aprovação.</p>';
-  return `<article class="cartao ${classe}" aria-labelledby="modelo-${esc(m.codigo)}"><p class="sobretitulo">${esc(m.codigo)} · ${m.formato}${m.revisao?` · ${esc(m.revisao)}`:''}</p><h4 id="modelo-${esc(m.codigo)}">${esc(m.titulo)}</h4><p>${esc(m.quando)}</p>${conteudo}<div class="acoes"><a class="botao" href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em ${m.formato}">Baixar ${m.formato}</a></div></article>`;
+  return `<article class="cartao ${classe}" aria-labelledby="modelo-${esc(m.codigo)}"><p class="sobretitulo">${esc(m.codigo)} · ${m.formato}${m.revisao?` · ${esc(m.revisao)}`:''}</p><h4 id="modelo-${esc(m.codigo)}">${esc(m.titulo)}</h4><p>${esc(m.quando)}</p>${conteudo}<div class="acoes"><a class="botao" href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em ${m.formato}">Baixar ${m.formato}</a><button class="secundario" data-como-usar="${esc(m.codigo)}" aria-label="Como usar ${esc(m.titulo)}">Como usar</button></div></article>`;
 }
 
 export function telaModelos(main){
@@ -17,6 +18,7 @@ export function telaModelos(main){
     <section aria-labelledby="procedimentos-prontos"><h3 id="procedimentos-prontos">Procedimentos prontos</h3><p class="origem">Escritos a partir do modelo PCM-MAN-017. Ajuste responsáveis e locais à sua fábrica antes de aprovar.</p><div class="grade duas">${PROCEDIMENTOS_PRONTOS.map(m=>`<article class="cartao modelo-procedimento"><p class="sobretitulo">${esc(m.codigo)} · ${m.formato}</p><h4>${esc(m.titulo)}</h4><p>${esc(m.quando)}</p><div class="acoes"><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)}">Baixar Word</a></div></article>`).join('')}</div></section>
     <details class="cartao"><summary>Como usar os arquivos</summary><p>Abra o Excel no Excel ou LibreOffice e o Word em um editor compatível. Cada arquivo tem uma aba Leia-me com as orientações. Recalcule as fórmulas e confira a impressão.</p><p>Os arquivos baixados não sincronizam com o aplicativo nem entre si. Escolha onde manter cada controle e confira o conteúdo antes de usar. Gerar ou baixar um documento não o torna aprovado.</p><p class="origem">Biblioteca ${esc(VERSAO_BIBLIOTECA_V2)} · PCM Direto · MIT.</p></details>`;
   const input=main.querySelector('#buscar-documentos');const grupo=main.querySelector('#grupo-documentos');const lista=main.querySelector('#lista-documentos');
+  ligarOrientacaoModelos(lista);
   function render(){
     filtros.busca=input.value;filtros.grupo=grupo.value;
     const modelos=MODELOS_V2.filter(m=>(!grupo.value||m.grupo===grupo.value)&&correspondeBusca([m.codigo,m.titulo,m.quando,m.grupo,...m.abas].join(' '),input.value));
