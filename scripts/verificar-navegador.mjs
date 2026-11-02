@@ -20,3 +20,5 @@ await import('./verificar-ciencia.mjs');
 await import('./verificar-contribuir-feedback.mjs');
 
 await import("./verificar-portal.mjs");
+
+await import("./verificar-biblioteca-atualizacao.mjs");

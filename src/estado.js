@@ -7,7 +7,7 @@ import { novoId } from './logica/entrada.js';
 import { montarDados } from './logica/pacote.js';
 import { proximaSegunda, textoData } from './logica/cronograma.js';
 import { lerRascunho } from './logica/rascunho.js';
-import { verificarBibliotecaEditada } from './logica/edicao.js';
+import { verificarBibliotecaCompativel, atualizarBibliotecaAnterior } from './logica/edicao.js';
 import { validarExecucoes } from './logica/execucao.js';
 import { verificarBackup, criarBackup } from './logica/backup.js';
 import { abrirRepositorio } from './repositorio.js';
@@ -114,7 +114,8 @@ export function carregar() {
   estado.biblioteca = copia(padrao);
   estado.bibliotecaEditada = false;
   const biblioteca = lerLocal(CHAVE_BIBLIOTECA);
-  if (biblioteca && verificarBibliotecaEditada(padrao, biblioteca.valor).length === 0) {
+  if (biblioteca) biblioteca.valor = atualizarBibliotecaAnterior(biblioteca.valor, padrao);
+  if (biblioteca && verificarBibliotecaCompativel(padrao, biblioteca.valor).length === 0) {
     estado.biblioteca = biblioteca.valor;
     estado.bibliotecaEditada = true;
   } else if (biblioteca) preservar(CHAVE_BIBLIOTECA, biblioteca.original);

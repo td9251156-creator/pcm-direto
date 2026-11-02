@@ -1,0 +1,158 @@
+{
+  "proposta": {
+    "titulo": "Manipulador robotizado - proposta genérica",
+    "autor": "Agente Copilot (banco de máquinas)",
+    "data": "2026-11-01",
+    "fontes": [
+      {
+        "id": "F1",
+        "tipo": "base_generica",
+        "titulo": "Base genérica a validar com manual do fabricante",
+        "referencia": "",
+        "versao": "",
+        "data": ""
+      }
+    ]
+  },
+  "tipos": [
+    {
+      "id": "robos_e_manipuladores",
+      "nome": "Manipulador robotizado",
+      "sigla": "REM",
+      "tarefas": [
+        {
+          "id": "REM-01",
+          "descricao": "Inspecionar visualmente o manipulador robotizado",
+          "componente": "Conjunto da máquina",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Diária",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Confirmar pontos de inspeção e critérios de aceitação no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "REM-02",
+          "descricao": "Verificar limpeza, fixação e sinais de desgaste do manipulador robotizado",
+          "componente": "Estrutura e componentes",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Periodicidade, método e limites devem ser confirmados no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "REM-03",
+          "descricao": "Avaliar ruído, vibração e aquecimento anormal do manipulador robotizado",
+          "componente": "Conjunto motriz",
+          "tipo_tarefa": "PREDITIVA",
+          "exige_parada": false,
+          "periodicidade": "Trimestral",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Registrar a condição e ajustar o intervalo conforme o regime de uso.",
+          "fonte": "F1"
+        },
+        {
+          "id": "REM-04",
+          "descricao": "Inspecionar eixos, guias e garras quanto a folga, desgaste e fixação",
+          "componente": "Eixos e garras",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Base genérica a validar com manual do fabricante; confirmar componente, critério, periodicidade e duração.",
+          "fonte": "F1"
+        },
+        {
+          "id": "REM-05",
+          "descricao": "Verificar controlador, cabos móveis e sinais de alarme do manipulador",
+          "componente": "Controlador e cabos móveis",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Trimestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Base genérica a validar com manual do fabricante; confirmar componente, critério, periodicidade e duração.",
+          "fonte": "F1"
+        },
+        {
+          "id": "REM-06",
+          "descricao": "Inspecionar fixações, estrutura e sinais de ruído ou vibração anormal do conjunto principal",
+          "componente": "Fixações e estrutura",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "REM-07",
+          "descricao": "Verificar limpeza e condição do painel e do acionamento elétrico, quando existentes",
+          "componente": "Painel e acionamento elétrico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Semestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        }
+      ],
+      "modos_falha": [
+        {
+          "componente": "Conjunto da máquina",
+          "modo": "Desempenho fora do esperado",
+          "efeito": "Parada ou perda de qualidade do processo",
+          "causa": "Desgaste, sujeira ou ajuste inadequado",
+          "controle": "REM-01 e REM-03"
+        }
+      ],
+      "itens_checklist": [
+        {
+          "item": "Estado geral sem dano visível",
+          "criterio": "Sem vazamentos, trincas, fixações soltas ou sinais novos de deterioração"
+        },
+        {
+          "item": "Ruído, vibração e aquecimento dentro do histórico",
+          "criterio": "Sem alteração anormal em relação à condição de referência"
+        }
+      ],
+      "pecas_criticas": [
+        {
+          "peca": "Elemento de desgaste do equipamento",
+          "especificacao": "Conforme o manual do fabricante",
+          "quantidade_sugerida": 1
+        }
+      ]
+    }
+  ],
+  "tarefasNovas": []
+}

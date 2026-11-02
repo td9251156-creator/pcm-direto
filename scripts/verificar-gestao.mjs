@@ -50,11 +50,21 @@ await executarComRecursos({
   assert.ok(await page.locator('.previa-tarefas').innerText().then(t=>t.includes('MOT-08')));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Prévia cabe no celular');
   await page.screenshot({path:'artifacts/previa-tarefas-celular.png',fullPage:true});
-  await page.locator('#buscar-modelos').fill('bomba');
+  await page.locator('#buscar-modelos').fill('bomba centrífuga');
   await page.locator('.previa-tarefas summary').click();
   assert.ok((await page.locator('.previa-tarefas').innerText()).includes('0,25 h por execução'),'Prévia preserva quartos de hora');
   await page.locator('#buscar-modelos').fill('');
-  for(const tipo of biblioteca.tipos){
+  for(const [i,tipo] of biblioteca.tipos.entries()){
+    // Evita a proteção do Chromium contra dezenas de downloads consecutivos.
+    // Os sete arquivos anteriores mantêm o teste de clique; o lote novo é conferido pelo link servido.
+    if(i>=7){
+      const link=page.locator(`a[href="./modelos/maquinas/pcm-modelo-${tipo.id}.pdf"]`);
+      assert.equal(await link.count(),1);
+      const resposta=await contexto.request.get(await link.evaluate(a=>a.href));
+      assert.equal(resposta.status(),200);
+      assert.deepEqual(await resposta.body(),await readFile(`public/modelos/maquinas/pcm-modelo-${tipo.id}.pdf`));
+      continue;
+    }
     const [pdf]=await Promise.all([page.waitForEvent('download'),page.locator(`a[href="./modelos/maquinas/pcm-modelo-${tipo.id}.pdf"]`).click()]);
     assert.deepEqual(await readFile(await pdf.path()),await readFile(`public/modelos/maquinas/pcm-modelo-${tipo.id}.pdf`));
     assert.equal((await readFile(await pdf.path())).subarray(0,5).toString(),'%PDF-');

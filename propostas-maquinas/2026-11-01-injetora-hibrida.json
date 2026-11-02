@@ -1,0 +1,309 @@
+{
+  "proposta": {
+    "titulo": "Injetora híbrida - proposta genérica",
+    "autor": "Agente Copilot (banco de máquinas)",
+    "data": "2026-11-01",
+    "fontes": [
+      {
+        "id": "F1",
+        "tipo": "base_generica",
+        "titulo": "Base genérica a validar com manual do fabricante",
+        "referencia": "",
+        "versao": "",
+        "data": ""
+      }
+    ]
+  },
+  "tipos": [
+    {
+      "id": "injetora_hibrida",
+      "nome": "Injetora híbrida",
+      "sigla": "IHY",
+      "tarefas": [
+        {
+          "id": "IHY-01",
+          "descricao": "Inspecionar visualmente vazamentos no circuito hidráulico e o estado dos acionamentos elétricos",
+          "componente": "Circuitos hidráulico e elétrico",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Diária",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Confirmar os pontos de inspeção e os limites aceitáveis no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-02",
+          "descricao": "Conferir nível e condição do óleo hidráulico e registrar ruídos ou vibração anormal",
+          "componente": "Unidade hidráulica",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Semanal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Tipo de óleo, nível e critérios de condição devem ser confirmados no manual.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-03",
+          "descricao": "Verificar a lubrificação das guias, fusos e articulações do conjunto de fechamento",
+          "componente": "Guias, fusos e articulações",
+          "tipo_tarefa": "LUBRIFICACAO",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Produto, quantidade e pontos de aplicação devem ser confirmados no manual.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-04",
+          "descricao": "Limpar filtros de ventilação do painel e verificar o resfriamento da unidade hidráulica",
+          "componente": "Painel e resfriamento hidráulico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Desenergizar e bloquear a máquina antes de acessar o painel; a tarefa controla risco de contato com partes energizadas.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-05",
+          "descricao": "Testar as proteções móveis, intertravamentos e parada de emergência",
+          "componente": "Proteções e comandos de segurança",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": true,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Não operar a máquina se uma proteção ou parada de emergência não atuar; confirmar o procedimento no manual.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-06",
+          "descricao": "Inspecionar alinhamento, folgas e sincronismo entre os acionamentos hidráulico e elétrico",
+          "componente": "Conjunto de fechamento e acionamentos",
+          "tipo_tarefa": "PREDITIVA",
+          "exige_parada": true,
+          "periodicidade": "Trimestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 1,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Critérios de alinhamento, folga e sincronismo devem ser confirmados no manual.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-07",
+          "descricao": "Lubrificar os pontos previstos do mecanismo de fechamento",
+          "componente": "Lubrificação",
+          "tipo_tarefa": "LUBRIFICACAO",
+          "exige_parada": false,
+          "periodicidade": "Semanal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-08",
+          "descricao": "Verificar nível do óleo hidráulico",
+          "componente": "Circuito hidráulico",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Semanal",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-09",
+          "descricao": "Inspecionar vazamentos de óleo no circuito hidráulico",
+          "componente": "Circuito hidráulico",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Semanal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-10",
+          "descricao": "Verificar a temperatura do óleo hidráulico",
+          "componente": "Circuito hidráulico",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Semanal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-11",
+          "descricao": "Inspecionar mangueiras hidráulicas e pneumáticas",
+          "componente": "Mangueiras e conexões",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Bimestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-12",
+          "descricao": "Limpar o trocador de calor e verificar sua condição",
+          "componente": "Trocador de calor",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Bimestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-13",
+          "descricao": "Limpar ou substituir o filtro de óleo conforme a condição",
+          "componente": "Filtro hidráulico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Semestral",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-14",
+          "descricao": "Avaliar a troca do óleo hidráulico conforme condição e manual",
+          "componente": "Circuito hidráulico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Anual",
+          "especialidade": "Lubrificação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Atividade derivada de uma tabela operacional fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-15",
+          "descricao": "Inspecionar fixações, estrutura e sinais de ruído ou vibração anormal do conjunto principal",
+          "componente": "Fixações e estrutura",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "IHY-16",
+          "descricao": "Verificar limpeza e condição do painel e do acionamento elétrico, quando existentes",
+          "componente": "Painel e acionamento elétrico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Semestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        }
+      ],
+      "modos_falha": [
+        {
+          "componente": "Unidade hidráulica",
+          "modo": "Perda de pressão no circuito",
+          "efeito": "Ciclo incompleto e força de fechamento insuficiente",
+          "causa": "Vazamento, filtro saturado ou desgaste de componente",
+          "controle": "Inspeção diária de vazamentos e verificação semanal do óleo (IHY-01 e IHY-02)"
+        },
+        {
+          "componente": "Acionamentos hidráulico e elétrico",
+          "modo": "Perda de sincronismo",
+          "efeito": "Movimento irregular e produto fora de especificação",
+          "causa": "Desalinhamento, falha de sensor ou ajuste inadequado",
+          "controle": "Inspeção trimestral de alinhamento e sincronismo (IHY-06)"
+        }
+      ],
+      "itens_checklist": [
+        {
+          "item": "Não há vazamento de óleo hidráulico",
+          "criterio": "Mangueiras, conexões e reservatório sem óleo escorrendo ou acumulado"
+        },
+        {
+          "item": "Acionamentos trabalham sem ruído ou vibração anormal",
+          "criterio": "Condição comparável ao histórico e sem sinais novos de falha"
+        },
+        {
+          "item": "Proteções, intertravamentos e parada de emergência funcionam",
+          "criterio": "A máquina impede ou interrompe o movimento perigoso conforme o procedimento"
+        }
+      ],
+      "pecas_criticas": [
+        {
+          "peca": "Elemento filtrante hidráulico",
+          "especificacao": "Dimensão e capacidade conforme o manual do fabricante",
+          "quantidade_sugerida": 1
+        },
+        {
+          "peca": "Sensor de intertravamento",
+          "especificacao": "Modelo compatível com o sistema de segurança da máquina",
+          "quantidade_sugerida": 1
+        }
+      ]
+    }
+  ],
+  "tarefasNovas": []
+}
