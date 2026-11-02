@@ -4,7 +4,7 @@
 
 Free, MIT-licensed maintenance planning software for technicians and small operations with up to 100 assets. The interface is in Brazilian Portuguese. The app runs in the browser and supports offline operation after its resources have loaded.
 
-It includes asset registration and TAG validation, preventive plans, plan revisions, task execution, failure records and local backups. The library provides 19 free PCM-MAN templates: 16 Excel files and three Word documents. Seven equipment types contain 64 reference tasks with declared source and version. Generic maintenance tasks must be checked against manufacturer instructions and qualified professional assessment.
+It includes asset registration and TAG validation, preventive plans, plan revisions, task execution, failure records and local backups. The library provides 19 free PCM-MAN templates: 16 Excel files and three Word documents. 47 equipment types contain 380 reference tasks with declared source and version. Generic maintenance tasks must be checked against manufacturer instructions and qualified professional assessment.
 
 **Test version:** templates are under development (R00). Generated documents require review. The app does not certify regulatory compliance or guarantee outcomes.
 
