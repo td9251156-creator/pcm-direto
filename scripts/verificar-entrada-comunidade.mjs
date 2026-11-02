@@ -11,7 +11,7 @@ await executarComRecursos({
     const contexto=await navegador.newContext({viewport:{width:390,height:844},acceptDownloads:true});
     await contexto.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());
     const p=await contexto.newPage();const erros=[];p.on('pageerror',e=>erros.push(e.message));
-    const ir=async rota=>{await p.goto('http://127.0.0.1:4201/#'+rota);await p.locator('#conteudo h2').first().waitFor();};
+    const ir=async rota=>{await p.goto('http://127.0.0.1:4201/app.html#'+rota);await p.locator('#conteudo h2').first().waitFor();};
     const lista=p.locator('#banco-modelos article');
     await ir('comunidade');await lista.first().waitFor();assert.equal(await lista.count(),3);
     const ids=()=>lista.locator('h4').evaluateAll(es=>es.map(e=>e.id));

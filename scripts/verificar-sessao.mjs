@@ -50,12 +50,12 @@ await executarComRecursos({
     const pagina = await contexto.newPage();
     const erros = [];
     pagina.on('pageerror', e => erros.push(e.message));
-    await pagina.goto('http://127.0.0.1:4177/#catalogo');
+    await pagina.goto('http://127.0.0.1:4177/app.html#catalogo');
     await pagina.locator('[data-login]').waitFor();
     canal = await pagina.evaluate(() => window.canalAuthTeste);
     assert.ok(canal, 'O SDK criou seu canal de sessão');
     const outra = await contexto.newPage();
-    await outra.goto('http://127.0.0.1:4177/#apoio');
+    await outra.goto('http://127.0.0.1:4177/app.html#apoio');
     const sessao = { user: { id: '00000000-0000-4000-8000-000000000001', email: 'colaborador@example.invalid' } };
     async function emitir(evento, valor) {
       await outra.evaluate(({ canal, evento, valor }) => {

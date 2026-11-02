@@ -16,7 +16,7 @@ await executarComRecursos({
     const c = await navegador.newContext({ serviceWorkers: 'block', acceptDownloads: true, viewport: { width: 1280, height: 900 } });
     await c.addInitScript(() => { const Original = Date; window.Date = class extends Original { constructor(...a) { super(...(a.length ? a : ['2026-10-27T12:00:00'])); } static now() { return new Original('2026-10-27T12:00:00').getTime(); } }; });
     const p = await c.newPage(); const erros = []; p.on('pageerror', e => erros.push(e.message));
-    const ir = async r => { if (!p.url().startsWith('http://127.0.0.1:4199/app.html')) await p.goto(`http://127.0.0.1:4199/#${r}`); else await p.evaluate(r => { location.hash = r; }, r); await p.locator('#conteudo h2').waitFor(); await p.waitForTimeout(100); };
+    const ir = async r => { if (!p.url().startsWith('http://127.0.0.1:4199/app.html')) await p.goto(`http://127.0.0.1:4199/app.html#${r}`); else await p.evaluate(r => { location.hash = r; }, r); await p.locator('#conteudo h2').waitFor(); await p.waitForTimeout(100); };
     await ir('cadastros');
     const metas = p.locator('#form-metas');
     assert.equal(await metas.locator('a[href="#mensal"]').count(), 1, 'Metas orienta e dá acesso aos indicadores disponíveis');
