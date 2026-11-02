@@ -24,6 +24,7 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | LibreOffice não está instalado nesta máquina. |
 | P15 | Revisões nos modelos para integrar melhor (lista abaixo) | Média | **Aguardando arquivos do mantenedor** | M1–M11 | Cada arquivo novo: hash no manifesto, testes e conferência no Excel. |
 | P16 | Publicações de 01/11/2026 | — | **Publicado** | — | PRs #45 a #51: só Biblioteca v2, modelos revisados, D1, IAs, D4 e D5. |
+| UX1 (item 1) | Plano Mestre recolhido por ativo, com filtros combinados | Alta | **Em validação no PR** | Revisão do mantenedor | Nove ativos em 390 px com menos de 6.000 px; setor, especialidade, sem responsável e busca; teclado e rótulos. Leitor de tela real pendente. |
 
 ### Decisões do mantenedor (01/11/2026)
 
