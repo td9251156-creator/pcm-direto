@@ -1,6 +1,6 @@
 // Catálogo de downloads da Biblioteca PCM v2. Arquivo, revisão e abas vêm do manifesto conferido por hash;
 // aqui ficam apenas título com acentos, finalidade e uma orientação curta de uso, sem regras técnicas.
-import manifesto from './biblioteca-pcm-v2.json';
+import manifesto from './biblioteca-pcm-v2.json' with { type: 'json' };
 
 const TEXTOS = {
   'PCM-MAN-001': ['Controle documental', 'Documentação', 'Para saber quais documentos estão em uso, em que revisão e quem responde por eles.'],

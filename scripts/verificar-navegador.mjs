@@ -22,3 +22,5 @@ await import('./verificar-contribuir-feedback.mjs');
 await import("./verificar-portal.mjs");
 
 await import("./verificar-biblioteca-atualizacao.mjs");
+
+await import("./verificar-catalogo-publico.mjs");
