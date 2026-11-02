@@ -37,7 +37,7 @@ await executarComRecursos({
       await p.getByRole('button',{name:'Como usar Ordens de serviço',exact:true}).click();
       assert.equal(await dialogo.evaluate(d=>d.scrollWidth<=d.clientWidth),true);await p.keyboard.press('Escape');
     }
-    await p.locator('#categoria-maquinas').click();assert.equal(await lista.count(),7);
+    await p.locator('#categoria-maquinas').click();assert.equal(await lista.count(),JSON.parse(await readFile(new URL('../src/dados/biblioteca.json',import.meta.url),'utf8')).tipos.length);
     await p.locator('#buscar-modelos').fill('motor');await p.locator('.previa-tarefas summary').first().click();assert.ok(await p.locator('.previa-tarefas').first().locator('li').count()>0);
     await p.locator('[data-caminho=os]').click();await aguardarOffline(p);await contexto.setOffline(true);
     await p.reload();await lista.first().waitFor();await p.getByRole('button',{name:'Como usar Ordens de serviço',exact:true}).click();

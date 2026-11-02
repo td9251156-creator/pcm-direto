@@ -1,0 +1,158 @@
+{
+  "proposta": {
+    "titulo": "Prensa de vulcanização - proposta genérica",
+    "autor": "Agente Copilot (banco de máquinas)",
+    "data": "2026-11-01",
+    "fontes": [
+      {
+        "id": "F1",
+        "tipo": "base_generica",
+        "titulo": "Base genérica a validar com manual do fabricante",
+        "referencia": "",
+        "versao": "",
+        "data": ""
+      }
+    ]
+  },
+  "tipos": [
+    {
+      "id": "prensas_de_vulcanizacao",
+      "nome": "Prensa de vulcanização",
+      "sigla": "PDV",
+      "tarefas": [
+        {
+          "id": "PDV-01",
+          "descricao": "Inspecionar visualmente a prensa de vulcanização",
+          "componente": "Conjunto da máquina",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Diária",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Confirmar pontos de inspeção e critérios de aceitação no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "PDV-02",
+          "descricao": "Verificar limpeza, fixação e sinais de desgaste da prensa de vulcanização",
+          "componente": "Estrutura e componentes",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Periodicidade, método e limites devem ser confirmados no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "PDV-03",
+          "descricao": "Avaliar ruído, vibração e aquecimento anormal da prensa de vulcanização",
+          "componente": "Conjunto motriz",
+          "tipo_tarefa": "PREDITIVA",
+          "exige_parada": false,
+          "periodicidade": "Trimestral",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Registrar a condição e ajustar o intervalo conforme o regime de uso.",
+          "fonte": "F1"
+        },
+        {
+          "id": "PDV-04",
+          "descricao": "Inspecionar placas, molde e superfícies de contato quanto a desgaste e condição",
+          "componente": "Placas e molde de vulcanização",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Base genérica a validar com manual do fabricante; confirmar componente, critério, periodicidade e duração.",
+          "fonte": "F1"
+        },
+        {
+          "id": "PDV-05",
+          "descricao": "Verificar aquecimento, sensores e indicação do ciclo de vulcanização",
+          "componente": "Aquecimento e controle do ciclo",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Trimestral",
+          "especialidade": "Instrumentação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Base genérica a validar com manual do fabricante; confirmar componente, critério, periodicidade e duração.",
+          "fonte": "F1"
+        },
+        {
+          "id": "PDV-06",
+          "descricao": "Inspecionar fixações, estrutura e sinais de ruído ou vibração anormal do conjunto principal",
+          "componente": "Fixações e estrutura",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "PDV-07",
+          "descricao": "Verificar limpeza e condição do painel e do acionamento elétrico, quando existentes",
+          "componente": "Painel e acionamento elétrico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Semestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        }
+      ],
+      "modos_falha": [
+        {
+          "componente": "Conjunto da máquina",
+          "modo": "Desempenho fora do esperado",
+          "efeito": "Parada ou perda de qualidade do processo",
+          "causa": "Desgaste, sujeira ou ajuste inadequado",
+          "controle": "PDV-01 e PDV-03"
+        }
+      ],
+      "itens_checklist": [
+        {
+          "item": "Estado geral sem dano visível",
+          "criterio": "Sem vazamentos, trincas, fixações soltas ou sinais novos de deterioração"
+        },
+        {
+          "item": "Ruído, vibração e aquecimento dentro do histórico",
+          "criterio": "Sem alteração anormal em relação à condição de referência"
+        }
+      ],
+      "pecas_criticas": [
+        {
+          "peca": "Elemento de desgaste do equipamento",
+          "especificacao": "Conforme o manual do fabricante",
+          "quantidade_sugerida": 1
+        }
+      ]
+    }
+  ],
+  "tarefasNovas": []
+}

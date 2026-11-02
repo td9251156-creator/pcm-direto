@@ -3,6 +3,7 @@
 // desmarcadas como segurança nem apagadas (regra 5 do produto).
 import { vezesPorAno, validarBiblioteca } from './plano.js';
 import { chave } from './texto.js';
+import anterior from '../dados/biblioteca-0.2.0.json';
 
 export const ORIGEM_USUARIO = 'definida pelo usuário, confirmar com manual do fabricante';
 
@@ -93,4 +94,53 @@ export function novoTipo(bib, nome, sigla) {
   if (bib.tipos.some((t) => t.id === id)) return { ok: false, motivo: 'Já existe um tipo com esse nome.' };
   if (bib.tipos.some((t) => t.sigla === s)) return { ok: false, motivo: `A sigla ${s} já está em uso.` };
   return { ok: true, tipo: { id, nome: String(nome).trim(), sigla: s, tarefas: [] } };
+}
+
+/** Atualização aditiva da biblioteca 0.2.0: mantém edições e nunca altera revisões salvas.
+ * Conflitos ou arquivos inválidos voltam intactos para o fluxo de recuperação existente.
+ */
+export function atualizarBibliotecaAnterior(bib, padrao) {
+  if (bib?.versao !== anterior.versao || padrao.versao !== '0.3.0' ||
+      verificarBibliotecaEditada(anterior, bib).length) return bib;
+  const nova = JSON.parse(JSON.stringify(bib));
+  const ids = new Set(nova.tipos.flatMap(t => t.tarefas.map(x => x.id)));
+  for (const tipo of padrao.tipos) {
+    const antigo = anterior.tipos.find(t => t.id === tipo.id);
+    const atual = nova.tipos.find(t => t.id === tipo.id);
+    if (!antigo) {
+      if (atual || nova.tipos.some(t => t.sigla === tipo.sigla) || tipo.tarefas.some(t => ids.has(t.id))) return bib;
+      nova.tipos.push(JSON.parse(JSON.stringify(tipo)));
+      tipo.tarefas.forEach(t => ids.add(t.id));
+    } else {
+      for (const tarefa of tipo.tarefas.filter(t => !antigo.tarefas.some(x => x.id === t.id))) {
+        if (ids.has(tarefa.id)) return bib;
+        atual.tarefas.push(JSON.parse(JSON.stringify(tarefa)));
+        ids.add(tarefa.id);
+      }
+    }
+  }
+  nova.versao = padrao.versao;
+  nova.data = padrao.data;
+  return verificarBibliotecaEditada(padrao, nova).length ? bib : nova;
+}
+
+/** Uma biblioteca anterior válida com conflito continua operável, sem incorporar o lote parcial. */
+export function verificarBibliotecaCompativel(padrao, bib) {
+  const referencia = bib?.versao === anterior.versao && padrao.versao === '0.3.0' ? anterior : padrao;
+  const problemas = verificarBibliotecaEditada(referencia, bib);
+  if (problemas.length || referencia === padrao) return problemas;
+  // O rótulo antigo não pode liberar uma biblioteca nova reetiquetada.
+  for (const tipo of padrao.tipos.filter(t => !anterior.tipos.some(a => a.id === t.id))) {
+    const atual = bib.tipos.find(t => t.id === tipo.id);
+    if (!atual) continue;
+    const identificaTipo = (atual.nome === tipo.nome && atual.sigla === tipo.sigla) ||
+      atual.tarefas.some(t => tipo.tarefas.some(x => x.id === t.id));
+    if (!identificaTipo) continue;
+    for (const tarefa of tipo.tarefas.filter(t => t.seguranca)) {
+      const editada = atual.tarefas.find(t => t.id === tarefa.id);
+      if (!editada) problemas.push(`${tarefa.id}: tarefa de segurança não pode ser retirada.`);
+      else { const r = verificarTarefa(padrao, editada); if (!r.ok) problemas.push(r.motivo); }
+    }
+  }
+  return problemas;
 }

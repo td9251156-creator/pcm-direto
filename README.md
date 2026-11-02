@@ -14,7 +14,7 @@ Software livre e gratuito para técnicos e pequenas operações de manutenção 
 - **Planejamento:** cadastro, colagem, CSV e XLSX; TAGs com validação e sugestões; criticidade por quatro notas de 1 a 5; tarefas, capacidade e revisões com prévia de impacto.
 - **Rotina local:** execução por ocorrência, histórico, falhas, fotos, registro de ciência, janelas de parada, etiquetas QR e dashboards. Ciência não é aprovação técnica nem comprovação de identidade.
 - **Documentos:** cópias preenchidas dos modelos da Biblioteca v2, por documento, com revisão e data de corte. Alguns recebem conteúdo operacional; outros, apenas cadastros e identificação. O PCM-MAN-011 por ativo e ano é gerado em Mensal.
-- **Biblioteca técnica:** sete tipos e 64 tarefas com origem e versão declaradas como base genérica. Isso não comprova validação com manuais de fabricantes.
+- **Biblioteca técnica:** 47 tipos e 380 tarefas com origem e versão declaradas como base genérica. Isso não comprova validação com manuais de fabricantes.
 - **Meus dados:** backup JSON versão 3 com prévia de restauração, compatível com versões 1 e 2, e lembrete de backup.
 - **Comunidade opcional:** modelos de máquinas, curtidas, comentários, denúncias e moderação. A conta online é para contribuir; não sincroniza a operação da fábrica.
 

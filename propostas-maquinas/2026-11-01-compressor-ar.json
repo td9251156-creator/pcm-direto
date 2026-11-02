@@ -1,0 +1,74 @@
+{
+  "proposta": {
+    "titulo": "Compressor de ar - proposta genérica",
+    "autor": "Agente Copilot (banco de máquinas)",
+    "data": "2026-11-01",
+    "fontes": [
+      {
+        "id": "F1",
+        "tipo": "base_generica",
+        "titulo": "Base genérica a validar com manual do fabricante",
+        "referencia": "",
+        "versao": "",
+        "data": ""
+      }
+    ]
+  },
+  "tipos": [],
+  "tarefasNovas": [
+    {
+      "tipo": "compressor_ar",
+      "tarefa": {
+        "id": "CMP-11",
+        "descricao": "Inspecionar a linha de descarga e os pontos de travamento de pressão",
+        "componente": "Linha de serviço",
+        "tipo_tarefa": "PREVENTIVA",
+        "exige_parada": false,
+        "periodicidade": "Mensal",
+        "especialidade": "Mecânica",
+        "duracao_horas": 0.5,
+        "seguranca": false,
+        "origem": "base genérica a validar com manual do fabricante",
+        "versao": "0.1.0",
+        "observacao": "Verificar vazamentos, fixação de mangueiras e ocorrência de ruídos em válvulas e conexões.",
+        "fonte": "F1"
+      }
+    },
+    {
+      "tipo": "compressor_ar",
+      "tarefa": {
+        "id": "CMP-12",
+        "descricao": "Conferir termografia e vibração das partes móveis do conjunto compressor",
+        "componente": "Conjunto motriz",
+        "tipo_tarefa": "PREDITIVA",
+        "exige_parada": false,
+        "periodicidade": "Trimestral",
+        "especialidade": "Preditiva",
+        "duracao_horas": 1,
+        "seguranca": false,
+        "origem": "base genérica a validar com manual do fabricante",
+        "versao": "0.1.0",
+        "observacao": "Ajustar o intervalo conforme a carga de operação e as condições ambientais da área.",
+        "fonte": "F1"
+      }
+    },
+    {
+      "tipo": "compressor_ar",
+      "tarefa": {
+        "id": "CMP-13",
+        "descricao": "Verificar funcionamento do secador de ar e o estado do filtro de separação",
+        "componente": "Tratamento de ar comprimido",
+        "tipo_tarefa": "INSPECAO",
+        "exige_parada": false,
+        "periodicidade": "Mensal",
+        "especialidade": "Operação",
+        "duracao_horas": 0.5,
+        "seguranca": false,
+        "origem": "base genérica a validar com manual do fabricante",
+        "versao": "0.1.0",
+        "observacao": "Conferir a umidade do ar e a frequência ideal para a carga de trabalho do processo.",
+        "fonte": "F1"
+      }
+    }
+  ]
+}
