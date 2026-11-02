@@ -75,6 +75,48 @@ await executarComRecursos({
   await ir('dados');await page.locator('#restaurar-backup').setInputFiles({name:'antigo.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(v1))});await page.locator('#confirmar-backup').click();await page.waitForURL('**/#semana');assert.equal((await rascunho()).equipamentos.length,equipamentos.length);
   await ir('equipamentos');await page.locator('.pular').focus();await page.keyboard.press('Enter');assert.equal(await page.evaluate(()=>document.activeElement.id),'conteudo');assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await ir('cadastros');await page.locator('#g-nome').fill('Indústria Exemplo');await page.locator('#g-pessoa-nome').fill('Pessoa A');await page.locator('#g-funcao').fill('Responsável fictício');await page.locator('#g-especialidade').fill('Elétrica');await page.locator('#salvar-pessoa').click();await page.getByRole('button',{name:'Editar Pessoa A',exact:true}).waitFor();assert.equal(await page.locator('#g-nome').inputValue(),'Indústria Exemplo');await page.locator('#salvar-organizacao').click();
+  // Plano Mestre: nove ativos recolhidos e filtros que se combinam no celular.
+  await ir('plano');
+  assert.equal(await page.locator('#lista-plano > details').count(),9,'Um grupo por ativo');
+  assert.equal(await page.locator('#lista-plano > details[open]').count(),0,'Ativos começam recolhidos');
+  const alturaPlano=await page.evaluate(()=>document.documentElement.scrollHeight);
+  assert.ok(alturaPlano<6000,`Plano recolhido mede ${alturaPlano} px em 390 px`);
+  const primeiroGrupo=page.locator('#lista-plano > details').first();
+  const resumo=primeiroGrupo.locator('summary');await resumo.focus();await resumo.press('Enter');
+  assert.equal(await primeiroGrupo.evaluate(e=>e.open),true,'Enter abre o ativo');
+  const atribuicao=primeiroGrupo.locator('select').first();const idAtribuicao=await atribuicao.getAttribute('id');
+  await atribuicao.selectOption({label:'Pessoa A'});
+  await page.waitForFunction(id=>document.activeElement?.id===id,idAtribuicao);
+  assert.equal(await primeiroGrupo.evaluate(e=>e.open),true,'Salvar preserva seção aberta e foco');
+  const especialidade=await primeiroGrupo.locator('tbody tr').first().locator('td').nth(2).innerText();
+  await page.getByLabel('Setor', {exact:true}).selectOption('UTL');
+  await page.getByLabel('Especialidade', {exact:true}).selectOption(especialidade);
+  await page.locator('#busca-plano').fill('compressor');
+  assert.equal(await page.locator('#lista-plano > details').count(),2,'Busca, setor e especialidade combinados');
+  await page.getByLabel('Somente tarefas sem responsável').check();
+  assert.equal(await page.locator('#lista-plano > details').count(),1,'Só o compressor com tarefa de Operação sem responsável permanece');
+  assert.equal(await page.locator('#lista-plano tbody tr').count(),1);
+  await page.locator('#lista-plano summary').click();
+  assert.ok((await page.locator('#lista-plano').innerText()).includes('CMP-01'));
+  await page.locator('#lista-plano summary').click();
+  assert.equal(await page.locator(`#${idAtribuicao}`).count(),0,'Tarefa atribuída sai do filtro sem responsável');
+  assert.ok((await page.locator('#resumo-plano').innerText()).includes('tarefas'));
+  await page.locator('#busca-plano').fill('inexistente');
+  assert.equal(await page.locator('#lista-plano > details').count(),0);
+  await page.getByRole('button',{name:'Limpar filtros',exact:true}).click();
+  assert.equal(await page.locator('#lista-plano > details').count(),9);
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'busca-plano');
+  for(const largura of [390,1280]){
+    await page.setViewportSize({width:largura,height:844});
+    await page.locator('#lista-plano summary').first().focus();
+    await page.locator('#lista-plano summary').first().press('Enter');
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Plano cabe na tela');
+    const nome=await page.locator('#lista-plano summary').first().getAttribute('aria-label');
+    assert.ok(nome.includes('tarefas'),'Grupo tem nome e contagem acessíveis');
+    await page.locator('#lista-plano summary').first().press('Space');
+  }
+  await page.setViewportSize({width:390,height:844});
+  console.log(`Plano Mestre: nove ativos, altura ${alturaPlano} px, filtros combinados, atribuição e teclado aprovados.`);
   await ir('criticidade');assert.equal(await page.locator('.avaliacao').first().locator('select').count(),4);for(const [i,nota]of [5,1,1,1].entries())await page.locator('.avaliacao').first().locator(`[name="nota-${i}"]`).selectOption(String(nota));await page.locator('.avaliacao').first().getByRole('button').click();await page.waitForFunction(()=>document.querySelector('.avaliacao')?.textContent.includes('Classe: A'));
   await ir('revisao');const cap=page.locator('.capacidade').first();await cap.focus();const capId=await cap.getAttribute('id');await cap.press('ArrowUp');await page.waitForFunction(id=>document.activeElement?.id===id,capId);await cap.press('ArrowUp');await page.waitForFunction(id=>document.activeElement?.id===id,capId);assert.equal(Number(await cap.inputValue()),1);
   // Atrasa a confirmação da próxima escrita para sair da tela durante o salvamento.

@@ -15,22 +15,49 @@ export function telaPlano(main) {
   const dados = dadosAtuais(); const hoje = textoData(new Date());
   const previstas = ocorrenciasPlanejadas(dados);
   const concluidas = new Set(estado.gestao.historico.filter(h => !h.cancelada && h.dataPrevista).map(h => `${h.equipamentoId}|${h.tarefaId}|${h.dataPrevista}`));
-  main.innerHTML = `<section class="cartao"><h2>Plano Mestre</h2><p>Uma linha por tarefa ativa, derivada da biblioteca e dos ajustes já revisados. A próxima data abaixo é uma ocorrência planejada, não uma nova regra de vencimento.</p><p><a href="#revisao">Editar frequências e capacidade na Revisão</a> · <a href="#mensal">Ver planejamento mensal</a> · <a href="#execucao">Registrar execução</a></p><label for="busca-plano">Buscar TAG, atividade ou especialidade</label><input id="busca-plano" type="search" placeholder="Ex.: UTL ou lubrificação"></section><section class="cartao"><div id="lista-plano"></div></section>`;
+  const ativos = new Map(dados.equipamentos.map(e => [e.id, e]));
+  const opcoes = valores => [...new Set(valores.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR')).map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  main.innerHTML = `<section class="cartao"><h2>Plano Mestre</h2><p>Abra um ativo para consultar suas tarefas ativas, derivadas da biblioteca e dos ajustes já revisados. A próxima data é uma ocorrência planejada, não uma nova regra de vencimento.</p><p><a href="#revisao">Editar frequências e capacidade na Revisão</a> · <a href="#mensal">Ver planejamento mensal</a> · <a href="#execucao">Registrar execução</a></p><label for="busca-plano">Buscar TAG, ativo, atividade ou especialidade</label><input id="busca-plano" type="search" placeholder="Ex.: UTL ou lubrificação"><div class="grade duas"><div><label for="setor-plano">Setor</label><select id="setor-plano"><option value="">Todos os setores</option>${opcoes(dados.equipamentos.map(e => e.setor))}</select></div><div><label for="especialidade-plano">Especialidade</label><select id="especialidade-plano"><option value="">Todas as especialidades</option>${opcoes(dados.plano.filter(l => l.ativa).map(l => l.especialidade))}</select></div></div><label class="filtro-sem-responsavel"><input id="sem-responsavel-plano" type="checkbox"> Somente tarefas sem responsável</label><button id="limpar-plano" class="secundario" type="button">Limpar filtros</button><p id="resumo-plano" role="status" aria-live="polite" tabindex="-1"></p></section><section class="cartao"><div id="lista-plano"></div></section>`;
   const lista = main.querySelector('#lista-plano');
   function mostrar() {
     const busca = main.querySelector('#busca-plano').value.toLocaleLowerCase('pt-BR');
-    lista.innerHTML = tabela(['Ativo / atividade', 'Frequência / horas', 'Especialidade', 'Responsável', 'Próxima ocorrência'], dados.plano.filter(l => l.ativa && `${l.tag} ${l.descricao} ${l.especialidade}`.toLocaleLowerCase('pt-BR').includes(busca)).map(l => {
-      const chave = chaveAjuste(l.equipamentoId, l.tarefaId);
-      const proxima = previstas.find(o => o.equipamentoId === l.equipamentoId && o.tarefaId === l.tarefaId && o.dataPrevista >= hoje && !concluidas.has(o.chave));
-      return `<tr><td><strong>${esc(l.tag)}</strong> · ${esc(l.tarefaId)}<br>${esc(l.descricao)}${l.seguranca ? ' <span class="selo-seguranca">SEGURANÇA</span>' : ''}<div class="origem">${esc(l.origem)} · versão ${esc(l.versao)}</div></td><td>${esc(l.periodicidade)}<br>${num(l.duracaoHoras, 2)} h por execução</td><td>${esc(l.especialidade)}</td><td><label class="oculto" for="resp-${l.equipamentoId}-${l.tarefaId}">Responsável por ${esc(l.tag)} ${esc(l.tarefaId)}</label><select id="resp-${l.equipamentoId}-${l.tarefaId}" data-chave="${esc(chave)}">${pessoasOpcoes(estado.gestao.responsaveis[chave])}</select></td><td>${proxima ? dataExibida(proxima.dataPrevista) : 'Sem ocorrência futura neste ciclo'}</td></tr>`;
-    }), 'Nenhuma tarefa ativa com esses filtros.');
+    const abertos = new Set([...lista.querySelectorAll('details[open]')].map(e => e.dataset.ativo));
+    const setor = main.querySelector('#setor-plano').value;
+    const especialidade = main.querySelector('#especialidade-plano').value;
+    const semResponsavel = main.querySelector('#sem-responsavel-plano').checked;
+    const linhas = dados.plano.filter(l => l.ativa
+      && (!setor || ativos.get(l.equipamentoId)?.setor === setor)
+      && (!especialidade || l.especialidade === especialidade)
+      && (!semResponsavel || !estado.gestao.responsaveis[chaveAjuste(l.equipamentoId, l.tarefaId)])
+      && `${l.tag} ${l.equipamento} ${l.descricao} ${l.especialidade}`.toLocaleLowerCase('pt-BR').includes(busca));
+    const grupos = new Map();
+    for (const linha of linhas) {
+      if (!grupos.has(linha.equipamentoId)) grupos.set(linha.equipamentoId, []);
+      grupos.get(linha.equipamentoId).push(linha);
+    }
+    main.querySelector('#resumo-plano').textContent = `${grupos.size} ativos · ${linhas.length} tarefas com os filtros atuais.`;
+    lista.innerHTML = [...grupos].map(([id, tarefas]) => {
+      const nome = `${tarefas[0].tag} · ${tarefas[0].equipamento} · ${tarefas.length} tarefas`;
+      return `<details class="plano-ativo" data-ativo="${esc(id)}" ${abertos.has(id) ? 'open' : ''}><summary aria-label="${esc(nome)}">${esc(nome)}</summary>` + tabela(['Ativo / atividade', 'Frequência / horas', 'Especialidade', 'Responsável', 'Próxima ocorrência'], tarefas.map(l => {
+        const chave = chaveAjuste(l.equipamentoId, l.tarefaId);
+        const proxima = previstas.find(o => o.equipamentoId === l.equipamentoId && o.tarefaId === l.tarefaId && o.dataPrevista >= hoje && !concluidas.has(o.chave));
+        return `<tr><td><strong>${esc(l.tag)}</strong> · ${esc(l.tarefaId)}<br>${esc(l.descricao)}${l.seguranca ? ' <span class="selo-seguranca">SEGURANÇA</span>' : ''}<div class="origem">${esc(l.origem)} · versão ${esc(l.versao)}</div></td><td>${esc(l.periodicidade)}<br>${num(l.duracaoHoras, 2)} h por execução</td><td>${esc(l.especialidade)}</td><td><label class="oculto" for="resp-${l.equipamentoId}-${l.tarefaId}">Responsável por ${esc(l.tag)} ${esc(l.tarefaId)}</label><select id="resp-${l.equipamentoId}-${l.tarefaId}" data-chave="${esc(chave)}">${pessoasOpcoes(estado.gestao.responsaveis[chave])}</select></td><td>${proxima ? dataExibida(proxima.dataPrevista) : 'Sem ocorrência futura neste ciclo'}</td></tr>`;
+      })) + '</details>';
+    }).join('') || '<p>Nenhuma tarefa ativa com esses filtros.</p>';
   }
   mostrar();
   main.querySelector('#busca-plano').addEventListener('input', mostrar);
+  for (const id of ['setor-plano', 'especialidade-plano', 'sem-responsavel-plano']) main.querySelector(`#${id}`).addEventListener('change', mostrar);
+  main.querySelector('#limpar-plano').addEventListener('click', () => {
+    for (const id of ['busca-plano', 'setor-plano', 'especialidade-plano']) main.querySelector(`#${id}`).value = '';
+    main.querySelector('#sem-responsavel-plano').checked = false;
+    mostrar(); main.querySelector('#busca-plano').focus();
+  });
   lista.addEventListener('change', async e => {
     if (!e.target.dataset.chave) return;
     const nova = copiaGestao(); nova.responsaveis[e.target.dataset.chave] = e.target.value;
-    const foco = e.target.id; (await guardar(nova, mostrar, foco));
+    const foco = e.target.id;
+    await guardar(nova, () => { mostrar(); if (!document.getElementById(foco)) main.querySelector('#resumo-plano').focus(); }, foco);
   });
 }
 
