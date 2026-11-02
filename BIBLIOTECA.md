@@ -705,7 +705,7 @@ Marque `[x]` na coluna OK quando a tarefa estiver revisada.
 
 ## Publicação do lote de 01/11/2026
 
-Publicação autorizada pelo mantenedor em 02/11/2026: 41 propostas, 40 tipos novos e 316 tarefas adicionais (incluindo duas do compressor). As propostas originais estão em `propostas-maquinas/`. Todas permanecem como base genérica, sem validação por fabricante. Seis tarefas novas de segurança usam essa mesma origem; autorização de publicação não equivale a aprovação técnica para execução.
+Publicação autorizada pelo mantenedor em 02/11/2026: 41 propostas, 40 tipos novos e 316 tarefas adicionais (incluindo três do compressor). As propostas originais estão em `propostas-maquinas/`. Todas permanecem como base genérica, sem validação por fabricante. Seis tarefas novas de segurança usam essa mesma origem; autorização de publicação não equivale a aprovação técnica para execução.
 
 Bibliotecas personalizadas 0.2.0 recebem somente os acréscimos sem conflito; ajustes anteriores e revisões congeladas são preservados. Havendo conflito de código ou sigla, a biblioteca anterior válida continua operável e sem acréscimos parciais quando não há ambiguidade com tarefas novas de segurança; a tela Biblioteca técnica informa que os códigos precisam ser conciliados para editar ou atualizar. Arquivos inválidos continuam no fluxo de recuperação. A versão 0.2.0 em `src/dados/biblioteca-0.2.0.json` é uma referência de compatibilidade, não o catálogo ativo.
 
