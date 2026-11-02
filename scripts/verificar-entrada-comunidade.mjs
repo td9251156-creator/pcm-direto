@@ -46,7 +46,7 @@ await executarComRecursos({
     await p.keyboard.press('Escape');await contexto.setOffline(false);
     const biblioteca=JSON.parse(await readFile('src/dados/biblioteca.json','utf8'));
     const backup={aplicativo:'PCM Direto',versao:1,biblioteca,rascunho:{equipamentos:[{id:'ficticio',setor:'TST',tipo:'motor_eletrico',numero:1,tag:'TST-MOT-001',descricao:'Motor fictício',fabricante:'',modelo:''}],ajustes:{},execucoes:{},exemplo:false,inicio:'2026-11-02',capacidade:{}}};
-    await ir('dados');await p.locator('#restaurar-backup').setInputFiles({name:'exemplo-ficticio.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});await p.locator('#confirmar-backup').click();await p.waitForURL('**/#semana');
+    await ir('dados');await p.locator('#restaurar-backup').setInputFiles({name:'exemplo-ficticio.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});await p.locator('#confirmar-backup').click();await p.waitForURL('**/app.html#semana');
     await ir('comunidade');assert.equal(await p.getByRole('link',{name:'Continuar configuração',exact:true}).getAttribute('href'),'#assistente');
     const antes=await p.evaluate(()=>new Promise((resolve,reject)=>{const r=indexedDB.open('pcm-direto:base:v3',1);r.onerror=()=>reject(r.error);r.onsuccess=()=>{const db=r.result;const q=db.transaction('base').objectStore('base').get('principal');q.onsuccess=()=>{db.close();resolve(q.result);};};}));
     await p.locator('[data-demonstrar]').click();await p.locator('#sair-demo').waitFor();await ir('comunidade');

@@ -32,7 +32,7 @@ await executarComRecursos({
       assert.doesNotMatch(definicao, /ainda não calcula|ainda não definidas/, 'Glossário acompanha a funcionalidade entregue');
     }
     const persistido = () => p.evaluate(() => new Promise((resolve, reject) => { const q = indexedDB.open('pcm-direto:base:v3', 1); q.onerror = () => reject(q.error); q.onsuccess = () => { const db = q.result; const t = db.transaction('base'); const r = t.objectStore('base').get('principal'); t.oncomplete = () => { db.close(); resolve(r.result.dados.rascunho); }; }; }));
-    async function restaurar(b) { await ir('dados'); await p.locator('#restaurar-backup').setInputFiles({ name: 'ficticio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(b)) }); await p.locator('#confirmar-backup').click(); await p.waitForURL('**/#semana'); }
+    async function restaurar(b) { await ir('dados'); await p.locator('#restaurar-backup').setInputFiles({ name: 'ficticio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(b)) }); await p.locator('#confirmar-backup').click(); await p.waitForURL('**/app.html#semana'); }
     for (const versao of [1,2]) { await restaurar(antigo(versao)); assert.equal((await persistido()).gestao.versao, 1); }
     await ir('mensal'); await p.locator('#indicador-ativo').selectOption('eq1'); await p.locator('#indicador-mes').fill('2026-09');
     assert.match(await p.locator('#resultado-indicadores').innerText(), /Sem dado/);

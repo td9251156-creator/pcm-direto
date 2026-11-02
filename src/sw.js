@@ -47,10 +47,11 @@ self.addEventListener('fetch', (evento) => {
       const relativo=url.pathname.slice(inicio.pathname.length);
       const aplicativo=relativo==='app.html'||relativo==='atualizar.html'||/^abrir-[a-f0-9]{16}\.html$/.test(relativo);
       if(aplicativo){evento.respondWith(caches.open(CACHE).then(c=>c.match(req,{ignoreSearch:true,ignoreVary:true})).then(r=>r||fetch(req)));return;}
+      if(relativo===''||relativo==='index.html'){evento.respondWith(caches.open(CACHE_PUBLICO).then(c=>c.match('./')));return;}
       if(url.search || relativo.startsWith('comunidade/acesso/'))return;
       evento.respondWith((async()=>{
         const c=await caches.open(CACHE_PUBLICO);const chave=relativo==='index.html'?new URL('./',inicio).href:req.url;
-        try{const r=await fetch(req);if(r.ok){await c.put(chave,r.clone());const chaves=await c.keys();while(chaves.length>20)await c.delete(chaves.shift());}return r;}
+        try{const r=await fetch(req);if(r.ok){await c.put(chave,r.clone());const chaves=(await c.keys()).filter(r=>new URL(r.url).pathname!==inicio.pathname);while(chaves.length>20)await c.delete(chaves.shift());}return r;}
         catch{const r=await c.match(chave);return r||new Response('Esta página do portal precisa de conexão. O aplicativo permanece disponível em app.html.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});}
       })());return;
     }
