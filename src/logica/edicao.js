@@ -3,7 +3,7 @@
 // desmarcadas como segurança nem apagadas (regra 5 do produto).
 import { vezesPorAno, validarBiblioteca } from './plano.js';
 import { chave } from './texto.js';
-import anterior from '../dados/biblioteca-0.2.0.json';
+import anterior from '../dados/biblioteca-0.2.0.json' with { type: 'json' };
 
 export const ORIGEM_USUARIO = 'definida pelo usuário, confirmar com manual do fabricante';
 

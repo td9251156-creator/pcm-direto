@@ -5,6 +5,16 @@ import { atualizarBibliotecaAnterior, verificarBibliotecaEditada, verificarBibli
 const copia = x => JSON.parse(JSON.stringify(x));
 
 describe('publicação aditiva das propostas de máquinas', () => {
+  it('exige conciliação em conflito ambíguo com a segurança de uma máquina nova', () => {
+    const bib = copia(anterior);
+    bib.tipos.push({ id: 'injetora_hidraulica', nome: 'Injetora hidráulica', sigla: 'IHD', tarefas: [
+      { ...bib.tipos[0].tarefas[0], id: 'IHD-01', origem: 'definida pelo usuário, confirmar com manual do fabricante' },
+    ] });
+    expect(atualizarBibliotecaAnterior(bib, padrao)).toBe(bib);
+    expect(verificarBibliotecaCompativel(padrao, bib).length).toBeGreaterThan(0);
+    expect(bib.tipos.at(-1).tarefas).toHaveLength(1);
+  });
+
   it('não permite burlar a segurança nova trocando somente a versão por 0.2.0', () => {
     for (const remover of [true, false]) {
       const bib = copia(padrao); bib.versao = '0.2.0';
