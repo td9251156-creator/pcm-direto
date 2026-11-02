@@ -24,7 +24,7 @@ function serviceWorker() {
       // Arquivos gerados pelo build + arquivos fixos da pasta public (manifesto e ícones)
       const publicos = readdirSync('public', { recursive: true })
         .map((f) => String(f).split(path.sep).join('/'))
-        .filter((f) => statSync('public/' + f).isFile() && (/^(icones|marca|fontes|apresentacao|propostas)\//.test(f) || /^modelos\/(biblioteca-v2|maquinas)\//.test(f) || ['manifest.webmanifest','conheca.html','portal.css','portal-modelos.js'].includes(f)));
+        .filter((f) => statSync('public/' + f).isFile() && (/^(icones|marca|fontes|apresentacao|propostas)\//.test(f) || /^modelos\/(biblioteca-v2|maquinas)\//.test(f) || ['manifest.webmanifest','conheca.html','portal.css'].includes(f)));
       const entradaAtual = pacote['app.html'];
       const portal = pacote['index.html'];
       // Entrada no mesmo endereço/origem para recuperar uma aba presa em HTML antigo.
@@ -58,7 +58,7 @@ export default defineConfig({
   build: {
     // As bibliotecas de planilha e documento são grandes; o aviso padrão não ajuda aqui.
     chunkSizeWarningLimit: 2000,
-    rolldownOptions: { input: { portal: 'index.html', app: 'app.html' } },
+    rolldownOptions: { input: { portal: 'index.html', app: 'app.html', catalogo: 'src/portal-modelos.js' } },
   },
   test: {
     include: ['testes/**/*.test.js'],

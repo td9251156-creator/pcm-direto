@@ -7,19 +7,23 @@ const base = 'http://127.0.0.1:4223';
 const manifesto = JSON.parse(await readFile('src/dados/biblioteca-pcm-v2.json', 'utf8'));
 const conteudoWorker = await readFile('dist/sw.js', 'utf8');
 const precache = JSON.parse(conteudoWorker.match(/^const ARQUIVOS = (.*);$/m)[1]);
-assert.ok(precache.includes('./portal-modelos.js'));
+assert.ok(precache.some(p => /^\.\/assets\/catalogo-.*\.js$/.test(p)), 'Filtro com nome versionado no cache do núcleo');
 assert.ok(!precache.some(p => /^\.\/modelos\/(index\.html|pcm-man-)/.test(p)), 'Páginas editoriais fora do cache obrigatório');
 await executarComRecursos({
   criarServidor: () => iniciarServidor({ raiz: process.cwd(), porta: 4223 }),
   criarNavegador: () => chromium.launch({ args: process.env.PCM_SEM_SANDBOX === '1' ? ['--no-sandbox'] : [] }),
   executar: async ({ navegador }) => {
     const c = await navegador.newContext({ serviceWorkers: 'block', acceptDownloads: true });
+    // Reproduz o CSS comum retido por uma instalação anterior, sem estilos do catálogo.
+    const estiloAnterior = (await readFile('public/portal.css', 'utf8')).split('/* Catálogo público')[0];
+    await c.route('**/portal.css', r => r.fulfill({ contentType: 'text/css', body: estiloAnterior }));
     const p = await c.newPage();
     await p.goto(base + '/');
     await p.locator('header nav a[href="./modelos/"]').click();
     const lista = p.locator('#lista-modelos > li:visible');
     const codigos = () => lista.evaluateAll(itens => itens.map(i => i.dataset.modelo));
     await p.locator('[data-filtros]:visible').waitFor();
+    assert.equal(await p.locator('link[rel="stylesheet"][href*="assets/"]').count(), 1, 'Estilos novos com nome versionado');
     assert.deepEqual(await codigos(), ['PCM-MAN-004', 'PCM-MAN-003', 'PCM-MAN-006']);
     const [download] = await Promise.all([p.waitForEvent('download'), lista.first().locator('a[download]').click()]);
     assert.deepEqual(await readFile(await download.path()), await readFile('public/modelos/biblioteca-v2/' + manifesto.modelos[3].arquivo));

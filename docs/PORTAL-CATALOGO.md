@@ -9,7 +9,7 @@ Continuação da fundação do portal: encontrar um arquivo, entender seu conte�
 - Quatro necessidades, com Controlar OS inicial; três sugestões por caminho, na ordem definida. Ver todos apresenta os 19 modelos. Busca com acentos pesquisa toda a biblioteca; limpar o campo restaura o modo anterior. Trocar o caminho limpa a busca. Escolhas permanecem apenas na página aberta.
 - Orientações iniciais de preenchimento e exemplo fictício por modelo, finalidade, conteúdo, cuidados de registro, autoria editorial e links reais para o app e o feedback. Não são guias técnicos aprofundados nem regras novas de manutenção.
 - Links da entrada principal levam ao catálogo público. Máquinas e tarefas continuam separadas no app.
-- Páginas editoriais fora do precache obrigatório; navegações já visitadas usam o cache público limitado existente. Filtros e estilos locais disponíveis com o cache do app pronto.
+- Páginas editoriais fora do precache obrigatório; navegações já visitadas usam o cache público limitado existente. Filtros e estilos locais disponíveis com o cache do app pronto. Seus nomes incluem a versão do conteúdo, evitando que um worker anterior sobreponha os estilos ou filtros de uma página nova.
 
 ## Verificações
 
