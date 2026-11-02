@@ -68,6 +68,12 @@ e-mails, não acessa contas reais e não comprova a entrega do link de autentica
 Leitor de tela, aparelhos reais, conteúdo e impressão no Excel/LibreOffice continuam exigindo
 conferência manual. O cenário especializado de atualização não testa migrações de esquema.
 
+`verificar-responsavel-lote.mjs` restaura um backup antigo fictício e usa uma pessoa fictícia para
+conferir prévia sem gravação, cancelamento, invalidação da confirmação ao mudar a seleção,
+atribuição por ativo e especialidade e ausência de alteração quando a pessoa já é responsável.
+Compara os demais dados e o plano inteiro antes/depois, incluindo tarefas de segurança;
+confere foco após salvar, persistência após recarregar, navegação e ausência de rolagem horizontal em 390/1280 px.
+
 O roteiro também executa `verificar-pdfs-banco.mjs`, com PostgreSQL em memória (PGlite) e
 substitutos de auth/storage sem rede, e `verificar-pdfs-comunidade.mjs`, com API simulada
 no servidor local 4178. Este último usa tela de 390 px, SDK real e eventos fictícios de sessão:

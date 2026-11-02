@@ -24,6 +24,7 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | LibreOffice não está instalado nesta máquina. |
 | P15 | Revisões nos modelos para integrar melhor (lista abaixo) | Média | **Aguardando arquivos do mantenedor** | M1–M11 | Cada arquivo novo: hash no manifesto, testes e conferência no Excel. |
 | P16 | Publicações de 01/11/2026 | — | **Publicado** | — | PRs #45 a #51: só Biblioteca v2, modelos revisados, D1, IAs, D4 e D5. |
+| C-02 | Item 2 do coordenador: atribuir responsável em lote por ativo ou especialidade | Alta | **Implementado e revisado; validação completa pendente** | Suíte de navegador parou pela falta do Chromium do Playwright; leitor de tela real e aparelho físico pendentes | Prévia e confirmação explícita; seleção invalida a prévia; segurança muda só de responsável. Roteiro fictício aprovado pelo autor e revisor em 390/1280 px, inclusive após recarregar. Sem publicação. |
 
 ### Decisões do mantenedor (01/11/2026)
 
