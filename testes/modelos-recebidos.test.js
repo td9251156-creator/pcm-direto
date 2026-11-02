@@ -2,6 +2,7 @@ import { it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import ExcelJS from 'exceljs';
 import contrato from '../src/dados/biblioteca-pcm-v2.json';
+import legado017 from './fixtures/indicadores017-local-20261101.json';
 import antigos from './fixtures/cabecalhos-biblioteca-20261101.json';
 import biblioteca from '../src/dados/biblioteca.json';
 import { normalizarFonte } from '../src/logica/dashboards/fonte.js';
@@ -145,4 +146,16 @@ it('dashboard conta reparo anterior conhecido independentemente de HI desconheci
   const f=normalizarFonte({metadados:{data_referencia:'2026-01-31',periodo:{inicio:'2026-01-01',fim:'2026-01-31'}},bases:{ativos:[],ordens_servico:[],falhas:[anterior,...atuais],custos_manutencao:[],operacao_ativos:[],orcamento_manutencao:[]}});
   const d=calcularConfiabilidade(f,{});expect(d.indicadores.reparo.valor).toBe(3);expect(d.indicadores.falhas.valor).toBe(atuais.length);expect(d.indicadores.reparo.populacao).toContain('iniciada(s) antes do período');if(!atuais.length)expect(d.indicadores.indisponibilidade.valor).toBe(null);else expect(d.indicadores.reparo.estado).toBe('parcial');
  }
+});
+
+
+it('preserva HI e MTBF do registro local legado sem hora/conclusão em mês anterior',()=>{
+ const g=criarGestao();g.falhas=[1,2,3].map(i=>({id:'local'+i,equipamentoId:'eq',tag:'TST-MOT-001',data:'2026-09-10',horasParada:2,sintoma:'Fictício'}));
+ const antes=structuredClone(g);const r=indicadores017(falhasDoAtivo(g,'eq','TST-MOT-001'),'2026-09',720,'2026-11-02T00:00:00');
+ expect(r).toMatchObject({hi:6,ho:714,n:3,mtbf:238,reparos:0,mttr:null});expect(r.alertas.join(' ')).toContain('horas de parada informadas');expect(g).toEqual(antes);
+});
+
+
+it.each(legado017.casos)('preserva o procedimento local anterior: $nome',c=>{
+ const g=criarGestao();g.falhas=[c.falha];const antes=structuredClone(g);const r=indicadores017(falhasDoAtivo(g,'eq','TST-MOT-001'),c.mes,c.hp,c.agora);expect(r).toMatchObject(c.esperado);expect(g).toEqual(antes);
 });

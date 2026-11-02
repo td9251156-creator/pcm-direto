@@ -15,7 +15,7 @@ A coleção passa de `biblioteca-pcm-v2.0.1` para `biblioteca-pcm-v2.0.2`. A rev
 
 A importação aceita os cabeçalhos antigos e novos de 004/008/012. Campos adicionais são opcionais em bases e backups existentes. Reimportação compara a chave e o conteúdo; não apaga registros ausentes do arquivo.
 
-No Mensal, intervalos completos prevalecem sobre durações avulsas. Quando só há duração sem limites precisos atravessando meses, não se inventa rateio da indisponibilidade; o aviso não invalida reparos completos de outras falhas. Falhas abertas não contam como reparos completos apenas por terem horas preenchidas.
+No Mensal, o procedimento anterior das falhas locais é preservado integralmente: duração sem hora de início pertence ao mês do registro; falha aberta com início conhecido usa o trecho provisório até a referência; conclusão sem hora não é convertida em um fim conhecido. Esses dados não são reescritos. Os tratamentos novos abaixo são restritos às falhas importadas do arquivo 008: intervalos completos prevalecem sobre durações avulsas. Quando só há duração sem limites precisos atravessando meses, não se inventa rateio da indisponibilidade; o aviso não invalida reparos completos de outras falhas. Falhas abertas não contam como reparos completos apenas por terem horas preenchidas.
 
 O dashboard de Confiabilidade mantém seu contrato de união/recorte de intervalos com data e hora completas. Durações avulsas ficam fora desse somatório, com aviso e encaminhamento ao Mensal; data sem hora não vira um intervalo de zero horas.
 

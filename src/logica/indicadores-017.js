@@ -61,6 +61,20 @@ export function indicadores017(falhas, mes, hp, agora) {
       if (f.data.slice(0, 7) === mes) { cronologiaInvalida = true; alertas.push('Falha com fim antes do início: corrija o registro.'); }
       continue;
     }
+    // Preservar integralmente o procedimento já usado pelas falhas locais e pelos backups anteriores.
+    // Os novos tratamentos de duração/precisão do arquivo 008 só se aplicam à origem importada.
+    if (f.origem !== 'importada') {
+      if (inicio) {
+        const fim = f.fim ?? (f.aberta ? limiteAberta : null);
+        if (fim === null) { if (f.data.slice(0,7) === mes) semHoras++; continue; }
+        if (f.fim === null && f.inicio < fimMes && fim > iniMes) provisoria = true;
+        const a = Math.max(f.inicio,iniMes), b = Math.min(fim,fimMes);
+        if (b > a) intervalos.push([a,b]);
+      } else if (f.data.slice(0,7) === mes) {
+        if (f.paradaInformada !== null) horasInformadas += f.paradaInformada; else semHoras++;
+      }
+      continue;
+    }
     const completo = inicio && f.fim !== null;
     // Fim provisório para falha aberta só quando não há duração explícita; não cria um fim salvo.
     const provisoriaComHora = inicio && f.aberta && f.paradaInformada === null;
