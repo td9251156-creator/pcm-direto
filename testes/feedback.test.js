@@ -1,8 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { CAMPOS_FEEDBACK, OPCOES_APOIO, novoFeedback, prepararFeedback } from '../src/logica/feedback.js';
 import { readFileSync } from 'node:fs';
+import { acessoAtual } from '../src/navegacao.js';
 
 describe('questionário preparado no aparelho', () => {
+  it('mantém as novas rotas localizadas na comunidade e em Mais no celular', () => {
+    for(const rota of ['contribuir','feedback']){expect(acessoAtual(rota,false)).toBe('comunidade');expect(acessoAtual(rota,true)).toBe('mais');}
+  });
   it('exige dificuldade, confere limites e não inclui campos estranhos', () => {
     expect(()=>prepararFeedback(novoFeedback())).toThrow('principal dificuldade');
     for(const c of CAMPOS_FEEDBACK.filter(c=>c.limite)){

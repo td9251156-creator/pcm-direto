@@ -6,7 +6,6 @@ describe('localização na navegação',()=>{
     for(const rota of ['equipamentos','cadastros','criticidade','revisao','plano','mensal','impressao'])expect(acessoAtual(rota,false)).toBe('planejar');
     expect(acessoAtual('execucao',false)).toBe('executar');
     expect(acessoAtual('catalogo',false)).toBe('comunidade');
-    for(const rota of ['contribuir','feedback']){expect(acessoAtual(rota,false)).toBe('comunidade');expect(acessoAtual(rota,true)).toBe('mais');}
     expect(acessoAtual('modelos',false)).toBe('entrega');
     for(const rota of ['semana','executar','ativos','falhas','planejar','biblioteca','entrega','dados'])expect(acessoAtual(rota,false)).toBe(rota);
   });
