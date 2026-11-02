@@ -20,17 +20,17 @@ export function falhasDoAtivo(gestao, equipamentoId, tag) {
     origem: 'app', data: f.data,
     inicio: f.horaInicio ? ms(`${f.data}T${f.horaInicio}:00`) : null,
     // Sem conclusão = falha aberta. Conclusão sem hora: fim desconhecido.
-    aberta: !f.dataConclusao,
+    aberta: !f.dataConclusao, fimDia: f.dataConclusao || null,
     fim: f.dataConclusao && f.horaFim ? ms(`${f.dataConclusao}T${f.horaFim}:00`) : null,
     paradaInformada: horasOk(f.horasParada) ? f.horasParada : null,
     reparo: f.dataConclusao && horasOk(f.horasReparo) ? f.horasReparo : null,
   }));
   for (const f of gestao.operacao?.falhas ?? []) {
     if (f.tag !== tag || ids.has(f.referencia_falha)) continue;
-    const ir = ms(f.inicio_reparo), fr = ms(f.fim_reparo);
-    lista.push({ origem: 'importada', data: f.inicio_falha.slice(0, 10), inicio: ms(f.inicio_falha), aberta: !f.fim_falha,
-      fim: f.fim_falha ? ms(f.fim_falha) : null, paradaInformada: null,
-      reparo: Number.isFinite(ir) && Number.isFinite(fr) && fr >= ir ? (fr - ir) / H : null });
+    const ir = f.inicio_reparo?.length === 19 ? ms(f.inicio_reparo) : NaN, fr = f.fim_reparo?.length === 19 ? ms(f.fim_reparo) : NaN;
+    lista.push({ origem: 'importada', data: f.inicio_falha.slice(0, 10), inicio: f.inicio_falha.length === 19 ? ms(f.inicio_falha) : null, aberta: !f.fim_falha, fimDia: f.fim_falha?.slice(0,10) || null,
+      fim: f.fim_falha?.length === 19 ? ms(f.fim_falha) : null, paradaInformada: horasOk(f.horas_parada) ? f.horas_parada : null,
+      reparo: Number.isFinite(ir) && Number.isFinite(fr) && fr >= ir ? (fr - ir) / H : horasOk(f.horas_reparo) ? f.horas_reparo : null });
   }
   return lista;
 }
@@ -53,28 +53,38 @@ export function indicadores017(falhas, mes, hp, agora) {
   const [ano, m] = mes.split('-').map(Number);
   const iniMes = Date.UTC(ano, m - 1, 1); const fimMes = Date.UTC(ano, m, 1);
   const limiteAberta = Math.min(fimMes, ms(agora));
-  const alertas = []; const intervalos = []; let horasInformadas = 0; let provisoria = false; let semHoras = 0;
+  const alertas = []; const intervalos = []; let horasInformadas = 0; let provisoria = false; let semHoras = 0; let cronologiaInvalida = false;
   const doMes = falhas.filter((f) => f.data.slice(0, 7) === mes);
   for (const f of falhas) {
-    if (f.inicio !== null && Number.isFinite(f.inicio)) {
-      if (f.fim !== null && f.fim < f.inicio) {
-        // Só bloqueia o mês da própria falha.
-        if (f.data.slice(0, 7) === mes) alertas.push('Falha com fim antes do início: corrija o registro.');
-        continue;
-      }
-      const fim = f.fim ?? (f.aberta ? limiteAberta : null);
-      if (fim === null) { if (f.data.slice(0, 7) === mes) semHoras++; continue; }
-      if (f.fim === null && f.inicio < fimMes && fim > iniMes) provisoria = true;
+    const inicio = f.inicio !== null && Number.isFinite(f.inicio);
+    if (inicio && f.fim !== null && f.fim < f.inicio) {
+      if (f.data.slice(0, 7) === mes) { cronologiaInvalida = true; alertas.push('Falha com fim antes do início: corrija o registro.'); }
+      continue;
+    }
+    const completo = inicio && f.fim !== null;
+    // Fim provisório para falha aberta só quando não há duração explícita; não cria um fim salvo.
+    const provisoriaComHora = inicio && f.aberta && f.paradaInformada === null;
+    if (completo || provisoriaComHora) {
+      const fim = completo ? f.fim : limiteAberta;
+      if (!completo && f.inicio < fimMes && fim > iniMes) provisoria = true;
       const a = Math.max(f.inicio, iniMes), b = Math.min(fim, fimMes);
       if (b > a) intervalos.push([a, b]);
-    } else if (f.data.slice(0, 7) === mes) {
-      // Sem hora de início: usa as horas de parada informadas na própria falha (sem divisão entre meses).
-      if (f.paradaInformada !== null) horasInformadas += f.paradaInformada; else semHoras++;
+      continue;
+    }
+    const ultimoDia = f.fimDia || (f.aberta ? agora.slice(0,10) : f.data);
+    const primeiroMes = f.data.slice(0,7), ultimoMes = ultimoDia.slice(0,7);
+    if (primeiroMes > mes || ultimoMes < mes) continue;
+    if (horasOk(f.paradaInformada) && primeiroMes === mes && ultimoMes === mes) {
+      horasInformadas += f.paradaInformada;
+      if (f.aberta) provisoria = true;
+    } else {
+      semHoras++;
+      if (horasOk(f.paradaInformada) && primeiroMes !== ultimoMes) alertas.push('Duração sem intervalo completo atravessa meses: não é possível ratear a indisponibilidade.');
     }
   }
-  const incoerente = alertas.length > 0;
+  const incoerente = cronologiaInvalida;
   const hi = incoerente || semHoras ? null : arred(uniaoEmHoras(intervalos) + horasInformadas);
-  if (semHoras) alertas.push(`${semHoras} falha(s) do mês sem hora de início/fim nem horas de parada: HI não calculada.`);
+  if (semHoras) alertas.push(`${semHoras} falha(s) do mês sem intervalo ou duração atribuível: HI não calculada.`);
   if (horasInformadas && hi !== null) alertas.push('Parte da HI veio das horas de parada informadas na falha (sem hora de início).');
   const hpValida = horasOk(hp) ? hp : null;
   if (hi !== null && hpValida !== null && hi > hpValida) alertas.push('HI maior que HP: confira as horas planejadas e as falhas.');

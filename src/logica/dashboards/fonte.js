@@ -8,7 +8,7 @@ const TEXTOS = ['tag', 'numero_os', 'referencia_falha', 'referencia_lancamento',
 const DATAS = ['data_abertura', 'data_prevista', 'data_conclusao', 'inicio_falha', 'fim_falha', 'inicio_reparo', 'fim_reparo', 'data_lancamento', 'competencia', 'inicio_periodo', 'fim_periodo'];
 const DATA_ISO = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?)?$/;
 const STATUS = ['ABERTA', 'PLANEJADA', 'PROGRAMADA', 'EM_EXECUCAO', 'CONCLUIDA', 'CANCELADA'];
-const NUMEROS = ['horas_estimadas', 'horas_restantes', 'valor_realizado', 'valor_orcado', 'horas_operacao'];
+const NUMEROS = ['horas_estimadas', 'horas_restantes', 'horas_executadas', 'horas_parada', 'horas_reparo', 'valor_realizado', 'valor_orcado', 'horas_operacao'];
 
 const texto = (v) => (v === null || v === undefined || String(v).trim() === '' ? null : String(v).trim());
 // Vazio continua null; zero real continua 0; texto não numérico vira null e é contado nos avisos.

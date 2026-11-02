@@ -59,7 +59,7 @@ describe('PCM-MAN-002 preenchido', () => {
     const saida = await preencherPcmMan002(bytes(), d);
     const original = await JSZip.loadAsync(bytes());
     const { zip, wb } = await abrirSaida(saida);
-    const alteradas = new Set(['xl/workbook.xml', ...[1, 2, 3, 4, 5, 6, 7].map((n) => `xl/worksheets/sheet${n}.xml`), ...[1, 2, 3, 4, 5].map((n) => `xl/tables/table${n}.xml`)]);
+    const alteradas = new Set(['xl/workbook.xml', ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `xl/worksheets/sheet${n}.xml`), ...[2, 3, 4, 5].map((n) => `xl/tables/table${n}.xml`)]);
     for (const nome of Object.keys(original.files).filter((n) => !original.files[n].dir && !alteradas.has(n))) {
       expect(await zip.file(nome).async('uint8array'), nome).toEqual(await original.file(nome).async('uint8array'));
     }
@@ -86,7 +86,7 @@ describe('PCM-MAN-002 preenchido', () => {
 
     // Cadastros: a tabela de ativos cresce até a linha 104; as tabelas vizinhas acompanham sem perder dados.
     expect(wb.getWorksheet('Cadastros').getTable('tb_pcm_ativos').table.tableRef ?? wb.getWorksheet('Cadastros').getTable('tb_pcm_ativos').table.ref).toBe('A4:D104');
-    expect(await zip.file('xl/tables/table1.xml').async('string')).toContain('ref="A4:D104"');
+    expect(await zip.file('xl/tables/table2.xml').async('string')).toContain('ref="A4:D104"');
     const cad = wb.getWorksheet('Cadastros');
     expect(cad.getCell('A104').value).toBe(d.ativos[99].tag);
     expect(cad.getCell('F5').value).toBe('Técnica Fictícia');
@@ -98,24 +98,24 @@ describe('PCM-MAN-002 preenchido', () => {
     expect(plano.getCell(`A${20 + n}`).value).toBe(15 + n);
     expect(texto(plano.getCell(`A${31 + k}`).value)).toMatch(/^Cinza = vem da MFMEA/);
     const xmlPlano = await aba(4);
-    expect(xmlPlano).toContain(`<mergeCell ref="A${31 + k}:M${31 + k}"/>`);
+    expect(xmlPlano).toContain(`<mergeCell ref="A${31 + k}:R${31 + k}"/>`);
     expect(xmlPlano).toMatch(new RegExp(`sqref="B21:B${30 + k}"`));
     expect(xmlPlano).toContain(`IF(B${30 + k}="","",IFERROR(INDEX(tb_pcm_ativos[descricao_ativo],MATCH(B${30 + k}`);
     expect(xmlPlano).not.toContain('t="shared"');
     const primeira = d.atividades[0];
-    expect(plano.getCell('L21').value).toEqual(new Date(`${primeira.primeira}T00:00:00Z`));
-    expect(plano.getCell('H21').value).toBe(primeira.periodicidade); // G (dias) é fórmula da periodicidade
+    expect(plano.getCell('Q21').value).toEqual(new Date(`${primeira.primeira}T00:00:00Z`));
+    expect(plano.getCell('M21').value).toBe(primeira.periodicidade); // G (dias) é fórmula da periodicidade
 
     // Cronograma: uma linha por atividade do Plano, e o total semanal soma o bloco inteiro.
     const xmlCrono = await aba(5);
     expect(xmlCrono).toContain(`<f>Plano!A${30 + k}</f>`);
     expect(xmlCrono).toContain(`SUMPRODUCT(--(F8:F${33 + k}="`);
-    expect(xmlCrono).toContain(`Plano!$J$5:$J$${30 + k}`); // duração
+    expect(xmlCrono).toContain(`Plano!$O$5:$O$${30 + k}`); // duração
     expect(texto(wb.getWorksheet('Cronograma').getCell(`A${34 + k}`).value)).toBe('Horas planejadas na semana');
 
     // Impressão e recálculo.
     const wbXml = await zip.file('xl/workbook.xml').async('string');
-    expect(wbXml).toContain(`'Plano'!$A$1:$M$${31 + k}`);
+    expect(wbXml).toContain(`'Plano'!$A$1:$R$${31 + k}`);
     expect(wbXml).toContain(`'Cronograma'!$A$1:$BM$${35 + k}`);
     expect(wbXml).toContain(`'Cadastros'!$A$1:$J$105`);
     expect(wbXml).toMatch(/fullCalcOnLoad="1"/);
@@ -151,7 +151,7 @@ describe('PCM-MAN-002 preenchido', () => {
     const seg = d.atividades.find((t) => t.atividade.endsWith('(tarefa de segurança)'));
     const tarefaSeg = emissao(3).revisao.plano.find((t) => t.seguranca);
     expect(Boolean(seg)).toBe(Boolean(tarefaSeg));
-    expect(d.atividades.every((t) => !('tipo' in t) && !('componente' in t))).toBe(true);
+    expect(d.atividades.every(t => t.componente === '' && t.tipoTarefa === '' && t.executante === '' && t.parada === '')).toBe(true);
   });
 });
 
@@ -185,16 +185,17 @@ describe('PCM-MAN-008 preenchido', () => {
     Object.assign(e.falhas[1], { dataConclusao: '2026-05-03', horaInicio: '', horaFim: '' });
     const d = dadosPcmMan008(e);
     expect(d.falhas[1]).toMatchObject({ inicio: '2026-05-01T07:45:00', fim: '2026-05-02T10:30:00' });
-    expect(d.falhas[2]).toMatchObject({ inicio: '2026-05-02', fim: null });
+    expect(d.falhas[2]).toMatchObject({ inicio: '2026-05-02', fim: '2026-05-03' });
     expect(d.falhas[2].acao).toContain('Concluída em 03/05/2026 (sem hora)');
     // Início com hora e conclusão no mesmo dia sem hora: fim vazio (não 00:00 antes do início, que o importador recusaria).
     const e2 = emissao008(1); Object.assign(e2.falhas[0], { horaInicio: '14:00', dataConclusao: '2026-05-01', horaFim: '' });
-    expect(dadosPcmMan008(e2).falhas[1]).toMatchObject({ inicio: '2026-05-01T14:00:00', fim: null });
+    expect(dadosPcmMan008(e2).falhas[1]).toMatchObject({ inicio: '2026-05-01T14:00:00', fim: '2026-05-01' });
     const saida = await preencherPcmMan008(readFileSync('public/modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx'), d);
     const reg = (await abrirWorkbookBibliotecaV2(saida, ExcelJS)).getWorksheet('Registro de falhas');
     expect(reg.getCell('H6').value).toEqual(new Date('2026-05-01T07:45:00Z'));
     expect(reg.getCell('I6').value).toEqual(new Date('2026-05-02T10:30:00Z'));
-    expect(reg.getCell('I7').value).toBe(null); // conclusão sem hora: sem fim inventado
+    expect(reg.getCell('I7').value).toEqual(new Date('2026-05-03T00:00:00Z'));
+    expect(reg.getCell('I7').numFmt).toBe('dd/mm/yyyy'); // data de conclusão conhecida, horário continua ausente
   });
 
   it('amplia o registro e grava data e hora como valores do Excel', async () => {
@@ -203,19 +204,19 @@ describe('PCM-MAN-008 preenchido', () => {
     const zip = await JSZip.loadAsync(saida);
     const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
     const reg = wb.getWorksheet('Registro de falhas');
-    expect(await zip.file('xl/tables/table1.xml').async('string')).toContain('ref="A4:M45"');
+    expect(await zip.file('xl/tables/table1.xml').async('string')).toContain('ref="A4:O45"');
     expect(reg.getCell('A5').value).toBe('F-IMP-1');
     expect(reg.getCell('H5').value).toEqual(new Date('2026-04-10T08:30:00Z'));
     expect(reg.getCell('I6').value).toBe(null);
     // Falha do app (só data) usa o estilo dd/mm/aaaa do modelo; a importada mantém data e hora.
     const xml3 = await zip.file('xl/worksheets/sheet3.xml').async('string');
-    expect(xml3).toMatch(/<c r="H6" s="145">/);
+    expect(xml3).toMatch(/<c r="H6" s="149">/);
     expect(xml3).toMatch(/<c r="H5" s="81">/);
-    expect(xml3).toMatch(/<c r="H45" s="147">/); // última linha: fechamento do bloco, só data
+    expect(xml3).toMatch(/<c r="H45" s="151">/); expect(reg.getCell('H45').numFmt).toBe('dd/mm/yyyy'); // última linha: fechamento do bloco, só data
     expect(xml3).toMatch(/<c r="A29" s="76"/); // antiga última linha agora usa o estilo do meio
-    expect(xml3).toMatch(/<c r="A45" s="84"/); // nova última linha mantém a borda de fechamento
+    expect(xml3).toMatch(/<c r="A45" s="85"/); // nova última linha mantém a borda de fechamento
     expect(texto(reg.getCell('A46').value)?.trim() ?? '').toBe('');
-    expect(await zip.file('xl/worksheets/sheet3.xml').async('string')).toContain('<mergeCell ref="A46:M46"/>');
+    expect(await zip.file('xl/worksheets/sheet3.xml').async('string')).toContain('<mergeCell ref="A46:O46"/>');
     expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('IMP-01');
   });
 });
@@ -267,7 +268,7 @@ describe('PCM-MAN-004 preenchido (histórico como ordens de serviço)', () => {
     const zip = await JSZip.loadAsync(saida);
     const wb = await abrirWorkbookBibliotecaV2(saida, ExcelJS);
     const ultima = 4 + d.ordens.length;
-    expect(await zip.file('xl/tables/table4.xml').async('string')).toContain(`ref="A4:N${ultima}"`);
+    expect(await zip.file('xl/tables/table4.xml').async('string')).toContain(`ref="A4:P${ultima}"`);
     const os = wb.getWorksheet('Ordens de Serviço');
     expect(os.getCell('A5').value).toBe(d.ordens[0].numero);
     expect(os.getCell(`A${ultima}`).value).toBe(d.ordens.at(-1).numero);

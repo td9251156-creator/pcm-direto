@@ -7,6 +7,8 @@ const FONTE = 'Modelo 008 · tb_pcm_falhas (cadastro por TAG em tb_pcm_ativos)';
 const HORA = 3600000;
 // Horários locais sem fuso são comparados entre si como relógio de parede (sem horário de verão em vigor).
 const ms = (v) => (v ? Date.parse(`${String(v).slice(0, 19)}Z`) : NaN);
+const comHora = v => typeof v === 'string' && v.length >= 19;
+const intervaloCompleto = (a,b) => comHora(a) && comHora(b) && ms(b) >= ms(a);
 const arred = (n) => Math.round(n * 100) / 100;
 
 // União de intervalos [ini, fim): sobreposições da mesma TAG não contam duas vezes.
@@ -33,27 +35,32 @@ export function calcularConfiabilidade(fonte, filtro) {
 
   const abertas = falhas.filter((f) => !f.fim_falha);
   const semInicio = bases.falhas.filter((f) => !f.inicio_falha).length;
-  const invalidas = falhas.filter((f) => f.fim_falha && !(ms(f.fim_falha) >= ms(f.inicio_falha)));
-  const reparoInvalido = falhas.filter((f) => f.inicio_reparo && f.fim_reparo && !(ms(f.fim_reparo) >= ms(f.inicio_reparo))).length;
-  const semReparo = falhas.filter((f) => f.fim_falha && !(f.inicio_reparo && f.fim_reparo)).length;
+  const invalidas = falhas.filter((f) => comHora(f.fim_falha) && comHora(f.inicio_falha) && ms(f.fim_falha) < ms(f.inicio_falha));
+  const semHorario = falhas.filter(f=>f.fim_falha && (!comHora(f.inicio_falha)||!comHora(f.fim_falha)));
+  const reparoInvalido = falhas.filter((f) => comHora(f.inicio_reparo) && comHora(f.fim_reparo) && ms(f.fim_reparo) < ms(f.inicio_reparo)).length;
+  const semReparo = falhas.filter((f) => f.fim_falha && !intervaloCompleto(f.inicio_reparo,f.fim_reparo)).length;
   const corte = (a, b) => [Math.max(a, ini), Math.min(b, fim)];
 
   // Critérios diferentes, de propósito: a CONTAGEM usa o dia de início da falha; as HORAS usam o
   // trecho de cada intervalo que cai dentro do período. Uma falha iniciada antes do período e
   // encerrada dentro dele não conta como evento, mas suas horas dentro do período entram.
   const doFiltro = bases.falhas.filter((f) => (!porAtivo || (f.tag && permitidas.has(f.tag))) && f.inicio_falha);
-  const anteriores = doFiltro.filter((f) => ms(f.inicio_falha) < ini);
-  const anterioresComHoras = anteriores.filter((f) => f.fim_falha && ms(f.fim_falha) > ini && ms(f.fim_falha) >= ms(f.inicio_falha));
+  const anteriores = doFiltro.filter((f) => dia(f.inicio_falha) < periodo.inicio);
+  const anterioresSemHorario = anteriores.filter(f=>f.fim_falha && dia(f.fim_falha) >= periodo.inicio && (!comHora(f.inicio_falha)||!comHora(f.fim_falha)));
+  const anterioresComHoras = anteriores.filter((f) => intervaloCompleto(f.inicio_falha,f.fim_falha) && ms(f.fim_falha) > ini);
+  const anterioresComReparo = anteriores.filter(f=>intervaloCompleto(f.inicio_reparo,f.fim_reparo) && ms(f.fim_reparo) > ini && ms(f.inicio_reparo) < fim);
+  const anterioresComIntervalo = [...new Set([...anterioresComHoras,...anterioresComReparo])];
   const anterioresAbertas = anteriores.filter((f) => !f.fim_falha).length;
   const porTag = new Map();
   const grupo = (f) => {
     const t = f.tag ?? '(sem TAG)';
-    if (!porTag.has(t)) porTag.set(t, { tag: t, falhas: 0, abertas: 0, indisp: [], reparo: [] });
+    if (!porTag.has(t)) porTag.set(t, { tag: t, falhas: 0, abertas: 0, indisp: [], reparo: [], semHorario: 0, semReparo: 0 });
     return porTag.get(t);
   };
   const horas = (g, f) => {
-    if (f.fim_falha && ms(f.fim_falha) >= ms(f.inicio_falha)) g.indisp.push(corte(ms(f.inicio_falha), ms(f.fim_falha)));
-    if (f.inicio_reparo && f.fim_reparo && ms(f.fim_reparo) >= ms(f.inicio_reparo)) g.reparo.push(corte(ms(f.inicio_reparo), ms(f.fim_reparo)));
+    if (intervaloCompleto(f.inicio_falha,f.fim_falha)) g.indisp.push(corte(ms(f.inicio_falha),ms(f.fim_falha)));
+    else if(f.fim_falha && (!comHora(f.inicio_falha)||!comHora(f.fim_falha)))g.semHorario++;
+    if (intervaloCompleto(f.inicio_reparo,f.fim_reparo))g.reparo.push(corte(ms(f.inicio_reparo),ms(f.fim_reparo)));else if(f.fim_falha)g.semReparo++;
   };
   for (const f of falhas) {
     const g = grupo(f);
@@ -61,19 +68,19 @@ export function calcularConfiabilidade(fonte, filtro) {
     if (!f.fim_falha) g.abertas++;
     horas(g, f);
   }
-  for (const f of anterioresComHoras) horas(grupo(f), f);
+  for (const f of anterioresComIntervalo) horas(grupo(f), f);
   const anterioresPorTag = new Map();
   for (const f of anterioresComHoras) anterioresPorTag.set(f.tag, [...(anterioresPorTag.get(f.tag) ?? []), corte(ms(f.inicio_falha), ms(f.fim_falha))]);
   const horasAnteriores = arred([...anterioresPorTag.values()].reduce((s, l) => s + uniaoEmHoras(l), 0));
   const ranking = [...porTag.values()].map((g) => ({
     tag: g.tag, equipamento: ativos.get(g.tag)?.descricao_ativo ?? '—', falhas: g.falhas, abertas: g.abertas,
-    indisponibilidade: arred(uniaoEmHoras(g.indisp)), reparo: arred(uniaoEmHoras(g.reparo)),
+    indisponibilidade: !g.indisp.length && g.semHorario ? null : arred(uniaoEmHoras(g.indisp)), reparo: !g.reparo.length && g.semReparo ? null : arred(uniaoEmHoras(g.reparo)),
   })).sort((a, b) => b.falhas - a.falhas || b.indisponibilidade - a.indisponibilidade || a.tag.localeCompare(b.tag));
   const comEvento = ranking.filter((g) => g.falhas > 0);
   const horasIndisp = arred(ranking.reduce((s, g) => s + g.indisponibilidade, 0));
   const horasReparo = arred(ranking.reduce((s, g) => s + g.reparo, 0));
 
-  const semHorasValidas = falhas.length > 0 && abertas.length + invalidas.length === falhas.length && !anterioresComHoras.length;
+  const semHorasValidas = (falhas.length > 0 && abertas.length + invalidas.length + semHorario.length === falhas.length && !anterioresComHoras.length) || (!falhas.length && !anterioresComHoras.length && anterioresSemHorario.length > 0);
   const notaAnteriores = anterioresComHoras.length ? ` Inclui ${horasAnteriores.toLocaleString('pt-BR')} h de ${anterioresComHoras.length} falha(s) iniciada(s) antes do período (não contadas como evento).` : '';
   const base = { fonte: FONTE, data: `Início da falha entre ${periodo.inicio} e ${periodo.fim}` };
   const indicadores = {
@@ -84,17 +91,17 @@ export function calcularConfiabilidade(fonte, filtro) {
     },
     indisponibilidade: {
       id: 'indisponibilidade', titulo: 'Indisponibilidade registrada', valor: semHorasValidas ? null : horasIndisp, unidade: 'h',
-      estado: semHorasValidas ? 'indefinido' : abertas.length || invalidas.length || anterioresAbertas ? 'parcial' : (falhas.length || anterioresComHoras.length ? 'ok' : 'zero'),
+      estado: semHorasValidas ? 'indefinido' : abertas.length || invalidas.length || semHorario.length || anterioresSemHorario.length || anterioresAbertas ? 'parcial' : (falhas.length || anterioresComHoras.length ? 'ok' : 'zero'),
       formula: 'Soma, por TAG, do tempo entre início e fim da falha que cai dentro do período; sobreposições contadas uma vez. Falhas iniciadas antes do período somam só o trecho dentro dele.',
-      populacao: `${falhas.length - abertas.length - invalidas.length} falhas do período com início e fim válidos.${notaAnteriores}`,
+      populacao: `${falhas.length - abertas.length - invalidas.length - semHorario.length} falhas do período com início e fim válidos.${notaAnteriores}`,
       exclusoes: 'Falhas abertas e intervalos com fim anterior ao início não entram nas horas.',
       ausencias: [abertas.length && `Incompleto: ${abertas.length} falha(s) aberta(s) sem fim registrado.`,
         anterioresAbertas && `${anterioresAbertas} falha(s) iniciada(s) antes do período continuam abertas: horas não contadas.`].filter(Boolean).join(' '), ...base,
     },
     reparo: {
-      id: 'reparo', titulo: 'Tempo de reparo registrado', valor: horasReparo, unidade: 'h', estado: semReparo || reparoInvalido ? 'parcial' : (falhas.length || horasReparo > 0 ? 'ok' : 'zero'),
+      id: 'reparo', titulo: 'Tempo de reparo registrado', valor: falhas.length && semReparo + abertas.length === falhas.length && !anterioresComReparo.length ? null : horasReparo, unidade: 'h', estado: semReparo || reparoInvalido ? 'parcial' : (falhas.length || horasReparo > 0 ? 'ok' : 'zero'),
       formula: 'Soma, por TAG, do tempo entre início e fim do reparo; separado da indisponibilidade.',
-      populacao: `${falhas.length - semReparo - abertas.length} falhas com reparo registrado.`, exclusoes: 'Reparos sem início ou fim não entram.',
+      populacao: `${falhas.length - semReparo - abertas.length} falhas do período com reparo registrado.${anterioresComReparo.length ? ' Inclui intervalos de reparo de '+anterioresComReparo.length+' falha(s) iniciada(s) antes do período.' : ''}`, exclusoes: 'Reparos sem início ou fim não entram.',
       ausencias: semReparo ? `${semReparo} falha(s) encerrada(s) sem intervalo de reparo.` : '', ...base,
     },
     mtbf: {
@@ -114,7 +121,7 @@ export function calcularConfiabilidade(fonte, filtro) {
 
   const frases = {
     mes: porMes.length ? `${falhas.length} falhas no período, média de ${(falhas.length / porMes.length).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} por mês com ocorrência${porMes.some((m) => m.parcial) ? '; há mês parcial no período' : ''}.` : 'Sem falhas no período filtrado.',
-    ativos: comEvento.length ?`${topo[0].tag} lidera com ${topo[0].falhas} falhas e ${topo[0].indisponibilidade.toLocaleString('pt-BR')} h de indisponibilidade; os ${topo.length} primeiros somam ${topo.reduce((s, g) => s + g.falhas, 0)} de ${falhas.length} falhas.` : 'Sem ativos com falha no período filtrado.',
+    ativos: comEvento.length ?`${topo[0].tag} lidera com ${topo[0].falhas} falhas e ${topo[0].indisponibilidade === null ? 'sem intervalo completo de indisponibilidade' : topo[0].indisponibilidade.toLocaleString('pt-BR') + ' h de indisponibilidade'}; os ${topo.length} primeiros somam ${topo.reduce((s, g) => s + g.falhas, 0)} de ${falhas.length} falhas.` : 'Sem ativos com falha no período filtrado.',
   };
   const acoes = [];
   if (comEvento.length) acoes.push({ texto: `Analisar ${topo[0].tag} (${topo[0].equipamento}): ${topo[0].falhas} falhas no período.`, evidencia: 'Contagem de registros; não indica causa.' });
@@ -124,6 +131,8 @@ export function calcularConfiabilidade(fonte, filtro) {
   if (semOS && acoes.length < 3) acoes.push({ texto: `Vincular OS a ${semOS} falha(s) sem número de OS.`, evidencia: 'Campo número da OS vazio.' });
 
   const avisos = [...fonte.avisos];
+  if (anterioresSemHorario.length) avisos.push(`${anterioresSemHorario.length} falha(s) iniciada(s) antes do filtro podem atingir o período, mas têm limites sem hora: indisponibilidade não atribuível, sem rateio de duração avulsa.`);
+  if (semHorario.length || anterioresSemHorario.length || falhas.some(f=>f.horas_parada != null || f.horas_reparo != null)) avisos.push('Este dashboard soma somente intervalos com data e hora completas; durações avulsas não entram nas uniões e recortes. Consulte o Mensal para o cálculo do procedimento PCM-MAN-017.');
   if (semAtivo) avisos.push(`${semAtivo} falhas fora do cadastro de ativos ficaram de fora dos filtros de setor/família/TAG.`);
   if (semInicio) avisos.push(`${semInicio} falha(s) sem início registrado ficaram fora das contagens.`);
   if (invalidas.length) avisos.push(`${invalidas.length} falha(s) com fim anterior ao início: horas não contadas.`);
