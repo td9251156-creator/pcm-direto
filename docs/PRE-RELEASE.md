@@ -9,7 +9,7 @@ Base pública conferida: `81100416509f684e8078a988882e830fdd9adb11`. Os PRs abai
 | Proposta | Commit conferido | Verificação local |
 |---|---|---|
 | [#58 — Entrada por necessidade](https://github.com/td9251156-creator/pcm-direto/pull/58) | `e0784395aeeee9dff8be5cd77dcb31e641b24986` | Lint, 416 testes/58 arquivos, build e 18 roteiros de navegador aprovados; revisão independente sem bloqueadores. |
-| [#59 — Contribuição e questionário](https://github.com/td9251156-creator/pcm-direto/pull/59) | `66c69b3bb05be8b4f9395b461dc0844654d6b77e` | Lint, 417 testes/58 arquivos, build e 18 roteiros de navegador aprovados; revisão independente sem bloqueadores. |
+| [#59 — Contribuição e questionário](https://github.com/td9251156-creator/pcm-direto/pull/59) | `210030760cf836c28a657d50d84b42de5621190f` | Lint, 417 testes/58 arquivos, build e 18 roteiros de navegador aprovados; revisão independente sem bloqueadores. |
 
 Os testes locais usaram `VITEST_MAX_WORKERS=1` para reduzir concorrência, sem alterar asserções ou limites. Navegador: `PLAYWRIGHT_BROWSERS_PATH=/workspace/.cache/pcm-playwright PCM_SEM_SANDBOX=1 npm run test:navegador`. Conferidores sem bloqueios. As verificações da documentação ficam no PR correspondente.
 
