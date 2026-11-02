@@ -5,7 +5,7 @@ import { TIPOS_TAREFA } from '../scripts/validar-proposta-maquinas.mjs';
 const ler = (c) => readFileSync(c, 'utf8').replace(/\r\n/g, '\n'); // checkout no Windows
 const AGENTES = ['.github/agents/banco-maquinas.agent.md', '.github/agents/redes-sociais.agent.md'];
 const PROMPTS = ['.github/prompts/coordenar.prompt.md', '.github/prompts/alimentar-banco-maquinas.prompt.md', '.github/prompts/redes-sociais.prompt.md'];
-const SKILLS = ['.github/skills/alimentar-banco-maquinas/SKILL.md', '.github/skills/redes-sociais/SKILL.md'];
+const SKILLS = ['.github/skills/alimentar-banco-maquinas/SKILL.md', '.github/skills/redes-sociais/SKILL.md', '.github/skills/coordenar/SKILL.md'];
 
 it('agentes, prompts e skills existem, têm descrição e apontam para arquivos que existem', () => {
   for (const arquivo of [...AGENTES, ...PROMPTS, ...SKILLS]) {
@@ -18,7 +18,7 @@ it('agentes, prompts e skills existem, têm descrição e apontam para arquivos 
       expect(existsSync(limpo), `${arquivo} cita ${caminho}`).toBe(true);
     }
   }
-  for (const s of SKILLS) expect(ler(s)).toContain('.github/agents/');
+  for (const s of SKILLS) expect(ler(s)).toMatch(/\.github\/(agents|prompts)\//);
   expect(ler('.github/prompts/alimentar-banco-maquinas.prompt.md')).toContain('banco-maquinas.agent.md');
   expect(ler('.github/prompts/redes-sociais.prompt.md')).toContain('redes-sociais.agent.md');
 });
@@ -41,4 +41,15 @@ it('os agentes nunca publicam e escrevem só na própria pasta; AGENTS.md e o gu
   const agents = ler('AGENTS.md'); const guia = ler('docs/CONTRIBUIR-COM-IA.md');
   for (const arquivo of [...AGENTES, '.github/prompts/coordenar.prompt.md']) { expect(agents, arquivo).toContain(arquivo); expect(guia, arquivo).toContain(arquivo); }
   expect(ler('.github/prompts/coordenar.prompt.md')).toMatch(/um item por vez/);
+});
+
+it('cada agente sabe a pasta e o ramo em que trabalha, iguais aos perfis do conferidor e ao script de tarefas', () => {
+  const script = ler('scripts/nova-tarefa-ia.ps1');
+  for (const [arquivo, tipo] of [['.github/agents/banco-maquinas.agent.md', 'maquinas'], ['.github/agents/redes-sociais.agent.md', 'divulgacao']]) {
+    const texto = ler(arquivo);
+    expect(texto).toContain(`agentes\\${tipo}-<tarefa>`); expect(texto).toContain(`ia/${tipo}/<tarefa>`);
+    expect(script).toContain(`'${tipo}'`);
+  }
+  expect(ler('AGENTS.md')).toContain('### Pastas e ramos dos agentes');
+  for (const s of ['nova-tarefa-ia.ps1', 'integrar-tarefa-ia.ps1', 'limpar-tarefas-ia.ps1']) expect(ler('docs/CONTRIBUIR-COM-IA.md')).toContain(s);
 });

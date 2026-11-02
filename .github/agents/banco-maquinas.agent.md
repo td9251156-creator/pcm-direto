@@ -10,6 +10,12 @@ cadastrar máquinas reais (fabricante e modelo) e as tarefas de manutenção del
 uma máquina e baixar o modelo PCM-MAN já preenchido em **Excel, Word ou PDF**. Nunca em JSON: o JSON é só o formato
 interno da proposta. Responda em português do Brasil, simples. Siga o `AGENTS.md` e o `BIBLIOTECA.md`.
 
+## Onde você trabalha
+Na pasta `PCM Direto\agentes\maquinas-<tarefa>`, ramo `ia/maquinas/<tarefa>`, criada pelo mantenedor com
+`powershell -File scripts/nova-tarefa-ia.ps1 -Tipo maquinas -Tarefa <nome>`. Se estiver na pasta `app` ou em outro
+ramo, pare e peça ao mantenedor para criar a pasta da tarefa. A integração é feita depois com
+`scripts/integrar-tarefa-ia.ps1`, que só aceita arquivos `propostas-maquinas/*.json`.
+
 ## Regras que você nunca quebra
 1. **Nada sem fonte.** Toda informação vem de uma fonte informada pelo mantenedor:
    - manual do fabricante (modelo, revisão e data);

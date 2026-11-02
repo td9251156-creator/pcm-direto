@@ -1,6 +1,6 @@
 import { it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { conferir, PROTEGIDOS } from '../scripts/conferir-entrega-ia.mjs';
+import { conferir, PROTEGIDOS, perfilDoRamo } from '../scripts/conferir-entrega-ia.mjs';
 
 it('aponta arquivos protegidos, ambiente/backup, dependência nova e possível senha', () => {
   expect(conferir(['src/telas/falhas.js', 'testes/x.test.js'], '', '+const a = 1;').ok).toBe(true);
@@ -27,4 +27,18 @@ it('OpenCode não compartilha sessões e não envia, integra nem instala sozinho
   expect(c.share).toBe('disabled');
   for (const cmd of ['git push*', 'git merge*', 'gh pr merge*', 'npm install*']) expect(c.permission.bash[cmd], cmd).toBe('deny');
   expect(c.permission.bash['*']).toBe('ask');
+});
+
+it('perfis por ramo: cada agente só altera a própria área; o coordenador recebe aviso em protegidos', () => {
+  const r = (ramo, arquivos) => conferir(arquivos, '', '', ramo);
+  expect(r('ia/maquinas/redutor', ['propostas-maquinas/2026-11-01-redutor.json']).ok).toBe(true);
+  const m = r('ia/maquinas/redutor', ['propostas-maquinas/x.json', 'src/telas/falhas.js', 'propostas-maquinas/README.md']);
+  expect(m.foraDoPerfil).toEqual(['src/telas/falhas.js', 'propostas-maquinas/README.md']); expect(m.ok).toBe(false);
+  expect(r('ia/divulgacao/semana-1', ['divulgacao/rascunhos/a.md', 'divulgacao/calendario.md']).ok).toBe(true);
+  expect(r('ia/divulgacao/semana-1', ['src/main.js']).ok).toBe(false);
+  expect(r('ia/codex/plano-mestre', ['src/telas/planejamento.js']).ok).toBe(true);
+  expect(r('ia/codex/plano-mestre', ['src/estado.js']).ok).toBe(false); // protegido bloqueia agente de código
+  const c = r('coord/fotos', ['src/estado.js']); expect(c.ok).toBe(true); expect(c.protegidos).toEqual(['src/estado.js']);
+  expect(r('feature/qualquer', ['src/a.js']).ok).toBe(false); // ramo fora do padrão
+  expect(perfilDoRamo('ia/maquinas/x').nome).toBe('banco de máquinas');
 });

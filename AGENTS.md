@@ -117,7 +117,26 @@ O Actions continua executando testes e publicação.
   `src/repositorio.js`, `src/logica/operacao.js`, `src/integracao/`, `src/saida/biblioteca-v2-*.js`,
   `src/dados/biblioteca-pcm-v2.json`, `public/modelos/**` e `supabase/**`.
 - Nenhum dado da fábrica, backup real, chave ou `.env` vai para qualquer ferramenta de IA ou serviço externo.
-- Toda entrega informa o ramo, os arquivos alterados, a saída real de `npm run verificar` e de`n  `node scripts/conferir-entrega-ia.mjs` e o que ficou pendente. Passo a passo para o mantenedor: docs/CONTRIBUIR-COM-IA.md.
+- Toda entrega informa o ramo, os arquivos alterados, a saída real de `npm run verificar` e de
+  `node scripts/conferir-entrega-ia.mjs` e o que ficou pendente. Passo a passo para o mantenedor: docs/CONTRIBUIR-COM-IA.md.
+
+### Pastas e ramos dos agentes
+A pasta `app` é só do desenvolvimento original e da integração (coordenador). Nenhum agente trabalha nela.
+
+| Quem | Pasta de trabalho | Ramo | Pode alterar |
+|---|---|---|---|
+| Coordenador (Claude Code) | `PCM Direto\app` | `coord/<assunto>` | Tudo; arquivos protegidos só com pedido explícito |
+| Agente banco-maquinas (Copilot) | `PCM Direto\agentes\maquinas-<tarefa>` | `ia/maquinas/<tarefa>` | Só `propostas-maquinas/*.json` |
+| Agente redes-sociais (Copilot) | `PCM Direto\agentes\divulgacao-<tarefa>` | `ia/divulgacao/<tarefa>` | Só `divulgacao/` |
+| OpenCode, Copilot (código), Claude em paralelo | `PCM Direto\agentes\<tipo>-<tarefa>` | `ia/<tipo>/<tarefa>` | Código, exceto arquivos protegidos |
+| Codex (nuvem) | Contêiner próprio | `ia/codex/<item>` | Código, exceto arquivos protegidos |
+
+- Criar a pasta: `powershell -File scripts/nova-tarefa-ia.ps1 -Tipo <tipo> -Tarefa <nome>`.
+- Integrar: `powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa <tipo>-<nome> [-AbrirPR]`. O script grava o pendente,
+  aplica o perfil do ramo (conferidor), valida e mostra o próximo passo. Nunca faz merge.
+- Limpar as integradas: `powershell -File scripts/limpar-tarefas-ia.ps1` (simula) e depois com `-Confirmar`.
+- O conferidor (`scripts/conferir-entrega-ia.mjs`) bloqueia arquivo fora da área do perfil, arquivo protegido em ramo
+  de agente, `.env`/backup, dependência nova e senha no código.
 
 ## Direção atual: Gestão, comunidade e Biblioteca PCM v2
 

@@ -15,22 +15,42 @@ Guia curto para o mantenedor. As regras que todas as ferramentas leem sozinhas e
 Regra de ouro: **uma tarefa, uma ferramenta, um ramo**. Nada vai para a `main` sem `npm run verificar`, conferência e a sua aprovação.
 Nunca cole dados reais da fábrica, backups, senhas ou o arquivo `.env` em nenhuma IA.
 
-## Fluxo em 5 passos
+## Pastas: quem trabalha onde
 
-1. **Escolha a tarefa** em `docs/FILA.md` (ou abra uma issue "Tarefa para uma ferramenta de IA" no GitHub).
-2. **Crie a pasta separada** da tarefa (não mexe na pasta principal):
+```
+PCM Direto\
+├─ app\                      desenvolvimento original e integração (só o coordenador)
+├─ agentes\                  uma pasta por tarefa de agente (criada pelo script)
+│  ├─ maquinas-<tarefa>\     agente banco-maquinas · ramo ia/maquinas/<tarefa> · só propostas-maquinas/
+│  ├─ divulgacao-<tarefa>\   agente redes-sociais  · ramo ia/divulgacao/<tarefa> · só divulgacao/
+│  └─ opencode-<tarefa>\     código (também copilot-…, claude-…) · ramo ia/<tipo>/<tarefa> · sem arquivos protegidos
+└─ backups\                  cópias de segurança completas do repositório (.bundle)
+```
+
+O Codex trabalha no próprio contêiner, no ramo `ia/codex/<item>`, com as mesmas regras do perfil de código.
+
+## Fluxo em 4 comandos (na pasta `app`)
+
+1. **Criar a pasta da tarefa** (não mexe na pasta `app`):
    ```powershell
-   powershell -File scripts/nova-tarefa-ia.ps1 -Ferramenta opencode -Tarefa testes-criticidade
+   powershell -File scripts/nova-tarefa-ia.ps1 -Tipo maquinas -Tarefa redutor-sew-r
    ```
-3. **Peça à ferramenta**, dentro dessa pasta, usando o modelo de pedido abaixo.
-4. **Confira** na pasta da tarefa:
+   Tipos: `maquinas`, `divulgacao`, `opencode`, `copilot`, `claude`.
+2. **Trabalhar na pasta criada:** abra no VS Code e use o agente (banco-maquinas ou redes-sociais), ou rode o OpenCode
+   dentro dela com o modelo de pedido abaixo.
+3. **Conferir e preparar a integração** (grava o que ficou sem commit, aplica o perfil do ramo, valida):
    ```powershell
-   npm run verificar
-   node scripts/conferir-entrega-ia.mjs
+   powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa maquinas-redutor-sew-r
+   powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa maquinas-redutor-sew-r -AbrirPR   # envia e abre o PR
    ```
-   O conferidor lista os arquivos alterados e acusa arquivo protegido, `.env`/backup, dependência nova e senha no código.
-5. **Entregue para integração:** diga ao Claude Code o nome do ramo (`ia/opencode/testes-criticidade`). Ele revisa, roda
-   os 13 roteiros de navegador, abre o PR e você aprova o merge. Depois apague a pasta: `git worktree remove <pasta>`.
+   Arquivo fora da área do agente, arquivo protegido, `.env`/backup, dependência nova ou senha: a integração para.
+4. **Depois do merge, limpar:**
+   ```powershell
+   powershell -File scripts/limpar-tarefas-ia.ps1             # mostra o que seria removido
+   powershell -File scripts/limpar-tarefas-ia.ps1 -Confirmar  # remove só as tarefas já integradas e sem pendências
+   ```
+
+O coordenador (Claude Code) revisa cada PR, roda os roteiros de navegador quando preciso e você aprova o merge.
 
 ## Modelo de pedido (cole na ferramenta)
 
