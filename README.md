@@ -6,11 +6,11 @@ Software livre e gratuito para técnicos e pequenas operações de manutenção 
 
 [Abrir o app](https://pcmdireto.me/) · [Conhecer o projeto](https://pcmdireto.me/conheca.html) · [Contribuir](CONTRIBUTING.md) · [English](README.en.md)
 
-**Versão de teste.** Modelos R00 em desenvolvimento; validação humana e documental ainda pendente. [Evidências e limites](docs/VALIDACAO-REFORMULACAO.md).
+**Versão de teste.** [Modelos recebidos e limites da integração](docs/ATUALIZACAO-BIBLIOTECA-20261102.md). Modelos R00 em desenvolvimento; validação humana e documental ainda pendente. [Evidências e limites](docs/VALIDACAO-REFORMULACAO.md).
 
 ## O que você encontra
 
-- **Biblioteca PCM v2:** 19 modelos gratuitos em branco, PCM-MAN-001 a 019, sendo 16 Excel e três Word. Download individual, sem conta. Há também um procedimento já escrito sobre indicadores, separado da contagem dos 19 modelos.
+- **Biblioteca PCM v2 (pacote 2.0.2):** 19 modelos gratuitos em branco, PCM-MAN-001 a 019, sendo 16 Excel e três Word. Download individual, sem conta. Há também um procedimento já escrito sobre indicadores, separado da contagem dos 19 modelos.
 - **Planejamento:** cadastro, colagem, CSV e XLSX; TAGs com validação e sugestões; criticidade por quatro notas de 1 a 5; tarefas, capacidade e revisões com prévia de impacto.
 - **Rotina local:** execução por ocorrência, histórico, falhas, fotos, registro de ciência, janelas de parada, etiquetas QR e dashboards. Ciência não é aprovação técnica nem comprovação de identidade.
 - **Documentos:** cópias preenchidas dos modelos da Biblioteca v2, por documento, com revisão e data de corte. Alguns recebem conteúdo operacional; outros, apenas cadastros e identificação. O PCM-MAN-011 por ativo e ano é gerado em Mensal.

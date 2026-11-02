@@ -38,10 +38,10 @@ it('preenche a planilha: o Excel calcula MTBF = 197 h e disponibilidade 98,5% co
   expect(ind.getCell('A4').value).toBe('BMB-01 · Bomba fictícia');
   expect(ind.getCell('D4').value).toEqual(new Date('2026-01-01T00:00:00Z'));
   expect([ind.getCell('F4').value, ind.getCell('H4').value]).toEqual([0.95, 0.9]);
-  expect([ind.getCell('B8').value, ind.getCell('C8').value, ind.getCell('D8').value, ind.getCell('E8').value]).toEqual([600, 591, 3, 10]);
-  expect(ind.getCell('E9').value).toBe(null);
+  expect([ind.getCell('B8').value, ind.getCell('C8').value, ind.getCell('D8').value, ind.getCell('E8').value, ind.getCell('F8').value]).toEqual([600, 591, 3, 3, 10]);
+  expect(ind.getCell('E9').value).toBe(0); expect(ind.getCell('F9').value).toBe(null);
   expect(ind.getCell('B10').value).toBe(null); // março ainda não encerrado
-  expect(ind.getCell('K8').value?.formula ?? ind.getCell('K8').formula).toMatch(/C8\/D8/); // MTBF = 591 ÷ 3 = 197 h no Excel
+  expect(ind.getCell('L8').value?.formula ?? ind.getCell('L8').formula).toMatch(/C8\/D8/); // MTBF = 591 ÷ 3 = 197 h no Excel
   expect(wb.getWorksheet('Cadastros').getCell('A5').value).toBe('Técnica Fictícia');
   expect(wb.getWorksheet('Leia-me').getCell('D13').value).toBe('Técnica Fictícia');
 });

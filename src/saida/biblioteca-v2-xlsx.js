@@ -281,7 +281,7 @@ export async function preencherPcmMan004(bytes, dados) {
   const data = (iso) => (iso ? serialData(iso) : null);
   preencherTabela(p, 'Ordens de Serviço', 29, dados.ordens.map((o) => ({ A: o.numero, B: o.tag, D: o.atividade || null, E: o.tipo || null,
     F: o.prioridade || null, G: o.status || null, H: o.responsavel || null, I: data(o.abertura), J: data(o.prazo), K: data(o.conclusao),
-    L: o.estimadas, M: o.restantes, N: o.observacao || null })));
+    L: o.estimadas, M: o.executadas ?? null, N: o.restantes, O: o.origem || null, P: o.observacao || null })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
@@ -294,13 +294,13 @@ export async function preencherPcmMan008(bytes, dados) {
   await conferirOriginal(bytes, 'PCM-MAN-008');
   const p = await abrirPacote(bytes);
   cadastrosLadoALado(p, dados);
-  // Falha do app sem hora: usa os estilos dd/mm/aaaa do próprio modelo (145 e 147, mesmas bordas de 81 e 89)
+  // Falha do app sem hora: usa os estilos dd/mm/aaaa do próprio modelo (149 e 151, mesmas bordas de 81 e 90)
   // para não exibir "00:00".
-  const SO_DATA = { 81: '145', 89: '147' };
+  const SO_DATA = { 81: '149', 90: '151' };
   const quando = (v) => (v && v.length === 10 ? { valor: serialData(v), estilos: SO_DATA } : serialDataHora(v));
   preencherTabela(p, 'Registro de falhas', 29, dados.falhas.map((f) => ({ A: f.referencia, B: f.tag, D: f.os || null, E: f.descricao || null,
-    F: f.causa || null, G: f.acao || null, H: quando(f.inicio), I: quando(f.fim), J: serialDataHora(f.inicioReparo), K: serialDataHora(f.fimReparo),
-    L: f.peca || null, M: f.responsavel || null })));
+    F: f.causa || null, G: f.acao || null, H: quando(f.inicio), I: quando(f.fim), J: quando(f.inicioReparo), K: quando(f.fimReparo),
+    L: f.peca || null, M: f.responsavel || null, N: f.horasParada ?? null, O: f.horasReparo ?? null })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
   return fecharPacote(p);
 }
@@ -330,12 +330,14 @@ export async function preencherPcmMan002(bytes, dados) {
   const extra = dados.atividades.length - 10;
   inserirLinhas(p, 'Plano', 30, extra);
   inserirLinhas(p, 'Cronograma', 33, extra);
-  // Colunas do Plano: G "A cada (dias)" é fórmula da Periodicidade (H). Periodicidade fora da lista do modelo:
-  // grava os dias direto em G e deixa H vazia.
+  // Colunas do modelo recebido: L (dias) calcula a Periodicidade M; fora da lista, grava dias em L e deixa M vazia.
   escrever(p, 'Plano', dados.atividades.flatMap((t, i) => {
     const l = 21 + i; const naLista = t.periodicidade in DIAS_POR_PERIODICIDADE;
-    return [[`A${l}`, 16 + i], [`B${l}`, t.tag], [`E${l}`, t.atividade], ...(naLista ? [[`H${l}`, t.periodicidade]] : [[`G${l}`, t.dias]]),
-      [`I${l}`, t.responsavel || null], [`J${l}`, t.duracao], [`L${l}`, t.primeira ? serialData(t.primeira) : null]];
+    return [[`A${l}`, 16 + i], [`B${l}`, t.tag], [`D${l}`, t.componente || null], [`E${l}`, t.atividade],
+      [`F${l}`, t.tarefaId || null], [`G${l}`, t.seguranca || null], [`H${l}`, t.origem || null], [`I${l}`, t.versao || null],
+      [`J${l}`, t.tipoTarefa || null], [`K${l}`, t.executante || null],
+      ...(naLista ? [[`M${l}`, t.periodicidade]] : [[`L${l}`, t.dias], [`M${l}`, null]]),
+      [`N${l}`, t.responsavel || null], [`O${l}`, t.duracao], [`P${l}`, t.parada || null], [`Q${l}`, t.primeira ? serialData(t.primeira) : null]];
   }));
   if (dados.ano) escrever(p, 'Cronograma', [['A4', dados.ano]]);
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null], ['D14', dados.aprovado || null]]);
@@ -351,8 +353,8 @@ export async function preencherPcmMan011(bytes, dados) {
   const p = await abrirPacote(bytes);
   const v = (n) => (Number.isFinite(n) ? n : null);
   escrever(p, 'Indicadores', [['A4', dados.ativo], ['D4', serialData(`${dados.ano}-01-01`)], ['F4', v(dados.metaDisponibilidade)], ['H4', v(dados.metaCumprimento)],
-    ...dados.meses.flatMap((m, i) => (m.aberto ? [] : [['B', m.horasProgramadas], ['C', m.horasOperacao], ['D', m.falhas], ['E', m.horasReparo],
-      ['F', m.pmPlanejadas], ['G', m.pmFeitas], ['H', m.horasCorretiva], ['I', m.horasPreventiva]].map(([c, x]) => [`${c}${8 + i}`, v(x)])))]);
+    ...dados.meses.flatMap((m, i) => (m.aberto ? [] : [['B', m.horasProgramadas], ['C', m.horasOperacao], ['D', m.falhas], ['E', m.reparosCompletos], ['F', m.horasReparo],
+      ['G', m.pmPlanejadas], ['H', m.pmFeitas], ['I', m.horasCorretiva], ['J', m.horasPreventiva]].map(([c, x]) => [`${c}${8 + i}`, v(x)])))]);
   preencherTabela(p, 'Cadastros', 29, dados.pessoas.map((n) => ({ A: n })));
   escrever(p, 'Leia-me', [['D13', dados.elaborado || null]]);
   return fecharPacote(p);

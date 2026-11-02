@@ -2,12 +2,14 @@
 import contrato from '../dados/biblioteca-pcm-v2.json';
 import JSZip from 'jszip';
 
-const numeros = new Set(['horas_estimadas', 'horas_restantes', 'valor_realizado']);
+const numeros = new Set(['horas_estimadas', 'horas_restantes', 'horas_executadas', 'horas_parada', 'horas_reparo', 'valor_realizado']);
 const datas = new Set(['data_abertura', 'data_prevista', 'data_conclusao', 'data_lancamento']);
 const horarios = new Set(['inicio_falha', 'fim_falha', 'inicio_reparo', 'fim_reparo']);
+// Com hora ausente, comparar apenas dias; não tratar a data como meia-noite.
+const anterior = (a, b) => a.length === 19 && b.length === 19 ? a < b : a.slice(0,10) < b.slice(0,10);
 const vazio = valor => valor === '' || valor === null || valor === undefined;
 // Colunas acrescentadas aos modelos 004 (observacao) e 008 (peca, responsavel) em 01/11/2026.
-const CAMPOS_NOVOS_OPCIONAIS = ['observacao', 'peca', 'responsavel'];
+const CAMPOS_NOVOS_OPCIONAIS = ['observacao', 'peca', 'responsavel', 'horas_executadas', 'origem_registro', 'horas_parada', 'horas_reparo', 'numero_os'];
 const dataValida = texto => {
   const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}):(\d{2}))?$/.exec(texto);
   if (!m) return false;
@@ -80,8 +82,14 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
         const epoch = wb.properties.date1904 ? Date.UTC(1904, 0, 1) : Date.UTC(1899, 11, 30);
         valor = new Date(epoch + Math.round(valor * 86400000));
       }
-      if (valor instanceof Date && Number.isFinite(valor.getTime())) valor = valor.toISOString().slice(0, horarios.has(campo) ? 19 : 10);
-      if (typeof valor !== 'string' || !dataValida(valor) || (horarios.has(campo) && valor.length !== 19) || (datas.has(campo) && valor.length !== 10)) {
+      if (valor instanceof Date && Number.isFinite(valor.getTime())) {
+        const formato = String(cell.numFmt ?? '').replace(/\[[^\]]*\]|"[^"]*"|\\./g, '');
+        const horaOculta = valor.getUTCHours() || valor.getUTCMinutes() || valor.getUTCSeconds() || valor.getUTCMilliseconds();
+        const soData = /d/i.test(formato) && /y/i.test(formato) && !/[hs]/i.test(formato) && !horaOculta;
+        // General não comprova ausência de hora. Preservar fração do dia mesmo oculta por um formato só data.
+        valor = valor.toISOString().slice(0, horarios.has(campo) && !soData ? 19 : 10);
+      }
+      if (typeof valor !== 'string' || !dataValida(valor) || (horarios.has(campo) && ![10,19].includes(valor.length)) || (datas.has(campo) && valor.length !== 10)) {
         erro(base, linha, campo, 'Data inválida; use data real do Excel ou formato ISO.'); return null;
       }
       return valor;
@@ -128,6 +136,7 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
       if (campo === 'prioridade' && vazio(o.prioridade) && o.tipo_manutencao === 'PREVENTIVA') continue; // vazia só em preventiva
       if (!permitidos.includes(o[campo])) erro('ordens_servico', null, campo, 'Código fora da lista padronizada.');
     }
+    if (o.origem_registro && !['Execução no app','OS importada','Digitação manual'].includes(o.origem_registro)) erro('ordens_servico', null, 'origem_registro', 'Código fora da lista padronizada.');
     if (!o.tag || !o.status || !o.data_abertura) erro('ordens_servico', null, 'tag/status/data_abertura', 'OS incompleta.');
     if (o.data_conclusao && o.data_abertura && o.data_conclusao < o.data_abertura) erro('ordens_servico', null, 'data_conclusao', 'Conclusão anterior à abertura.');
     if (o.status === 'CONCLUIDA' && !o.data_conclusao) erro('ordens_servico', null, 'data_conclusao', 'OS concluída sem data de conclusão.');
@@ -136,9 +145,9 @@ export function prepararPreviaBibliotecaV2(wb, codigo) {
   for (const f of bases.falhas ?? []) {
     if (!f.tag || !f.inicio_falha) erro('falhas', null, 'tag/inicio_falha', 'Falha sem TAG ou início.');
     for (const [ini, fim] of [['inicio_falha', 'fim_falha'], ['inicio_reparo', 'fim_reparo']]) {
-      if (f[fim] && (!f[ini] || f[fim] < f[ini])) erro('falhas', null, fim, 'Intervalo inválido.');
+      if (f[fim] && (!f[ini] || anterior(f[fim], f[ini]))) erro('falhas', null, fim, 'Intervalo inválido.');
     }
-    if ((f.inicio_reparo && f.inicio_falha && f.inicio_reparo < f.inicio_falha) || (f.fim_reparo && f.fim_falha && f.fim_reparo > f.fim_falha)) erro('falhas', null, 'inicio_reparo/fim_reparo', 'Reparo fora do intervalo de indisponibilidade.');
+    if ((f.inicio_reparo && f.inicio_falha && anterior(f.inicio_reparo, f.inicio_falha)) || (f.fim_reparo && f.fim_falha && anterior(f.fim_falha, f.fim_reparo))) erro('falhas', null, 'inicio_reparo/fim_reparo', 'Reparo fora do intervalo de indisponibilidade.');
   }
   for (const custo of bases.custos_manutencao ?? []) {
     if (!['MATERIAL', 'MAO_OBRA', 'TERCEIROS', 'OUTROS'].includes(custo.categoria_custo)) erro('custos_manutencao', null, 'categoria_custo', 'Código fora da lista padronizada.');
