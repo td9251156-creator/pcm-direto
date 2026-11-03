@@ -1,6 +1,6 @@
 # Portal de manutenção prática — implementação consolidada
 
-Direção: encontrar um modelo, entender como usar, aplicar na rotina e trocar experiências sobre o assunto. Continuação da fundação e do catálogo do PR #67, já integrado à main. Esta entrega acrescenta guias, continuidade no app, conversas e distribuição no ramo `coord/completar-portal-manutencao`; **não significa integração, publicação ou ativação automática dessas novas partes**.
+Direção: encontrar um modelo, entender como usar, aplicar na rotina e trocar experiências sobre o assunto. Continuação da fundação e do catálogo do PR #67, já integrado à main. Esta entrega acrescenta guias, continuidade no app, conversas e distribuição no ramo `coord/completar-portal-manutencao`; integrada no PR #68 com autorização do mantenedor. A ativação das conversas continua condicionada à conferência de Auth/moderação reais.
 
 | Área | Implementado | Verificação / pendência |
 |---|---|---|
@@ -8,7 +8,7 @@ Direção: encontrar um modelo, entender como usar, aplicar na rotina e trocar e
 | Orientação | Primeiro preenchimento e exemplo fictício em cada material | Conteúdo editorial; revisão técnica humana permanece separada |
 | Aprender | Índice público e guia aprofundado de OS | Outros três guias completos como rascunhos `publicado:false`, sem páginas/links públicos até revisão técnica |
 | Aplicar | Capacidades específicas para 002/004/008/011; outros arquivos distinguem cadastros/texto da equipe | Parâmetro `modelo` validado pelo catálogo, intenção em memória e retorno ao material, sem gerar/alterar por abrir link |
-| Comunidade — servidor | Assuntos por código, moderação prévia, contas confirmadas, respostas em um nível, retirada, denúncias e limites | Migração local testada; **produção não migrada nem ativada** |
+| Comunidade — servidor | Assuntos por código, moderação prévia, contas confirmadas, respostas em um nível, retirada, denúncias e limites | Migração aplicada em produção, 19 assuntos e acesso direto revogado conferidos; **participação desativada** |
 | Comunidade — interface | Leitura pública sob demanda, login contextual, participação, “minhas”, moderação e denúncias privadas | SDK com API simulada; e-mail e permissões reais dependem de implantação autorizada |
 | Privacidade | Projeções sem IDs privados/e-mail; sem anexos, mensagens privadas, notificações, pontos ou tracking | Conta/rascunho limpos ao trocar usuário ou sair/retornar; token fixado por operação privada |
 | Descoberta | Títulos, descrições, canonical, prévias sociais, sitemap, robots e 404; app/recuperação/callback fora do sitemap e com noindex | Indexação no Google não foi confirmada nem sitemap enviado pelo mantenedor |
@@ -38,6 +38,6 @@ O teste de lifecycle usa eventos BFCache simulados, sem afirmar conferência em 
 
 ## Próximas decisões após revisão
 
-Autorizar integração/publicação e, separadamente, a migração/ativação da comunidade; revisar os três guias em rascunho para publicação gradual. Em seguida, o mantenedor poderá publicar o conteúdo orgânico preparado e iniciar uma comparação de 28 dias. Sem métricas confirmadas ou validação de uso, não há alegação de aumento de público ou retorno ao app.
+Conferir retorno de login, entrega real de e-mail e moderação antes de ativar as conversas; revisar os três guias em rascunho para publicação gradual. Em seguida, o mantenedor poderá publicar o conteúdo orgânico preparado e iniciar uma comparação de 28 dias. Sem métricas confirmadas ou validação de uso, não há alegação de aumento de público ou retorno ao app.
 
 A correção de entrada direta publicada no PR #70 foi incorporada nesta entrega: os botões de apresentação abrem o app diretamente, e os links antigos continuam compatíveis sem exibir o portal antes do app.

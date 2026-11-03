@@ -4,8 +4,8 @@
 
 - **Integrado:** fundação e catálogo público de 19 modelos, PRs #61, #62 e #67; catálogo em `562e292`. Downloads originais preservados.
 - **Integrado:** modelos recebidos, coleção 2.0.2 (#64); biblioteca de máquinas 0.3.0, 47 tipos/380 tarefas (#65); apresentação simplificada a pedido do mantenedor (#66).
-- **Preparado/verificado localmente:** guia de OS, contexto do modelo até o app, comunidade por material com moderação, sitemap/404 e materiais de distribuição. Detalhes, evidências e limites em [Entrega do portal](portal/ENTREGA.md).
-- **Pendente de produção:** aplicar/revisar a migração de conversas, configurar retorno de login e autorizar ativação. O banco real ainda não tem essas tabelas; o comportamento local não comprova permissões em produção.
+- **Integrado no PR #68 e verificado:** guia de OS, contexto do modelo até o app, comunidade por material com moderação, sitemap/404 e materiais de distribuição. Detalhes, evidências e limites em [Entrega do portal](portal/ENTREGA.md).
+- **Banco real:** migração de conversas aplicada, 19 assuntos conferidos, quatro tabelas com RLS e sem SELECT direto para visitantes/contas. Participação desativada (`ativo=false`). Pendentes: allowlist de retorno do Auth, entrega real de e-mail e teste de login/moderação antes da ativação.
 - **Revisão humana:** três guias em rascunho, orientações editoriais, Auth/e-mail reais, aparelhos e editores Office. Validação de uso com pessoas segue adiada.
 - **Não publicado nas redes:** perfis, fixada e quatro conjuntos orgânicos em `divulgacao/portal/`. Métricas não medidas permanecem sem números.
 

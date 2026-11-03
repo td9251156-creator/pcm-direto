@@ -35,7 +35,8 @@ await executarComRecursos({
       await p.goto('http://127.0.0.1:4222/app.html#cadastros');
       await p.locator('#form-organizacao input[name="nome"]').fill('Operação fictícia após atualização');
       await p.locator('#salvar-organizacao').click();
-      await p.waitForFunction(() => document.querySelector('#salvar-organizacao') && !document.querySelector('#salvar-organizacao').disabled);
+      // O botão não sinaliza persistência: só recarregar após a confirmação da transação.
+      await p.waitForFunction(() => document.querySelector('#mensagens')?.textContent === 'Dados guardados neste aparelho.');
       await p.reload();
       await p.locator('#form-organizacao input[name="nome"]').waitFor();
       assert.equal(await p.locator('#form-organizacao input[name="nome"]').inputValue(), 'Operação fictícia após atualização');
