@@ -73,6 +73,20 @@ try {
  await como('authenticated',M,()=>recusa(()=>enviar('Excesso diário'),'54000'));
  await como('authenticated',B,async()=>{for(let i=0;i<9;i++)await db.query('select comunidade_denunciar($1,$2)',[pais[i].id,'Motivo fictício']);await recusa(()=>db.query('select comunidade_denunciar($1,$2)',[pais[10].id,'Excesso diário']),'54000');});
  await db.exec('update comunidade_pcm.configuracao set ativo=false');
- await como('authenticated',A,()=>db.query('select comunidade_retirar($1)',[filho]));
- console.log('Conversas: moderação prévia, duas contas, visitante, limites, idempotência, um nível de resposta, retirada, denúncias privadas, paginação e projeção sem autor/e-mail aprovados.');
+ await como('anon',null,async()=>{assert.equal((await listar()).rows.length,0);await recusa(()=>listar('meus'),'42501');});
+ await como('authenticated',A,async()=>{
+  assert.ok((await listar('meus')).rows.every(r=>r.proprio));
+  await recusa(()=>enviar('Novo envio durante pausa'),'55000');
+  await recusa(()=>db.query('select comunidade_denunciar($1,$2)',[pais[0].id,'Motivo fictício']),'55000');
+  await recusa(()=>listar('moderacao'),'42501');
+  await db.query('select comunidade_retirar($1)',[filho]);
+ });
+ await como('authenticated',B,()=>recusa(()=>db.query('select comunidade_retirar($1)',[filho]),'42501'));
+ await como('authenticated',M,async()=>{
+  await listar('moderacao');
+  await db.query('select comunidade_moderar($1,false)',[pais[0].id]);
+  const pendentes=await db.query('select * from comunidade_denuncias_listar(0)');
+  if(pendentes.rows.length)await db.query('select comunidade_denuncia_resolver($1)',[pendentes.rows[0].id]);
+ });
+ console.log('Conversas: moderação prévia, duas contas, visitante, limites, idempotência, um nível de resposta, retirada, denúncias privadas, pausa com retirada/moderação e bloqueio de novos envios, paginação e projeção sem autor/e-mail aprovados.');
 }finally{await db.close();}

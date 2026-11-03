@@ -13,7 +13,7 @@ assert.match(await readFile('dist/comunidade/acesso/index.html','utf8'),/noindex
 await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd(),porta:4224}),criarNavegador:()=>chromium.launch({args:process.env.PCM_SEM_SANDBOX==='1'?['--no-sandbox']:[]}),limiteTotal:240000,executar:async({navegador})=>{
  const c=await navegador.newContext({serviceWorkers:'block',acceptDownloads:true});c.setDefaultTimeout(10000);
  await c.addInitScript(()=>{const Canal=window.BroadcastChannel;window.BroadcastChannel=class extends Canal{constructor(nome){super(nome);window.canalComunidadeTeste=nome;}};});
- let ativa=true,emails=0,envios=0,ultimoToken,segurarPapel=false,recebeuPapel,liberarPapel,segurarEnvio=false,recebeuEnvio,liberarEnvio;
+ let ativa=true,falhaDisponibilidade=null,ultimaConsulta=null,emails=0,envios=0,ultimoToken,segurarPapel=false,recebeuPapel,liberarPapel,segurarEnvio=false,recebeuEnvio,liberarEnvio;
  const raizId='50000000-0000-4000-8000-000000000001';
  const itens=[{id:raizId,codigo:'PCM-MAN-004',resposta_a:null,apelido:'Equipe publicada',texto:'Pergunta publicada fictícia',situacao:'aprovado',criado_em:'2026-11-02T12:00:00Z',autor:B}];let denuncias=[];
  const dto=(i,ator)=>({id:i.id,codigo:i.codigo,resposta_a:i.resposta_a,apelido:i.apelido,texto:i.texto,situacao:i.situacao,criado_em:i.criado_em,proprio:i.autor===ator,publicado:i.situacao==='aprovado'&&(!i.resposta_a||itens.some(p=>p.id===i.resposta_a&&p.situacao==='aprovado'))});
@@ -27,15 +27,17 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
   if(url.pathname.endsWith('/logout'))return responder({});
   if(url.pathname.endsWith('/catalogo_e_moderador')){if(segurarPapel){segurarPapel=false;recebeuPapel();await new Promise(resolve=>{liberarPapel=resolve;});}return responder(ator===M);}
   const nome=url.pathname.split('/').at(-1);const dados=req.method()==='POST'?req.postDataJSON():{};
-  if(nome==='comunidade_ativa')return responder(ativa);
+  if(nome==='comunidade_ativa'){if(falhaDisponibilidade==='ausente')return responder({code:'PGRST202'},404);if(falhaDisponibilidade==='invalida')return responder('indefinida');return responder(ativa);}
   if(nome==='comunidade_resumo')return responder([{codigo:'PCM-MAN-004',comentarios:1,atualizado_em:'2026-11-02T12:00:00Z'}]);
   if(nome==='comunidade_listar'){
+   ultimaConsulta=dados;
    assert.deepEqual(Object.keys(dados).sort(),['p_codigo','p_vista','p_pagina'].sort());
    if(dados.p_vista!=='publicos'&&!ator)return responder({code:'42501'},403);
    const lista=itens.filter(i=>(!dados.p_codigo||i.codigo===dados.p_codigo)&&(dados.p_vista==='meus'?i.autor===ator&&i.situacao!=='retirado':dados.p_vista==='moderacao'?ator===M&&i.situacao==='pendente':i.situacao==='aprovado'&&(!i.resposta_a||itens.some(p=>p.id===i.resposta_a&&p.situacao==='aprovado'))));
    return responder(lista.map(i=>dto(i,ator)));
   }
   if(nome==='comunidade_enviar'){
+   if(!ativa)return responder({code:'55000'},400);
    assert.deepEqual(Object.keys(dados).sort(),['p_codigo','p_apelido','p_texto','p_resposta_a','p_nonce'].sort());assert.ok(ator);ultimoToken=ator;envios++;
    if(segurarEnvio){segurarEnvio=false;recebeuEnvio();await new Promise(resolve=>{liberarEnvio=resolve;});}
    const id=crypto.randomUUID();itens.push({id,codigo:dados.p_codigo,apelido:dados.p_apelido,texto:dados.p_texto,resposta_a:dados.p_resposta_a,situacao:'pendente',criado_em:new Date().toISOString(),autor:ator});return responder(id);
@@ -80,8 +82,33 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  assert.deepEqual(await p.evaluate(async()=>(await indexedDB.databases()).map(d=>d.name)),[],'Conversas públicas não abrem a base operacional');
  await mkdir('artifacts',{recursive:true});
  for(const width of [320,390,820,1280]){await p.setViewportSize({width,height:900});assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await p.screenshot({path:`artifacts/conversa-modelo-${width}.png`,fullPage:true});}
- ativa=false;await p.reload();await p.locator('[data-carregar-conversas]').click();await p.waitForFunction(()=>document.body.innerText.includes('As conversas ainda não estão disponíveis.'));
+ const enviosAntesPausa=envios;
+ itens.push({id:crypto.randomUUID(),codigo:'PCM-MAN-004',apelido:'Equipe B',texto:'Pendência fictícia anterior à pausa',resposta_a:null,situacao:'pendente',criado_em:new Date().toISOString(),autor:B});
+ ativa=false;await p.reload();await p.locator('[data-carregar-conversas]').click();
+ await p.locator('[data-retirar]').first().waitFor({timeout:5000});
+ assert.ok((await p.locator('[data-conversas-conteudo]').innerText()).includes('Novos envios estão pausados'));
+ assert.equal(await p.locator('[data-enviar]').count(),0);assert.equal(await p.locator('[data-vista=publicos]').count(),0);assert.equal(await p.locator('[data-denunciar]').count(),0);
+ p.once('dialog',d=>d.accept());await p.locator('[data-retirar]').first().click();await p.waitForFunction(()=>document.body.innerText.includes('Sua mensagem foi retirada.'));
+ await emitir(B);await p.locator('[data-vista=meus]').waitFor();await p.waitForFunction(()=>document.body.innerText.includes('Pendência fictícia anterior à pausa'));assert.ok(!(await p.locator('[data-lista-conversas]').innerText()).includes('Pergunta privada A'));
+ await emitir(null,'SIGNED_OUT');await p.locator('[data-entrar]').waitFor();assert.equal(await p.locator('[data-lista-conversas] [data-comentario]').count(),0);
+ await p.locator('[data-entrar] input').fill('colaborador@example.invalid');await p.locator('[data-entrar] button').click();await p.waitForFunction(()=>document.body.innerText.includes('confira seu e-mail'));assert.equal(emails,2);
+ await emitir(M);await p.locator('[data-vista=moderacao]').click();await p.locator('[data-aprovar]').first().click();await p.locator('[data-atualizar]:enabled').waitFor();assert.equal(itens.find(i=>i.texto==='Pendência fictícia anterior à pausa').situacao,'aprovado');assert.equal(await p.locator('[data-enviar]').count(),0);assert.equal(ultimaConsulta.p_pagina,0,'Pausa retorna à primeira página das próprias mensagens');
+ ativa=true;await p.locator('[data-atualizar]').click();await p.locator('[data-enviar]').waitFor();
+ for(let n=0;n<10;n++)itens.push({id:crypto.randomUUID(),codigo:'PCM-MAN-004',apelido:'Fictício',texto:'Publicação fictícia '+n,resposta_a:null,situacao:'aprovado',criado_em:new Date().toISOString(),autor:B});
+ await p.locator('[data-vista=publicos]').click();await p.locator('[data-proxima]:enabled').waitFor();await p.locator('[data-proxima]').click();await p.locator('[data-lista-conversas] .mensagem-conversa').first().waitFor();assert.equal(ultimaConsulta.p_pagina,1);
+ await p.locator('[data-enviar] input').fill('Equipe M');await p.locator('[data-enviar] textarea').fill('Rascunho preservado durante pausa');
+ ativa=false;await p.locator('[data-atualizar]').click();await p.locator('[data-atualizar]:enabled').waitFor();assert.equal(await p.locator('[data-enviar]').count(),0);assert.equal(ultimaConsulta.p_pagina,0,'Pausa retorna à primeira página das próprias mensagens');
+ ativa=true;await p.locator('[data-atualizar]').click();await p.locator('[data-enviar]').waitFor();assert.equal(await p.locator('[data-enviar] textarea').inputValue(),'Rascunho preservado durante pausa');assert.equal(envios,enviosAntesPausa);
+ ativa=false;await p.locator('[data-atualizar]').click();await p.locator('[data-atualizar]:enabled').waitFor();
+
  const [arquivo]=await Promise.all([p.waitForEvent('download'),p.locator('.cabecalho-publico a[download]').click()]);assert.deepEqual(await readFile(await arquivo.path()),await readFile('public/modelos/biblioteca-v2/PCM-MAN-004_Ordens-de-Servico_R00.xlsx'));
+ for(const falha of ['ausente','invalida']){
+  falhaDisponibilidade=falha;await p.reload();await p.locator('[data-carregar-conversas]').click();await p.locator('[data-carregar-conversas]:enabled').waitFor();
+  assert.equal(await p.locator('[data-entrar]').count(),0);assert.equal(await p.locator('[data-enviar]').count(),0);assert.equal(await p.locator('[data-lista-conversas]').count(),0);
+  assert.ok((await p.locator('[data-comunidade-modelo]').innerText()).includes(falha==='ausente'?'As conversas ainda não estão disponíveis.':'Não foi possível conferir a disponibilidade'));
+  const [original]=await Promise.all([p.waitForEvent('download'),p.locator('.cabecalho-publico a[download]').click()]);assert.deepEqual(await readFile(await original.path()),await readFile('public/modelos/biblioteca-v2/PCM-MAN-004_Ordens-de-Servico_R00.xlsx'));
+ }
+ falhaDisponibilidade=null;
  assert.deepEqual(erros,[]);await outra.close();await c.close();
 
  const retorno=await navegador.newContext({serviceWorkers:'block'});
@@ -95,5 +122,5 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  await l.evaluate(()=>location.hash='comunidade');await l.locator('[data-demonstrar]').click();await l.locator('#sair-demo').waitFor();await l.evaluate(()=>location.hash='comunidade');await l.locator('[data-sair-exemplo]').click();await l.waitForFunction(()=>!document.querySelector('#intencao-modelo')?.innerText.includes('Exemplo isolado'));assert.equal(await l.locator('#intencao-modelo .botao').getAttribute('href'),'#assistente');assert.deepEqual(await ler(),antes);
  await l.locator('[data-dispensar-modelo]').click();await l.evaluate(()=>location.hash='apoio');await l.locator('#buscar-apoio').waitFor();assert.equal(await l.locator('#intencao-modelo').count(),0);
  await l.goto(origem+'/app.html?modelo=INVALIDO#inicio');await l.locator('#conteudo h2').first().waitFor();assert.equal(await l.locator('#intencao-modelo').count(),0);await local.close();
- console.log('Portal completo: guia/404/sitemap, contexto sem escrita/geração, saída demo, leitura pública, login por assunto simulado, duas contas, token fixo, rascunho/renovação, pagehide/pageshow simulado, moderação, denúncia privada, retirada, quatro larguras e falha da comunidade sem bloquear download aprovados.');
+ console.log('Portal completo: guia/404/sitemap, contexto sem escrita/geração, saída demo, leitura pública, login por assunto simulado, duas contas, token fixo, rascunho/renovação, pagehide/pageshow simulado, moderação, denúncia privada, retirada, quatro larguras, pausa com login/retirada/moderação sem novo envio e falha da comunidade sem bloquear download aprovados.');
 }});

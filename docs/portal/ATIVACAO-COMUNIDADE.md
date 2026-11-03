@@ -39,7 +39,17 @@ Não foi realizado teste de carga concorrente em PostgreSQL hospedado. O código
 update comunidade_pcm.configuracao set ativo=true where id=true;
 ```
 
-Para pausar novas conversas, definir `ativo=false`. Páginas recém-abertas deixam de carregar a participação; leitura/downloads dos materiais continuam. Os RPCs de retirada e moderação continuam autorizados para seus papéis durante a pausa, mas a interface inicial não oferece login enquanto pausada. Solicitações de remoção também podem ser encaminhadas a pcmdireto@gmail.com.
+Para pausar novas conversas, definir `ativo=false`. Páginas recém-abertas mostram o aviso de novos envios pausados. O acesso por e-mail, Minhas mensagens, retirada e moderação permanecem disponíveis para seus respectivos papéis; formulários de envio, denúncia e a vista pública não são oferecidos. A pausa não substitui a autorização do servidor. Leitura/downloads dos materiais continuam. Solicitações de remoção também podem ser encaminhadas a pcmdireto@gmail.com.
+
+## Conferir o acesso enquanto a participação está pausada
+
+1. No painel Supabase → Authentication → URL Configuration, mantenha as URLs existentes e acrescente as 20 linhas de `retornos-auth.txt` em Redirect URLs. Não use globstar amplo nem compartilhe chaves.
+2. Abra `https://pcmdireto.me/modelos/pcm-man-004/#conversa`, clique em **Ver conversas** e use **Acessar minhas mensagens**. O aviso de pausa deve continuar visível; não deve haver formulário para publicar comentário.
+3. Digite seu e-mail e peça o link. Abra-o no mesmo navegador. Após voltar ao material, clique em **Ver conversas** novamente: deve aparecer **Conta conectada**. Não envie senha, código ou link de autenticação ao mantenedor/agente.
+4. Confira a própria lista e a opção de sair; só a conta moderadora deve ver a fila de moderação. Os testes automáticos usam contas fictícias e não comprovam entrega real de e-mail ou configuração do Auth.
+5. Continue a conferência entre contas e da moderação prevista acima. A participação continua `ativo=false` até concluir as verificações; permitir login durante a pausa não a ativa.
+
+A configuração do Auth exige acesso ao painel: o conector disponível nesta rodada permite consultas e migrações do banco, mas não altera Redirect URLs. O login real continua pendente de conferência pelo mantenedor.
 
 ## Pendências humanas
 
