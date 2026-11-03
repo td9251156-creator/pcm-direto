@@ -10,7 +10,7 @@ async function iniciarConversa(raiz) {
   raiz.hidden = false;
   const codigo = raiz.dataset.comunidadeModelo || null;
   const prefixo = raiz.dataset.prefixo;
-  let iniciado=false, sessao=null, moderador=false, vista=codigo?'publicos':'meus', pagina=0, pedido=0, versao=0, ocupado=false, eventos=0, ultimaConta=0, ciclo=0, pararSessao;
+  let iniciado=false, participacaoAtiva=false, sessao=null, moderador=false, vista=codigo?'publicos':'meus', pagina=0, pedido=0, versao=0, ocupado=false, eventos=0, ultimaConta=0, ciclo=0, pararSessao;
   let rascunho={apelido:'',texto:'',resposta:null,nonce:crypto.randomUUID()};
   let registros=[];const desativados=new Map();
   const mensagem=document.createElement('p'); mensagem.setAttribute('role','status'); mensagem.tabIndex=-1;
@@ -18,6 +18,15 @@ async function iniciarConversa(raiz) {
   const area=raiz.querySelector('[data-conversas-conteudo]');
   const vivo=()=>raiz.isConnected;
   const avisar=texto=>{if(vivo())mensagem.textContent=texto;};
+  const vistaInicial=()=>participacaoAtiva&&codigo?'publicos':'meus';
+  async function conferirDisponibilidade(atual){
+    const ativa=await rpcComunidade('ativa');
+    if(!atual())return false;
+    if(typeof ativa!=='boolean')throw new Error('Não foi possível conferir a disponibilidade das conversas.');
+    participacaoAtiva=ativa;
+    if(!ativa&&vista==='publicos'){vista='meus';pagina=0;}
+    return true;
+  }
   function limparRascunho(){rascunho={apelido:'',texto:'',resposta:null,nonce:crypto.randomUUID()};}
   function bloquearControles(){for(const e of raiz.querySelectorAll('button,input,textarea')){if(!desativados.has(e))desativados.set(e,e.disabled);e.disabled=true;}}
   function desativar(e,valor){if(ocupado){desativados.set(e,valor);e.disabled=true;}else e.disabled=valor;}
@@ -30,19 +39,19 @@ async function iniciarConversa(raiz) {
     finally{if(vivo()&&epoca===versao){ocupado=false;for(const [e,valor] of desativados)if(e.isConnected)e.disabled=valor;desativados.clear();}}
   }
   function desenhar() {
-    const conta = sessao ? `<p>Conta conectada. Seu e-mail não aparece nas conversas.</p><button type="button" data-sair>Sair desta conta</button>` : `<form data-entrar><label>E-mail para receber o link de acesso<input type="email" name="email" required maxlength="254" autocomplete="email"></label><p>Abra o link neste mesmo navegador para voltar a este material. O acesso é necessário somente para participar.</p><button type="submit">Receber link de acesso</button></form>`;
-    area.innerHTML=`<section class="conta-conversa"><h3>${sessao?'Sua participação':'Entre para participar'}</h3>${conta}</section><div class="acoes controles-conversa">${codigo?`<button type="button" data-vista="publicos" aria-pressed="${vista==='publicos'}">Conversas publicadas</button>`:''}${sessao?`<button type="button" data-vista="meus" aria-pressed="${vista==='meus'}">Minhas mensagens</button>`:''}${moderador?`<button type="button" data-vista="moderacao" aria-pressed="${vista==='moderacao'}">Fila de moderação</button><button type="button" data-vista="denuncias" aria-pressed="${vista==='denuncias'}">Denúncias privadas</button>`:''}</div><div data-lista-conversas tabindex="-1"></div><div class="acoes"><button type="button" data-anterior ${pagina===0?'disabled':''}>Anterior</button><span>Página ${pagina+1}</span><button type="button" data-proxima>Próxima</button><button type="button" data-atualizar>Atualizar conversas</button></div><div data-formulario-conversa></div>`;
+    const conta = sessao ? `<p>Conta conectada. Seu e-mail não aparece nas conversas.</p><button type="button" data-sair>Sair desta conta</button>` : `<form data-entrar><label>E-mail para receber o link de acesso<input type="email" name="email" required maxlength="254" autocomplete="email"></label><p>Abra o link neste mesmo navegador para voltar a este material. ${participacaoAtiva?'O acesso é necessário somente para participar.':'Você pode consultar ou retirar suas mensagens e conferir o acesso; novos envios estão pausados.'}</p><button type="submit">Receber link de acesso</button></form>`;
+    area.innerHTML=`${participacaoAtiva?'':'<p class="nota-aberta" data-participacao-pausada>Novos envios estão pausados. Você pode entrar para consultar ou retirar suas mensagens. A moderação permanece disponível.</p>'}<section class="conta-conversa"><h3>${sessao?'Sua participação':participacaoAtiva?'Entre para participar':'Acessar minhas mensagens'}</h3>${conta}</section><div class="acoes controles-conversa">${codigo&&participacaoAtiva?`<button type="button" data-vista="publicos" aria-pressed="${vista==='publicos'}">Conversas publicadas</button>`:''}${sessao?`<button type="button" data-vista="meus" aria-pressed="${vista==='meus'}">Minhas mensagens</button>`:''}${moderador?`<button type="button" data-vista="moderacao" aria-pressed="${vista==='moderacao'}">Fila de moderação</button><button type="button" data-vista="denuncias" aria-pressed="${vista==='denuncias'}">Denúncias privadas</button>`:''}</div><div data-lista-conversas tabindex="-1"></div><div class="acoes"><button type="button" data-anterior ${pagina===0?'disabled':''}>Anterior</button><span>Página ${pagina+1}</span><button type="button" data-proxima>Próxima</button><button type="button" data-atualizar>Atualizar conversas</button></div><div data-formulario-conversa></div>`;
     area.querySelector('[data-entrar]')?.addEventListener('submit',e=>{e.preventDefault();const email=new FormData(e.currentTarget).get('email').trim();atuar(async atual=>{await entrarNaConversa(email,codigo,prefixo);if(atual())avisar('Se o envio foi autorizado, confira seu e-mail e abra o link neste navegador.');});});
     area.querySelector('[data-sair]')?.addEventListener('click',()=>atuar(async()=>{await sairCatalogo();}));
     area.querySelectorAll('[data-vista]').forEach(b=>b.onclick=()=>{if(ocupado)return;vista=b.dataset.vista;pagina=0;desenhar();atualizar();});
     area.querySelector('[data-anterior]').onclick=()=>{if(ocupado||!pagina)return;pagina--;desenhar();atualizar();};
     area.querySelector('[data-proxima]').onclick=()=>{if(ocupado)return;pagina++;desenhar();atualizar();};
-    area.querySelector('[data-atualizar]').onclick=()=>{if(!ocupado)atuar(async()=>{await aplicarSessao(sessao,true);});};
+    area.querySelector('[data-atualizar]').onclick=()=>{if(!ocupado)atuar(async atual=>{if(await conferirDisponibilidade(atual))await aplicarSessao(sessao,true);});};
     desenharFormulario();if(ocupado)bloquearControles();
   }
   function desenharFormulario(){
     const f=area.querySelector('[data-formulario-conversa]');if(!f)return;
-    if(!sessao||!codigo){f.innerHTML='';return;}
+    if(!participacaoAtiva||!sessao||!codigo){f.innerHTML='';return;}
     f.innerHTML=`<section><h3>${rascunho.resposta?'Responder à pergunta selecionada':'Faça uma pergunta ou compartilhe sua experiência'}</h3>${rascunho.resposta?'<button type="button" data-cancelar-resposta>Cancelar resposta</button>':''}<form data-enviar><label>Apelido público<input name="apelido" required maxlength="60" value="${esc(rascunho.apelido)}" autocomplete="off"></label><p>Use um apelido, sem e-mail. Não inclua nomes ou dados privados da fábrica na mensagem.</p><label>Mensagem<textarea name="texto" required maxlength="2000" rows="5">${esc(rascunho.texto)}</textarea></label><p>Até 2.000 caracteres. O rascunho não enviado fica apenas nesta página e é descartado ao recarregar. Uma mensagem enviada fica na sua conta para moderação. O envio aguarda moderação antes de aparecer publicamente.</p><button type="submit">Enviar para moderação</button></form></section>`;
     f.querySelector('[data-cancelar-resposta]')?.addEventListener('click',()=>{if(ocupado)return;rascunho.resposta=null;rascunho.nonce=crypto.randomUUID();desenharFormulario();});
     f.querySelectorAll('input,textarea').forEach(i=>i.oninput=()=>{rascunho[i.name]=i.value;rascunho.nonce=crypto.randomUUID();});
@@ -51,14 +60,14 @@ async function iniciarConversa(raiz) {
   async function atualizar(){
     const numero=++pedido, epoca=versao;
     const lista=area.querySelector('[data-lista-conversas]');if(!lista)return;
-    if(!codigo&&!sessao){lista.textContent='Escolha um material para ler as conversas públicas. Entre para acompanhar suas mensagens.';desativar(area.querySelector('[data-proxima]'),true);return;}
+    if(!sessao&&(!codigo||!participacaoAtiva)){lista.textContent=participacaoAtiva?'Escolha um material para ler as conversas públicas. Entre para acompanhar suas mensagens.':'Entre para consultar suas próprias mensagens; novos envios estão pausados.';desativar(area.querySelector('[data-proxima]'),true);return;}
     lista.textContent='Carregando conversas…';
     try{
       const dados=await rpcComunidade(vista==='denuncias'?'denuncias_listar':'listar',vista==='denuncias'?{p_pagina:pagina}:{p_codigo:codigo,p_vista:vista,p_pagina:pagina},{usuarioId:sessao?.user.id,vigente:()=>vivo()&&numero===pedido&&epoca===versao});
       if(!vivo()||numero!==pedido||epoca!==versao)return;
       registros=dados||[];
       desativar(area.querySelector('[data-proxima]'),registros.length===0 || (vista==='publicos'?registros.filter(c=>!c.resposta_a).length<10:registros.length<20));
-      lista.innerHTML=registros.length?registros.map(c=>vista==='denuncias'?`<article class="mensagem-conversa"><p>${esc(c.codigo)} · Denúncia privada</p><p class="texto-conversa">${esc(c.motivo)}</p><p class="texto-conversa">Mensagem: ${esc(c.texto||'Retirada pelo autor')}</p><div class="acoes"><button type="button" data-ocultar="${c.comentario_id}">Ocultar comentário</button><button type="button" data-resolver="${c.id}">Resolver denúncia</button></div></article>`:`<article class="mensagem-conversa ${c.resposta_a?'resposta-conversa':''}" data-comentario="${c.id}"><p class="sobretitulo">${esc(c.codigo)} · ${c.resposta_a?'Resposta':'Pergunta / experiência'}</p><h3>${esc(c.apelido)}</h3><p>${esc(rotulo(c))} · ${esc(new Date(c.criado_em).toLocaleDateString('pt-BR'))}</p><p class="texto-conversa">${esc(c.texto)}</p><div class="acoes">${vista==='publicos'&&!c.resposta_a?`<button type="button" data-responder="${c.id}">Responder</button>`:''}${c.proprio?`<button type="button" data-retirar="${c.id}">Retirar minha mensagem</button>`:''}${c.publicado&&sessao?`<button type="button" data-denunciar="${c.id}">Denunciar</button>`:''}${moderador&&vista==='moderacao'?`<button type="button" data-aprovar="${c.id}">Publicar</button><button type="button" data-ocultar="${c.id}">Não publicar</button>`:''}</div></article>`).join(''):'<p>Nenhuma mensagem nesta página.</p>';
+      lista.innerHTML=registros.length?registros.map(c=>vista==='denuncias'?`<article class="mensagem-conversa"><p>${esc(c.codigo)} · Denúncia privada</p><p class="texto-conversa">${esc(c.motivo)}</p><p class="texto-conversa">Mensagem: ${esc(c.texto||'Retirada pelo autor')}</p><div class="acoes"><button type="button" data-ocultar="${c.comentario_id}">Ocultar comentário</button><button type="button" data-resolver="${c.id}">Resolver denúncia</button></div></article>`:`<article class="mensagem-conversa ${c.resposta_a?'resposta-conversa':''}" data-comentario="${c.id}"><p class="sobretitulo">${esc(c.codigo)} · ${c.resposta_a?'Resposta':'Pergunta / experiência'}</p><h3>${esc(c.apelido)}</h3><p>${esc(rotulo(c))} · ${esc(new Date(c.criado_em).toLocaleDateString('pt-BR'))}</p><p class="texto-conversa">${esc(c.texto)}</p><div class="acoes">${vista==='publicos'&&!c.resposta_a?`<button type="button" data-responder="${c.id}">Responder</button>`:''}${c.proprio?`<button type="button" data-retirar="${c.id}">Retirar minha mensagem</button>`:''}${c.publicado&&sessao&&participacaoAtiva?`<button type="button" data-denunciar="${c.id}">Denunciar</button>`:''}${moderador&&vista==='moderacao'?`<button type="button" data-aprovar="${c.id}">Publicar</button><button type="button" data-ocultar="${c.id}">Não publicar</button>`:''}</div></article>`).join(''):'<p>Nenhuma mensagem nesta página.</p>';
       lista.querySelectorAll('[data-responder]').forEach(b=>b.onclick=()=>{if(ocupado)return;if(!sessao){avisar('Entre e depois escolha a pergunta que deseja responder.');area.querySelector('input[type="email"]')?.focus();return;}rascunho.resposta=b.dataset.responder;rascunho.nonce=crypto.randomUUID();desenharFormulario();area.querySelector('textarea')?.focus();});
       lista.querySelectorAll('[data-retirar]').forEach(b=>b.onclick=()=>{if(ocupado||!confirm('Retirar esta mensagem? O texto deixará de aparecer nas conversas.'))return;atuar(async(atual,mutar)=>{await mutar('retirar',{p_id:b.dataset.retirar});if(atual()){await atualizar();avisar('Sua mensagem foi retirada.');}});});
       lista.querySelectorAll('[data-aprovar],[data-ocultar],[data-resolver]').forEach(b=>b.onclick=()=>atuar(async(atual,mutar)=>{if(b.dataset.resolver)await mutar('denuncia_resolver',{p_id:b.dataset.resolver});else await mutar('moderar',{p_id:b.dataset.aprovar||b.dataset.ocultar,p_aprovar:!!b.dataset.aprovar});if(atual()){await atualizar();avisar('Decisão registrada.');}}));
@@ -78,15 +87,15 @@ async function iniciarConversa(raiz) {
     sessao=nova;
     if(!mudou&&!forcar&&area.querySelector('[data-lista-conversas]'))return;
     const numeroConta=++ultimaConta;
-    if(mudou){versao++;pedido++;ocupado=false;desativados.clear();area.replaceChildren();avisar('Conferindo a conta…');limparRascunho();pagina=0;if(!sessao)vista=codigo?'publicos':'meus';document.querySelectorAll('dialog.dialogo-comunidade').forEach(d=>d.close());}
+    if(mudou){versao++;pedido++;ocupado=false;desativados.clear();area.replaceChildren();avisar('Conferindo a conta…');limparRascunho();pagina=0;if(!sessao)vista=vistaInicial();document.querySelectorAll('dialog.dialogo-comunidade').forEach(d=>d.close());}
     const epoca=versao;
     let pode;try{pode=!!sessao&&await moderadorCatalogo();}catch{pode=false;}
     if(!vivo()||epoca!==versao||numeroConta!==ultimaConta)return;
-    moderador=pode;if(!moderador&&['moderacao','denuncias'].includes(vista))vista=codigo?'publicos':'meus';desenhar();await atualizar();
+    moderador=pode;if(!moderador&&['moderacao','denuncias'].includes(vista))vista=vistaInicial();desenhar();await atualizar();
   }
   function limparAoSair(){
     ciclo++;versao++;pedido++;ultimaConta++;pararSessao?.();pararSessao=undefined;
-    sessao=null;moderador=false;ocupado=false;desativados.clear();iniciado=false;vista=codigo?'publicos':'meus';pagina=0;registros=[];limparRascunho();
+    sessao=null;moderador=false;participacaoAtiva=false;ocupado=false;desativados.clear();iniciado=false;vista=vistaInicial();pagina=0;registros=[];limparRascunho();
     document.querySelectorAll('dialog.dialogo-comunidade').forEach(d=>d.close());area.replaceChildren();mensagem.textContent='';
     const botao=raiz.querySelector('[data-carregar-conversas]');botao.hidden=false;botao.disabled=false;
   }
@@ -95,8 +104,8 @@ async function iniciarConversa(raiz) {
   raiz.querySelector('[data-carregar-conversas]').onclick=async e=>{
     if(iniciado)return;iniciado=true;const cicloAtual=ciclo;const valido=()=>vivo()&&cicloAtual===ciclo;const botao=e.currentTarget;botao.disabled=true;avisar('Carregando conversas…');
     try{
-      const ativa=await rpcComunidade('ativa');if(!valido())return;
-      if(ativa!==true){avisar(indisponivel);botao.disabled=false;iniciado=false;return;}
+      if(!await conferirDisponibilidade(valido))return;
+      vista=vistaInicial();
       const parar=await observarSessaoCatalogo(nova=>{if(valido()){eventos++;aplicarSessao(nova);}});
       if(!valido()){parar();return;}pararSessao=parar;
       const versaoInicial=eventos;const atual=await sessaoCatalogo();if(!valido())return;if(eventos===versaoInicial)await aplicarSessao(atual);

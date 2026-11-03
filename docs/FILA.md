@@ -19,6 +19,10 @@ Conferência somente leitura do servidor identificou que transportador de correi
 
 A operação local, a biblioteca pública e os downloads não dependem da ativação das conversas. Pendência que exige acesso humano: configuração do Auth e validação real de entrada/retorno por e-mail e moderação. Diagnóstico de categorias sem dados reais: `supabase/diagnostico/catalogo_tipos.sql`.
 
+## Continuidade — acesso à própria conta com participação pausada
+
+A interface foi corrigida para permitir login, consulta/retirada das próprias mensagens e moderação durante a pausa, respeitando as operações já autorizadas no servidor. Novos envios, denúncias e a vista pública ficam indisponíveis. O refresh reconfere a disponibilidade e preserva o rascunho da mesma conta; trocar de conta continua limpando campos privados. Falha do backend ou resposta inválida não abre o formulário de acesso. Roteiro humano de entrada/retorno em [Ativação da comunidade](portal/ATIVACAO-COMUNIDADE.md#conferir-o-acesso-enquanto-a-participação-está-pausada); Auth real segue pendente, sem ativação automática.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
