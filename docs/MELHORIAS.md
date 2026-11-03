@@ -234,3 +234,14 @@ O catálogo do PR #67 foi integrado em `562e292`. A continuação acrescenta gui
 Integração autorizada pelo mantenedor; 505 testes/65 arquivos, lint/build e 25 roteiros aprovados, com revisão independente na preparação. PR #69 encerrado como duplicado para preservar a correção de navegação do #70. Migração adicional de conversas aplicada, 19 assuntos e bloqueio de leitura direta das quatro tabelas confirmados. Conversas desativadas até conferir Auth/moderação reais; materiais, downloads e app independem dessa ativação. Divulgação nas redes permanece manual.
 
 A CI de registro da publicação expôs uma espera incorreta no roteiro de atualização da biblioteca: o botão habilitado não sinalizava fim da gravação. O roteiro passou a aguardar a confirmação de persistência antes de recarregar, mantendo todas as verificações de integridade. Não foi alterado o armazenamento do app.
+
+
+## Cadastros: envio único e falha de persistência
+
+Reprodução com conta local fictícia e uma transação IndexedDB atrasada: dois `requestSubmit()` no cadastro de pessoas geravam dois registros (`2 !== 1` no teste anterior à correção). A tela agora bloqueia seus controles durante a gravação, informa o estado com `aria-busy` e mensagem, preserva os demais formulários e só redesenha após persistência confirmada. Sair e voltar ao mesmo endereço cria outro formulário, que não pode ser substituído pela resposta antiga.
+
+Em falha de espaço, os campos continuam disponíveis e a base persistida fica intacta. A inclusão aplicada apenas na memória mantém seu ID para nova tentativa não duplicar a pessoa ou referência no backup; Inativar/Reativar repete a intenção visível em vez de inverter novamente o estado da memória. O foco retorna ao controle conectado após a falha, sem roubar o foco de outra tela. O exemplo informa que a mudança fica somente nele.
+
+Escopo: tela de Cadastros e roteiro de navegador; sem alterar esquema de dados, backups, estado/repositório, modelos, biblioteca técnica ou Supabase. O roteiro inclui envio repetido sob transação pendente, gravação/reload, rascunhos/foco, saída e retorno à mesma rota, falha de quota, repetição de pessoa/referência e Inativar, conteúdo do backup e larguras 320/390/820/1280. Publicação ainda não declarada nesta preparação.
+
+Verificação da preparação: lint, 505 testes/65 arquivos e build aprovados; roteiro dedicado aprovado e revisão independente somente leitura sem bloqueadores após as correções de IDs/foco/ativação. Neste ambiente, o teste OOXML atingiu o prazo padrão de 5 s com o paralelismo inicial; `VITEST_MAX_WORKERS=1 npm run verificar` passou sem mudar prazos nem asserções. O roteiro novo faz parte da suíte completa de navegador e da CI.
