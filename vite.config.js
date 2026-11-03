@@ -13,6 +13,13 @@ export function versaoDoCache(arquivos) {
   return hash.digest('hex').slice(0, 16);
 }
 
+// O navegador não envia o fragmento ao servidor. A ponte precisa decidir antes do primeiro desenho.
+function entradaLegada() {
+  return { name: 'pcm-entrada-legada', transformIndexHtml: { order: 'pre', handler(html) {
+    return html.replace('<!--ENTRADA-APP-->', () => '<script>\n' + readFileSync('src/portal-entrada.js', 'utf8') + '\n</script>');
+  } } };
+}
+
 // Gera o sw.js na pasta final com a lista de todos os arquivos do app,
 // para o aplicativo abrir e gerar planilhas mesmo sem internet.
 function serviceWorker() {
@@ -54,7 +61,7 @@ function serviceWorker() {
 // inclusive em https://<usuario>.github.io/pcm-direto/
 export default defineConfig({
   base: './',
-  plugins: [portalModelos(), serviceWorker()],
+  plugins: [entradaLegada(), portalModelos(), serviceWorker()],
   build: {
     // As bibliotecas de planilha e documento são grandes; o aviso padrão não ajuda aqui.
     chunkSizeWarningLimit: 2000,
