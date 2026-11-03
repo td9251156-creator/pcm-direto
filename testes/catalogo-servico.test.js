@@ -1,5 +1,6 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 
+const tokenFicticio = conta => ['token', conta, 'ficticio'].join('-');
 const mock = vi.hoisted(() => ({ cliente: null, criar: vi.fn() }));
 vi.mock('@supabase/supabase-js', () => ({ createClient: (...args) => { mock.criar(...args); return mock.cliente; } }));
 beforeEach(() => {
@@ -125,13 +126,13 @@ it.each([false,null,'false','true',[],{}])('não interpreta resposta malformada 
 });
 it('vincula a consulta de moderação à conta e ao token conferidos',async()=>{
  const setHeader=vi.fn().mockResolvedValue({data:true,error:null});
- mock.cliente={auth:{getSession:async()=>({data:{session:{user:{id:'conta-a'},access_token:'token-a-ficticio'}}})},rpc:vi.fn(()=>({setHeader}))};
+ mock.cliente={auth:{getSession:async()=>({data:{session:{user:{id:'conta-a'},access_token:tokenFicticio('a')}}})},rpc:vi.fn(()=>({setHeader}))};
  const {moderadorCatalogo}=await import('../src/servicos/catalogo.js');
  expect(await moderadorCatalogo({usuarioId:'conta-a',vigente:()=>true})).toBe(true);
  expect(setHeader).toHaveBeenCalledWith('Authorization','Bearer token-a-ficticio');
 });
 it('não consulta perfil de outra conta quando a sessão mudou',async()=>{
- mock.cliente={auth:{getSession:async()=>({data:{session:{user:{id:'conta-b'},access_token:'token-b-ficticio'}}})},rpc:vi.fn()};
+ mock.cliente={auth:{getSession:async()=>({data:{session:{user:{id:'conta-b'},access_token:tokenFicticio('b')}}})},rpc:vi.fn()};
  const {moderadorCatalogo}=await import('../src/servicos/catalogo.js');
  await expect(moderadorCatalogo({usuarioId:'conta-a',vigente:()=>true})).rejects.toThrow('conta mudou');expect(mock.cliente.rpc).not.toHaveBeenCalled();
 });
