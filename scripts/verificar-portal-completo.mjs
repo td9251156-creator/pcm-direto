@@ -111,10 +111,49 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  falhaDisponibilidade=null;
  assert.deepEqual(erros,[]);await outra.close();await c.close();
 
- const retorno=await navegador.newContext({serviceWorkers:'block'});
- await retorno.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());
- await retorno.addInitScript(({canal,sessao})=>localStorage.setItem(canal,JSON.stringify(sessao)),{canal,sessao:sessao(A)});
- const callback=await retorno.newPage();await callback.goto(origem+'/comunidade/acesso/?assunto=PCM-MAN-004');await callback.waitForURL('**/modelos/pcm-man-004/#conversa');await retorno.close();
+ // Uma sessão antiga não confirma um novo link de acesso. SDK real, provedor simulado.
+ const fluxo='fluxo_ficticio_1234',verificador='verificador-ficticio-com-mais-de-43-caracteres-para-teste';
+ for(const caso of ['sem-verificador','erro-provedor','sem-codigo','codigo-recusado','fluxo-invalido','sucesso-fluxo','sucesso-legado']){
+  const retorno=await navegador.newContext({serviceWorkers:'block'});let trocas=0;
+  await retorno.addInitScript(({canal,sessao,caso,fluxo,verificador})=>{
+   if(!location.pathname.includes('/comunidade/acesso/'))return;
+   localStorage.setItem(canal,JSON.stringify(sessao));
+   if(caso==='sucesso-fluxo')localStorage.setItem(canal+'-flow-'+fluxo+'-code-verifier',JSON.stringify(verificador));
+   if(['sucesso-legado','codigo-recusado','fluxo-invalido'].includes(caso))localStorage.setItem(canal+'-code-verifier',JSON.stringify(verificador));
+  },{canal,sessao:sessao(M),caso,fluxo,verificador});
+  await retorno.route('**/*',r=>{
+   const u=new URL(r.request().url());if(u.hostname==='127.0.0.1')return r.continue();
+   const responder=(data,status=200)=>r.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
+   if(u.pathname.endsWith('/token')&&u.searchParams.get('grant_type')==='pkce'){
+    trocas++;assert.equal(r.request().postDataJSON().code_verifier,verificador);
+    return caso==='codigo-recusado'?responder({error:'invalid_grant',error_code:'flow_state_not_found',error_description:'Erro fictício'},400):responder(sessao(B));
+   }
+   if(u.pathname.endsWith('/rpc/comunidade_ativa'))return responder(true);
+   if(u.pathname.endsWith('/rpc/catalogo_e_moderador'))return responder(r.request().headers().authorization==='Bearer '+jwt(M));
+   if(u.pathname.endsWith('/rpc/comunidade_listar'))return responder([]);
+   return r.abort();
+  });
+  const callback=await retorno.newPage();const busca=new URLSearchParams({assunto:'PCM-MAN-004'});
+  if(caso!=='sem-codigo'&&caso!=='erro-provedor')busca.set('code','codigo-ficticio');
+  if(caso==='erro-provedor'){busca.set('error','access_denied');busca.set('error_description','Erro fictício');}
+  if(caso==='sucesso-fluxo')busca.set('sb_flow_id',fluxo);
+  if(caso==='fluxo-invalido')busca.set('sb_flow_id','../invalido');
+  await callback.goto(origem+'/comunidade/acesso/?'+busca);
+  if(caso.startsWith('sucesso')){
+   await callback.waitForURL('**/modelos/pcm-man-004/#conversa');assert.equal(trocas,1,'O código deve ser trocado uma única vez');
+   assert.equal(await callback.evaluate(c=>JSON.parse(localStorage.getItem(c)).user.id,canal),B,'A sessão é a devolvida pelo novo link, não a anterior');
+   await callback.locator('[data-carregar-conversas]').click();await callback.locator('[data-enviar]').waitFor();assert.equal(await callback.locator('[data-vista=moderacao]').count(),0,'Conta participante não herda a interface de moderação');
+  }else{
+   await callback.waitForFunction(()=>!location.pathname.includes('/comunidade/acesso/')||document.querySelector('[data-retorno-comunidade] [role=status]')?.textContent.includes('Não foi possível confirmar'),null,{timeout:5000});
+   assert.equal(new URL(callback.url()).pathname,'/comunidade/acesso/','Link inválido não pode redirecionar usando sessão anterior');
+   await callback.locator('[data-retorno-comunidade] [role=status]').filter({hasText:'Não foi possível confirmar'}).waitFor();
+   assert.equal(await callback.evaluate(c=>JSON.parse(localStorage.getItem(c)).user.id,canal),M,'Não encerra a sessão anterior ao falhar o novo link');
+   assert.equal(trocas,caso==='codigo-recusado'?1:0);
+   if(caso==='fluxo-invalido')assert.equal(await callback.evaluate(c=>JSON.parse(localStorage.getItem(c+'-code-verifier')),canal),verificador,'Fluxo inválido não consome o verificador pendente');
+   assert.equal(new URL(callback.url()).searchParams.has('code'),false);assert.equal(new URL(callback.url()).searchParams.has('error_description'),false);
+  }
+  await retorno.close();
+ }
  const local=await navegador.newContext();const l=await local.newPage();let downloads=0;l.on('download',()=>downloads++);
  await l.goto(origem+'/app.html#inicio');await l.locator('#conteudo h2').first().waitFor();
  const ler=()=>l.evaluate(()=>new Promise(resolve=>{const r=indexedDB.open('pcm-direto:base:v3',1);r.onsuccess=()=>{const db=r.result;const tx=db.transaction('base');const q=tx.objectStore('base').get('principal');tx.oncomplete=()=>{db.close();resolve(q.result);};};}));
@@ -122,5 +161,5 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  await l.evaluate(()=>location.hash='comunidade');await l.locator('[data-demonstrar]').click();await l.locator('#sair-demo').waitFor();await l.evaluate(()=>location.hash='comunidade');await l.locator('[data-sair-exemplo]').click();await l.waitForFunction(()=>!document.querySelector('#intencao-modelo')?.innerText.includes('Exemplo isolado'));assert.equal(await l.locator('#intencao-modelo .botao').getAttribute('href'),'#assistente');assert.deepEqual(await ler(),antes);
  await l.locator('[data-dispensar-modelo]').click();await l.evaluate(()=>location.hash='apoio');await l.locator('#buscar-apoio').waitFor();assert.equal(await l.locator('#intencao-modelo').count(),0);
  await l.goto(origem+'/app.html?modelo=INVALIDO#inicio');await l.locator('#conteudo h2').first().waitFor();assert.equal(await l.locator('#intencao-modelo').count(),0);await local.close();
- console.log('Portal completo: guia/404/sitemap, contexto sem escrita/geração, saída demo, leitura pública, login por assunto simulado, duas contas, token fixo, rascunho/renovação, pagehide/pageshow simulado, moderação, denúncia privada, retirada, quatro larguras, pausa com login/retirada/moderação sem novo envio e falha da comunidade sem bloquear download aprovados.');
+ console.log('Portal completo: guia/404/sitemap, contexto sem escrita/geração, saída demo, leitura pública, retorno PKCE com sessão antiga e fluxos distintos simulados, duas contas, token fixo, rascunho/renovação, pagehide/pageshow simulado, moderação, denúncia privada, retirada, quatro larguras, pausa com login/retirada/moderação sem novo envio e falha da comunidade sem bloquear download aprovados.');
 }});

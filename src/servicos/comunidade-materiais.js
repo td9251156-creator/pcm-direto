@@ -33,3 +33,32 @@ export async function entrarNaConversa(email, codigo, prefixo) {
   const r = await c.auth.signInWithOtp({ email, options: { emailRedirectTo: retorno.href } });
   if (r.error) throw new Error('Não foi possível enviar o link de acesso. Aguarde e tente novamente.');
 }
+
+
+/** Confirma o próprio link recebido; uma sessão anterior não é prova de sucesso. */
+export async function confirmarAcessoConversa() {
+  const url = new URL(location.href);
+  const parametros = url.searchParams;
+  const codigo = parametros.get('code');
+  const fluxo = parametros.get('sb_flow_id');
+  const hash = new URLSearchParams(url.hash.slice(1));
+  const erroNoRetorno = ['error', 'error_code', 'error_description'].some(c => parametros.has(c) || hash.has(c));
+  const assunto = parametros.get('assunto');
+  const limpa = new URL(url.pathname, url.origin);
+  if (/^PCM-MAN-(00[1-9]|01[0-9])$/.test(assunto || '')) limpa.searchParams.set('assunto', assunto);
+  // Não deixa códigos ou descrições do provedor na URL, inclusive quando o acesso falha.
+  history.replaceState(history.state, '', limpa.href);
+  const falha = () => new Error('Não foi possível confirmar este link. Solicite outro e abra na mesma janela em que informou o e-mail.');
+  // Mesmo formato aceito pelo SDK: rejeitar antes evita tocar o verificador de outro fluxo.
+  const fluxoInvalido = parametros.has('sb_flow_id') && !/^[a-zA-Z0-9_-]{8,64}$/.test(fluxo || '');
+  if (erroNoRetorno || !codigo || parametros.getAll('code').length !== 1 || parametros.getAll('sb_flow_id').length > 1 || fluxoInvalido) throw falha();
+  try {
+    const c = await clienteCatalogo();
+    const opcoes = parametros.has('sb_flow_id') ? { flowId: fluxo } : undefined;
+    const r = await c.auth.exchangeCodeForSession(codigo, opcoes);
+    const usuario = r.data?.session?.user?.id;
+    if (r.error || !usuario || r.data.user?.id !== usuario) throw falha();
+  } catch {
+    throw falha();
+  }
+}

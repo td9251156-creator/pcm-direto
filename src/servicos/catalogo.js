@@ -16,7 +16,9 @@ export async function clienteCatalogo() {
   if (!c.configurado) throw new Error(c.erro || 'O catálogo online ainda não foi conectado.');
   if (!instancia) {
     const { createClient } = await import('@supabase/supabase-js');
-    instancia = createClient(c.url, c.chave, { auth: { flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }, global: { fetch: requisitar } });
+    // O retorno da Comunidade troca o código explicitamente e só então confirma o acesso.
+    const retornoComunidade = /(^|\/)comunidade\/acesso(?:\/(?:index\.html)?)?$/.test(globalThis.location?.pathname || '');
+    instancia = createClient(c.url, c.chave, { auth: { flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: !retornoComunidade }, global: { fetch: requisitar } });
   }
   return instancia;
 }
@@ -72,7 +74,22 @@ export async function listarCatalogo({ busca = '', pagina = 0, meus = false, mod
   const deslocamento = Math.max(0, Math.floor(Number(pagina) || 0)) * 20;
   return await conferir(q.range(deslocamento, deslocamento + 19)) || [];
 }
-export async function moderadorCatalogo() { const c = await clienteCatalogo(); return !!(await conferir(c.rpc('catalogo_e_moderador'))); }
+export async function moderadorCatalogo({ usuarioId, vigente = () => true } = {}) {
+  const mudou = () => new Error('A conta mudou. Confira o acesso antes de continuar.');
+  if (!vigente()) throw mudou();
+  const c = await clienteCatalogo(); let token;
+  if (usuarioId) {
+    const r = await c.auth.getSession(); const sessao = r.data?.session;
+    if (r.error || !vigente() || sessao?.user.id !== usuarioId || !sessao?.access_token) throw mudou();
+    token = sessao.access_token;
+  }
+  if (!vigente()) throw mudou();
+  let consulta = c.rpc('catalogo_e_moderador');
+  if (token) consulta = consulta.setHeader('Authorization', 'Bearer ' + token);
+  const permitido = await conferir(consulta);
+  if (!vigente()) throw mudou();
+  return permitido === true;
+}
 export async function salvarModelo(dados, id = null, originalId = null) {
   const problemas = validarModeloCatalogo(dados); if (problemas.length) throw new Error(problemas[0]);
   const c = await clienteCatalogo(); return await conferir(c.rpc('catalogo_salvar', { p_dados: dados, p_id: id, p_original_id: originalId }));

@@ -275,3 +275,16 @@ Após o mantenedor informar que salvou os endereços de retorno, confirmou o log
 Uma conferência nova em navegador isolado, sem login, encontrou uma mensagem aprovada em PCM-MAN-004. A projeção pública não retornou `email`, `autor_id` ou `nonce`; não abriu IndexedDB operacional nem enviou e-mail. O download permaneceu idêntico ao original; teclado e quatro larguras aprovados sem erros JavaScript capturados nesses fluxos. Não foram modificadas mensagens, permissões ou configuração nesta rodada de registro.
 
 Retirada e autorização entre duas contas autenticadas reais, aparelhos, leitor de tela e comportamento BFCache real continuam pendentes. Os testes automáticos com contas fictícias não foram reapresentados como validação humana. A validação de uso com pessoas segue adiada. Esta atualização documental substitui as declarações anteriores de participação pausada, que permanecem apenas no histórico das entregas.
+
+
+## Retorno de acesso: confirmação do novo link sem reutilizar sessão anterior
+
+O relato de Fila de moderação no teste da segunda conta motivou uma conferência sem alterar permissões. O servidor tem um único moderador, não concede INSERT/UPDATE/DELETE diretos na lista a visitantes/contas comuns e a função de perfil consulta a identidade autenticada. A causa específica do relato não foi estabelecida.
+
+Um defeito concreto foi reproduzido com dados fictícios: o callback de um novo link sem verificador válido redirecionava para o modelo porque já havia uma sessão de moderador no armazenamento. A detecção automática do SDK fica desativada somente nesse callback; ele exige uma troca explícita e bem-sucedida do código, com identificador do fluxo preservado. Falha ou ausência do código não usa `getSession()` como comprovação. A sessão anterior não recebe logout automático, e códigos/erros saem da URL.
+
+A conferência do perfil passa a exigir booleano verdadeiro e, no portal, token da conta conferida, com guarda de validade da consulta. Não altera a lista de moderadores nem políticas do servidor. Os testes incluem sessão antiga de moderador, ausência de código/verificador, erro do provedor, código recusado, identificador de fluxo inválido preservando o verificador pendente e sucesso de participante com fluxos novo e legado. O teste real com outra conta continua pendente; não foi declarado como correção comprovada da situação específica do mantenedor.
+
+Separadamente, o mantenedor confirmou retirada do teste anterior; uma consulta com papel anônimo retornou zero mensagens públicas no material. Essa retirada é uma evidência humana + conferência de leitura pública, não prova de autorização entre contas autenticadas distintas.
+
+Preparação da correção: lint, 528 testes/65 arquivos e build aprovados; revisão independente somente leitura sem bloqueadores. O teste anterior à correção demonstrou o redirecionamento indevido para `/modelos/pcm-man-004/` em vez de permanecer no retorno em falha. Os novos cenários usam o SDK real com provedor simulado e não enviam e-mails ou usam contas reais.

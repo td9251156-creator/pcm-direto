@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 
 const mock = vi.hoisted(() => ({ cliente: null, criar: vi.fn() }));
 vi.mock('@supabase/supabase-js', () => ({ createClient: (...args) => { mock.criar(...args); return mock.cliente; } }));
@@ -103,4 +103,40 @@ describe('Cliente do catálogo e permissões solicitadas', () => {
     await expect(moderadorCatalogo()).rejects.toThrow('Não foi possível');
     await expect(moderadorCatalogo()).rejects.not.toThrow('detalhe interno');
   });
+});
+
+
+afterEach(()=>vi.unstubAllGlobals());
+it.each([
+ ['/comunidade/acesso/',false],
+ ['/comunidade/acesso/index.html',false],
+ ['/pcm-direto/comunidade/acesso/',false],
+ ['/app.html',true],
+ ['/modelos/pcm-man-004/',true],
+])('configura detecção automática do SDK para %s: %s',async(path,esperado)=>{
+ vi.stubGlobal('location',new URL('https://exemplo.test'+path));mock.cliente={auth:{}};
+ const {clienteCatalogo}=await import('../src/servicos/catalogo.js');await clienteCatalogo();
+ expect(mock.criar.mock.calls[0][2].auth.detectSessionInUrl).toBe(esperado);
+});
+
+it.each([false,null,'false','true',[],{}])('não interpreta resposta malformada como permissão de moderador: %s',async data=>{
+ mock.cliente={rpc:vi.fn(async()=>({data,error:null}))};
+ const {moderadorCatalogo}=await import('../src/servicos/catalogo.js');expect(await moderadorCatalogo()).toBe(false);
+});
+it('vincula a consulta de moderação à conta e ao token conferidos',async()=>{
+ const setHeader=vi.fn().mockResolvedValue({data:true,error:null});
+ mock.cliente={auth:{getSession:async()=>({data:{session:{user:{id:'conta-a'},access_token:'token-a-ficticio'}}})},rpc:vi.fn(()=>({setHeader}))};
+ const {moderadorCatalogo}=await import('../src/servicos/catalogo.js');
+ expect(await moderadorCatalogo({usuarioId:'conta-a',vigente:()=>true})).toBe(true);
+ expect(setHeader).toHaveBeenCalledWith('Authorization','Bearer token-a-ficticio');
+});
+it('não consulta perfil de outra conta quando a sessão mudou',async()=>{
+ mock.cliente={auth:{getSession:async()=>({data:{session:{user:{id:'conta-b'},access_token:'token-b-ficticio'}}})},rpc:vi.fn()};
+ const {moderadorCatalogo}=await import('../src/servicos/catalogo.js');
+ await expect(moderadorCatalogo({usuarioId:'conta-a',vigente:()=>true})).rejects.toThrow('conta mudou');expect(mock.cliente.rpc).not.toHaveBeenCalled();
+});
+it('ignora permissão concluída após a consulta deixar de pertencer à tela atual',async()=>{
+ let atual=true;mock.cliente={rpc:vi.fn(async()=>{atual=false;return{data:true,error:null};})};
+ const {moderadorCatalogo}=await import('../src/servicos/catalogo.js');
+ await expect(moderadorCatalogo({vigente:()=>atual})).rejects.toThrow('conta mudou');
 });
