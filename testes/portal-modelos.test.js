@@ -16,10 +16,22 @@ describe('catálogo público independente do app', () => {
       expect(html).toContain(`<h1>${m.titulo}</h1>`);
       expect(html).toContain(`href="../../${m.url.slice(2)}" download`);
       expect(html).toContain(`https://pcmdireto.me/modelos/${m.codigo.toLowerCase()}/`);
-      expect(html).not.toContain('<script');
+      expect(html).toContain(`data-comunidade-modelo="${m.codigo}"`);
+      expect(html).toContain(`app.html?modelo=${m.codigo}#inicio`);
       for (const aba of m.abas) expect(html).toContain(aba.replace(/&/g, '&amp;'));
       const dados = manifesto.modelos.find(x => x.codigo === m.codigo);
       expect(createHash('sha256').update(readFileSync('public/' + dados.url)).digest('hex')).toBe(dados.sha256);
     }
   });
+});
+
+import { todasPaginas } from '../scripts/portal-modelos.mjs';
+import { GUIAS_PORTAL } from '../src/dados/guias-portal.js';
+it('publica somente o primeiro guia, preserva rascunhos e mantém callback fora da indexação', () => {
+  const paginas=todasPaginas();
+  expect(paginas.has('guias/organizar-ordens-de-servico/index.html')).toBe(true);
+  for(const g of GUIAS_PORTAL.filter(g=>!g.publicado))expect(paginas.has(`guias/${g.slug}/index.html`)).toBe(false);
+  expect(paginas.get('guias/index.html')).toContain('href="../guias/" aria-current="page"');
+  expect(paginas.get('comunidade/index.html')).toContain('href="../comunidade/" aria-current="page"');
+  expect(paginas.get('comunidade/acesso/index.html')).toContain('noindex,nofollow');
 });

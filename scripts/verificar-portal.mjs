@@ -20,9 +20,9 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  const semJs=await navegador.newContext({javaScriptEnabled:false});const leitura=await semJs.newPage();await leitura.goto('http://127.0.0.1:4210/');
  assert.ok(await leitura.getByRole('heading',{name:'O que você precisa agora?'}).isVisible());
  assert.ok(await leitura.locator('header a[href="./modelos/"]').isVisible());
- for(const href of ['apoio','catalogo','inicio'])assert.ok(await leitura.locator(`header a[href="./app.html#${href}"]`).isVisible());
+ for(const href of ['./guias/','./comunidade/','./app.html#inicio'])assert.ok(await leitura.locator(`header a[href="${href}"]`).isVisible());
  await semJs.close();
- await p.locator('header nav a[href="./app.html#apoio"]').click();await p.locator('#conteudo h2').first().waitFor();assert.ok((await p.locator('#conteudo').innerText()).includes('guias curtos'),'O CTA Guias abre o apoio existente');
+ await p.locator('header nav a[href="./guias/"]').click();await p.locator('h1').filter({hasText:'Entenda antes de preencher.'}).waitFor();await p.locator('a[href="../app.html#apoio"]').click();await p.locator('#conteudo h2').first().waitFor();assert.ok((await p.locator('#conteudo').innerText()).includes('guias curtos'),'O CTA Guias abre o apoio existente');
  await p.goto('http://127.0.0.1:4210/?origem=ficticia#falhas?ativo=ficticio');await p.waitForURL('**/app.html?origem=ficticia#falhas?ativo=ficticio');await p.locator('#conteudo h2').first().waitFor();
  await aguardarOffline(p);
  const biblioteca=JSON.parse(await readFile('src/dados/biblioteca.json','utf8'));

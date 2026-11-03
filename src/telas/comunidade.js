@@ -33,7 +33,7 @@ export function telaComunidade(main, ir){
     acesso.setAttribute('aria-busy',String(!!exemploPendente));
     for(const b of acesso.querySelectorAll('button'))b.disabled=!!exemploPendente;
     if(exemploPendente)acesso.insertAdjacentHTML('beforeend','<p role="status">Abrindo o exemplo. Aguarde a gravação em andamento terminar.</p>');
-    acesso.querySelector('[data-sair-exemplo]')?.addEventListener('click',()=>{sairDaDemonstracao();desenharAcesso();acesso.querySelector('a').focus();});
+    acesso.querySelector('[data-sair-exemplo]')?.addEventListener('click',()=>{sairDaDemonstracao();ir('comunidade');main.querySelector('#acesso-pcm a')?.focus();});
     acesso.querySelector('[data-demonstrar]')?.addEventListener('click',async()=>{
       if(exemploPendente)return;
       exemploPendente=(async()=>{

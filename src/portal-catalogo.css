@@ -41,3 +41,19 @@ section.mais-modelos { display: block; }
 .exemplo-modelo { border-left: 3px solid var(--sinal); padding: 20px; margin-top: 24px; background: #fff; }
 .exemplo-modelo h3 { font-size: 18px; margin-top: 0; }
 .exemplo-modelo p { margin-bottom: 0; }
+.artigo-publico { max-width: 800px; }
+.artigo-publico section { margin-bottom: 40px; }
+.artigo-publico h2 { font-size: 28px; }
+#conversa { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--borda); }
+[data-comunidade-modelo] button, [data-comunidade-resumo] button { font: inherit; min-height: 44px; border: 1px solid var(--azul); border-radius: 4px; padding: 10px 16px; color: var(--azul); background: white; cursor: pointer; }
+[data-comunidade-modelo] button:disabled, [data-comunidade-resumo] button:disabled { opacity: .55; cursor: wait; }
+[data-comunidade-modelo] label { display: block; font-weight: 600; margin-block: 16px 8px; }
+[data-comunidade-modelo] input, [data-comunidade-modelo] textarea, .dialogo-comunidade textarea { display: block; width: 100%; max-width: 100%; font: inherit; padding: 12px; border: 1px solid #7c8a9d; border-radius: 4px; margin-top: 8px; }
+.mensagem-conversa { padding: 20px; border: 1px solid var(--borda); background: white; margin-block: 16px; overflow-wrap: anywhere; }
+.mensagem-conversa h3 { font-size: 18px; }
+.texto-conversa { white-space: pre-wrap; }
+.resposta-conversa { margin-left: 24px; border-left: 3px solid var(--sinal); }
+.controles-conversa { margin-block: 20px; }
+.controles-conversa [aria-pressed="true"] { background: var(--azul); color: white; }
+.dialogo-comunidade { width: min(550px,90vw); border: 1px solid var(--borda); border-radius: 6px; color: var(--texto); padding: 24px; }
+.dialogo-comunidade::backdrop { background: #071c3d99; }

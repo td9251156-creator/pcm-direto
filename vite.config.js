@@ -65,7 +65,7 @@ export default defineConfig({
   build: {
     // As bibliotecas de planilha e documento são grandes; o aviso padrão não ajuda aqui.
     chunkSizeWarningLimit: 2000,
-    rolldownOptions: { input: { portal: 'index.html', app: 'app.html', catalogo: 'src/portal-modelos.js' } },
+    rolldownOptions: { input: { portal: 'index.html', app: 'app.html', catalogo: 'src/portal-modelos.js', conversas: 'src/comunidade-publica.js' } },
   },
   test: {
     include: ['testes/**/*.test.js'],

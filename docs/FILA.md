@@ -1,5 +1,18 @@
 > Atualização 24/10/2026: decisões atuais em [Reformulação](REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
+## Atualização do portal — 02/11/2026
+
+- **Integrado:** fundação e catálogo público de 19 modelos, PRs #61, #62 e #67; catálogo em `562e292`. Downloads originais preservados.
+- **Integrado:** modelos recebidos, coleção 2.0.2 (#64); biblioteca de máquinas 0.3.0, 47 tipos/380 tarefas (#65); apresentação simplificada a pedido do mantenedor (#66).
+- **Preparado/verificado localmente:** guia de OS, contexto do modelo até o app, comunidade por material com moderação, sitemap/404 e materiais de distribuição. Detalhes, evidências e limites em [Entrega do portal](portal/ENTREGA.md).
+- **Pendente de produção:** aplicar/revisar a migração de conversas, configurar retorno de login e autorizar ativação. O banco real ainda não tem essas tabelas; o comportamento local não comprova permissões em produção.
+- **Revisão humana:** três guias em rascunho, orientações editoriais, Auth/e-mail reais, aparelhos e editores Office. Validação de uso com pessoas segue adiada.
+- **Não publicado nas redes:** perfis, fixada e quatro conjuntos orgânicos em `divulgacao/portal/`. Métricas não medidas permanecem sem números.
+
+## Histórico da fila — 01/11/2026
+
+A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
+
 ## Lista única de pendências — situação em 01/11/2026
 
 Conferida contra o código e os testes do ramo `coord/pcm-man-001`. Situações: **Verificado** = implementado e
