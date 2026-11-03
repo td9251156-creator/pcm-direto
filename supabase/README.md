@@ -10,6 +10,8 @@ Depois aplique `migrations/202610240002_interacoes.sql` para curtidas, comentár
 e `migrations/202610240003_contagens.sql` para a visão com RLS e agregação privada.
 No projeto do mantenedor essas estruturas já foram conferidas em 24/10/2026;
 não repetir migrações em banco existente sem inspecionar tabelas e histórico primeiro.
+A migração adicional `migrations/20261027120000_tipos_catalogo.sql` mantém as regras de validação e acrescenta transportador de correia, ventilador/exaustor e unidade hidráulica ao contrato público (sete tipos + Outro). Ela não acrescenta tipos técnicos nem substitui os 47 tipos da biblioteca local. Para verificar a compatibilidade sem criar contas nem gravar modelos, use `diagnostico/catalogo_tipos.sql` como administrador: todas as oito linhas devem retornar `aceito=true`. Consulte o estado de implantação em `docs/FILA.md` antes de reaplicar migrações.
+
 Habilite a autenticação por e-mail no painel e configure os endereços de retorno do aplicativo.
 Depois que o mantenedor criar sua conta, copie o UUID dela em Authentication → Users e execute,
 como administrador, substituindo o UUID fictício:
@@ -97,5 +99,5 @@ automática. Limites do projeto também se aplicam: este desenho não estabelece
 
 `scripts/verificar-pdfs-banco.mjs` usa PGlite 0.5.11 exclusivamente em memória e substitutos
 locais de auth/storage. Confere funções reais, RLS, bloqueio de escrita e decisão com versão.
-O parser real abre as quatro fichas e recusa um PDF falso. O teste não substitui a API real de
+O parser real abre as 47 fichas e recusa um PDF falso. O teste não substitui a API real de
 Storage. As ferramentas ficam no pacote isolado `ferramentas/navegador`, fora do aplicativo.

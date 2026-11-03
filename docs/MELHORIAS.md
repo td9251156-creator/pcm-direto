@@ -245,3 +245,15 @@ Em falha de espaço, os campos continuam disponíveis e a base persistida fica i
 Escopo: tela de Cadastros e roteiro de navegador; sem alterar esquema de dados, backups, estado/repositório, modelos, biblioteca técnica ou Supabase. O roteiro inclui envio repetido sob transação pendente, gravação/reload, rascunhos/foco, saída e retorno à mesma rota, falha de quota, repetição de pessoa/referência e Inativar, conteúdo do backup e larguras 320/390/820/1280. Publicação ainda não declarada nesta preparação.
 
 Verificação da preparação: lint, 505 testes/65 arquivos e build aprovados; roteiro dedicado aprovado e revisão independente somente leitura sem bloqueadores após as correções de IDs/foco/ativação. Neste ambiente, o teste OOXML atingiu o prazo padrão de 5 s com o paralelismo inicial; `VITEST_MAX_WORKERS=1 npm run verificar` passou sem mudar prazos nem asserções. O roteiro novo faz parte da suíte completa de navegador e da CI.
+
+
+## Catálogo online: categorias oferecidas e recusadas pelo servidor
+
+Uma consulta somente leitura no projeto real reproduziu a incompatibilidade: os quatro tipos originais e Outro eram aceitos; transportador de correia, ventilador/exaustor e unidade hidráulica retornavam `false`. A migração de ampliação já existia no repositório, mas não estava no histórico real.
+
+O roteiro PostgreSQL em memória agora reproduz a recusa antes da migração, aplica o arquivo existente e compara todas as oito categorias do contrato com `TIPOS_CATALOGO` e o validador JavaScript. Também exerce `catalogo_salvar` como autor fictício nas oito categorias e mantém as verificações de autoria, RLS, imutabilidade, limites, decisão com versão, arquivamento e PDFs. Um diagnóstico somente leitura permite conferir produção sem criar contas nem gravar modelos. Não modifica o contrato da biblioteca de arquivos, os dados operacionais, o backend de conversas ou o login.
+
+
+Aplicação real: o corpo da função online foi comparado ao arquivo existente, normalizando apenas espaços; a única diferença era a inclusão das três categorias. Após revisão independente sem bloqueadores, a migração foi aplicada isoladamente como `tipos_catalogo`. Todas as oito categorias retornaram `aceito=true`; proprietário, ACL, SECURITY INVOKER, IMMUTABLE e `search_path` vazio permaneceram iguais. Não houve carga de dados, criação de conta, reexecução das migrações-base ou mudança no esquema de conversas. Advisors conferidos: avisos legados permanecem documentados; nenhuma permissão foi ampliada para silenciá-los.
+
+Verificação local: lint, 505 testes/65 arquivos e build aprovados com `VITEST_MAX_WORKERS=1 npm run verificar`; roteiro PostgreSQL/PDF aprovado com as oito categorias e 47 fichas. Login/retorno de e-mail reais e moderação entre contas continuam pendentes, sem declarar as conversas ativadas.
