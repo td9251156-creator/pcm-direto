@@ -232,3 +232,5 @@ O catálogo do PR #67 foi integrado em `562e292`. A continuação acrescenta gui
 ## Publicação do portal — PR #68
 
 Integração autorizada pelo mantenedor; 505 testes/65 arquivos, lint/build e 25 roteiros aprovados, com revisão independente na preparação. PR #69 encerrado como duplicado para preservar a correção de navegação do #70. Migração adicional de conversas aplicada, 19 assuntos e bloqueio de leitura direta das quatro tabelas confirmados. Conversas desativadas até conferir Auth/moderação reais; materiais, downloads e app independem dessa ativação. Divulgação nas redes permanece manual.
+
+A CI de registro da publicação expôs uma espera incorreta no roteiro de atualização da biblioteca: o botão habilitado não sinalizava fim da gravação. O roteiro passou a aguardar a confirmação de persistência antes de recarregar, mantendo todas as verificações de integridade. Não foi alterado o armazenamento do app.
