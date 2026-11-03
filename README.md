@@ -39,7 +39,11 @@ Você pode testar, melhorar explicações, propor conteúdo com fonte ou contrib
 
 ## Situação e próximos passos
 
-Entrada por necessidade, contribuição e questionário local já integram o projeto. O portal público reúne os 19 modelos, orientação de uso e o primeiro guia aprofundado de OS; o link do material continua no app sem alterar dados automaticamente. As conversas por material têm estrutura instalada, mas permanecem desativadas até conferir login e moderação reais. Faltam medidas confirmadas de uso e retorno; estrelas e forks não substituem essas medidas.
+Entrada por necessidade, contribuição e questionário local já integram o projeto. O portal público reúne os 19 modelos, orientação de uso e o primeiro guia aprofundado de OS; o link do material continua no app sem alterar dados automaticamente.
+
+As conversas por material estão ativas com revisão prévia. O mantenedor confirmou login, envio e aprovação; uma conferência sem login confirmou a leitura da mensagem aprovada. Retirada e autorização entre duas contas reais ainda aguardam conferência.
+
+Faltam medidas confirmadas de uso e retorno; estrelas e forks não substituem essas medidas.
 
 [Índice dos documentos](docs/README.md) · [Roadmap](ROADMAP.md) · [Governança](docs/GOVERNANCA.md) · [Preparação open source](docs/PREPARACAO-OPEN-SOURCE.md) · [Créditos e licenças de terceiros](CREDITOS.md).
 

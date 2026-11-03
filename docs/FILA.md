@@ -5,8 +5,8 @@
 - **Integrado:** fundação e catálogo público de 19 modelos, PRs #61, #62 e #67; catálogo em `562e292`. Downloads originais preservados.
 - **Integrado:** modelos recebidos, coleção 2.0.2 (#64); biblioteca de máquinas 0.3.0, 47 tipos/380 tarefas (#65); apresentação simplificada a pedido do mantenedor (#66).
 - **Integrado no PR #68 e verificado:** guia de OS, contexto do modelo até o app, comunidade por material com moderação, sitemap/404 e materiais de distribuição. Detalhes, evidências e limites em [Entrega do portal](portal/ENTREGA.md).
-- **Banco real:** migração de conversas aplicada, 19 assuntos conferidos, quatro tabelas com RLS e sem SELECT direto para visitantes/contas. Participação desativada (`ativo=false`). Pendentes: allowlist de retorno do Auth, entrega real de e-mail e teste de login/moderação antes da ativação.
-- **Revisão humana:** três guias em rascunho, orientações editoriais, Auth/e-mail reais, aparelhos e editores Office. Validação de uso com pessoas segue adiada.
+- **Banco real:** migração de conversas aplicada, 19 assuntos conferidos, quatro tabelas com RLS e sem SELECT direto para visitantes/contas. Participação ativa (`ativo=true`) com revisão prévia. O mantenedor informou que cadastrou os retornos do Auth e confirmou login, envio e aprovação. A leitura de uma mensagem aprovada foi conferida sem login. Pendentes: retirada e autorização entre duas contas reais.
+- **Revisão humana:** três guias em rascunho, orientações editoriais, retirada e autorização entre contas reais, aparelhos e editores Office. Validação de uso com pessoas segue adiada.
 - **Não publicado nas redes:** perfis, fixada e quatro conjuntos orgânicos em `divulgacao/portal/`. Métricas não medidas permanecem sem números.
 
 ## Continuidade — confiabilidade de Cadastros
@@ -17,11 +17,11 @@
 
 Conferência somente leitura do servidor identificou que transportador de correia, ventilador/exaustor e unidade hidráulica eram oferecidos pelo app, mas recusados pelo validador online. **Corrigido no servidor:** a migração existente `20261027120000_tipos_catalogo.sql` foi aplicada isoladamente como `tipos_catalogo`, ampliando só as categorias aceitas. As oito categorias passaram no diagnóstico após a aplicação; proprietário, permissões e atributos da função foram preservados. O teste PostgreSQL em memória agora compara as oito categorias do contrato público (sete tipos + Outro), exerce o RPC com cada uma e preserva testes de autoria/PDF/moderação. O catálogo comunitário usa esse contrato; ele não representa todos os 47 tipos da biblioteca local.
 
-A operação local, a biblioteca pública e os downloads não dependem da ativação das conversas. Pendência que exige acesso humano: configuração do Auth e validação real de entrada/retorno por e-mail e moderação. Diagnóstico de categorias sem dados reais: `supabase/diagnostico/catalogo_tipos.sql`.
+A operação local, a biblioteca pública e os downloads não dependem da ativação das conversas. A configuração dos retornos foi informada como salva e a entrada/retorno por e-mail e o envio/aprovação foram confirmados pelo mantenedor. Essa confirmação não substitui as verificações reais de retirada e de autorização entre contas distintas. Diagnóstico de categorias sem dados reais: `supabase/diagnostico/catalogo_tipos.sql`.
 
 ## Continuidade — acesso à própria conta com participação pausada
 
-A interface foi corrigida para permitir login, consulta/retirada das próprias mensagens e moderação durante a pausa, respeitando as operações já autorizadas no servidor. Novos envios, denúncias e a vista pública ficam indisponíveis. O refresh reconfere a disponibilidade e preserva o rascunho da mesma conta; trocar de conta continua limpando campos privados. Falha do backend ou resposta inválida não abre o formulário de acesso. Roteiro humano de entrada/retorno em [Ativação da comunidade](portal/ATIVACAO-COMUNIDADE.md#conferir-o-acesso-enquanto-a-participação-está-pausada); Auth real segue pendente, sem ativação automática.
+A interface foi corrigida para permitir login, consulta/retirada das próprias mensagens e moderação durante a pausa, respeitando as operações já autorizadas no servidor. Novos envios, denúncias e a vista pública ficam indisponíveis. O refresh reconfere a disponibilidade e preserva o rascunho da mesma conta; trocar de conta continua limpando campos privados. Falha do backend ou resposta inválida não abre o formulário de acesso. Roteiro humano de entrada/retorno em [Ativação da comunidade](portal/ATIVACAO-COMUNIDADE.md#conferir-o-acesso-enquanto-a-participação-está-pausada); O mantenedor confirmou o login real e o envio/aprovação; a participação foi ativada com pré-moderação, conforme o registro em Ativação da comunidade.
 
 ## Histórico da fila — 01/11/2026
 
