@@ -28,3 +28,5 @@ await import("./verificar-catalogo-publico.mjs");
 await import("./verificar-comunidade-materiais-banco.mjs");
 await import("./verificar-portal-completo.mjs");
 await import("./verificar-entrada-direta.mjs");
+
+await import('./verificar-cadastros-gravacao.mjs');

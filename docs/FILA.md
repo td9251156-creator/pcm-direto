@@ -9,6 +9,10 @@
 - **Revisão humana:** três guias em rascunho, orientações editoriais, Auth/e-mail reais, aparelhos e editores Office. Validação de uso com pessoas segue adiada.
 - **Não publicado nas redes:** perfis, fixada e quatro conjuntos orgânicos em `divulgacao/portal/`. Métricas não medidas permanecem sem números.
 
+## Continuidade — confiabilidade de Cadastros
+
+Correção em preparação no ramo `coord/cadastros-gravacao-unica`: impedir inclusão duplicada por envios durante gravação, informar o estado ocupado, manter rascunhos/foco após falha e impedir resposta antiga de redesenhar a tela após sair e voltar. Nova tentativa após quota reutiliza o ID da pessoa/referência aplicada em memória; repetir Inativar mantém a intenção mostrada no botão. Não altera armazenamento, modelos nem regras técnicas. Evidências e situação em [MELHORIAS.md](MELHORIAS.md#cadastros-envio-único-e-falha-de-persistência).
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
