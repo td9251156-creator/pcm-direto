@@ -4,7 +4,7 @@
 
 Software livre e gratuito para técnicos e pequenas operações de manutenção com até 100 ativos. Encontre um modelo, entenda como usar e organize a rotina. O app funciona no navegador, com os dados da fábrica no aparelho e operação offline após o carregamento completo.
 
-[Abrir o app](https://pcmdireto.me/) · [Conhecer o projeto](https://pcmdireto.me/conheca.html) · [Contribuir](CONTRIBUTING.md) · [English](README.en.md)
+[Portal e modelos](https://pcmdireto.me/) · [Abrir o app](https://pcmdireto.me/app.html#inicio) · [Conhecer o projeto](https://pcmdireto.me/conheca.html) · [Contribuir](CONTRIBUTING.md) · [English](README.en.md)
 
 **Versão de teste.** [Modelos recebidos e limites da integração](docs/ATUALIZACAO-BIBLIOTECA-20261102.md). Modelos R00 em desenvolvimento; validação humana e documental ainda pendente. [Evidências e limites](docs/VALIDACAO-REFORMULACAO.md).
 
@@ -39,7 +39,7 @@ Você pode testar, melhorar explicações, propor conteúdo com fonte ou contrib
 
 ## Situação e próximos passos
 
-Entrada por necessidade e questionário local estão preparados nos [PRs #58](https://github.com/td9251156-creator/pcm-direto/pull/58) e [#59](https://github.com/td9251156-creator/pcm-direto/pull/59), sujeitos a revisão e integração. Não são declarados publicados neste documento. Faltam medidas confirmadas de uso e retorno; estrelas e forks não substituem essas medidas.
+Entrada por necessidade, contribuição e questionário local já integram o projeto. O portal público reúne os 19 modelos, orientação de uso e o primeiro guia aprofundado de OS; o link do material continua no app sem alterar dados automaticamente. As conversas por material têm estrutura instalada, mas permanecem desativadas até conferir login e moderação reais. Faltam medidas confirmadas de uso e retorno; estrelas e forks não substituem essas medidas.
 
 [Índice dos documentos](docs/README.md) · [Roadmap](ROADMAP.md) · [Governança](docs/GOVERNANCA.md) · [Preparação open source](docs/PREPARACAO-OPEN-SOURCE.md) · [Créditos e licenças de terceiros](CREDITOS.md).
 

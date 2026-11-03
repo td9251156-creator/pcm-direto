@@ -227,3 +227,8 @@ antes de verificar a navegação. Evidências locais em artifacts/identidade-fig
 ## Portal público — catálogo integrado, continuação preparada — 02/11/2026
 
 O catálogo do PR #67 foi integrado em `562e292`. A continuação acrescenta guia de OS, intenção de material sem escrita/geração automática, conversas moderadas em esquema privado, descoberta e conteúdo orgânico preparado. Revisão independente concluída; 495 testes/64 arquivos e 24 roteiros de navegador/banco aprovados localmente. Migração e ativação em produção, Auth real, revisão dos três guias em rascunho e publicação nas redes permanecem separados. Evidências e limitações: [Entrega consolidada](portal/ENTREGA.md).
+
+
+## Publicação do portal — PR #68
+
+Integração autorizada pelo mantenedor; 505 testes/65 arquivos, lint/build e 25 roteiros aprovados, com revisão independente na preparação. PR #69 encerrado como duplicado para preservar a correção de navegação do #70. Migração adicional de conversas aplicada, 19 assuntos e bloqueio de leitura direta das quatro tabelas confirmados. Conversas desativadas até conferir Auth/moderação reais; materiais, downloads e app independem dessa ativação. Divulgação nas redes permanece manual.

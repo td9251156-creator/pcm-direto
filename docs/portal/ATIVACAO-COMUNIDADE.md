@@ -2,7 +2,9 @@
 
 ## Estado desta entrega
 
-Migração e interface implementadas, verificadas localmente e preparadas para revisão. **Não aplicadas nem ativadas em produção.** A consulta somente leitura ao projeto real confirmou cinco tabelas legadas do catálogo; as novas estruturas de conversas ainda não existem. RLS habilitado nessas tabelas antigas não comprova a autorização das estruturas novas.
+Interface integrada no PR #68. Migração aplicada ao projeto real após autorização do mantenedor: 19 assuntos conferidos, quatro tabelas com RLS e sem SELECT direto para `anon`/`authenticated`; RPC público de configuração respondeu `false` como visitante. **Participação permanece desativada.** Allowlist do Auth, entrega de e-mail e moderação entre contas reais ainda não foram conferidas.
+
+Os advisors após a migração indicaram quatro avisos informativos de RLS sem políticas no esquema privado: comportamento intencional, com acesso direto revogado e projeções/autorização feitas por RPC. Os avisos sobre funções privilegiadas públicas do catálogo antigo e proteção contra senhas vazadas permanecem separados; não foram silenciados nem declarados corrigidos.
 
 A revisão dos advisors do projeto real foi somente leitura e não equivale a uma aprovação da migração nova. Há avisos legados a triar separadamente; nenhuma alteração automática foi feita para silenciá-los.
 
@@ -27,7 +29,7 @@ Não foi realizado teste de carga concorrente em PostgreSQL hospedado. O código
 
 ## Procedimento após aprovação da implantação
 
-1. Conferir o commit aprovado e guardar a configuração atual do projeto. Aplicar a migração adicional; ela não altera o catálogo antigo e nasce com `ativo=false`.
+1. Migração adicional já aplicada; ela não altera o catálogo antigo e permanece com `ativo=false`. Conferir novamente a configuração antes da ativação.
 2. Conferir grants/RLS e assinaturas das funções realmente instaladas. Executar os advisors e triar os resultados; não adicionar o esquema privado à API nem conceder SELECT direto às tabelas para resolver erros.
 3. Autorizar no Auth as URLs exatas de retorno em `https://pcmdireto.me/comunidade/acesso/`, incluindo os parâmetros `assunto` previstos. A lista está em `retornos-auth.txt`. Evitar globstar amplo em produção, conforme a documentação oficial de redirect URLs.
 4. Conferir login e retorno ao material, e testar duas contas e a moderação em ambiente autorizado. Não criar contas ou disparar e-mails reais sem instrução do mantenedor. Verificar que não há leitura de pendências, retirada ou decisão de outra conta.
