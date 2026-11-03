@@ -41,7 +41,7 @@ Você pode testar, melhorar explicações, propor conteúdo com fonte ou contrib
 
 Entrada por necessidade, contribuição e questionário local já integram o projeto. O portal público reúne os 19 modelos, orientação de uso e o primeiro guia aprofundado de OS; o link do material continua no app sem alterar dados automaticamente.
 
-As conversas por material estão ativas com revisão prévia. O mantenedor confirmou login, envio e aprovação; uma conferência sem login confirmou a leitura da mensagem aprovada. Retirada e autorização entre duas contas reais ainda aguardam conferência.
+As conversas por material estão ativas com revisão prévia. O mantenedor confirmou login, envio, aprovação e retirada; a leitura e a retirada pública foram conferidas sem login. A autorização entre duas contas reais continua em conferência.
 
 Faltam medidas confirmadas de uso e retorno; estrelas e forks não substituem essas medidas.
 

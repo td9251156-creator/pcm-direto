@@ -7,9 +7,9 @@ Interface integrada nos PRs #68 e #74. Migração aplicada ao projeto real após
 Evidências separadas:
 
 - **Conferência do servidor:** as dez funções privadas correspondem ao código testado; permissões diretas das tabelas continuam revogadas para visitantes/contas e novos comentários começam como `pendente`.
-- **Informado pelo mantenedor:** cadastrou os Redirect URLs, recebeu o link e concluiu a entrada/retorno ao material, visualizou Fila de moderação e confirmou envio e aprovação da mensagem de teste.
-- **Conferência pública sem login:** uma mensagem aprovada disponível no PCM-MAN-004; resposta sem os campos `email`, `autor_id` e `nonce`, sem abertura da base operacional nem envio de e-mail. Download original, teclado e larguras 320/390/820/1280 aprovados, sem erros JavaScript capturados nesses fluxos.
-- **Ainda não conferido com contas/aparelhos reais:** retirada, autorização entre duas contas autenticadas distintas, ciclo BFCache e leitor de tela. Os cenários automáticos de autoria, moderação e retirada continuam sendo evidências separadas desses testes humanos.
+- **Informado pelo mantenedor:** cadastrou os Redirect URLs, recebeu o link e concluiu a entrada/retorno ao material, visualizou Fila de moderação e confirmou envio, aprovação e retirada da mensagem de teste.
+- **Conferência pública sem login:** uma mensagem aprovada disponível no PCM-MAN-004; resposta sem os campos `email`, `autor_id` e `nonce`, sem abertura da base operacional nem envio de e-mail. Download original, teclado e larguras 320/390/820/1280 aprovados, sem erros JavaScript capturados nesses fluxos. Após a retirada informada pelo mantenedor, uma consulta com papel anônimo retornou zero mensagens públicas no material.
+- **Ainda não conferido com contas/aparelhos reais:** autorização entre duas contas autenticadas distintas, ciclo BFCache e leitor de tela. Os cenários automáticos de autoria, moderação e retirada continuam sendo evidências separadas desses testes humanos.
 
 A ativação foi realizada para a conferência do fluxo real pelo mantenedor após confirmar login e acesso à moderação. Não representa conclusão dos testes entre contas reais, validação de uso com pessoas ou garantia de ausência de falhas.
 
@@ -62,8 +62,18 @@ Roteiro para quando o serviço estiver pausado; não descreve o estado ativo atu
 
 A configuração do Auth exige acesso ao painel: o conector disponível nesta rodada permite consultas e migrações do banco, mas não altera Redirect URLs. O mantenedor informou que concluiu o cadastro dos retornos e confirmou o login real; não houve leitura automatizada da configuração privada do Auth.
 
+## Retorno do link e conferência da segunda conta
+
+O retorno da Comunidade exige a troca bem-sucedida do código daquele link pelo SDK. Uma sessão anterior não confirma um novo acesso. Código, identificador do fluxo e erros do provedor são retirados da URL; apenas o assunto válido permanece. O identificador do fluxo é preservado para a troca explícita. Um erro informa que é necessário solicitar outro link e abri-lo no contexto correto; não há logout automático de uma sessão já aberta.
+
+Para testar uma conta participante, use outro e-mail seu em uma janela anônima. Se já houver uma conta conectada nessa janela, use **Sair desta conta** antes de pedir o novo link. Copie o link recebido e abra **nessa mesma janela anônima**, sem enviá-lo ao mantenedor/agente. As janelas normais compartilham a sessão do mesmo perfil; abrir o link na janela normal não testa a conta anônima.
+
+O mantenedor relatou ver a fila ao testar outra conta. As consultas administrativas agregadas mostraram um único moderador e nenhuma permissão de escrita direta na lista para contas comuns. Isso não identifica qual sessão estava sendo usada no navegador nem conclui a causa específica do relato. O defeito reproduzido foi o callback aceitar uma sessão já aberta quando a confirmação do novo link falhava. O teste real da segunda conta continua pendente após a correção.
+
+A verificação do perfil no portal também exige o booleano `true` do servidor, usa o token da conta conferida e ignora resultados de uma consulta que deixou de pertencer à tela/conta atual. As permissões do servidor não foram ampliadas nem substituídas por controles da interface.
+
 ## Pendências humanas
 
-Retirada e autorização entre duas contas reais distintas; comportamento BFCache, aparelhos reais e leitor de tela. Entrega do e-mail/retorno e envio/aprovação foram confirmados pelo mantenedor, sem declarar auditoria completa da configuração do provedor. A validação de uso com pessoas segue adiada.
+Autorização entre duas contas reais distintas; comportamento BFCache, aparelhos reais e leitor de tela. Entrega do e-mail/retorno e envio/aprovação/retirada foram confirmados pelo mantenedor, sem declarar auditoria completa da configuração do provedor. A validação de uso com pessoas segue adiada.
 
 Fontes oficiais consultadas: https://supabase.com/changelog.md , https://supabase.com/docs/guides/database/postgres/row-level-security e https://supabase.com/docs/guides/auth/redirect-urls .
