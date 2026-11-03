@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    html[data-entrada="app"] body { visibility: hidden; }
+    html[data-entrada="app"] body::before { content: "Abrindo o PCM Direto…"; visibility: visible; position: fixed; inset: 0; padding: 32px; background: #f4f6f9; color: #0b2a5b; font: 16px/1.5 system-ui, sans-serif; }
+  </style>
+  <!--ENTRADA-APP-->
   <title>PCM Direto · Manutenção prática</title>
   <meta name="description" content="Modelos gratuitos e orientações práticas para organizar a manutenção. Encontre um modelo, aprenda a usar e conheça o app aberto do PCM Direto.">
   <meta name="theme-color" content="#0b2a5b">
@@ -11,7 +16,6 @@
   <link rel="stylesheet" href="./fontes/fontes.css">
   <link rel="stylesheet" href="./portal.css">
   <link rel="stylesheet" href="./src/portal-catalogo.css">
-  <script type="module" src="./src/portal-entrada.js"></script>
 </head>
 <body>
   <a href="#principal" class="pular">Pular para o conteúdo</a>
