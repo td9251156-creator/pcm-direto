@@ -11,7 +11,13 @@
 
 ## Continuidade — confiabilidade de Cadastros
 
-Correção em preparação no ramo `coord/cadastros-gravacao-unica`: impedir inclusão duplicada por envios durante gravação, informar o estado ocupado, manter rascunhos/foco após falha e impedir resposta antiga de redesenhar a tela após sair e voltar. Nova tentativa após quota reutiliza o ID da pessoa/referência aplicada em memória; repetir Inativar mantém a intenção mostrada no botão. Não altera armazenamento, modelos nem regras técnicas. Evidências e situação em [MELHORIAS.md](MELHORIAS.md#cadastros-envio-único-e-falha-de-persistência).
+**Integrada e publicada no PR #72**, ramo `coord/cadastros-gravacao-unica`: impedir inclusão duplicada por envios durante gravação, informar o estado ocupado, manter rascunhos/foco após falha e impedir resposta antiga de redesenhar a tela após sair e voltar. Nova tentativa após quota reutiliza o ID da pessoa/referência aplicada em memória; repetir Inativar mantém a intenção mostrada no botão. Não altera armazenamento, modelos nem regras técnicas. Evidências e situação em [MELHORIAS.md](MELHORIAS.md#cadastros-envio-único-e-falha-de-persistência).
+
+## Continuidade — compatibilidade do catálogo online
+
+Conferência somente leitura do servidor identificou que transportador de correia, ventilador/exaustor e unidade hidráulica eram oferecidos pelo app, mas recusados pelo validador online. **Corrigido no servidor:** a migração existente `20261027120000_tipos_catalogo.sql` foi aplicada isoladamente como `tipos_catalogo`, ampliando só as categorias aceitas. As oito categorias passaram no diagnóstico após a aplicação; proprietário, permissões e atributos da função foram preservados. O teste PostgreSQL em memória agora compara as oito categorias do contrato público (sete tipos + Outro), exerce o RPC com cada uma e preserva testes de autoria/PDF/moderação. O catálogo comunitário usa esse contrato; ele não representa todos os 47 tipos da biblioteca local.
+
+A operação local, a biblioteca pública e os downloads não dependem da ativação das conversas. Pendência que exige acesso humano: configuração do Auth e validação real de entrada/retorno por e-mail e moderação. Diagnóstico de categorias sem dados reais: `supabase/diagnostico/catalogo_tipos.sql`.
 
 ## Histórico da fila — 01/11/2026
 

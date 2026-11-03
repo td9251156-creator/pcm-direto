@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PGlite } from '../ferramentas/navegador/node_modules/@electric-sql/pglite/dist/index.js';
 import { PDFDocument } from '../ferramentas/navegador/node_modules/pdf-lib/cjs/index.js';
+import { TIPOS_CATALOGO, validarModeloCatalogo } from '../src/logica/catalogo.js';
 import { conferirPdf } from '../supabase/functions/catalogo-finalizar-pdf/validacao.js';
 
 const db = new PGlite();
@@ -37,10 +38,30 @@ try {
   for (const nome of ['202610230001_catalogo.sql', '20261024145808_pdfs_catalogo.sql']) {
     await db.exec(await readFile(new URL('../supabase/migrations/' + nome, import.meta.url), 'utf8'));
   }
+  // A migração histórica aceita só quatro categorias; reproduz a diferença observada em produção.
+  for (const tipo of ['transportador_correia', 'ventilador_exaustor', 'unidade_hidraulica']) {
+    assert.equal((await uma('select catalogo_privado.dados_validos($1::jsonb) valido', [JSON.stringify({ ...dados, tipo_base: tipo })])).valido, false);
+  }
+  await db.exec(await readFile(new URL('../supabase/migrations/20261027120000_tipos_catalogo.sql', import.meta.url), 'utf8'));
+  for (const tipo of Object.keys(TIPOS_CATALOGO)) {
+    const modelo = { ...dados, tipo_base: tipo };
+    assert.deepEqual(validarModeloCatalogo(modelo), []);
+    assert.equal((await uma('select catalogo_privado.dados_validos($1::jsonb) valido', [JSON.stringify(modelo)])).valido, true, tipo);
+  }
+  for (const invalido of [{ ...dados, tipo_base: 'categoria_inventada' }, { ...dados, inventario: [] }, { ...dados, titulo: '' }]) {
+    assert.ok(validarModeloCatalogo(invalido).length);
+    assert.equal((await uma('select catalogo_privado.dados_validos($1::jsonb) valido', [JSON.stringify(invalido)])).valido, false);
+  }
   await db.query('insert into auth.users values($1),($2),($3)', [A, B, M]);
   await db.query('insert into public.catalogo_moderadores values($1)', [M]);
   await como('anon', null, () => recusa(() => db.query('select catalogo_reservar_pdf(gen_random_uuid())'), '42501'));
   const id = await como('authenticated', A, async () => (await uma('select catalogo_salvar($1::jsonb) id', [JSON.stringify(dados)])).id);
+  for (const tipo of Object.keys(TIPOS_CATALOGO)) {
+    await como('authenticated', A, async () => {
+      const novo = (await uma('select catalogo_salvar($1::jsonb) id', [JSON.stringify({ ...dados, tipo_base: tipo })])).id;
+      await db.query('select catalogo_retirar($1)', [novo]);
+    });
+  }
   const reserva = await como('authenticated', A, async () => (await uma('select catalogo_reservar_pdf($1) r', [id])).r);
   await como('authenticated', B, async () => {
     await recusa(() => db.query('select catalogo_reservar_pdf($1)', [id]), '42501');
@@ -104,5 +125,5 @@ try {
   }
   await assert.rejects(() => conferirPdf(new TextEncoder().encode('%PDF-1.7\nlixo\n%%EOF'), PDFDocument), /não pôde ser aberto/);
   await assert.rejects(() => conferirPdf(new Uint8Array(5000001), PDFDocument), /5 MB/);
-  console.log('PDFs: PostgreSQL em memória aprovou autoria, RLS, imutabilidade, limites, validação, aprovação por versão e arquivo preservado ao arquivar. Parser abriu as 47 fichas e recusou PDF falso.');
+  console.log('PDFs: PostgreSQL em memória aprovou as oito categorias do contrato público, autoria, RLS, imutabilidade, limites, validação, aprovação por versão e arquivo preservado ao arquivar. Parser abriu as 47 fichas e recusou PDF falso.');
 } finally { await db.close(); }
