@@ -24,7 +24,7 @@ O cache obrigatório mantém o núcleo do app e os pequenos assets versionados. 
 
 ## Verificado nesta entrega
 
-Lint, 495 testes/64 arquivos e build aprovados. Os 24 roteiros de navegador/banco passaram, incluindo a simulação das APIs de comunidade e dos eventos de retorno de página. Revisão independente de código concluída sem bloqueadores após as correções. Nenhuma dessas evidências é apresentada como teste de Auth ou de permissões novas em produção.
+Lint, 505 testes/65 arquivos e build aprovados. Os 25 roteiros de navegador/banco passaram, incluindo a simulação das APIs de comunidade e dos eventos de retorno de página. Revisão independente de código concluída sem bloqueadores após as correções. Nenhuma dessas evidências é apresentada como teste de Auth ou de permissões novas em produção.
 
 ## Como conferir
 
@@ -39,3 +39,5 @@ O teste de lifecycle usa eventos BFCache simulados, sem afirmar conferência em 
 ## Próximas decisões após revisão
 
 Autorizar integração/publicação e, separadamente, a migração/ativação da comunidade; revisar os três guias em rascunho para publicação gradual. Em seguida, o mantenedor poderá publicar o conteúdo orgânico preparado e iniciar uma comparação de 28 dias. Sem métricas confirmadas ou validação de uso, não há alegação de aumento de público ou retorno ao app.
+
+A correção de entrada direta publicada no PR #70 foi incorporada nesta entrega: os botões de apresentação abrem o app diretamente, e os links antigos continuam compatíveis sem exibir o portal antes do app.
