@@ -67,10 +67,10 @@ await executarComRecursos({
     });
     const pagina = await contexto.newPage();
     const erros = []; pagina.on('pageerror', e => erros.push(e.message));
-    await pagina.goto('http://127.0.0.1:4178/#catalogo');
+    await pagina.goto('http://127.0.0.1:4178/app.html#catalogo');
     await pagina.locator('[data-login]').waitFor();
     const canal = await pagina.evaluate(() => window.canalPdfTeste);
-    const emissora = await contexto.newPage(); await emissora.goto('http://127.0.0.1:4178/#apoio');
+    const emissora = await contexto.newPage(); await emissora.goto('http://127.0.0.1:4178/app.html#apoio');
     async function entrar(usuario) {
       await emissora.evaluate(({ canal, usuario }) => {
         const c = new BroadcastChannel(canal); c.postMessage({ event: 'SIGNED_IN', session: { user: { id: usuario, email: 'teste@example.invalid' } } }); c.close();
@@ -98,7 +98,15 @@ await executarComRecursos({
     await ficha.evaluate(() => { window.print = () => { window.imprimiuTeste = true; }; });
     await ficha.locator('#imprimir-ficha').click();
     assert.equal(await ficha.evaluate(() => window.imprimiuTeste), true);
-    await ficha.locator('#fechar-ficha').click();
+    // O popup pode encerrar antes da confirmação do clique chegar ao Playwright.
+    await Promise.all([
+      ficha.waitForEvent('close'),
+      ficha.locator('#fechar-ficha').click().catch(erro => {
+        if (!ficha.isClosed() || !/closed/i.test(erro.message)) throw erro;
+      }),
+    ]);
+    assert.equal(ficha.isClosed(), true);
+    assert.equal(pagina.isClosed(), false, 'Fechar a ficha não encerra o formulário de contribuição');
     await pagina.locator('#c-pdf').setInputFiles({ name: 'falso.pdf', mimeType: 'application/pdf', buffer: Buffer.from('arquivo inválido') });
     await pagina.getByRole('button', { name: 'Salvar rascunho online', exact: true }).click();
     await pagina.locator('#mensagens').getByText('O arquivo escolhido não tem formato PDF.').waitFor();

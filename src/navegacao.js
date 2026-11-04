@@ -1,5 +1,6 @@
 // Uma subtela mantém destacado o acesso que leva ao seu grupo.
 const grupos = {
+  contribuir: 'comunidade', feedback: 'comunidade',
   equipamentos: 'planejar', cadastros: 'planejar', criticidade: 'planejar', janelas: 'planejar',
   revisao: 'planejar', plano: 'planejar', mensal: 'planejar', impressao: 'planejar',
   execucao: 'executar', modelos: 'entrega',

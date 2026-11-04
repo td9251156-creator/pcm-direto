@@ -61,7 +61,7 @@ export function dadosPcmMan001(emissao) {
 /**
  * PCM-MAN-008. Registro de falhas: as falhas importadas do 008 (campos completos) e as do registro do app até a data de
  * corte. As do app levam início (data e hora, se informada) e fim = conclusão do reparo com hora (sem hora: na ação);
- * peça e responsável têm colunas próprias; horas de parada e de reparo (sem coluna) vão escritas na ação. Pareto e Ficha de falha ficam para a equipe.
+ * peça, responsável, horas de parada e horas de reparo têm colunas próprias. Pareto e Ficha de falha ficam para a equipe.
  */
 export function dadosPcmMan008(emissao) {
   const { estado: e, revisao: r, meta: m, falhas } = emissao;
@@ -71,18 +71,17 @@ export function dadosPcmMan008(emissao) {
   const op = e.gestao.operacao;
   const importadas = (op?.falhas ?? []).filter((f) => f.inicio_falha.slice(0, 10) <= m.dataCorte).map((f) => ({
     referencia: f.referencia_falha, tag: f.tag, os: f.numero_os ?? '', descricao: f.descricao_falha ?? '', causa: f.causa ?? '', acao: f.acao ?? '',
-    inicio: f.inicio_falha, fim: f.fim_falha, inicioReparo: f.inicio_reparo, fimReparo: f.fim_reparo, peca: f.peca ?? '', responsavel: f.responsavel ?? '',
+    inicio: f.inicio_falha, fim: f.fim_falha, inicioReparo: f.inicio_reparo, fimReparo: f.fim_reparo, horasParada: f.horas_parada ?? null, horasReparo: f.horas_reparo ?? null, peca: f.peca ?? '', responsavel: f.responsavel ?? '',
   }));
   const vistas = new Set(importadas.map((f) => f.referencia));
   const comHora = (d, h) => (d && h ? `${d}T${h}:00` : d || null);
   const doApp = falhas.filter((f) => !vistas.has(f.id)).map((f) => {
-    // Fim da falha = conclusão com hora. Sem a hora, o fim fica vazio (um dia sem hora seria lido como 00:00, antes do
-    // início ou com indisponibilidade encurtada) e a data da conclusão vai escrita na ação.
-    const fim = f.dataConclusao && f.horaFim ? comHora(f.dataConclusao, f.horaFim) : null;
+    // A data de conclusão é preservada mesmo sem hora: o leitor reconhece o formato só data sem inventar 00:00.
+    const fim = comHora(f.dataConclusao, f.horaFim);
     const extras = [Number.isFinite(f.horasParada) && `Parada: ${num(f.horasParada)} h`, Number.isFinite(f.horasReparo) && `Reparo: ${num(f.horasReparo)} h`,
-      f.dataConclusao && !fim && `Concluída em ${f.dataConclusao.split('-').reverse().join('/')} (sem hora)`].filter(Boolean);
+      f.dataConclusao && !f.horaFim && `Concluída em ${f.dataConclusao.split('-').reverse().join('/')} (sem hora)`].filter(Boolean);
     return { referencia: f.id, tag: f.tag, os: '', descricao: f.sintoma, causa: f.causa, acao: [f.acao, ...extras].filter(Boolean).join(' · '),
-      inicio: comHora(f.data, f.horaInicio), fim, inicioReparo: null, fimReparo: null, peca: f.peca ?? '', responsavel: pessoa.get(f.responsavelId) ?? '' };
+      inicio: comHora(f.data, f.horaInicio), fim, inicioReparo: null, fimReparo: null, horasParada: f.horasParada ?? null, horasReparo: f.horasReparo ?? null, peca: f.peca ?? '', responsavel: pessoa.get(f.responsavelId) ?? '' };
   });
   const registros = [...importadas, ...doApp].sort((a, b) => a.inicio.localeCompare(b.inicio) || a.referencia.localeCompare(b.referencia));
   const ativos = r.equipamentos.map((a) => ({ tag: a.tag, descricao: a.descricao, familia: nomeTipo.get(a.tipo) ?? a.tipo, setor: a.setor }));
@@ -108,11 +107,20 @@ export function dadosPcmMan004(emissao) {
   const nomeTipo = new Map(e.biblioteca.tipos.map((t) => [t.id, t.nome]));
   const pessoa = new Map(e.gestao.pessoas.map((p) => [p.id, p.nome]));
   const op = e.gestao.operacao;
-  // OS "APP-…" reimportadas são cópias de registros do próprio app: vale sempre o estado atual do app, não a cópia.
-  const importadas = (op?.ordens_servico ?? []).filter((o) => !o.numero_os.startsWith('APP-') && (!o.data_abertura || o.data_abertura <= m.dataCorte)).map((o) => ({
+  // Apenas IDs realmente conhecidos pertencem à operação local. APP- de outra base não é descartada pelo prefixo.
+  const idsLocais = new Set([...[...(e.gestao.historico ?? []), ...historico].map(h => `APP-${h.id}`), ...e.programacao.ocorrencias.map(o => `APP-${o.id}`)]);
+  const horasApontadas = (numero, tag, ocorrenciaId = null) => {
+    const candidatas = [numero, ocorrenciaId && `APP-${ocorrenciaId}`].filter(Boolean);
+    for (const id of candidatas) {
+      const o = op?.ordens_servico?.find(x => x.numero_os === id && x.tag === tag);
+      if (typeof o?.horas_executadas === 'number' && Number.isFinite(o.horas_executadas) && o.horas_executadas >= 0) return o.horas_executadas;
+    }
+    return null;
+  };
+  const importadas = (op?.ordens_servico ?? []).filter((o) => !idsLocais.has(o.numero_os) && (!o.data_abertura || o.data_abertura <= m.dataCorte)).map((o) => ({
     numero: o.numero_os, tag: o.tag, atividade: o.atividade ?? '', tipo: o.tipo_manutencao ?? '', prioridade: o.prioridade ?? '', status: o.status ?? '',
     responsavel: o.responsavel ?? '', abertura: o.data_abertura ?? null, prazo: o.data_prevista ?? null, conclusao: o.data_conclusao ?? null,
-    estimadas: o.horas_estimadas ?? null, restantes: o.horas_restantes ?? null, observacao: o.observacao ?? '',
+    estimadas: o.horas_estimadas ?? null, executadas: o.horas_executadas ?? null, origem: o.origem_registro || 'OS importada', restantes: o.horas_restantes ?? null, observacao: o.observacao ?? '',
   }));
   const vistas = new Set(importadas.map((o) => o.numero));
   const chave = (x) => `${x.equipamentoId}|${x.tarefaId}|${x.dataPrevista}`;
@@ -126,12 +134,12 @@ export function dadosPcmMan004(emissao) {
     return { numero: `APP-${h.id}`, tag: h.tag, atividade: nomeTarefa(h.descricao || t?.descricao || '', o?.seguranca ?? t?.seguranca),
       tipo: 'PREVENTIVA', prioridade: '', status: h.cancelada ? 'CANCELADA' : 'CONCLUIDA', responsavel: pessoa.get(h.responsavelId) ?? '',
       abertura: h.dataPrevista && h.dataPrevista <= h.data ? h.dataPrevista : h.data, prazo: h.dataPrevista || null,
-      conclusao: h.cancelada ? null : h.data, estimadas: horas, restantes: horas === null ? null : 0, observacao: h.observacao ?? '' };
+      conclusao: h.cancelada ? null : h.data, estimadas: horas, executadas: horasApontadas(`APP-${h.id}`, h.tag, h.ocorrenciaId || o?.id), origem: 'Execução no app', restantes: horas === null ? null : 0, observacao: h.observacao ?? '' };
   });
   const feitas = idsConcluidos(e.programacao, historico);
   const programadas = ocorrencias.filter((o) => o.dataPrevista <= m.dataCorte && !feitas.has(o.id)).map((o) => ({
     numero: `APP-${o.id}`, tag: o.tag, atividade: nomeTarefa(o.descricao, o.seguranca), tipo: 'PREVENTIVA', prioridade: '', status: 'PROGRAMADA',
-    responsavel: pessoa.get(o.responsavelId) ?? '', abertura: o.dataPrevista, prazo: o.dataPrevista, conclusao: null, estimadas: o.horas, restantes: o.horas, observacao: '',
+    responsavel: pessoa.get(o.responsavelId) ?? '', abertura: o.dataPrevista, prazo: o.dataPrevista, conclusao: null, estimadas: o.horas, executadas: horasApontadas(`APP-${o.id}`, o.tag), origem: 'Execução no app', restantes: o.horas, observacao: '',
   }));
   const ordens = [...importadas, ...[...execucoes, ...programadas].filter((o) => !vistas.has(o.numero))]
     .sort((a, b) => (a.abertura ?? '').localeCompare(b.abertura ?? '') || a.numero.localeCompare(b.numero));
@@ -165,7 +173,7 @@ const unicos = (lista) => [...new Set(lista.map((s) => String(s ?? '').trim()).f
 
 /**
  * PCM-MAN-002. Criticidade: um ativo por linha, com as notas S, Q, P e frequência (1 a 5) avaliadas no app; a classe é
- * calculada pela própria planilha. Sem equivalente no app (ficam em branco): MFMEA, componente, tipo de tarefa e "exige parada".
+ * calculada pela própria planilha. MFMEA fica para a equipe; opcionais só são emitidos quando existem na biblioteca da revisão.
  */
 export function dadosPcmMan002(emissao) {
   const { estado: e, revisao: r, meta: m, ocorrencias } = emissao;
@@ -183,9 +191,21 @@ export function dadosPcmMan002(emissao) {
   }
   const atividades = r.plano.filter((t) => t.ativa !== false).map((t) => {
     const k = `${t.equipamentoId}|${t.tarefaId}`;
+    const equipamento = r.equipamentos.find(a => a.id === t.equipamentoId);
+    const fonte = r.biblioteca?.tipos?.find(x => x.id === equipamento?.tipo)?.tarefas?.find(x => x.id === t.tarefaId);
+    // Campos opcionais vêm apenas da biblioteca congelada da revisão. Não inferir pela descrição ou especialidade.
+    const tipos = { INSPECAO: 'Inspeção', LUBRIFICACAO: 'Lubrificação', PREVENTIVA: 'Preventiva', PREDITIVA: 'Preditiva' };
+    const executantes = ['Operador','Manutenção','Terceiro'];
+    const origens = ['MFMEA','Manual do fabricante','Requisito legal','Lição aprendida','Outra'];
+    const origem = t.origem || fonte?.origem || '';
     return {
       tag: t.tag,
       atividade: t.seguranca ? `${t.descricao} (tarefa de segurança)` : t.descricao,
+      tarefaId: t.tarefaId || '', seguranca: t.seguranca === true ? 'Sim' : t.seguranca === false ? 'Não' : '',
+      origem: origem ? (origens.includes(origem) ? origem : 'Outra') : '', origemCompleta: origem, versao: t.versao || fonte?.versao || '',
+      componente: fonte?.componente || '', tipoTarefa: tipos[fonte?.tipo_tarefa] ?? '',
+      executante: executantes.includes(fonte?.executante) ? fonte.executante : '',
+      parada: typeof fonte?.exige_parada === 'boolean' ? (fonte.exige_parada ? 'Sim' : 'Não') : '',
       periodicidade: t.periodicidade, dias: DIAS_POR_PERIODICIDADE[t.periodicidade] ?? null,
       responsavel: pessoa.get(r.responsaveis?.[k] ?? '')?.nome ?? '',
       duracao: Number.isFinite(t.duracaoHoras) ? t.duracaoHoras : null,
@@ -219,7 +239,7 @@ export function dadosPcmMan011(estado, equipamento, ano, hoje, elaborado = '') {
     const r = indicadores017(falhas, mes, total?.horasPlanejadas ?? null, `${hoje}T00:00:00`);
     const pms = ocorrenciasVigentes(estado.programacao).filter((o) => o.equipamentoId === equipamento.id && o.dataPrevista.slice(0, 7) === mes);
     const pmFeitas = pms.filter((o) => feitas.has(o.id));
-    return { mes, horasProgramadas: r.hp, horasOperacao: r.ho, falhas: r.n, horasReparo: r.somaReparos, pmPlanejadas: pms.length,
+    return { mes, horasProgramadas: r.hp, horasOperacao: r.ho, falhas: r.n, reparosCompletos: r.reparos, horasReparo: r.somaReparos, pmPlanejadas: pms.length,
       pmFeitas: pmFeitas.length, horasCorretiva: r.somaReparos, horasPreventiva: pmFeitas.length ? pmFeitas.reduce((s, o) => s + o.horas, 0) : null,
       provisorio: r.provisoria, alertas: r.alertas };
   });

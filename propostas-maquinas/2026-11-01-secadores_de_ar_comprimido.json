@@ -1,0 +1,158 @@
+{
+  "proposta": {
+    "titulo": "Secador de ar comprimido - proposta genérica",
+    "autor": "Agente Copilot (banco de máquinas)",
+    "data": "2026-11-01",
+    "fontes": [
+      {
+        "id": "F1",
+        "tipo": "base_generica",
+        "titulo": "Base genérica a validar com manual do fabricante",
+        "referencia": "",
+        "versao": "",
+        "data": ""
+      }
+    ]
+  },
+  "tipos": [
+    {
+      "id": "secadores_de_ar_comprimido",
+      "nome": "Secador de ar comprimido",
+      "sigla": "SDA",
+      "tarefas": [
+        {
+          "id": "SDA-01",
+          "descricao": "Inspecionar visualmente o secador de ar comprimido",
+          "componente": "Conjunto da máquina",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Diária",
+          "especialidade": "Operação",
+          "duracao_horas": 0.25,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Confirmar pontos de inspeção e critérios de aceitação no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "SDA-02",
+          "descricao": "Verificar limpeza, fixação e sinais de desgaste do secador de ar comprimido",
+          "componente": "Estrutura e componentes",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Periodicidade, método e limites devem ser confirmados no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "SDA-03",
+          "descricao": "Avaliar ruído, vibração e aquecimento anormal do secador de ar comprimido",
+          "componente": "Conjunto motriz",
+          "tipo_tarefa": "PREDITIVA",
+          "exige_parada": false,
+          "periodicidade": "Trimestral",
+          "especialidade": "Preditiva",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Registrar a condição e ajustar o intervalo conforme o regime de uso.",
+          "fonte": "F1"
+        },
+        {
+          "id": "SDA-04",
+          "descricao": "Inspecionar trocador, drenos e conexões do circuito de secagem quanto a vazamento e sujeira",
+          "componente": "Circuito de secagem",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": false,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Base genérica a validar com manual do fabricante; confirmar componente, critério, periodicidade e duração.",
+          "fonte": "F1"
+        },
+        {
+          "id": "SDA-05",
+          "descricao": "Verificar filtros, drenos e indicação do ponto de orvalho",
+          "componente": "Filtros e ponto de orvalho",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Trimestral",
+          "especialidade": "Operação",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Base genérica a validar com manual do fabricante; confirmar componente, critério, periodicidade e duração.",
+          "fonte": "F1"
+        },
+        {
+          "id": "SDA-06",
+          "descricao": "Inspecionar fixações, estrutura e sinais de ruído ou vibração anormal do conjunto principal",
+          "componente": "Fixações e estrutura",
+          "tipo_tarefa": "INSPECAO",
+          "exige_parada": true,
+          "periodicidade": "Mensal",
+          "especialidade": "Mecânica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        },
+        {
+          "id": "SDA-07",
+          "descricao": "Verificar limpeza e condição do painel e do acionamento elétrico, quando existentes",
+          "componente": "Painel e acionamento elétrico",
+          "tipo_tarefa": "PREVENTIVA",
+          "exige_parada": true,
+          "periodicidade": "Semestral",
+          "especialidade": "Elétrica",
+          "duracao_horas": 0.5,
+          "seguranca": false,
+          "origem": "base genérica a validar com manual do fabricante",
+          "versao": "0.1.0",
+          "observacao": "Controle transversal baseado na tabela fornecida; confirmar aplicabilidade, critério, periodicidade e duração no manual do fabricante.",
+          "fonte": "F1"
+        }
+      ],
+      "modos_falha": [
+        {
+          "componente": "Conjunto da máquina",
+          "modo": "Desempenho fora do esperado",
+          "efeito": "Parada ou perda de qualidade do processo",
+          "causa": "Desgaste, sujeira ou ajuste inadequado",
+          "controle": "SDA-01 e SDA-03"
+        }
+      ],
+      "itens_checklist": [
+        {
+          "item": "Estado geral sem dano visível",
+          "criterio": "Sem vazamentos, trincas, fixações soltas ou sinais novos de deterioração"
+        },
+        {
+          "item": "Ruído, vibração e aquecimento dentro do histórico",
+          "criterio": "Sem alteração anormal em relação à condição de referência"
+        }
+      ],
+      "pecas_criticas": [
+        {
+          "peca": "Elemento de desgaste do equipamento",
+          "especificacao": "Conforme o manual do fabricante",
+          "quantidade_sugerida": 1
+        }
+      ]
+    }
+  ],
+  "tarefasNovas": []
+}

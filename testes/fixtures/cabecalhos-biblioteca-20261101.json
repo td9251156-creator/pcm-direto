@@ -1,0 +1,69 @@
+{
+  "ativos": {
+    "nome": "tb_pcm_ativos",
+    "intervalo": "A4:D29",
+    "linhaDados": 5,
+    "campos": [
+      "tag",
+      "descricao_ativo",
+      "familia",
+      "setor"
+    ]
+  },
+  "ordens_servico": {
+    "nome": "tb_pcm_os",
+    "intervalo": "A4:N29",
+    "linhaDados": 5,
+    "campos": [
+      "numero_os",
+      "tag",
+      "equipamento",
+      "atividade",
+      "tipo_manutencao",
+      "prioridade",
+      "status",
+      "responsavel",
+      "data_abertura",
+      "data_prevista",
+      "data_conclusao",
+      "horas_estimadas",
+      "horas_restantes",
+      "observacao"
+    ]
+  },
+  "falhas": {
+    "nome": "tb_pcm_falhas",
+    "intervalo": "A4:M29",
+    "linhaDados": 5,
+    "campos": [
+      "referencia_falha",
+      "tag",
+      "equipamento",
+      "numero_os",
+      "descricao_falha",
+      "causa",
+      "acao",
+      "inicio_falha",
+      "fim_falha",
+      "inicio_reparo",
+      "fim_reparo",
+      "peca",
+      "responsavel"
+    ]
+  },
+  "custos_manutencao": {
+    "nome": "tb_pcm_custos",
+    "intervalo": "A4:H29",
+    "linhaDados": 5,
+    "campos": [
+      "referencia_lancamento",
+      "data_lancamento",
+      "tag",
+      "equipamento",
+      "setor",
+      "categoria_custo",
+      "valor_realizado",
+      "documento_origem"
+    ]
+  }
+}

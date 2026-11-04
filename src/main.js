@@ -1,8 +1,10 @@
+import { lerIntencaoModelo } from './logica/intencao-modelo.js';
+import { mostrarIntencaoModelo } from './telas/intencao-modelo.js';
 import { telaModelos } from './telas/modelos.js';
 import { telaImportarOperacao } from './telas/importar-operacao.js';
 // Ponto de entrada: carrega o rascunho, troca de tela pelo endereço (#inicio, #equipamentos...)
 // e registra o service worker para funcionar como aplicativo e sem internet.
-import { inicializarPersistencia, recuperacao, estado } from './estado.js';
+import { inicializarPersistencia, recuperacao, estado, emDemonstracao } from './estado.js';
 import { baixar, atualizarAvisoArmazenamento } from './ui.js';
 import { telaAtivos } from './telas/ativos.js';
 import { telaEquipamentos } from './telas/equipamentos.js';
@@ -19,12 +21,15 @@ import { telaFalhas } from './telas/falhas.js';
 import { telaBoasVindas,telaAssistente,telaPlanejar,telaSemana,telaOcorrencias,telaMais,telaMeusDados } from './telas/gestao-diaria.js';
 import { telaDashboards } from './telas/dashboards.js';
 import { telaApoio } from './telas/apoio.js';
-import { telaComunidade } from './telas/comunidade.js';
+import { telaComunidade, aberturaExemploPendente } from './telas/comunidade.js';
 import { telaCatalogo } from './telas/catalogo.js';
+import { telaContribuir, telaFeedback } from './telas/contribuir.js';
 import { registrarAtualizacao } from './servicos/atualizacao.js';
 import { acessoAtual } from './navegacao.js';
 
 const TELAS = {
+  contribuir: { titulo: 'Como contribuir', desenhar: telaContribuir },
+  feedback: { titulo: 'Sua experiência', desenhar: telaFeedback },
   modelos: { titulo: 'Modelos para sua rotina', desenhar: telaModelos },
   comunidade: { titulo: 'Comunidade e modelos', desenhar: telaComunidade },
   catalogo: { titulo: 'Catálogo colaborativo', desenhar: telaCatalogo },
@@ -66,7 +71,9 @@ function ir(nome) {
   else location.hash = nome;
 }
 
+let modeloSolicitado = lerIntencaoModelo(location.search);
 let encerrarTela;
+let visitaNavegacao=0;
 
 function marcarNavegacao(atual) {
   const mobile = matchMedia('(max-width:1023px)').matches;
@@ -80,6 +87,15 @@ matchMedia('(max-width:1023px)').addEventListener('change',()=>marcarNavegacao(l
 
 /** Desenha a tela indicada no endereço. */
 function mostrar() {
+  const visita=++visitaNavegacao;
+  const abertura=aberturaExemploPendente();
+  if(abertura){
+    // A tela de destino só nasce após restaurar a base real se a exploração foi abandonada.
+    encerrarTela?.();encerrarTela=undefined;
+    const continuar=()=>{if(visita===visitaNavegacao)mostrar();};
+    abertura.then(continuar,continuar);
+    return;
+  }
   const nome = location.hash.slice(1).split('?')[0];
   // Endereços antigos de material interno levam ao catálogo útil para o usuário.
   if(nome==='marca'){location.replace('#modelos');return;}
@@ -94,6 +110,7 @@ function mostrar() {
   document.title = `${tela.titulo} · PCM Direto`;
   encerrarTela?.();
   encerrarTela = tela.desenhar(main, ir);
+  mostrarIntencaoModelo(main, modeloSolicitado, estado, emDemonstracao(), () => { modeloSolicitado = null; document.getElementById('intencao-modelo')?.remove(); main.focus(); });
   document.getElementById('lembrete-backup')?.remove();
   const { ultimoBackup, alteradoEm } = estado.metadados;
   if (!estado.exemplo && alteradoEm && (!ultimoBackup ||

@@ -12,7 +12,7 @@ describe('cores da marca', () => {
     expect(css).toContain(`--destaque: #${MARCA.destaque.toLowerCase()}`);
   });
   it('index.html e manifesto usam a cor primária', () => {
-    expect(readFileSync('index.html', 'utf8').toLowerCase()).toContain(`name="theme-color" content="${p}"`);
+    expect(readFileSync('app.html', 'utf8').toLowerCase()).toContain(`name="theme-color" content="${p}"`);
     expect(JSON.parse(readFileSync('public/manifest.webmanifest', 'utf8')).theme_color.toLowerCase()).toBe(p);
   });
 });

@@ -1,0 +1,138 @@
+:root {
+  --azul: #0b2a5b;
+  --profundo: #071c3d;
+  --laranja: #b85600;
+  --sinal: #e2701f;
+  --texto: #0e1726;
+  --suave: #4a5668;
+  --borda: #dde3ea;
+  --fundo: #f4f6f9;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.6 Archivo, Arial, sans-serif; }
+a { color: var(--azul); text-underline-offset: 4px; }
+a:focus-visible { outline: 3px solid var(--laranja); outline-offset: 5px; border-radius: 2px; }
+h1, h2, h3, p { margin-top: 0; }
+h1, h2, h3 { line-height: 1.15; }
+h1 { font-size: clamp(38px, 4.4vw, 60px); letter-spacing: -.045em; margin-bottom: 26px; }
+h1 span { color: var(--azul); }
+h2 { font-size: clamp(28px, 3vw, 36px); letter-spacing: -.025em; margin-bottom: 16px; }
+h3 { font-size: 23px; letter-spacing: -.02em; margin: 18px 0 16px; }
+p { color: var(--suave); }
+.largura { max-width: 1180px; padding-inline: 28px; margin-inline: auto; }
+.pular { position: absolute; left: -9999px; }
+.pular:focus { left: 20px; top: 16px; z-index: 10; padding: 14px; background: white; }
+.topo { background: white; border-bottom: 1px solid var(--borda); }
+.topo-conteudo { display: flex; align-items: center; justify-content: space-between; gap: 32px; max-width: 1320px; margin: auto; padding: 20px 36px; }
+.marca { flex: 0 0 auto; }
+.marca img { width: 220px; height: auto; display: block; }
+.topo nav { display: flex; gap: 30px; align-items: center; }
+.topo nav a { font-size: 14px; font-weight: 600; text-decoration: none; padding-block: 12px; }
+.topo nav a:not(.botao):hover, .link-acao:hover { text-decoration: underline; }
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: 20px; min-height: 48px; padding: 13px 21px; border: 1px solid var(--azul); border-radius: 5px; background: var(--azul); color: white; font-size: 14px; font-weight: 700; line-height: 1.4; text-decoration: none; transition: background .15s ease; }
+.botao:hover { background: var(--profundo); }
+.botao.secundario { background: white; color: var(--azul); }
+.botao.secundario:hover { background: #edf2f9; }
+.heroi { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; padding-top: 76px; padding-bottom: 76px; align-items: center; }
+.sobretitulo, .etiqueta { color: var(--laranja); font-family: 'IBM Plex Mono', monospace; text-transform: uppercase; }
+.sobretitulo { font-size: 11px; letter-spacing: 1px; margin-bottom: 20px; }
+.etiqueta { font-size: 11px; letter-spacing: .5px; }
+.introducao { font-size: 18px; max-width: 530px; margin-bottom: 28px; }
+.acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 24px; }
+.link-acao { display: inline-flex; align-items: center; gap: 14px; min-height: 48px; color: var(--azul); font-size: 14px; font-weight: 700; text-decoration: none; }
+.confianca { font-size: 12px; margin: 19px 0 0; }
+.resumo { background: white; border: 1px solid var(--borda); border-top: 3px solid var(--sinal); border-radius: 2px; box-shadow: 0 12px 42px #071c3d06; }
+.resumo-topo { display: flex; align-items: center; gap: 10px; padding: 21px 25px; border-bottom: 1px solid var(--borda); }
+.resumo-topo h2 { font-size: 14px; letter-spacing: 0; margin: 0; }
+.ponto { width: 7px; height: 7px; background: var(--sinal); flex-shrink: 0; }
+.resumo ol { list-style: none; padding: 19px 25px 8px; margin: 0; }
+.resumo li { display: flex; gap: 20px; padding-block: 12px; }
+.numero { color: var(--laranja); font: 14px 'IBM Plex Mono', monospace; padding-top: 2px; }
+.resumo strong { font-size: 15px; }
+.resumo li p { font-size: 13px; margin: 5px 0 0; }
+.resumo-rodape { background: #f9fafc; padding: 17px 25px; font-size: 12px; margin: 0; }
+.caminhos { padding-bottom: 64px; }
+.secao-titulo { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 28px; }
+.secao-titulo .sobretitulo { margin-bottom: 12px; }
+.secao-titulo h2 { margin-bottom: 0; }
+.secao-titulo > p { font-size: 13px; margin-bottom: 3px; }
+.grade-caminhos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.cartao { display: flex; flex-direction: column; background: white; border: 1px solid var(--borda); border-radius: 5px; padding: 27px; }
+.cartao p { font-size: 14px; margin-bottom: 24px; }
+.cartao .link-acao { margin-top: auto; }
+.faixa-pratica { display: grid; grid-template-columns: 1fr 1.1fr; gap: 70px; padding: 46px; max-width: 1124px; border-radius: 6px; background: var(--azul); color: white; }
+.faixa-pratica .sobretitulo { color: #ffb57b; }
+.faixa-pratica p { color: #d9e4f7; font-size: 15px; }
+.faixa-pratica .claro { background: white; border-color: white; color: var(--azul); margin-top: 8px; }
+.faixa-pratica .claro:hover { background: #e6eef8; }
+.faixa-pratica a:focus-visible { outline-color: #ffb57b; }
+.passos-pratica { list-style: none; padding: 0; margin: 0; align-self: center; }
+.passos-pratica li { display: flex; gap: 20px; padding-block: 14px; }
+.passos-pratica li > span { color: #ffb57b; font: 13px 'IBM Plex Mono', monospace; padding-top: 3px; }
+.passos-pratica strong { font-size: 14px; }
+.passos-pratica p { font-size: 13px; margin: 5px 0 0; }
+.comunidade { display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 72px; padding-block: 72px; }
+.comunidade > div > p:not(.sobretitulo) { font-size: 15px; max-width: 540px; }
+.nota-aberta { background: white; border: 1px solid var(--borda); border-left: 3px solid var(--sinal); border-radius: 4px; padding: 28px; }
+.nota-aberta h3 { font-size: 24px; }
+.nota-aberta p { font-size: 14px; }
+.nota-aberta a { min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; padding-block: 8px; }
+.rodape { border-top: 1px solid var(--borda); padding-top: 28px; padding-bottom: 34px; font-size: 12px; }
+.rodape-topo { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 16px; }
+.rodape strong { color: var(--azul); font-size: 16px; }
+.rodape nav { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.rodape nav a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 8px; }
+.rodape p { margin-bottom: 12px; }
+.rodape .aviso { max-width: 920px; }
+@media (max-width: 1000px) {
+  .topo-conteudo { padding-inline: 28px; gap: 24px; }
+  .topo nav { gap: 20px; }
+  .heroi { gap: 32px; padding-block: 54px; }
+  h1 { font-size: 46px; }
+  .grade-caminhos { gap: 14px; }
+  .cartao { padding: 22px; }
+  .cartao .link-acao { align-items: start; }
+  .faixa-pratica { margin-inline: 28px; padding: 36px; gap: 36px; }
+  .comunidade { gap: 36px; padding-block: 56px; }
+}
+@media (max-width: 720px) {
+  .largura { padding-inline: 20px; }
+  .topo-conteudo { padding: 17px 20px 0; display: block; }
+  .marca { display: inline-block; }
+  .marca img { width: 200px; }
+  .topo nav { margin-top: 13px; padding-top: 7px; border-top: 1px solid var(--borda); justify-content: space-between; gap: 8px; }
+  .topo nav a { font-size: 12px; padding-block: 14px; }
+  .topo nav .meu-pcm { min-height: 48px; padding: 9px 11px; gap: 7px; margin-bottom: 4px; }
+  .heroi { grid-template-columns: 1fr; gap: 30px; padding-top: 38px; padding-bottom: 44px; }
+  h1 { font-size: clamp(36px, 8.6vw, 46px); letter-spacing: -.04em; margin-bottom: 22px; }
+  .introducao { font-size: 16px; margin-bottom: 23px; }
+  .sobretitulo { font-size: 10px; letter-spacing: .7px; margin-bottom: 17px; }
+  .acoes { gap: 8px 20px; }
+  .acoes .botao { width: 100%; }
+  .confianca { font-size: 11px; margin-top: 14px; }
+  .resumo-topo { padding: 18px 20px; }
+  .resumo ol { padding: 13px 20px 7px; }
+  .resumo li { padding-block: 10px; gap: 16px; }
+  .resumo-rodape { padding: 15px 20px; }
+  .caminhos { padding-bottom: 36px; }
+  .secao-titulo { display: block; margin-bottom: 22px; }
+  .secao-titulo > p { margin-top: 14px; }
+  .secao-titulo > p br { display: none; }
+  .grade-caminhos { grid-template-columns: 1fr; gap: 13px; }
+  .cartao { padding: 23px; }
+  .cartao h3 { margin-top: 14px; }
+  .cartao p { margin-bottom: 12px; }
+  .faixa-pratica { grid-template-columns: 1fr; margin-inline: 20px; padding: 28px 24px; gap: 17px; }
+  .faixa-pratica h2 { font-size: 29px; }
+  .faixa-pratica .botao { width: 100%; }
+  .passos-pratica li { padding-block: 12px; gap: 15px; }
+  .comunidade { grid-template-columns: 1fr; padding-block: 42px; gap: 26px; }
+  .nota-aberta { padding: 24px; }
+  .rodape-topo { display: block; }
+  .rodape nav { margin-top: 9px; gap: 6px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .botao { transition: none; }
+}

@@ -1,12 +1,48 @@
-import { estado } from '../estado.js';
+import { estado, atualizarGestao, emDemonstracao } from '../estado.js';
 import { PERIODICIDADES } from '../logica/plano.js';
 import { novoId } from '../logica/entrada.js';
 import { esc, avisar } from '../ui.js';
-import { campo, selecionarPessoa, tabela, copiaGestao, guardar, valorOpcional } from './gestao-ui.js';
+import { campo, selecionarPessoa, tabela, copiaGestao, valorOpcional } from './gestao-ui.js';
 
 export function telaCadastros(main) {
   const g = estado.gestao; const o = g.organizacao;
   const setores = [...new Set([...o.setores, ...estado.equipamentos.map(e => e.setor).filter(s => /^[A-Z0-9]{2,4}$/.test(s))])].filter(Boolean);
+  let gravando = false;
+  async function guardarCadastro(nova, redesenhar, foco) {
+    if (gravando) return false;
+    gravando = true;
+    const raiz = main.querySelector('#tela-cadastros');
+    const rota = location.hash;
+    const demonstracao = emDemonstracao();
+    const focoAnterior = document.activeElement;
+    const controles = [...raiz.querySelectorAll('input, select, textarea, button')].map(c => [c, c.disabled]);
+    raiz.setAttribute('aria-busy', 'true');
+    for (const [c] of controles) c.disabled = true;
+    avisar(demonstracao ? 'Aplicando alteração ao exemplo…' : 'Guardando dados neste aparelho…');
+    try {
+      const r = await atualizarGestao(nova);
+      if (!r.ok) { avisar(r.motivo); return false; }
+      if (!r.guardado) {
+        avisar('Alteração aplicada nesta sessão. O navegador não conseguiu salvar; baixe um backup antes de sair.');
+        return false;
+      }
+      // Voltar ao mesmo endereço não torna o formulário antigo novamente atual.
+      if (raiz.isConnected && main.contains(raiz) && location.hash === rota) {
+        redesenhar();
+        if (foco) document.getElementById(foco)?.focus();
+      }
+      avisar(demonstracao ? 'Alteração aplicada somente ao exemplo.' : 'Dados guardados neste aparelho.');
+      return true;
+    } catch {
+      avisar('Não foi possível concluir a gravação. Os campos foram mantidos; confira os dados e baixe um backup antes de sair.');
+      return false;
+    } finally {
+      gravando = false;
+      raiz.removeAttribute('aria-busy');
+      for (const [c, desabilitado] of controles) c.disabled = desabilitado;
+      if (raiz.isConnected && raiz.contains(focoAnterior) && document.activeElement === document.body) focoAnterior.focus();
+    }
+  }
   function reapresentar(formularioSalvo = '') {
     const rascunhos = Array.from(main.querySelectorAll('form')).filter(f => f.getAttribute('id') !== formularioSalvo).map(f => ({
       id: f.getAttribute('id'), campos: Array.from(f.elements).filter(c => c.name).map(c => ({ nome: c.name, valor: c.value, rotulo: c.selectedOptions?.[0]?.textContent })),
@@ -51,39 +87,45 @@ export function telaCadastros(main) {
     if (digitados.some(s => !/^[A-Z0-9]{2,4}$/.test(s))) { avisar('Use siglas de setor com 2 a 4 letras ou números.'); f.elements.setores.focus(); return; }
     nova.organizacao = { nome: f.elements.nome.value.trim(), setores: [...new Set([...digitados, ...estado.equipamentos.map(e => e.setor).filter(s => /^[A-Z0-9]{2,4}$/.test(s))])],
       elaborador: f.elements.elaborador.value, aprovador: f.elements.aprovador.value, padraoCodigo: o.padraoCodigo, referencial: f.elements.referencial.value.trim() };
-    (await guardar(nova, () => reapresentar('form-organizacao'), 'salvar-organizacao'));
+    (await guardarCadastro(nova, () => reapresentar('form-organizacao'), 'salvar-organizacao'));
   });
   const fp = main.querySelector('#form-pessoa');
   fp.addEventListener('submit', async e => {
     e.preventDefault(); const f = e.target; const nova = copiaGestao(); const atual = nova.pessoas.find(p => p.id === f.elements.id.value);
     const p = { id: atual?.id || novoId(), nome: f.elements['pessoa-nome'].value.trim(), funcao: f.elements.funcao.value.trim(), especialidade: f.elements.especialidade.value.trim(), ativo: atual?.ativo ?? true };
-    nova.pessoas = atual ? nova.pessoas.map(x => x.id === p.id ? p : x) : [...nova.pessoas, p]; (await guardar(nova, () => reapresentar('form-pessoa'), 'g-pessoa-nome'));
+    main.querySelector('#salvar-pessoa').textContent = 'Salvar pessoa';
+    f.elements.id.value = p.id; // Repetir após falha atualiza a mesma pessoa ainda em memória.
+    nova.pessoas = atual ? nova.pessoas.map(x => x.id === p.id ? p : x) : [...nova.pessoas, p]; (await guardarCadastro(nova, () => reapresentar('form-pessoa'), 'g-pessoa-nome'));
   });
   fp.addEventListener('reset', () => { fp.elements.id.value = ''; main.querySelector('#salvar-pessoa').textContent = 'Adicionar pessoa'; });
-  main.querySelector('#form-metas').addEventListener('submit', async e => { e.preventDefault(); const nova = copiaGestao(); nova.metas = { disponibilidade: valorOpcional(e.target.elements.disponibilidade.value), aderencia: valorOpcional(e.target.elements.aderencia.value) }; (await guardar(nova, () => reapresentar('form-metas'), 'salvar-metas')); });
+  main.querySelector('#form-metas').addEventListener('submit', async e => { e.preventDefault(); const nova = copiaGestao(); nova.metas = { disponibilidade: valorOpcional(e.target.elements.disponibilidade.value), aderencia: valorOpcional(e.target.elements.aderencia.value) }; (await guardarCadastro(nova, () => reapresentar('form-metas'), 'salvar-metas')); });
   const fr = main.querySelector('#form-requisito');
   fr.addEventListener('submit', async e => {
     e.preventDefault(); const f = e.target; const nova = copiaGestao();
     const r = { id: f.elements.id.value || novoId(), referencia: f.elements.referencia.value.trim(), versao: f.elements.versao.value.trim(), data: f.elements.data.value, fonte: f.elements.fonte.value.trim(), status: f.elements.status.value };
     if (r.status === 'verificado' && (!r.versao || !r.data || !r.fonte)) { avisar('Para marcar como verificado, preencha versão, data e fonte oficial HTTPS.'); return; }
-    nova.requisitos = nova.requisitos.some(x => x.id === r.id) ? nova.requisitos.map(x => x.id === r.id ? r : x) : [...nova.requisitos, r]; (await guardar(nova, () => reapresentar('form-requisito'), 'g-referencia'));
+    main.querySelector('#salvar-requisito').textContent = 'Salvar referência';
+    f.elements.id.value = r.id;
+    nova.requisitos = nova.requisitos.some(x => x.id === r.id) ? nova.requisitos.map(x => x.id === r.id ? r : x) : [...nova.requisitos, r]; (await guardarCadastro(nova, () => reapresentar('form-requisito'), 'g-referencia'));
   });
   fr.addEventListener('reset', () => { fr.elements.id.value = ''; main.querySelector('#salvar-requisito').textContent = 'Adicionar referência'; });
   main.querySelector('#tela-cadastros').addEventListener('click', tratarClique);
   async function tratarClique(e) {
+    if (gravando) return;
     const b = e.target.closest('button'); const nova = copiaGestao();
     if (b?.dataset.editarPessoa) {
       const p = g.pessoas.find(p => p.id === b.dataset.editarPessoa);
       for (const [nome, valor] of Object.entries({ id: p.id, 'pessoa-nome': p.nome, funcao: p.funcao, especialidade: p.especialidade })) fp.elements[nome].value = valor;
       main.querySelector('#salvar-pessoa').textContent = 'Salvar pessoa'; fp.elements['pessoa-nome'].focus();
     } else if (b?.dataset.ativarPessoa) {
-      nova.pessoas = nova.pessoas.map(p => p.id === b.dataset.ativarPessoa ? { ...p, ativo: !p.ativo } : p); (await guardar(nova, reapresentar, 'g-pessoa-nome')); return;
+      const ativo = !g.pessoas.find(p => p.id === b.dataset.ativarPessoa).ativo;
+      nova.pessoas = nova.pessoas.map(p => p.id === b.dataset.ativarPessoa ? { ...p, ativo } : p); (await guardarCadastro(nova, reapresentar, 'g-pessoa-nome')); return;
     } else if (b?.dataset.editarRequisito) {
       const r = g.requisitos.find(r => r.id === b.dataset.editarRequisito);
       for (const [nome, valor] of Object.entries(r)) fr.elements[nome].value = valor;
       main.querySelector('#salvar-requisito').textContent = 'Salvar referência'; fr.elements.referencia.focus();
     } else if (b?.dataset.removerRequisito) {
-      if (confirm('Remover esta referência do cadastro?')) { nova.requisitos = nova.requisitos.filter(r => r.id !== b.dataset.removerRequisito); (await guardar(nova, () => reapresentar(fr.elements.id.value === b.dataset.removerRequisito ? 'form-requisito' : ''), 'g-referencia')); return; }
+      if (confirm('Remover esta referência do cadastro?')) { nova.requisitos = nova.requisitos.filter(r => r.id !== b.dataset.removerRequisito); (await guardarCadastro(nova, () => reapresentar(fr.elements.id.value === b.dataset.removerRequisito ? 'form-requisito' : ''), 'g-referencia')); return; }
     }
   }
 }

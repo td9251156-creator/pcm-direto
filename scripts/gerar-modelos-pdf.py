@@ -51,9 +51,6 @@ for tipo in BIBLIOTECA['tipos']:
                          height=250 * logo_altura / logo_largura, mask='auto')
         canvas.setStrokeColor(LARANJA)
         canvas.line(42, altura - 88, largura - 42, altura - 88)
-        aviso = paragrafo('O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante.', PEQUENO)
-        _, h = aviso.wrap(largura - 84, 45)
-        aviso.drawOn(canvas, 42, 39)
         canvas.setFont('Archivo', 8)
         canvas.setFillColor(AZUL)
         canvas.drawString(42, 24, f"pcmdireto.me · MIT · Biblioteca {BIBLIOTECA['versao']} · {tipo['sigla']}")
@@ -70,14 +67,12 @@ for tipo in BIBLIOTECA['tipos']:
         dados = [[paragrafo(cabecalho, ParagraphStyle('codigo', parent=ESTILO, fontName='Archivo-Bold', textColor=SEGURANCA if seguro else AZUL)),
                   paragrafo(tarefa['periodicidade'])],
                  [paragrafo(tarefa['descricao']), ''],
-                 [paragrafo(f"Especialidade: {tarefa['especialidade']} · Duração estimada: {str(tarefa['duracao_horas']).replace('.', ',')} h por execução", PEQUENO), ''],
-                 [paragrafo(f"Origem: {tarefa['origem']} · Versão: {tarefa['versao']}", PEQUENO), '']]
+                 [paragrafo(f"Especialidade: {tarefa['especialidade']} · Duração estimada: {str(tarefa['duracao_horas']).replace('.', ',')} h por execução", PEQUENO), '']]
         if tarefa.get('observacao'):
             dados.append([paragrafo(f"Observação: {tarefa['observacao']}", PEQUENO), ''])
         tabela = Table(dados, colWidths=[documento.width * .65, documento.width * .35], hAlign='LEFT')
         tabela.setStyle(TableStyle([
-            ('SPAN', (0, 1), (-1, 1)), ('SPAN', (0, 2), (-1, 2)), ('SPAN', (0, 3), (-1, 3)),
-            *([('SPAN', (0, 4), (-1, 4))] if len(dados) > 4 else []),
+            *[('SPAN', (0, linha), (-1, linha)) for linha in range(1, len(dados))],
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#FFF0F1' if seguro else '#EDF3F7')),
             ('BOX', (0, 0), (-1, -1), .5, colors.HexColor('#CED9E1')),
             ('VALIGN', (0, 0), (-1, -1), 'TOP'),

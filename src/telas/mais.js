@@ -22,6 +22,8 @@ const grupos=[
     ['modelos','Modelos para sua rotina','Entender cada modelo da Biblioteca PCM v2 e baixar Excel ou Word'],
   ]],
   ['Dados e apoio',[
+    ['contribuir','Como contribuir','Testar, melhorar orientações e propor conteúdo ou código'],
+    ['feedback','Contar minha experiência','Questionário local, sem envio automático'],
     ['dados','Meus dados','Backup completo e restauração'],
     ['importar-operacao','Importar dados da operação','OS, falhas, custos e orçamento dos modelos 004, 008 e 012'],
     ['biblioteca','Biblioteca técnica','Consultar tarefas, fontes e modelos de máquinas'],

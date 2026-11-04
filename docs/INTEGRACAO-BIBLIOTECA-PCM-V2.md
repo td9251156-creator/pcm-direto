@@ -1,3 +1,5 @@
+> Atualização 02/11/2026: integração do pacote 2.0.2 e limites dos novos modelos em [Atualização da biblioteca](ATUALIZACAO-BIBLIOTECA-20261102.md). As seções anteriores abaixo conservam o histórico.
+
 # Biblioteca PCM v2 — preparação para integração
 
 Fonte recebida: `NEW/Biblioteca-PCM-v2`. Inventário: 16 XLSX e 3 DOCX.

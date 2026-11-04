@@ -43,6 +43,9 @@ O PCM Direto usa estas bibliotecas abertas, cada uma com a sua licença:
 | [Vitest](https://vitest.dev/) e [ESLint](https://eslint.org/) | Testes e conferência do código | MIT |
 | [Playwright](https://playwright.dev/), [PGlite](https://pglite.dev/) e [pdf-lib](https://pdf-lib.js.org/) | Testes no navegador, no banco e nos PDFs | Apache-2.0, Apache-2.0 e MIT |
 | [ReportLab](https://www.reportlab.com/opensource/) | Gerar as fichas PDF da biblioteca | BSD |
-| [DejaVu Sans](https://dejavu-fonts.github.io/) | Letras do logo, convertidas em desenho | Licença livre DejaVu |
+| [Archivo](https://github.com/Omnibus-Type/Archivo) e [IBM Plex Mono](https://github.com/IBM/plex) | Fontes locais da interface e documentos | SIL OFL 1.1; textos preservados em `public/fontes/archivo-OFL.txt` e `ibmplexmono-OFL.txt` |
+| [DejaVu Sans](https://dejavu-fonts.github.io/) | Referência tipográfica histórica do projeto | Licença livre DejaVu |
 
 Parte do código foi escrita com ajuda de IA e revisada pelo autor.
+
+As atribuições acima e os arquivos originais da marca são preservados; esta atualização não substitui licenças de terceiros pela MIT. Ferramentas de IA não são exigidas de contribuidores. Uso relevante deve ser informado na entrega, conforme [CONTRIBUTING](CONTRIBUTING.md).

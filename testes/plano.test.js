@@ -10,9 +10,10 @@ describe('biblioteca técnica', () => {
     expect(validarBiblioteca(biblioteca)).toEqual([]);
   });
 
-  it('tem os 4 tipos do MVP e os 3 tipos da versão 0.2.0', () => {
-    expect(biblioteca.tipos.map((t) => t.id)).toEqual(['motor_eletrico', 'compressor_ar', 'bomba_centrifuga', 'ponte_rolante',
+  it('preserva os sete tipos anteriores e amplia para 47 tipos', () => {
+    expect(biblioteca.tipos.slice(0, 7).map((t) => t.id)).toEqual(['motor_eletrico', 'compressor_ar', 'bomba_centrifuga', 'ponte_rolante',
       'transportador_correia', 'ventilador_exaustor', 'unidade_hidraulica']);
+    expect(biblioteca.tipos).toHaveLength(47);
   });
 
   it('toda tarefa traz origem de base genérica e versão', () => {

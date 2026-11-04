@@ -14,7 +14,7 @@ const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
   branco:'Validade, situação e aprovação dos documentos já emitidos (o app não registra a aprovação deles), além de função e especialidade das pessoas.',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan001(bytes,dadosPcmMan001(emissao))},
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-002'),
-  preenche:'Cadastros (ativos, setores, famílias e pessoas), Criticidade com as notas de 1 a 5 avaliadas no app, Plano com as tarefas da revisão ativa (a cada quantos dias, responsável, duração e 1ª execução) e o Cronograma ligado ao Plano. Tarefas de segurança vêm marcadas.',
+  preenche:'Cadastros (ativos, setores, famílias e pessoas), Criticidade com as notas de 1 a 5 avaliadas no app, Plano com as tarefas da revisão ativa (a cada quantos dias, responsável, duração e 1ª execução) e o Cronograma ligado ao Plano. ID da tarefa, segurança, classificação de origem e versão da regra vêm identificados; executante e tipo só quando conhecidos na biblioteca da revisão.',
   branco:'Notas ainda não avaliadas, MFMEA (análise da equipe), componente, tipo de tarefa e se exige parada.',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan002(bytes,dadosPcmMan002(emissao))},
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-004'),
@@ -22,7 +22,7 @@ const PREENCHIDOS_V2=[{...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-001'),
   branco:'Prioridade das preventivas (o app não registra) e a ficha "Ordem de serviço" para imprimir uma OS.',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan004(bytes,dadosPcmMan004(emissao))},
   {...MODELOS_V2.find(m=>m.codigo==='PCM-MAN-008'),
-  preenche:'Registro de falhas até a data de corte: as importadas do 008 e as do registro do app, com início e conclusão (data e hora, quando informadas); peça, horas de parada e reparo vão escritas na ação. Inclui os cadastros.',
+  preenche:'Registro de falhas até a data de corte: as importadas do 008 e as do registro do app, com início e conclusão (hora somente quando informada), peça, responsável e colunas numéricas de horas de parada e reparo. Inclui os cadastros.',
   branco:'Hora das falhas registradas sem hora, a Ficha de falha e o Pareto (escolha das categorias pela equipe).',
   preencher:async(bytes,emissao)=>(await import('../saida/biblioteca-v2-xlsx.js')).preencherPcmMan008(bytes,dadosPcmMan008(emissao))},
   ...['PCM-MAN-017','PCM-MAN-018','PCM-MAN-019'].map(codigo=>({...MODELOS_V2.find(m=>m.codigo===codigo),
@@ -49,7 +49,7 @@ export function telaDocumentos(main){
     <ul class="lista-modelos-simples" aria-labelledby="outros-modelos">${SIMPLES.map(m=>`<li><span><strong>${m.codigo}</strong> · ${esc(m.titulo)}<br><span class="origem">${esc(m.quando)}</span></span><span class="acoes"><button type="submit" form="emissao-pcmd" name="documento" value="${m.codigo}" data-documento="${m.codigo}" aria-label="Gerar ${esc(m.titulo)} com os cadastros" aria-describedby="bloqueio-pcmd" ${revisao?'':'disabled'}>Gerar Excel</button><a href="${esc(m.url)}" download aria-label="Baixar ${esc(m.titulo)} em branco">Em branco</a></span></li>`).join('')}</ul>
 </section>
     <details class="cartao"><summary>Outros formatos do planejamento em edição</summary><p class="origem">Exportações anteriores, sem o histórico completo da revisão ativa. Para guardar toda a base, use <a href="#dados">Meus dados → Backup completo</a>.</p><div id="formatos-anteriores"></div></details>
-    <section class="cartao"><h3>Depois do download</h3><p>Abra o arquivo diretamente no Excel, LibreOffice ou Word. Recalcule as fórmulas das planilhas e confira impressão, pendências e campos “A definir”. As periodicidades devem ser confirmadas com o manual do fabricante.</p><a href="#apoio">Ajuda para usar os documentos</a></section>`;
+    <section class="cartao"><h3>Depois do download</h3><p>Abra o arquivo diretamente no Excel, LibreOffice ou Word. Recalcule as fórmulas das planilhas e confira impressão, pendências e campos “A definir”. As periodicidades devem ser confirmadas com o manual do fabricante.</p><a href="#apoio">Ajuda para usar os documentos</a> · <a href="#feedback">Como foi sua experiência?</a></section>`;
   telaEntrega(main.querySelector('#formatos-anteriores'));
   const form=main.querySelector('#emissao-pcmd');
   form.addEventListener('invalid',e=>e.target.closest('details')?.setAttribute('open',''),true);

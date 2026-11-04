@@ -3,7 +3,7 @@
   "short_name": "PCM Direto",
   "description": "Gerador de PCM aberto: lista de equipamentos entra, plano de manutenção sai em planilha e documento.",
   "lang": "pt-BR",
-  "start_url": "./",
+  "start_url": "./app.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -33,5 +33,6 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
-  ]
+  ],
+  "id": "/"
 }

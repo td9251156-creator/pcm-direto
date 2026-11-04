@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import padrao from '../src/dados/biblioteca.json';
+import anterior from '../src/dados/biblioteca-0.2.0.json';
 import { criarBackup, verificarBackup } from '../src/logica/backup.js';
 
 const eq = { id: 'eq1', setor: 'UTL', tipo: 'motor_eletrico', numero: 1, tag: 'UTL-MOT-001', descricao: 'Motor fictício' };
@@ -13,6 +14,36 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('backup completo', () => {
+  it('mantém operação e gravação quando a tarefa personalizada usa CMP-11', async () => {
+    const biblioteca = structuredClone(anterior);
+    const compressor = biblioteca.tipos.find(t => t.id === 'compressor_ar');
+    compressor.tarefas.push({ ...compressor.tarefas[0], id: 'CMP-11', descricao: 'Tarefa personalizada anterior', seguranca: false });
+    const b = criarBackup({ ...modelo(), biblioteca });
+    expect(verificarBackup(b, padrao).ok).toBe(true);
+    const app = await import('../src/estado.js');
+    app.carregar();
+    expect((await app.restaurarBackup(b)).ok).toBe(true);
+    expect(await app.salvar()).toBe(true);
+    app.carregar();
+    expect(app.estado.biblioteca).toEqual(biblioteca);
+    expect(app.estado.equipamentos).toEqual(b.rascunho.equipamentos);
+  });
+
+  it('restaura backup com biblioteca 0.2.0 sem perder personalizações ou marcações', async () => {
+    const b = criarBackup({ ...modelo(), biblioteca: structuredClone(anterior) });
+    b.biblioteca.tipos[0].tarefas[0].descricao = 'Descrição personalizada antiga';
+    const original = structuredClone(b);
+    const app = await import('../src/estado.js');
+    app.carregar();
+    expect((await app.restaurarBackup(b)).ok).toBe(true);
+    expect(b).toEqual(original);
+    app.carregar();
+    expect(app.estado.biblioteca.tipos).toHaveLength(47);
+    expect(app.estado.biblioteca.tipos[0].tarefas[0].descricao).toBe('Descrição personalizada antiga');
+    expect(app.estado.equipamentos).toEqual(b.rascunho.equipamentos);
+    expect(app.estado.execucoes).toEqual(b.rascunho.execucoes);
+  });
+
   it('inclui todos os dados e não compartilha referências com a sessão', () => {
     const estado = modelo();
     const backup = criarBackup(estado);

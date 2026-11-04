@@ -31,7 +31,7 @@ const ferramenta=process.env.PCM_PLAYWRIGHT||new URL('../ferramentas/navegador/n
 const {chromium}=await import(ferramenta);const pasta=new URL('../artifacts/modelos-expandidos/',import.meta.url);await mkdir(pasta,{recursive:true});
 await executarComRecursos({limiteTotal:300000,criarServidor:async()=>{const servidor=await createServer({root:fileURLToPath(new URL('../',import.meta.url)),server:{host:'127.0.0.1',port:4182,strictPort:true}});await servidor.listen();return servidor;},criarNavegador:()=>chromium.launch({executablePath:process.env.PCM_CHROMIUM||undefined,args:process.env.PCM_SEM_SANDBOX==='1'?['--no-sandbox']:[]}),executar:async({navegador})=>{
   const contexto=await navegador.newContext({serviceWorkers:'block'});const p=await contexto.newPage();p.setDefaultTimeout(180000);const erros=[];p.on('pageerror',e=>erros.push(e.message));
-  await p.route('https://**/*',rota=>rota.abort());await p.route('http://127.0.0.1:4182/',rota=>rota.fulfill({contentType:'text/html',body:'<!doctype html><html lang="pt-BR"><title>Exportação isolada</title><body>Teste local de modelos</body></html>'}));await p.goto('http://127.0.0.1:4182/');
+  await p.route('https://**/*',rota=>rota.abort());await p.route('http://127.0.0.1:4182/app.html',rota=>rota.fulfill({contentType:'text/html',body:'<!doctype html><html lang="pt-BR"><title>Exportação isolada</title><body>Teste local de modelos</body></html>'}));await p.goto('http://127.0.0.1:4182/app.html');
   const rejeitou=await p.evaluate(async estado=>{const g=await import('/src/saida/biblioteca-v2-xlsx.js');const d=await import('/src/logica/biblioteca-v2-dados.js');const {prepararEmissao}=await import('/src/logica/emissao.js');
     const e=prepararEmissao(estado,{dataCorte:'2026-01-05',elaborador:'Pessoa fictícia',aprovador:'',aprovado:false});try{await g.preencherPcmMan002(new Uint8Array([1,2,3]),d.dadosPcmMan002(e));return false;}catch(erro){return erro.message.includes('diferente do esperado');}},estado);
   assert.ok(rejeitou,'Modelo diferente do esperado não pode ser preenchido');
@@ -55,7 +55,7 @@ await executarComRecursos({limiteTotal:300000,criarServidor:async()=>{const serv
   assert.equal(gerados['PCM-MAN-001'].tabelas.tb_pcm_pessoas,'A4:D46'); // 41 pessoas + elaborador
   assert.equal(gerados['PCM-MAN-002'].tabelas.tb_pcm_ativos,'A4:D104');
   assert.match(gerados['PCM-MAN-002'].wb,/'Criticidade'!\$A\$1:\$Y\$108/);
-  assert.equal(gerados['PCM-MAN-008'].tabelas.tb_pcm_falhas??Object.values(gerados['PCM-MAN-008'].tabelas).find(v=>v.startsWith('A4:K')),'A4:M1105');
+  assert.equal(gerados['PCM-MAN-008'].tabelas.tb_pcm_falhas,'A4:O1105');
   const os=gerados['PCM-MAN-004'].tabelas.tb_pcm_os;const linhasOs=Number(/(\d+)$/.exec(os)[1])-4;assert.ok(linhasOs>=3101,'004 com todas as execuções: '+os);
   assert.deepEqual(erros,[]);await contexto.close();
   console.log(`Aprovado: Biblioteca v2 (001, 002, 004 e 008) com 100 ativos, criticidade 1 a 5, ${linhasOs} OS (3101 execuções), 1101 falhas, 42 referências, imagens preservadas, recálculo ao abrir e modelo diferente recusado.`);

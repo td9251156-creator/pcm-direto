@@ -25,12 +25,22 @@ export const PERFIS = [
 
 export const perfilDoRamo = (ramo) => PERFIS.find((p) => ramo.startsWith(p.prefixo)) ?? null;
 
-export function conferir(arquivos, diffPacote, diffTexto, ramo = 'coord/') {
+export function conferir(arquivos, diffPacote, diffTexto, ramo = 'coord/', pacotes = null) {
   const perfil = perfilDoRamo(ramo);
   const protegidos = arquivos.filter((a) => PROTEGIDOS.some((r) => r.test(a)));
   const foraDoPerfil = perfil?.permitidos ? arquivos.filter((a) => !perfil.permitidos.some((r) => r.test(a))) : [];
   const env = arquivos.filter((a) => /(^|\/)\.env/.test(a) || /backup.*\.json$/i.test(a));
-  const dependencias = /^\+\s*"[^"]+":\s*"[^"]+"/m.test(diffPacote);
+  // Metadados de versão não instalam pacotes. A exceção exige os JSONs completos
+  // do ancestral/HEAD, sem confiar em indentação ou no contexto parcial do diff.
+  let somenteVersao = false;
+  if (pacotes?.antes && pacotes?.depois && !Array.isArray(pacotes.antes) && !Array.isArray(pacotes.depois)) {
+    const { version: anterior, ...restoAntes } = pacotes.antes;
+    const { version: nova, ...restoDepois } = pacotes.depois;
+    somenteVersao = typeof anterior === 'string' && typeof nova === 'string' && anterior !== nova &&
+      JSON.stringify(restoAntes) === JSON.stringify(restoDepois);
+  }
+  const versaoDoCoordenador = perfil?.prefixo === 'coord/' && somenteVersao;
+  const dependencias = Boolean(diffPacote.trim()) && !versaoDoCoordenador;
   const segredos = diffTexto.split('\n').filter((l) => l.startsWith('+') && SEGREDO.test(l)).length;
   const protegidosBloqueiam = perfil ? perfil.protegidosBloqueiam !== false : true;
   const ok = !!perfil && !foraDoPerfil.length && !(protegidosBloqueiam && protegidos.length) && !env.length && !dependencias && !segredos;
@@ -42,7 +52,14 @@ if (process.argv[1]?.replace(/\\/g, '/').endsWith('scripts/conferir-entrega-ia.m
   const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
   const ramo = git('branch', '--show-current');
   const arquivos = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean);
-  const r = conferir(arquivos, git('diff', `${base}...HEAD`, '--', 'package.json'), git('diff', `${base}...HEAD`), ramo);
+  let pacotes = null;
+  if (arquivos.includes('package.json')) {
+    try {
+      const ancestral = git('merge-base', base, 'HEAD');
+      pacotes = { antes: JSON.parse(git('show', `${ancestral}:package.json`)), depois: JSON.parse(git('show', 'HEAD:package.json')) };
+    } catch { /* Sem os JSONs completos, nenhuma exceção de versão é concedida. */ }
+  }
+  const r = conferir(arquivos, git('diff', `${base}...HEAD`, '--', 'package.json'), git('diff', `${base}...HEAD`), ramo, pacotes);
   console.log(`Ramo ${ramo} · perfil: ${r.perfil?.nome ?? 'nenhum'} · ${arquivos.length} arquivo(s) alterado(s) em relação a ${base}.`);
   for (const a of arquivos) console.log(`  ${r.foraDoPerfil.includes(a) ? '!! FORA DO PERFIL ' : r.protegidos.includes(a) ? '!! PROTEGIDO ' : '   '}${a}`);
   if (!r.perfil) console.log('Bloqueio: o ramo deve começar com ia/maquinas/, ia/divulgacao/, ia/<ferramenta>/ ou coord/.');
@@ -50,7 +67,7 @@ if (process.argv[1]?.replace(/\\/g, '/').endsWith('scripts/conferir-entrega-ia.m
   if (r.protegidos.length) console.log(r.protegidosBloqueiam ? `Bloqueio: ${r.protegidos.length} arquivo(s) protegido(s); só o coordenador altera, com pedido explícito.`
     : `Atenção: ${r.protegidos.length} arquivo(s) protegido(s); confirme que a tarefa pediu e explique no PR.`);
   if (r.env.length) console.log('Bloqueio: arquivo de ambiente ou backup na entrega. Retire antes de continuar.');
-  if (r.dependencias) console.log('Bloqueio: package.json com dependência nova. O projeto não aceita dependência sem autorização.');
+  if (r.dependencias) console.log('Bloqueio: package.json alterado além da versão raiz permitida ao coordenador. Dependências exigem autorização.');
   if (r.segredos) console.log(`Bloqueio: ${r.segredos} linha(s) parecem conter senha ou chave.`);
   console.log(r.ok ? 'Conferência automática sem bloqueios. Próximo passo: npm run verificar e a integração.' : 'Conferência com bloqueios: corrija antes de integrar.');
   process.exitCode = r.ok ? 0 : 1;

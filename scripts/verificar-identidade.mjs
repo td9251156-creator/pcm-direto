@@ -9,11 +9,11 @@ await executarComRecursos({
   executar:async({navegador})=>{
     const c=await navegador.newContext({serviceWorkers:'block',viewport:{width:1280,height:900}});
     const p=await c.newPage();const erros=[];p.on('pageerror',e=>erros.push(e.message));
-    await p.goto('http://127.0.0.1:4198/#cadastros');await p.locator('#conteudo h2').waitFor();
+    await p.goto('http://127.0.0.1:4198/app.html#cadastros');await p.locator('#conteudo h2').waitFor();
     assert.equal(await p.locator('.etapas a[aria-current="page"]').getAttribute('href'),'#planejar','Subtela mantém a localização no menu');
     const foco=p.locator('.etapas a[href="#planejar"]');await foco.focus();
     assert.equal(await foco.evaluate(e=>getComputedStyle(e).outlineColor),'rgb(184, 86, 0)','Foco contrasta com o menu claro');
-    await p.goto('http://127.0.0.1:4198/#mais');const busca=p.locator('#buscar-ferramentas');await busca.fill('backup');
+    await p.goto('http://127.0.0.1:4198/app.html#mais');const busca=p.locator('#buscar-ferramentas');await busca.fill('backup');
     await p.evaluate(()=>{location.hash='apoio';});await p.locator('#conteudo h2').waitFor();
     await p.evaluate(()=>{location.hash='mais';});await busca.waitFor();assert.equal(await busca.inputValue(),'backup','Busca permanece ao navegar');
     await busca.fill('zzzinexistente');await p.getByRole('button',{name:'Limpar busca'}).click();assert.equal(await busca.inputValue(),'');assert.equal(await busca.evaluate(e=>e===document.activeElement),true);
@@ -31,7 +31,7 @@ await executarComRecursos({
     await p.setViewportSize({width:1280,height:900});await p.evaluate(()=>{location.hash='plano';});await p.locator('#conteudo h2').waitFor();assert.equal(await p.locator('.etapas a[aria-current="page"]').getAttribute('href'),'#planejar');
     await p.setViewportSize({width:390,height:844});await p.waitForFunction(()=>document.querySelector('.etapas a[aria-current="page"]')?.getAttribute('href')==='#mais');assert.equal(await p.locator('.etapas a[aria-current="page"]').getAttribute('href'),'#mais');
     await mkdir('artifacts',{recursive:true});
-    for(const width of [390,1280]){await p.setViewportSize({width,height:900});await p.goto('http://127.0.0.1:4198/#mais');await busca.waitFor();await busca.fill('');await p.screenshot({path:`artifacts/identidade-figma-${width}.png`,fullPage:true});}
+    for(const width of [390,1280]){await p.setViewportSize({width,height:900});await p.goto('http://127.0.0.1:4198/app.html#mais');await busca.waitFor();await busca.fill('');await p.screenshot({path:`artifacts/identidade-figma-${width}.png`,fullPage:true});}
     assert.deepEqual(erros,[]);await c.close();
     console.log('Identidade: localização em subtelas, foco contrastante, busca preservada, limpar com foco e componentes responsivos aprovados.');
   },

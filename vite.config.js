@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { portalModelos } from './scripts/portal-modelos.mjs';
 
 /** A versão muda também quando só o conteúdo de um arquivo fixo ou do worker muda. */
 export function versaoDoCache(arquivos) {
@@ -10,6 +11,13 @@ export function versaoDoCache(arquivos) {
     hash.update(nome).update('\0').update(conteudo).update('\0');
   }
   return hash.digest('hex').slice(0, 16);
+}
+
+// O navegador não envia o fragmento ao servidor. A ponte precisa decidir antes do primeiro desenho.
+function entradaLegada() {
+  return { name: 'pcm-entrada-legada', transformIndexHtml: { order: 'pre', handler(html) {
+    return html.replace('<!--ENTRADA-APP-->', () => '<script>\n' + readFileSync('src/portal-entrada.js', 'utf8') + '\n</script>');
+  } } };
 }
 
 // Gera o sw.js na pasta final com a lista de todos os arquivos do app,
@@ -23,11 +31,12 @@ function serviceWorker() {
       // Arquivos gerados pelo build + arquivos fixos da pasta public (manifesto e ícones)
       const publicos = readdirSync('public', { recursive: true })
         .map((f) => String(f).split(path.sep).join('/'))
-        .filter((f) => statSync('public/' + f).isFile());
-      const entradaAtual = pacote['index.html'];
+        .filter((f) => statSync('public/' + f).isFile() && (/^(icones|marca|fontes|apresentacao|propostas)\//.test(f) || /^modelos\/(biblioteca-v2|maquinas)\//.test(f) || ['manifest.webmanifest','conheca.html','portal.css'].includes(f)));
+      const entradaAtual = pacote['app.html'];
+      const portal = pacote['index.html'];
       // Entrada no mesmo endereço/origem para recuperar uma aba presa em HTML antigo.
       if (entradaAtual) this.emitFile({ type: 'asset', fileName: 'atualizar.html', source: entradaAtual.source });
-      const arquivos = [...new Set([...Object.keys(pacote), ...publicos, ...(entradaAtual ? ['atualizar.html'] : [])])].filter((f) => !f.endsWith('.map')).sort();
+      const arquivos = [...new Set([...Object.keys(pacote), ...publicos, ...(entradaAtual ? ['atualizar.html'] : [])])].filter((f) => !f.endsWith('.map') && !/^(guias|comunidade)\//.test(f) && !/^modelos\/(?:index\.html|pcm-man-)/.test(f) && !/^editorial\//.test(f)).sort();
       const worker = readFileSync('src/sw.js', 'utf8');
       const conteudos = arquivos.map((nome) => [nome, nome === 'atualizar.html' && entradaAtual ? entradaAtual.source : pacote[nome]
         ? (pacote[nome].type === 'chunk' ? pacote[nome].code : pacote[nome].source)
@@ -39,9 +48,10 @@ function serviceWorker() {
         this.emitFile({ type: 'asset', fileName: 'versao-atual.json', source: JSON.stringify({ entrada, versao }) });
       }
       const codigo = worker
-        .replace('[/*ARQUIVOS*/]', JSON.stringify(arquivos.map((f) => './' + f)))
+        .replace('[/*ARQUIVOS*/]', JSON.stringify([...arquivos, ...(entradaAtual ? [`abrir-${versao}.html`] : [])].map((f) => './' + f)))
         .replace('/*VERSAO*/', versao)
-        .replace('/*PAGINA*/null', JSON.stringify(entradaAtual?.source ?? null));
+        .replace('/*PAGINA*/null', JSON.stringify(entradaAtual?.source ?? null))
+        .replace('/*PORTAL*/null', JSON.stringify(portal?.source ?? null));
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: codigo });
     },
   };
@@ -51,10 +61,11 @@ function serviceWorker() {
 // inclusive em https://<usuario>.github.io/pcm-direto/
 export default defineConfig({
   base: './',
-  plugins: [serviceWorker()],
+  plugins: [entradaLegada(), portalModelos(), serviceWorker()],
   build: {
     // As bibliotecas de planilha e documento são grandes; o aviso padrão não ajuda aqui.
     chunkSizeWarningLimit: 2000,
+    rolldownOptions: { input: { portal: 'index.html', app: 'app.html', catalogo: 'src/portal-modelos.js', conversas: 'src/comunidade-publica.js', compartilhar: 'src/portal-compartilhar.js' } },
   },
   test: {
     include: ['testes/**/*.test.js'],

@@ -1,5 +1,6 @@
 // Entrada preservada do roteiro de regressão; implementação atualizada para Gestão e IndexedDB.
 await import('./verificar-gestao.mjs');
+await import('./verificar-entrada-comunidade.mjs');
 await import('./verificar-atualizacao.mjs');
 await import('./verificar-sessao.mjs');
 await import('./verificar-pdfs-banco.mjs');
@@ -17,3 +18,20 @@ await import('./verificar-janelas.mjs');
 await import('./verificar-qr.mjs');
 await import('./verificar-fotos.mjs');
 await import('./verificar-ciencia.mjs');
+await import('./verificar-contribuir-feedback.mjs');
+
+await import("./verificar-portal.mjs");
+
+await import("./verificar-biblioteca-atualizacao.mjs");
+
+await import("./verificar-catalogo-publico.mjs");
+
+await import("./verificar-comunidade-materiais-banco.mjs");
+await import("./verificar-portal-completo.mjs");
+await import("./verificar-entrada-direta.mjs");
+
+await import('./verificar-cadastros-gravacao.mjs');
+
+await import('./verificar-compartilhar.mjs');
+
+await import('./verificar-atualizacao-portal.mjs');

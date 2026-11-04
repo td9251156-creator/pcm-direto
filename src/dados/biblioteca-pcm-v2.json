@@ -1,5 +1,5 @@
 {
-  "versao": "biblioteca-pcm-v2.0.1",
+  "versao": "biblioteca-pcm-v2.0.2",
   "originaisPreservados": true,
   "substituiCatalogoAnterior": false,
   "dashboards": [
@@ -157,8 +157,8 @@
       "codigo": "PCM-MAN-002",
       "arquivo": "PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00.xlsx",
       "titulo": "Criticidade, MFMEA e Plano",
-      "sha256": "1e694cf6606594d42db0f5264941a55d9d9be70f72970652381a3f49d81f41c3",
-      "bytes": 459321,
+      "sha256": "a34b4e340d085a34d3aa83bdd1eb5819f17131976d2bf7b820faec1b342f32d3",
+      "bytes": 574214,
       "url": "modelos/biblioteca-v2/PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -180,6 +180,30 @@
         },
         {
           "nome": "Cronograma",
+          "tabelas": []
+        },
+        {
+          "nome": "Atividades padrão",
+          "tabelas": [
+            {
+              "nome": "tb_pcm_atividades_padrao",
+              "intervalo": "A4:H64",
+              "linhaDados": 5,
+              "campos": [
+                "grupo",
+                "atividade",
+                "tipo",
+                "executante",
+                "periodicidade",
+                "criterio",
+                "acao_se_anormal",
+                "seguranca"
+              ]
+            }
+          ]
+        },
+        {
+          "nome": "Checklist",
           "tabelas": []
         },
         {
@@ -241,14 +265,14 @@
         }
       ],
       "preenchimentoAutomatico": false,
-      "origemAtualizacao": "envio do mantenedor 31/10/2026: Biblioteca-PCM-v2\\PCM-MAN-002_Criticidade-FMECA-e-Plano_R00.xlsx"
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-003",
       "arquivo": "PCM-MAN-003_Planner-de-Manutencao_R00.xlsx",
       "titulo": "Planner de Manutencao",
-      "sha256": "1a715f188631d8291e847b0c6c79b8ed3aaf805a962bce593bf5693ef314d1f7",
-      "bytes": 392683,
+      "sha256": "dc8c72c9e009dbe1adfefa8000e741456f18fb07a1412a79843023c75d1973c9",
+      "bytes": 447228,
       "url": "modelos/biblioteca-v2/PCM-MAN-003_Planner-de-Manutencao_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -267,6 +291,28 @@
         {
           "nome": "Planner anual",
           "tabelas": []
+        },
+        {
+          "nome": "Programação",
+          "tabelas": [
+            {
+              "nome": "tb_pcm_programacao",
+              "intervalo": "A4:J44",
+              "linhaDados": 5,
+              "campos": [
+                "referencia_os_tarefa",
+                "tag",
+                "equipamento",
+                "atividade",
+                "data_prevista",
+                "responsavel",
+                "duracao_h",
+                "ano",
+                "mes",
+                "semana"
+              ]
+            }
+          ]
         },
         {
           "nome": "Cadastros",
@@ -326,14 +372,15 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-004",
       "arquivo": "PCM-MAN-004_Ordens-de-Servico_R00.xlsx",
       "titulo": "Ordens de Servico",
-      "sha256": "832790a26529318addfba89e59106eabcb7a5bfa96b0feadb810e16d3cc85984",
-      "bytes": 324370,
+      "sha256": "9bcf486504fff432bcb56469d0088c86aa26d51f2f29b17bacc4a91e646ab30b",
+      "bytes": 324994,
       "url": "modelos/biblioteca-v2/PCM-MAN-004_Ordens-de-Servico_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -378,7 +425,7 @@
           "tabelas": [
             {
               "nome": "tb_pcm_os",
-              "intervalo": "A4:N29",
+              "intervalo": "A4:P29",
               "linhaDados": 5,
               "campos": [
                 "numero_os",
@@ -393,7 +440,9 @@
                 "data_prevista",
                 "data_conclusao",
                 "horas_estimadas",
+                "horas_executadas",
                 "horas_restantes",
+                "origem_registro",
                 "observacao"
               ]
             }
@@ -457,14 +506,15 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-005",
       "arquivo": "PCM-MAN-005_Checklist-de-Preventiva_R00.xlsx",
       "titulo": "Checklist de Preventiva",
-      "sha256": "fc267413ef59944ce0c55597a2861ece52e29285e09b5bfc59cf0e8a684f1862",
-      "bytes": 268549,
+      "sha256": "74a0d37c31c2bc93ea7c000b55a721fc9bb49ed04d54bad35371ecad55b133f1",
+      "bytes": 269214,
       "url": "modelos/biblioteca-v2/PCM-MAN-005_Checklist-de-Preventiva_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -534,14 +584,15 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-006",
       "arquivo": "PCM-MAN-006_Passagem-de-Turno_R00.xlsx",
       "titulo": "Passagem de Turno",
-      "sha256": "d4136e70020a6478abfb1cd740b04d0554f3ead9e7baa3d2e64d97353ad1f7f4",
-      "bytes": 267304,
+      "sha256": "a37743bc3e528ed08be697a87e950df99368b373df54bd2c098edff6964009ae",
+      "bytes": 320956,
       "url": "modelos/biblioteca-v2/PCM-MAN-006_Passagem-de-Turno_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -552,6 +603,27 @@
         {
           "nome": "Passagem",
           "tabelas": []
+        },
+        {
+          "nome": "Registro",
+          "tabelas": [
+            {
+              "nome": "tb_pcm_passagem",
+              "intervalo": "A4:I34",
+              "linhaDados": 5,
+              "campos": [
+                "data_turno",
+                "turno",
+                "tag",
+                "equipamento",
+                "o_que_aconteceu",
+                "minutos_parados",
+                "situacao_maquina",
+                "nr_os",
+                "acao_proximo_turno"
+              ]
+            }
+          ]
         },
         {
           "nome": "Cadastros",
@@ -611,7 +683,8 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-007",
@@ -702,8 +775,8 @@
       "codigo": "PCM-MAN-008",
       "arquivo": "PCM-MAN-008_Falhas-e-Pareto_R00.xlsx",
       "titulo": "Falhas e Pareto",
-      "sha256": "cbf8b1cc7fdd2ddc376e047f0a9a3c71d84aa2e718c1b17453df70841ed47b3f",
-      "bytes": 375783,
+      "sha256": "36c7467d9eb8dd65d760377aa9643f9c6ceab2bf7039569819f22a374d19643c",
+      "bytes": 376439,
       "url": "modelos/biblioteca-v2/PCM-MAN-008_Falhas-e-Pareto_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -720,7 +793,7 @@
           "tabelas": [
             {
               "nome": "tb_pcm_falhas",
-              "intervalo": "A4:M29",
+              "intervalo": "A4:O29",
               "linhaDados": 5,
               "campos": [
                 "referencia_falha",
@@ -735,7 +808,9 @@
                 "inicio_reparo",
                 "fim_reparo",
                 "peca",
-                "responsavel"
+                "responsavel",
+                "horas_parada",
+                "horas_reparo"
               ]
             }
           ]
@@ -802,14 +877,15 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-009",
       "arquivo": "PCM-MAN-009_Acao-Corretiva_R00.xlsx",
       "titulo": "Acao Corretiva",
-      "sha256": "44c451a68d3eb54c8c2bfe090f065595c68fbe2b3e1acd398bdd47157da0e3d7",
-      "bytes": 268810,
+      "sha256": "9adbc57907f799f08d1db186cfd9b31ef81bc8414c1d798adcf371b34b643b8c",
+      "bytes": 269242,
       "url": "modelos/biblioteca-v2/PCM-MAN-009_Acao-Corretiva_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -879,7 +955,8 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-010",
@@ -1038,8 +1115,8 @@
       "codigo": "PCM-MAN-011",
       "arquivo": "PCM-MAN-011_Indicadores-Mensais_R00.xlsx",
       "titulo": "Indicadores Mensais",
-      "sha256": "6f4079ecec375d263222fdbb2cc4f9c1ce7074ef5df76f6f159552109c1421d1",
-      "bytes": 269023,
+      "sha256": "7cfac1104ebbacc9c54ef1636e2f11aa842a1e94e5f920bae4292e92a9eb214e",
+      "bytes": 269233,
       "url": "modelos/biblioteca-v2/PCM-MAN-011_Indicadores-Mensais_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1082,14 +1159,15 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-012",
       "arquivo": "PCM-MAN-012_Orcamento-e-Custos_R00.xlsx",
       "titulo": "Orcamento e Custos",
-      "sha256": "f5963a7fd0d18fc447e22411953ac2c7ffed7655d9f12b62a3b87c170ad0c49a",
-      "bytes": 324568,
+      "sha256": "085821aa7d1c166860e9e0bf66314f73b16b173042faad21ab53380afca515ba",
+      "bytes": 381044,
       "url": "modelos/biblioteca-v2/PCM-MAN-012_Orcamento-e-Custos_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1112,11 +1190,31 @@
           "tabelas": []
         },
         {
+          "nome": "Orçamento por setor",
+          "tabelas": [
+            {
+              "nome": "tb_pcm_orcamento",
+              "intervalo": "A4:H64",
+              "linhaDados": 5,
+              "campos": [
+                "ano",
+                "mes",
+                "setor",
+                "categoria",
+                "valor_orcado",
+                "valor_realizado",
+                "saldo",
+                "pct_usado"
+              ]
+            }
+          ]
+        },
+        {
           "nome": "Lançamentos",
           "tabelas": [
             {
               "nome": "tb_pcm_custos",
-              "intervalo": "A4:H29",
+              "intervalo": "A4:I29",
               "linhaDados": 5,
               "campos": [
                 "referencia_lancamento",
@@ -1126,7 +1224,8 @@
                 "setor",
                 "categoria_custo",
                 "valor_realizado",
-                "documento_origem"
+                "documento_origem",
+                "numero_os"
               ]
             }
           ]
@@ -1181,7 +1280,8 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-013",
@@ -1310,8 +1410,8 @@
       "codigo": "PCM-MAN-014",
       "arquivo": "PCM-MAN-014_Manutencao-Autonoma_R00.xlsx",
       "titulo": "Manutencao Autonoma",
-      "sha256": "6b5c32b704063c92a0ade3f8e14cf16770ddb75fc1b1a8d0a10830476c8d2405",
-      "bytes": 377398,
+      "sha256": "f7646e51582e69d120bdb6912216318d8762f375146e1f985aebb79fa1080421",
+      "bytes": 432041,
       "url": "modelos/biblioteca-v2/PCM-MAN-014_Manutencao-Autonoma_R00.xlsx",
       "formato": "xlsx",
       "abas": [
@@ -1328,11 +1428,33 @@
           "tabelas": []
         },
         {
+          "nome": "Registro de anomalias",
+          "tabelas": [
+            {
+              "nome": "tb_pcm_anomalias",
+              "intervalo": "A4:J34",
+              "linhaDados": 5,
+              "campos": [
+                "tag",
+                "equipamento",
+                "tipo_etiqueta",
+                "data",
+                "achado_por",
+                "anomalia",
+                "prazo",
+                "situacao",
+                "nr_os",
+                "dias_em_aberto"
+              ]
+            }
+          ]
+        },
+        {
           "nome": "Quadro de MA",
           "tabelas": [
             {
               "nome": "tb_pcm_quadro_autonoma",
-              "intervalo": "A5:K25",
+              "intervalo": "A5:M25",
               "linhaDados": 6,
               "campos": [
                 "tag",
@@ -1345,7 +1467,9 @@
                 "passo_5",
                 "passo_6",
                 "passo_7",
-                "pct_avanco"
+                "pct_avanco",
+                "data_ultimo_avanco",
+                "auditoria_lider"
               ]
             }
           ]
@@ -1408,7 +1532,8 @@
           ]
         }
       ],
-      "preenchimentoAutomatico": false
+      "preenchimentoAutomatico": false,
+      "origemAtualizacao": "Original enviado pelo mantenedor em Biblioteca-PCM-v2.zip; revisão R00 preservada, pacote 2.0.2."
     },
     {
       "codigo": "PCM-MAN-015",

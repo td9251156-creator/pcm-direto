@@ -1,0 +1,30 @@
+name: Experiência de uso
+description: Conte como foi experimentar o PCM Direto, apenas com exemplos fictícios.
+title: "[Experiência] "
+body:
+  - type: markdown
+    attributes:
+      value: Confira antes de publicar. Não envie dados da fábrica, informações pessoais, backups ou vulnerabilidades. Este relato será público.
+  - type: textarea
+    id: dificuldade
+    attributes:
+      label: Qual foi a principal dificuldade?
+    validations:
+      required: true
+  - type: textarea
+    id: faltou
+    attributes:
+      label: O que faltou?
+  - type: textarea
+    id: tema
+    attributes:
+      label: Qual norma ou auditoria importa para você?
+  - type: input
+    id: apoio
+    attributes:
+      label: Que forma de apoio você consideraria?
+      description: Opcional, sem cobrança nem compromisso.
+  - type: textarea
+    id: comentario
+    attributes:
+      label: Quer deixar outro comentário?

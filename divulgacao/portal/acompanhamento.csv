@@ -1,0 +1,9 @@
+periodo_inicio,periodo_fim,canal,pagina,metrica,valor,situacao,fonte
+,,Search Console,/modelos/,impressoes,,nao medido,Search Console do mantenedor
+,,Search Console,/modelos/,cliques,,nao medido,Search Console do mantenedor
+,,LinkedIn,,alcance,,nao medido,Estatisticas da pagina
+,,LinkedIn,,cliques,,nao medido,Estatisticas da pagina
+,,Instagram,,salvamentos,,nao medido,Estatisticas do perfil
+,,Instagram,,compartilhamentos,,nao medido,Estatisticas do perfil
+,,Comunidade,,perguntas espontaneas,,nao medido,Conversa moderada por material
+,,Comunidade,,pendencias de moderacao,,nao medido,Painel privado de moderacao

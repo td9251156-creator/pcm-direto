@@ -11,8 +11,8 @@ export function htmlFichaModelo(dados, fonte, logo) {
     <header><img src="${esc(logo)}" alt="PCM Direto — Manutenção planejada. Direto ao ponto."><p class="origem">MODELO DE REFERÊNCIA · MÁQUINAS E TAREFAS</p><h1>${esc(dados.titulo)}</h1><p class="origem">${esc(fonte)}</p></header>
     ${detalhe('Descrição', dados.descricao)}${detalhe('Fabricante', dados.fabricante)}${detalhe('Modelo', dados.modelo)}${detalhe('Características', dados.caracteristicas)}${detalhe('Contribuição', dados.apelido)}
     <p><strong>${tarefas.length} tarefas de referência.</strong> ${esc(dados.aviso || 'Confirme aplicabilidade, periodicidades e condições de execução com o manual do equipamento.')} Esta ficha não é um plano aprovado da sua fábrica.</p>
-    ${tarefas.map((t, i) => `<section class="tarefa"><h2>${esc(t.id || 'Tarefa ' + (i + 1))}${t.seguranca ? ' <span class="seguranca">· SEGURANÇA</span>' : ''}</h2><p>${esc(t.descricao)}</p><p>${esc(t.periodicidade)} · ${esc(t.especialidade)} · ${esc(String(t.duracao_horas).replace('.', ','))} h por execução</p><p class="origem">Origem: ${esc(t.origem)} · Versão: ${esc(t.versao)}</p>${detalhe('Observação', t.observacao)}</section>`).join('')}
-    <footer><p>O material apoia a organização do PCM e não substitui a avaliação de profissional habilitado nem o texto oficial das normas. As periodicidades são base genérica e devem ser confirmadas com o manual do fabricante.</p><p>PCM Direto · pcmdireto.me · MIT</p></footer></body></html>`;
+    ${tarefas.map((t, i) => `<section class="tarefa"><h2>${esc(t.id || 'Tarefa ' + (i + 1))}${t.seguranca ? ' <span class="seguranca">· SEGURANÇA</span>' : ''}</h2><p>${esc(t.descricao)}</p><p>${esc(t.periodicidade)} · ${esc(t.especialidade)} · ${esc(String(t.duracao_horas).replace('.', ','))} h por execução</p>${t.origem && !t.origem.startsWith('base genérica') ? `<p class="origem">Origem: ${esc(t.origem)} · Versão: ${esc(t.versao)}</p>` : ''}${detalhe('Observação', t.observacao)}</section>`).join('')}
+    <footer><p>PCM Direto · pcmdireto.me · MIT</p></footer></body></html>`;
 }
 
 export function abrirFichaModelo(dados, fonte) {

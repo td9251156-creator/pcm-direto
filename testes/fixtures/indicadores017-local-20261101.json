@@ -1,0 +1,117 @@
+{
+  "origem": "32c8baf — algoritmo local anterior à atualização dos modelos",
+  "casos": [
+    {
+      "nome": "local sem hora fechado atravessando meses",
+      "falha": {
+        "id": "local",
+        "equipamentoId": "eq",
+        "tag": "TST-MOT-001",
+        "data": "2026-01-31",
+        "horasParada": 8,
+        "horasReparo": 4,
+        "horaInicio": "",
+        "horaFim": "",
+        "dataConclusao": "2026-02-02"
+      },
+      "mes": "2026-01",
+      "hp": 100,
+      "agora": "2026-03-01T00:00:00",
+      "esperado": {
+        "hi": 8,
+        "ho": 92,
+        "n": 1,
+        "reparos": 1,
+        "somaReparos": 4,
+        "mtbf": 92,
+        "mttr": 4,
+        "disponibilidade": 92,
+        "provisoria": false
+      }
+    },
+    {
+      "nome": "local aberto com início conhecido e duração avulsa",
+      "falha": {
+        "id": "local",
+        "equipamentoId": "eq",
+        "tag": "TST-MOT-001",
+        "data": "2026-01-03",
+        "horasParada": 2,
+        "horasReparo": 4,
+        "horaInicio": "08:00",
+        "horaFim": "",
+        "dataConclusao": ""
+      },
+      "mes": "2026-01",
+      "hp": 100,
+      "agora": "2026-01-03T12:00:00",
+      "esperado": {
+        "hi": 4,
+        "ho": 96,
+        "n": 1,
+        "reparos": 0,
+        "somaReparos": null,
+        "mtbf": 96,
+        "mttr": null,
+        "disponibilidade": 96,
+        "provisoria": true
+      }
+    },
+    {
+      "nome": "local com início conhecido e conclusão sem hora",
+      "falha": {
+        "id": "local",
+        "equipamentoId": "eq",
+        "tag": "TST-MOT-001",
+        "data": "2026-01-03",
+        "horasParada": 2,
+        "horasReparo": 4,
+        "horaInicio": "08:00",
+        "horaFim": "",
+        "dataConclusao": "2026-01-03"
+      },
+      "mes": "2026-01",
+      "hp": 100,
+      "agora": "2026-03-01T00:00:00",
+      "esperado": {
+        "hi": null,
+        "ho": null,
+        "n": 1,
+        "reparos": 1,
+        "somaReparos": 4,
+        "mtbf": null,
+        "mttr": 4,
+        "disponibilidade": null,
+        "provisoria": false
+      }
+    },
+    {
+      "nome": "local legado sem hora aberto em mês anterior",
+      "falha": {
+        "id": "local",
+        "equipamentoId": "eq",
+        "tag": "TST-MOT-001",
+        "data": "2026-09-10",
+        "horasParada": 2,
+        "horasReparo": 4,
+        "horaInicio": "",
+        "horaFim": "",
+        "dataConclusao": ""
+      },
+      "mes": "2026-09",
+      "hp": 720,
+      "agora": "2026-11-02T00:00:00",
+      "esperado": {
+        "hi": 2,
+        "ho": 718,
+        "n": 1,
+        "reparos": 0,
+        "somaReparos": null,
+        "mtbf": 718,
+        "mttr": null,
+        "disponibilidade": 99.72,
+        "provisoria": false
+      }
+    }
+  ]
+}

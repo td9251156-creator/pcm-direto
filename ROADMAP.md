@@ -1,4 +1,6 @@
-> Plano atual de continuidade: [PLANO-DESENVOLVIMENTO.md](docs/PLANO-DESENVOLVIMENTO.md). O roteiro abaixo conserva o histórico do MVP.
+> Direção atual (04/11/2026): portal e app publicados, 19 modelos, quatro guias editoriais e conversas com moderação. A consolidação acrescenta correções de atualização/offline, evidências e kit de divulgação. Situação efetiva e limites em [Consolidação](docs/CONSOLIDACAO-PORTAL.md) e [Fila](docs/FILA.md).
+>
+> **Histórico:** o roteiro abaixo conserva as ideias do MVP, não descreve o estado atual nem autoriza refazer funções já entregues. [Catálogo histórico A–I](docs/HISTORICO-CATALOGO.md).
 
 > Atualização 24/10/2026: decisões atuais em [Reformulação](docs/REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 

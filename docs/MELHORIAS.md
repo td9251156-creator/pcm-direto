@@ -223,3 +223,131 @@ especificidade na borda de erro e hover de botão secundário desabilitado; ambo
 conferidos pelo revisor no Chromium com os CSS reais. Nenhum bloqueador restante no escopo.
 O roteiro específico também confere os dois estados e aguarda o evento de mudança de largura
 antes de verificar a navegação. Evidências locais em artifacts/identidade-figma-*.png.
+
+## Portal público — catálogo integrado, continuação preparada — 02/11/2026
+
+O catálogo do PR #67 foi integrado em `562e292`. A continuação acrescenta guia de OS, intenção de material sem escrita/geração automática, conversas moderadas em esquema privado, descoberta e conteúdo orgânico preparado. Revisão independente concluída; 495 testes/64 arquivos e 24 roteiros de navegador/banco aprovados localmente. Migração e ativação em produção, Auth real, revisão dos três guias em rascunho e publicação nas redes permanecem separados. Evidências e limitações: [Entrega consolidada](portal/ENTREGA.md).
+
+
+## Publicação do portal — PR #68
+
+Integração autorizada pelo mantenedor; 505 testes/65 arquivos, lint/build e 25 roteiros aprovados, com revisão independente na preparação. PR #69 encerrado como duplicado para preservar a correção de navegação do #70. Migração adicional de conversas aplicada, 19 assuntos e bloqueio de leitura direta das quatro tabelas confirmados. Conversas desativadas até conferir Auth/moderação reais; materiais, downloads e app independem dessa ativação. Divulgação nas redes permanece manual.
+
+A CI de registro da publicação expôs uma espera incorreta no roteiro de atualização da biblioteca: o botão habilitado não sinalizava fim da gravação. O roteiro passou a aguardar a confirmação de persistência antes de recarregar, mantendo todas as verificações de integridade. Não foi alterado o armazenamento do app.
+
+
+## Cadastros: envio único e falha de persistência
+
+Reprodução com conta local fictícia e uma transação IndexedDB atrasada: dois `requestSubmit()` no cadastro de pessoas geravam dois registros (`2 !== 1` no teste anterior à correção). A tela agora bloqueia seus controles durante a gravação, informa o estado com `aria-busy` e mensagem, preserva os demais formulários e só redesenha após persistência confirmada. Sair e voltar ao mesmo endereço cria outro formulário, que não pode ser substituído pela resposta antiga.
+
+Em falha de espaço, os campos continuam disponíveis e a base persistida fica intacta. A inclusão aplicada apenas na memória mantém seu ID para nova tentativa não duplicar a pessoa ou referência no backup; Inativar/Reativar repete a intenção visível em vez de inverter novamente o estado da memória. O foco retorna ao controle conectado após a falha, sem roubar o foco de outra tela. O exemplo informa que a mudança fica somente nele.
+
+Escopo: tela de Cadastros e roteiro de navegador; sem alterar esquema de dados, backups, estado/repositório, modelos, biblioteca técnica ou Supabase. O roteiro inclui envio repetido sob transação pendente, gravação/reload, rascunhos/foco, saída e retorno à mesma rota, falha de quota, repetição de pessoa/referência e Inativar, conteúdo do backup e larguras 320/390/820/1280. Publicação ainda não declarada nesta preparação.
+
+Verificação da preparação: lint, 505 testes/65 arquivos e build aprovados; roteiro dedicado aprovado e revisão independente somente leitura sem bloqueadores após as correções de IDs/foco/ativação. Neste ambiente, o teste OOXML atingiu o prazo padrão de 5 s com o paralelismo inicial; `VITEST_MAX_WORKERS=1 npm run verificar` passou sem mudar prazos nem asserções. O roteiro novo faz parte da suíte completa de navegador e da CI.
+
+
+## Catálogo online: categorias oferecidas e recusadas pelo servidor
+
+Uma consulta somente leitura no projeto real reproduziu a incompatibilidade: os quatro tipos originais e Outro eram aceitos; transportador de correia, ventilador/exaustor e unidade hidráulica retornavam `false`. A migração de ampliação já existia no repositório, mas não estava no histórico real.
+
+O roteiro PostgreSQL em memória agora reproduz a recusa antes da migração, aplica o arquivo existente e compara todas as oito categorias do contrato com `TIPOS_CATALOGO` e o validador JavaScript. Também exerce `catalogo_salvar` como autor fictício nas oito categorias e mantém as verificações de autoria, RLS, imutabilidade, limites, decisão com versão, arquivamento e PDFs. Um diagnóstico somente leitura permite conferir produção sem criar contas nem gravar modelos. Não modifica o contrato da biblioteca de arquivos, os dados operacionais, o backend de conversas ou o login.
+
+
+Aplicação real: o corpo da função online foi comparado ao arquivo existente, normalizando apenas espaços; a única diferença era a inclusão das três categorias. Após revisão independente sem bloqueadores, a migração foi aplicada isoladamente como `tipos_catalogo`. Todas as oito categorias retornaram `aceito=true`; proprietário, ACL, SECURITY INVOKER, IMMUTABLE e `search_path` vazio permaneceram iguais. Não houve carga de dados, criação de conta, reexecução das migrações-base ou mudança no esquema de conversas. Advisors conferidos: avisos legados permanecem documentados; nenhuma permissão foi ampliada para silenciá-los.
+
+Verificação local: lint, 505 testes/65 arquivos e build aprovados com `VITEST_MAX_WORKERS=1 npm run verificar`; roteiro PostgreSQL/PDF aprovado com as oito categorias e 47 fichas. Login/retorno de e-mail reais e moderação entre contas continuam pendentes, sem declarar as conversas ativadas.
+
+
+## Comunidade pausada: acesso às próprias mensagens
+
+Com `ativo=false`, os RPCs já permitiam retirada e moderação autorizadas, mas a interface encerrava antes de oferecer login. Isso impedia consultar/retirar mensagens e conferir o retorno por e-mail antes da ativação. A interface agora distingue pausa válida de backend ausente/resposta inválida: durante pausa válida, permite acesso às próprias mensagens e moderação, mantendo indisponíveis novos envios, denúncias e a vista pública.
+
+O refresh reconfere a disponibilidade com a guarda da conta atual, volta à primeira página ao trocar automaticamente da vista pública para Minhas mensagens e preserva o rascunho oculto na mesma conta. Troca de conta e retorno BFCache continuam limpando conteúdo privado. Testes reproduziram a ausência de retirada antes da correção e passaram depois, incluindo login simulado durante pausa, troca de contas, retirada, moderação, retomada/pausa com rascunho, paginação, resposta inválida/backend ausente e downloads originais preservados. Não modifica SQL, RLS, quotas, autenticação do provedor ou dados operacionais. Entrega real de e-mail/PKCE e moderação entre contas reais permanecem pendentes.
+
+A suíte completa também expôs uma corrida no próprio roteiro da ficha PDF: `window.close()` podia fechar o popup antes da confirmação do clique retornar ao Playwright. O roteiro agora aguarda o evento de fechamento, tolera somente o erro de alvo já fechado e confere que a página principal continua aberta; as demais asserções de PDF, envio e armazenamento foram mantidas. Roteiro dedicado e os 26 roteiros completos aprovados localmente. Lint, 505 testes/65 arquivos e build aprovados; validações de e-mail real continuam separadas.
+
+
+## Conversas ativas — confirmação do mantenedor e leitura pública
+
+Após o mantenedor informar que salvou os endereços de retorno, confirmou o login e visualizou Fila de moderação, as dez funções privadas do servidor foram comparadas ao código testado e as permissões diretas das quatro tabelas foram conferidas. O estado inicial de comentários permanece `pendente`; a participação foi ativada com revisão prévia. O mantenedor confirmou depois o envio e a aprovação da mensagem de teste.
+
+Uma conferência nova em navegador isolado, sem login, encontrou uma mensagem aprovada em PCM-MAN-004. A projeção pública não retornou `email`, `autor_id` ou `nonce`; não abriu IndexedDB operacional nem enviou e-mail. O download permaneceu idêntico ao original; teclado e quatro larguras aprovados sem erros JavaScript capturados nesses fluxos. Não foram modificadas mensagens, permissões ou configuração nesta rodada de registro.
+
+Retirada e autorização entre duas contas autenticadas reais, aparelhos, leitor de tela e comportamento BFCache real continuam pendentes. Os testes automáticos com contas fictícias não foram reapresentados como validação humana. A validação de uso com pessoas segue adiada. Esta atualização documental substitui as declarações anteriores de participação pausada, que permanecem apenas no histórico das entregas.
+
+
+## Retorno de acesso: confirmação do novo link sem reutilizar sessão anterior
+
+O relato de Fila de moderação no teste da segunda conta motivou uma conferência sem alterar permissões. O servidor tem um único moderador, não concede INSERT/UPDATE/DELETE diretos na lista a visitantes/contas comuns e a função de perfil consulta a identidade autenticada. A causa específica do relato não foi estabelecida.
+
+Um defeito concreto foi reproduzido com dados fictícios: o callback de um novo link sem verificador válido redirecionava para o modelo porque já havia uma sessão de moderador no armazenamento. A detecção automática do SDK fica desativada somente nesse callback; ele exige uma troca explícita e bem-sucedida do código, com identificador do fluxo preservado. Falha ou ausência do código não usa `getSession()` como comprovação. A sessão anterior não recebe logout automático, e códigos/erros saem da URL.
+
+A conferência do perfil passa a exigir booleano verdadeiro e, no portal, token da conta conferida, com guarda de validade da consulta. Não altera a lista de moderadores nem políticas do servidor. Os testes incluem sessão antiga de moderador, ausência de código/verificador, erro do provedor, código recusado, identificador de fluxo inválido preservando o verificador pendente e sucesso de participante com fluxos novo e legado. O teste real com outra conta continua pendente; não foi declarado como correção comprovada da situação específica do mantenedor.
+
+Separadamente, o mantenedor confirmou retirada do teste anterior; uma consulta com papel anônimo retornou zero mensagens públicas no material. Essa retirada é uma evidência humana + conferência de leitura pública, não prova de autorização entre contas autenticadas distintas.
+
+Preparação da correção: lint, 528 testes/65 arquivos e build aprovados; revisão independente somente leitura sem bloqueadores. O teste anterior à correção demonstrou o redirecionamento indevido para `/modelos/pcm-man-004/` em vez de permanecer no retorno em falha. Os novos cenários usam o SDK real com provedor simulado e não enviam e-mails ou usam contas reais.
+
+
+## Compartilhar materiais públicos
+
+Páginas dos 19 modelos e do guia publicado oferecem Compartilhar no aparelho (quando compatível) e Copiar link. O campo com o endereço permanente permite seleção manual mesmo sem JavaScript. O módulo usa apenas título público e canonical validado: nunca inclui query, fragmento, sessão, comentários ou dados operacionais. Não há chamada de compartilhar/copiar ao abrir a página. Cancelar a ação nativa não aciona cópia; ações pendentes impedem cliques repetidos. Falha da cópia seleciona o endereço e explica a alternativa manual, sem anunciar sucesso falso.
+
+A entrada JavaScript do compartilhamento é separada da Comunidade e recebe nome versionado no build/cache. As páginas editoriais continuam fora do precache obrigatório; páginas visitadas ficam no cache público limitado já existente. Conteúdo, arquivos originais, Auth/Supabase e base operacional não são alterados. O teste dedicado cobre APIs simuladas, cancelamento/falha, clipboard ausente, envio único, teclado, quatro larguras, leitura sem JavaScript, backend indisponível e abertura offline com base preservada e download idêntico ao original.
+
+Revisão independente somente leitura sem bloqueadores. O compartilhamento nativo em aparelho real, leitor de tela e recebimento por outro aplicativo não foram conferidos; sucesso do teste simulado não foi tratado como essa evidência. Não há afirmação de crescimento de público ou divulgação automática nas redes.
+
+Verificação desta entrega: `npm run verificar` aprovado (lint, 529 testes em 65 arquivos e build), com `VITEST_MAX_WORKERS=1` no ambiente local; os 27 roteiros de `npm run test:navegador` foram aprovados. APIs de compartilhamento e clipboard simuladas, sem envio real.
+
+## Busca pública: sigla OS sem resultados enganosos
+
+Reprodução com o índice real: “OS” retornava 11 modelos por casar trechos em “documentos”, “custos” e outras palavras. Regressão registrada antes da correção. A correspondência de termos curtos passa a usar palavras inteiras; OS tem alias editorial próprio, ligado apenas ao 004, para não confundir a sigla com o artigo “os” nas descrições. “O.S.” e “(O.S.)” são aceitos. Trechos de palavras maiores, acentos, termos combinados e códigos permanecem pesquisáveis; uma consulta só de pontuação não apresenta todos os modelos.
+
+A mudança se limita ao catálogo público, não altera busca operacional, armazenamento, autenticação, modelos originais ou conteúdo técnico. A revisão independente identificou a colisão com o artigo e a pontuação entre parênteses; ambas foram corrigidas antes da entrega. Não há medição de uso ou promessa de crescimento associada a esta correção.
+
+Verificação: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 534 testes em 66 arquivos e build); os 27 roteiros de `npm run test:navegador` passaram. Revisão independente somente leitura sem bloqueadores após as correções. Não houve teste com leitor de tela nem validação de uso com pessoas.
+
+## Materiais: acesso direto à leitura e às ações
+
+As páginas longas exigiam percorrer o conteúdo para chegar à conversa ou ao compartilhamento. Um índice “Nesta página” passa a aparecer após a abertura dos modelos e do guia, com links para seções da própria página. Cada destino tem identificador único e foco programático por navegação HTML; `tabindex="-1"` não acrescenta paradas na sequência de Tab. O foco por teclado tem contorno visível. Em telas pequenas, o índice usa uma coluna, sem esconder conteúdo.
+
+Os links preservam os endereços antigos, não abrem o login, não consultam o servidor e não compartilham conteúdo automaticamente. Não há JavaScript novo, mudança no cache obrigatório ou alteração de dados, downloads e textos técnicos. O roteiro de navegador verifica destinos e foco por Enter no modelo e no guia, com JavaScript, sem JavaScript e offline, junto das regressões de compartilhamento. Leitor de tela e aparelhos reais permanecem como conferências separadas.
+
+Verificações: lint, 534 testes em 66 arquivos e build aprovados (`VITEST_MAX_WORKERS=1 npm run verificar`); 27 roteiros de navegador aprovados, incluindo destinos/foco com e sem JavaScript e offline, quatro larguras e downloads preservados. Captura do índice em 390 px conferida. Revisão independente somente leitura sem bloqueadores.
+
+## Busca de documentos consistente entre portal e app
+
+A busca pública por OS estava corrigida, mas as listas internas ainda usavam comparação por trecho: a mesma consulta voltava a encontrar documentos por palavras como “custos”. Excel e Word também não faziam parte do índice. Dois testes de regressão falharam antes da correção.
+
+O índice editorial comum passa a alimentar a geração HTML do portal, as sugestões/busca de Documentos PCM na Comunidade do app e Modelos para sua rotina. O formato faz parte do texto pesquisável; OS continua sendo alias explícito só do 004, sem confundir o artigo “os”. Busca global, quatro caminhos, grupos de finalidade, limpeza/foco e preferências em memória são preservados. A busca de máquinas e tarefas não adota essa regra de documentos.
+
+Sem mudança de dados operacionais, modelos originais, Auth, backend ou regras técnicas. Testes de navegador incluem as três listas, siglas, códigos, formatos, combinações e filtro de finalidade. Validação de uso com pessoas e leitores de tela permanecem separadas.
+
+Verificação: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 536 testes em 66 arquivos e build); os 27 roteiros de `npm run test:navegador` passaram. Revisão independente somente leitura sem bloqueadores.
+
+## Consolidação: atualização e leitura pública offline
+
+O novo roteiro `verificar-atualizacao-portal.mjs` reproduziu a falha: V1 permanece ativa, V2 aguarda, um modelo recebe HTML V2 da rede, mas perde seus assets V2 ao reabrir offline. O worker agora guarda somente CSS/JS públicos de nomes versionados no diretório assets, sem query, em cache separado limitado a 80 entradas. O cache do núcleo da versão ativa não é alterado por esses recursos. Todos os caches do mesmo escopo são limpos na ativação normal, preservando os três da versão atual; não há skipWaiting ou recarga forçada.
+
+O aviso de página não guardada passa de texto sem ação para HTML acessível com link ao aplicativo. Falta de espaço ao guardar HTML ou recurso não substitui resposta online válida por uma página antiga/erro. O teste cobre recursos novos offline com V2 aguardando, query não guardada, limite, falta de espaço simulada, saída offline, edição pendente preservada e ativação após fechar as abas. Usa dados fictícios e servidor isolado; não comprova aparelhos reais ou leitor de tela.
+
+A revisão independente identificou que abrir/consultar o cache também pode falhar. O tratamento foi ampliado para leitura online, e requisições com Authorization não entram no handler. A raiz usa o HTML embutido quando sua entrada pública foi removida. Três testes unitários cobrem esses casos; os mocks passaram a fornecer Headers, como um Request real, sem retirar verificações. **Implantação:** a proteção vale após ativação normal do worker corrigido; não altera retroativamente um worker antigo que ainda controla abas abertas. Terminar o trabalho, fechar as abas/janela instalada e abrir novamente, sem apagar dados.
+
+Verificação final desta correção: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 539 testes em 66 arquivos e build); 28 roteiros de navegador aprovados. Revisão independente somente leitura sem bloqueadores após os ajustes. A suíte anterior revelou mocks sem Headers; o contrato do teste foi corrigido, sem remover asserções ou relaxar produção.
+
+## Consolidação da prévia, guias e divulgação
+
+Três guias existentes foram incluídos após conferência editorial contra arquivos e capacidades, completando os quatro temas aprovados. A data editorial dos novos guias é 04/11/2026; validação técnica humana não foi declarada. Índice, orientação, aplicação e conversa usam o mesmo código de modelo, e rascunhos futuros continuam fora das páginas/sitemap. O atalho de Conheça passa a abrir o catálogo com rótulo coerente.
+
+A versão 0.1.0-preview.1 recebe notas atualizadas, changelog e relatório dos seis pontos. O kit inclui 16 PNGs 1080×1350, quatro PDFs LinkedIn, 16 textos alternativos, legendas, perfis e medição em 28 dias. Scripts apenas renderizam/empacotam; não postam, agendam ou coletam dados. Campos sem medição ficam vazios. Preparação do Search Console depende de propriedade do mantenedor; nenhum token de exemplo foi publicado.
+
+Conferência LibreOfficeDev: 20 arquivos originais e 19 cópias fictícias abriram e exportaram primeira página, mantendo hashes. Isso não aprova todas as páginas, fórmulas, Excel/Word, celulares ou leitor de tela. Metadados do Supabase e dez funções reais foram conferidos somente em leitura, sem mensagens privadas, alteração de permissão ou identidade real. Advisors e a advisory moderada de dependências permanecem descritos; não foram silenciados. Evidências e limites em CONSOLIDACAO-PORTAL.md.
+
+Verificação da preparação: lint, 541 testes/66 arquivos e build aprovados; 28 roteiros de navegador aprovados com os quatro guias. Regressão específica do portal e lint final aprovados. Conferência do ZIP por manifesto, dimensões dos 16 PNGs e quatro páginas/texto de cada PDF de divulgação aprovada; revisões independentes somente leitura sem bloqueadores após ajustes. Publicação e commit final ficam registrados no PR/release correspondente.
+
+O conferidor impedia a versão da prévia por classificar qualquer string adicionada no package.json como dependência. Uma regressão falhou antes e passou após a exceção estrita: somente o coordenador, comparando os JSONs completos do ancestral e do HEAD, com mudança apenas na versão raiz. A proposta inicial baseada em indentação foi descartada na revisão, pois não provava a estrutura do JSON. Dependências, alterações mistas, chave version aninhada e os demais agentes continuam bloqueados. Perfis, segredos, ambiente e arquivos protegidos mantêm as guardas anteriores.
+
+## Entrega do kit da prévia por arquivo versionado
+
+O site e os quatro guias foram publicados e conferidos, mas o envio do ZIP a uploads.github.com retornou 401; a criação com anexo não deixou release/tag publicada. A entrega usa o ZIP conferido em divulgacao/portal/kit-divulgacao.zip e link de download preso à versão do repositório. Não há novo workflow com permissão de escrita, mudança de credencial ou envio por outra plataforma. O pacote fica fora do build/cache operacional. A release deve ser criada sem anexo no commit integrado aprovado, com link direto e SHA-256 do ZIP.

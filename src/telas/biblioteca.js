@@ -4,7 +4,7 @@
 import { estado, usarBiblioteca, restaurarBiblioteca, BIBLIOTECA_PADRAO } from '../estado.js';
 import { PERIODICIDADES, vezesPorAno } from '../logica/plano.js';
 import {
-  verificarBibliotecaEditada, tarefaPadrao, podeApagarTarefa, podeApagarTipo, novaTarefa, novoTipo,
+  atualizarBibliotecaAnterior, verificarBibliotecaEditada, tarefaPadrao, podeApagarTarefa, podeApagarTipo, novaTarefa, novoTipo,
 } from '../logica/edicao.js';
 import { esc, baixar, avisar } from '../ui.js';
 import { abrirFichaModelo } from '../saida/ficha-pdf.js';
@@ -91,6 +91,7 @@ export function telaBiblioteca(main) {
       </form>
     </details>
 
+    ${bib.versao === '0.2.0' ? '<p role="status">Sua biblioteca personalizada foi preservada. Há conflito com códigos ou siglas do novo catálogo. Baixe uma cópia antes de conciliar os códigos; a operação e os planos existentes continuam disponíveis. A edição da biblioteca requer conciliação ou restauração consciente do padrão.</p>' : ''}
     <div id="tipos">${bib.tipos.map(htmlTipo).join('')}</div>
     <datalist id="lista-especialidades">${ESPECIALIDADES.map((e) => `<option value="${e}">`).join('')}</datalist>
   `;
@@ -179,6 +180,7 @@ export function telaBiblioteca(main) {
     e.target.value = '';
     let nova;
     try { nova = JSON.parse(await arquivo.text()); } catch { avisar('O arquivo não é um JSON válido.'); return; }
+    nova = atualizarBibliotecaAnterior(nova, BIBLIOTECA_PADRAO);
     const problemas = verificarBibliotecaEditada(BIBLIOTECA_PADRAO, nova);
     if (problemas.length) {
       avisar(`Biblioteca não importada: ${problemas[0]}${problemas.length > 1 ? ` (e mais ${problemas.length - 1})` : ''}`);

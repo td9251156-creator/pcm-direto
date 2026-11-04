@@ -14,10 +14,11 @@ export const CHAVES = { ativos: 'tag', ordens_servico: 'numero_os', falhas: 'ref
 export const ROTULOS_BASE = { ativos: 'Ativos', ordens_servico: 'Ordens de serviço', falhas: 'Falhas', custos_manutencao: 'Lançamentos de custo', orcamento: 'Orçamento' };
 export const CODIGOS_IMPORTACAO = ['PCM-MAN-004', 'PCM-MAN-008', 'PCM-MAN-012'];
 
-const NUMEROS = new Set(['horas_estimadas', 'horas_restantes', 'valor_realizado']);
+const NUMEROS = new Set(['horas_estimadas', 'horas_restantes', 'horas_executadas', 'horas_parada', 'horas_reparo', 'valor_realizado']);
 const DATAS = new Set(['data_abertura', 'data_prevista', 'data_conclusao', 'data_lancamento']);
 const HORARIOS = new Set(['inicio_falha', 'fim_falha', 'inicio_reparo', 'fim_reparo']);
 const DOMINIOS = {
+  origem_registro: ['Execução no app', 'OS importada', 'Digitação manual'],
   tipo_manutencao: ['PREVENTIVA', 'CORRETIVA', 'PREDITIVA', 'INSPECAO'],
   prioridade: ['BAIXA', 'MEDIA', 'ALTA', 'URGENTE'],
   status: ['ABERTA', 'PLANEJADA', 'PROGRAMADA', 'EM_EXECUCAO', 'CONCLUIDA', 'CANCELADA'],
@@ -35,6 +36,8 @@ export function criarOperacao() {
   return { versao: 1, ativos: [], ordens_servico: [], falhas: [], custos_manutencao: [], orcamento: [], importacoes: [] };
 }
 
+// Com hora ausente, comparar apenas dias; não tratar a data como meia-noite.
+const anterior = (a, b) => a.length === 19 && b.length === 19 ? a < b : a.slice(0,10) < b.slice(0,10);
 const vazio = v => v === null || v === undefined || v === '';
 const objeto = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const chaveOrcamento = o => `${o.competencia}|${o.setor ?? ''}|${o.categoria_custo}`;
@@ -71,9 +74,9 @@ function conferirRegistro(base, r) {
   if (base === 'falhas') {
     if (vazio(r.tag) || vazio(r.inicio_falha)) motivos.push('Falha sem TAG ou início.');
     for (const [ini, fim] of [['inicio_falha', 'fim_falha'], ['inicio_reparo', 'fim_reparo']]) {
-      if (r[fim] && (!r[ini] || r[fim] < r[ini])) motivos.push(`${fim}: intervalo inválido.`);
+      if (r[fim] && (!r[ini] || anterior(r[fim], r[ini]))) motivos.push(`${fim}: intervalo inválido.`);
     }
-    if ((r.inicio_reparo && r.inicio_falha && r.inicio_reparo < r.inicio_falha) || (r.fim_reparo && r.fim_falha && r.fim_reparo > r.fim_falha)) {
+    if ((r.inicio_reparo && r.inicio_falha && anterior(r.inicio_reparo, r.inicio_falha)) || (r.fim_reparo && r.fim_falha && anterior(r.fim_falha, r.fim_reparo))) {
       motivos.push('Reparo fora do intervalo de indisponibilidade.');
     }
   }
@@ -190,7 +193,7 @@ export function validarOperacao(op) {
         for (const campo of CAMPOS[base]) {
           const v = r[campo] ?? null;
           if (NUMEROS.has(campo)) { if (v !== null && !(typeof v === 'number' && Number.isFinite(v) && v >= 0)) return false; }
-          else if (DATAS.has(campo) || HORARIOS.has(campo)) { if (v !== null && !dataIso(v, HORARIOS.has(campo))) return false; }
+          else if (DATAS.has(campo) || HORARIOS.has(campo)) { if (v !== null && !dataIso(v, HORARIOS.has(campo) && v.length !== 10)) return false; }
           else if (!texto(v)) return false;
           if (DOMINIOS[campo] && v !== null && !DOMINIOS[campo].includes(v)) return false;
         }

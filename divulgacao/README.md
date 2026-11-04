@@ -9,3 +9,7 @@ quem publica é o mantenedor.
 
 Regras: só dados e telas fictícias; sem promessa de conformidade; sem números inventados; sem rastreadores;
 sem nomes de pessoas, escolas ou empresas sem autorização escrita.
+
+## Portal — nova rodada preparada
+
+Os materiais de [portal/](portal/README.md) são rascunhos desta implementação para revisão do mantenedor; não foram aprovados ou publicados automaticamente.

@@ -1,5 +1,64 @@
 > Atualização 24/10/2026: decisões atuais em [Reformulação](REFORMULACAO.md). As seções abaixo registram o histórico e não substituem essas decisões.
 
+## Atualização do portal — 02/11/2026
+
+- **Integrado:** fundação e catálogo público de 19 modelos, PRs #61, #62 e #67; catálogo em `562e292`. Downloads originais preservados.
+- **Integrado:** modelos recebidos, coleção 2.0.2 (#64); biblioteca de máquinas 0.3.0, 47 tipos/380 tarefas (#65); apresentação simplificada a pedido do mantenedor (#66).
+- **Integrado no PR #68 e verificado:** guia de OS, contexto do modelo até o app, comunidade por material com moderação, sitemap/404 e materiais de distribuição. Detalhes, evidências e limites em [Entrega do portal](portal/ENTREGA.md).
+- **Banco real:** migração de conversas aplicada, 19 assuntos conferidos, quatro tabelas com RLS e sem SELECT direto para visitantes/contas. Participação ativa (`ativo=true`) com revisão prévia. O mantenedor informou que cadastrou os retornos do Auth e confirmou login, envio e aprovação. A leitura de uma mensagem aprovada foi conferida sem login. Retirada confirmada pelo mantenedor e ausência pública conferida com papel anônimo; autorização entre duas contas reais continua em conferência.
+- **Revisão humana:** conteúdo dos quatro guias editoriais, autorização entre contas reais, aparelhos e editores Office. Três guias foram incluídos na prévia após conferência editorial, sem declarar validação humana. Validação de uso com pessoas segue adiada.
+- **Não publicado nas redes:** perfis, fixada e quatro conjuntos orgânicos em `divulgacao/portal/`. Métricas não medidas permanecem sem números.
+
+## Continuidade — confiabilidade de Cadastros
+
+**Integrada e publicada no PR #72**, ramo `coord/cadastros-gravacao-unica`: impedir inclusão duplicada por envios durante gravação, informar o estado ocupado, manter rascunhos/foco após falha e impedir resposta antiga de redesenhar a tela após sair e voltar. Nova tentativa após quota reutiliza o ID da pessoa/referência aplicada em memória; repetir Inativar mantém a intenção mostrada no botão. Não altera armazenamento, modelos nem regras técnicas. Evidências e situação em [MELHORIAS.md](MELHORIAS.md#cadastros-envio-único-e-falha-de-persistência).
+
+## Continuidade — compatibilidade do catálogo online
+
+Conferência somente leitura do servidor identificou que transportador de correia, ventilador/exaustor e unidade hidráulica eram oferecidos pelo app, mas recusados pelo validador online. **Corrigido no servidor:** a migração existente `20261027120000_tipos_catalogo.sql` foi aplicada isoladamente como `tipos_catalogo`, ampliando só as categorias aceitas. As oito categorias passaram no diagnóstico após a aplicação; proprietário, permissões e atributos da função foram preservados. O teste PostgreSQL em memória agora compara as oito categorias do contrato público (sete tipos + Outro), exerce o RPC com cada uma e preserva testes de autoria/PDF/moderação. O catálogo comunitário usa esse contrato; ele não representa todos os 47 tipos da biblioteca local.
+
+A operação local, a biblioteca pública e os downloads não dependem da ativação das conversas. A configuração dos retornos foi informada como salva e a entrada/retorno por e-mail e o envio/aprovação foram confirmados pelo mantenedor. Essa confirmação não substitui as verificações reais de retirada e de autorização entre contas distintas. Diagnóstico de categorias sem dados reais: `supabase/diagnostico/catalogo_tipos.sql`.
+
+## Continuidade — acesso à própria conta com participação pausada
+
+A interface foi corrigida para permitir login, consulta/retirada das próprias mensagens e moderação durante a pausa, respeitando as operações já autorizadas no servidor. Novos envios, denúncias e a vista pública ficam indisponíveis. O refresh reconfere a disponibilidade e preserva o rascunho da mesma conta; trocar de conta continua limpando campos privados. Falha do backend ou resposta inválida não abre o formulário de acesso. Roteiro humano de entrada/retorno em [Ativação da comunidade](portal/ATIVACAO-COMUNIDADE.md#conferir-o-acesso-enquanto-a-participação-está-pausada); O mantenedor confirmou o login real e o envio/aprovação; a participação foi ativada com pré-moderação, conforme o registro em Ativação da comunidade.
+
+## Continuidade — confirmação do link e identidade do perfil
+
+Em conferência da segunda conta, o mantenedor relatou visualizar Fila de moderação. O banco tem um único moderador e não concede escrita direta na lista a contas comuns; a sessão usada nesse relato ainda não foi confirmada. Foi reproduzido e corrigido um defeito no retorno: um novo link inválido podia redirecionar ao material usando a sessão antiga. Agora o callback exige sucesso da troca do próprio código, preserva o identificador do fluxo PKCE e retira os parâmetros sensíveis da URL. O perfil de moderação do portal é conferido com token vinculado à conta, exige booleano verdadeiro e descarta respostas antigas. Não altera moderadores, RLS ou configuração do serviço. A causa específica do relato e o teste real com conta participante permanecem em conferência; roteiro em [Ativação da comunidade](portal/ATIVACAO-COMUNIDADE.md#retorno-do-link-e-conferência-da-segunda-conta).
+
+## Continuidade — compartilhar modelos e guias
+
+Item 10 do roteiro de contribuição: páginas dos 19 modelos e do guia publicado passam a oferecer compartilhamento pelo aparelho quando compatível, cópia do link e seleção manual. O endereço compartilhado é o canonical público, sem parâmetros, fragmentos ou conteúdo da operação. O campo permanece disponível sem JavaScript; cancelar não dispara outra ação. O módulo de compartilhamento é independente da Comunidade e funciona offline para páginas já visitadas, após o cache do app estar pronto. Testes de navegador simulam as APIs do aparelho; confirmação em aparelho real/leitor de tela permanece separada.
+
+Conferência anterior de acesso: o mantenedor informou que, após a correção do PR #76, a conta participante conectou sem Fila de moderação. Isso confirma o comportamento observado dos dois perfis, sem declarar auditoria completa de isolamento de mensagens privadas entre contas reais. A validação de uso com pessoas continua adiada.
+
+## Continuidade — busca por sigla no catálogo público
+
+Correção delimitada: OS/O.S. passam a identificar o modelo 004 por um alias editorial separado da descrição. Antes, a busca por trecho encontrava 11 modelos, inclusive por “custos”; palavra inteira sozinha também confundia o artigo “os”. Palavras maiores continuam aceitando trechos, acentos não impedem resultados e códigos com hífens ou espaços continuam disponíveis. Busca global, quatro caminhos, limpeza com retorno de foco e leitura dos 19 modelos sem JavaScript são preservados. Sem alteração de arquivos Office ou regras técnicas.
+
+## Continuidade — atalhos dentro dos materiais
+
+Índice “Nesta página” após a abertura dos 19 modelos e do guia publicado. Modelos oferecem acesso direto ao preenchimento, conteúdo, cuidados, aplicação, conversa e compartilhamento; o guia também permite ir às suas seções de leitura. Links HTML levam a destinos únicos e focáveis, sem adicionar etapas ao download nem carregar conversas automaticamente. O índice funciona sem JavaScript e em páginas já disponíveis offline; a ordem natural de Tab é preservada. Sem nova orientação técnica ou alteração de arquivos originais.
+
+## Continuidade — mesma busca de documentos no portal e app
+
+A correção de OS passa a valer também em Documentos PCM da Comunidade do app e em Modelos para sua rotina. As três listas usam um índice editorial comum, que inclui o formato: Excel encontra os 16 arquivos e Word os três. É possível combinar formato e assunto, mantendo o filtro de finalidade no app e a busca global sobre as sugestões. A busca de máquinas/tarefas permanece separada. Nenhuma preferência entra na base ou no backup.
+
+## Consolidação — portal offline durante atualização
+
+Reproduzida a abertura de HTML editorial de uma publicação nova sob o worker anterior, com CSS/JS ausentes ao voltar offline. Correção mantém até 80 recursos públicos versionados em cache separado, sem queries, callbacks ou respostas privadas; o núcleo do app permanece da versão ativa. A ativação continua aguardando liberação das abas, sem apagar rascunhos nem forçar atualização. Página não guardada recebe aviso HTML com link funcional para o app offline; falta de espaço no cache não esconde resposta online válida. Roteiro de duas publicações passa a cobrir o ramo real com PORTAL definido.
+
+## Consolidação da prévia e divulgação
+
+Pedido do mantenedor: concluir os seis pontos de consolidação. Correção offline integrada no PR #81. A prévia 0.1.0-preview.1 acrescenta três guias editoriais (semana, falhas/Pareto e plano), corrige o atalho de Conheça para o catálogo e reúne changelog, evidências, kit de 16 slides e roteiro de 28 dias. Os textos foram comparados aos modelos e capacidades; a publicação autorizada não é validação técnica humana. 20 originais e 19 cópias fictícias abriram/exportaram a primeira página no LibreOfficeDev disponível, com hashes preservados.
+
+Redes, Search Console, teste com contas/aparelhos reais e validação de uso têm estados separados. Sem acesso conectado às redes/Console, não houve postagem, alteração de perfil ou configuração de propriedade. Relatório completo em [Consolidação](CONSOLIDACAO-PORTAL.md), materiais em [Divulgação](../divulgacao/portal/README.md). A release usa o commit integrado e o CI correspondente; nenhum dado medido foi inventado.
+
+## Histórico da fila — 01/11/2026
+
+A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
+
 ## Lista única de pendências — situação em 01/11/2026
 
 Conferida contra o código e os testes do ramo `coord/pcm-man-001`. Situações: **Verificado** = implementado e
