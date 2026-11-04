@@ -1,6 +1,6 @@
 # PCM Direto
 
-[Português](README.md) · [Try the app](https://pcmdireto.me/) · [Contribute](CONTRIBUTING.en.md)
+[Português](README.md) · [Portal](https://pcmdireto.me/) · [Try the app](https://pcmdireto.me/app.html#inicio) · [Contribute](CONTRIBUTING.en.md)
 
 Free, MIT-licensed maintenance planning software for technicians and small operations with up to 100 assets. The interface is in Brazilian Portuguese. The app runs in the browser and supports offline operation after its resources have loaded.
 

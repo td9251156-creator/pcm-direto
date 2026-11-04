@@ -6,7 +6,7 @@
 - **Integrado:** modelos recebidos, coleção 2.0.2 (#64); biblioteca de máquinas 0.3.0, 47 tipos/380 tarefas (#65); apresentação simplificada a pedido do mantenedor (#66).
 - **Integrado no PR #68 e verificado:** guia de OS, contexto do modelo até o app, comunidade por material com moderação, sitemap/404 e materiais de distribuição. Detalhes, evidências e limites em [Entrega do portal](portal/ENTREGA.md).
 - **Banco real:** migração de conversas aplicada, 19 assuntos conferidos, quatro tabelas com RLS e sem SELECT direto para visitantes/contas. Participação ativa (`ativo=true`) com revisão prévia. O mantenedor informou que cadastrou os retornos do Auth e confirmou login, envio e aprovação. A leitura de uma mensagem aprovada foi conferida sem login. Retirada confirmada pelo mantenedor e ausência pública conferida com papel anônimo; autorização entre duas contas reais continua em conferência.
-- **Revisão humana:** três guias em rascunho, orientações editoriais, autorização entre contas reais, aparelhos e editores Office. Validação de uso com pessoas segue adiada.
+- **Revisão humana:** conteúdo dos quatro guias editoriais, autorização entre contas reais, aparelhos e editores Office. Três guias foram incluídos na prévia após conferência editorial, sem declarar validação humana. Validação de uso com pessoas segue adiada.
 - **Não publicado nas redes:** perfis, fixada e quatro conjuntos orgânicos em `divulgacao/portal/`. Métricas não medidas permanecem sem números.
 
 ## Continuidade — confiabilidade de Cadastros
@@ -48,6 +48,12 @@ A correção de OS passa a valer também em Documentos PCM da Comunidade do app 
 ## Consolidação — portal offline durante atualização
 
 Reproduzida a abertura de HTML editorial de uma publicação nova sob o worker anterior, com CSS/JS ausentes ao voltar offline. Correção mantém até 80 recursos públicos versionados em cache separado, sem queries, callbacks ou respostas privadas; o núcleo do app permanece da versão ativa. A ativação continua aguardando liberação das abas, sem apagar rascunhos nem forçar atualização. Página não guardada recebe aviso HTML com link funcional para o app offline; falta de espaço no cache não esconde resposta online válida. Roteiro de duas publicações passa a cobrir o ramo real com PORTAL definido.
+
+## Consolidação da prévia e divulgação
+
+Pedido do mantenedor: concluir os seis pontos de consolidação. Correção offline integrada no PR #81. A prévia 0.1.0-preview.1 acrescenta três guias editoriais (semana, falhas/Pareto e plano), corrige o atalho de Conheça para o catálogo e reúne changelog, evidências, kit de 16 slides e roteiro de 28 dias. Os textos foram comparados aos modelos e capacidades; a publicação autorizada não é validação técnica humana. 20 originais e 19 cópias fictícias abriram/exportaram a primeira página no LibreOfficeDev disponível, com hashes preservados.
+
+Redes, Search Console, teste com contas/aparelhos reais e validação de uso têm estados separados. Sem acesso conectado às redes/Console, não houve postagem, alteração de perfil ou configuração de propriedade. Relatório completo em [Consolidação](CONSOLIDACAO-PORTAL.md), materiais em [Divulgação](../divulgacao/portal/README.md). A release usa o commit integrado e o CI correspondente; nenhum dado medido foi inventado.
 
 ## Histórico da fila — 01/11/2026
 

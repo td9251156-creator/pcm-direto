@@ -1,6 +1,6 @@
 # Quatro conjuntos iniciais — rascunhos, publicação manual
 
-Os links de materiais dependem da publicação autorizada do PR. O guia aprofundado de OS é o primeiro; os outros três guias permanecem em revisão. As orientações iniciais nas páginas dos modelos podem ser usadas sem anunciar um guia ainda não publicado.
+Os links dos quatro materiais já estão públicos. Os quatro guias editoriais acompanham esta prévia: OS, semana, falhas e plano preventivo. A conferência humana permanece separada. Confirme o link público antes da postagem.
 
 ## 1. Controlar OS — PCM-MAN-004
 

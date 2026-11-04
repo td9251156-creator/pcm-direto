@@ -1,6 +1,6 @@
 {
   "name": "pcm-direto",
-  "version": "0.1.0",
+  "version": "0.1.0-preview.1",
   "description": "Gerador de PCM aberto, em português: lista de equipamentos entra, plano de manutenção sai em .xlsx e .docx. Roda 100% no navegador.",
   "license": "MIT",
   "author": "Thiago Oliveira Lima",

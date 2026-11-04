@@ -1,6 +1,6 @@
-# Perfis e publicação fixada — rascunhos para revisão
+# Perfis e publicação fixada — textos preparados
 
-Não publicados. Usar após a publicação autorizada do portal. Nenhuma mudança foi feita nas contas das redes.
+Não publicados nas redes. O portal e as páginas dos 19 modelos já estão disponíveis. Nenhuma mudança foi feita nas contas das redes por esta preparação.
 
 ## LinkedIn — descrição curta
 
@@ -35,4 +35,4 @@ Comece por um equipamento e um registro. Depois ajuste o que ficou confuso antes
 
 Conheça o projeto: https://pcmdireto.me/
 
-Visual: tela do catálogo com a seleção Controlar OS. Somente dados fictícios. Não divulgar conversas como ativas antes da migração, da configuração do retorno de login e da verificação de permissões.
+Visual: tela do catálogo com a seleção Controlar OS. Somente dados fictícios. As conversas estão ativas com revisão prévia; não apresentar conteúdo editorial como participação de usuários.

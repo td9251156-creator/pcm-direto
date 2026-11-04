@@ -38,7 +38,7 @@ await executarComRecursos({
   const c=await navegador.newContext({serviceWorkers:'block'});await preparar(c);
   await c.route('https://*.supabase.co/**',r=>r.abort());
   const p=await c.newPage();const erros=[];p.on('pageerror',e=>erros.push(e.message));
-  for(const caminho of ['/modelos/pcm-man-004/','/guias/organizar-ordens-de-servico/']){
+  for(const caminho of ['/modelos/pcm-man-004/','/guias/organizar-ordens-de-servico/','/guias/organizar-semana-manutencao/','/guias/registrar-falhas-pareto/','/guias/comecar-plano-preventivo/']){
    const url='https://pcmdireto.me'+caminho;
    await p.goto(origem+caminho+'?origem=ficticia&code=nao-compartilhar#conversa');
    const nativo=p.locator('[data-compartilhar-aparelho]'),copiar=p.locator('[data-copiar-link]'),campo=p.locator('#link-compartilhar'),status=p.locator('#status-compartilhar');
