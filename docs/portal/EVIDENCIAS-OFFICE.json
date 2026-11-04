@@ -1,0 +1,369 @@
+{
+  "data": "2026-11-04",
+  "escopo": "Abertura no LibreOffice e exportação da primeira página. Não é validação completa de fórmulas, impressão, Excel/Word ou revisão humana. codigo_na_previa significa somente presença textual do código na primeira página exportada.",
+  "conjuntos": [
+    {
+      "conjunto": "20 originais:19 modelos e procedimento",
+      "versao": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+      "arquivos": [
+        {
+          "arquivo": "PCM-MAN-001_Controle-Documental_R00.xlsx",
+          "sha256": "b76da47aa7168195dc10b67771ff684d92a1d928de79b2237c1ff952171ac999",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2611,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00.xlsx",
+          "sha256": "a34b4e340d085a34d3aa83bdd1eb5819f17131976d2bf7b820faec1b342f32d3",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 3754,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-003_Planner-de-Manutencao_R00.xlsx",
+          "sha256": "dc8c72c9e009dbe1adfefa8000e741456f18fb07a1412a79843023c75d1973c9",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2778,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-004_Ordens-de-Servico_R00.xlsx",
+          "sha256": "9bcf486504fff432bcb56469d0088c86aa26d51f2f29b17bacc4a91e646ab30b",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2573,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-005_Checklist-de-Preventiva_R00.xlsx",
+          "sha256": "74a0d37c31c2bc93ea7c000b55a721fc9bb49ed04d54bad35371ecad55b133f1",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2554,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-006_Passagem-de-Turno_R00.xlsx",
+          "sha256": "a37743bc3e528ed08be697a87e950df99368b373df54bd2c098edff6964009ae",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2364,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-007_Seguranca-no-Trabalho_R00.xlsx",
+          "sha256": "627888657b205e489fd923bcd624ea869a7fa57f5654897d5f79ef75a8f8950b",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2339,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-008_Falhas-e-Pareto_R00.xlsx",
+          "sha256": "36c7467d9eb8dd65d760377aa9643f9c6ceab2bf7039569819f22a374d19643c",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2494,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-009_Acao-Corretiva_R00.xlsx",
+          "sha256": "9adbc57907f799f08d1db186cfd9b31ef81bc8414c1d798adcf371b34b643b8c",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2341,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-010_Estoque-e-Pecas-Criticas_R00.xlsx",
+          "sha256": "bcc91433460e613942aadd12d4dac6f7fa54fa5bd56a94551a2fae17a52fa5ed",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2343,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-011_Indicadores-Mensais_R00.xlsx",
+          "sha256": "7cfac1104ebbacc9c54ef1636e2f11aa842a1e94e5f920bae4292e92a9eb214e",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2779,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-012_Orcamento-e-Custos_R00.xlsx",
+          "sha256": "085821aa7d1c166860e9e0bf66314f73b16b173042faad21ab53380afca515ba",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2658,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-013_Auditorias-da-Manutencao_R00.xlsx",
+          "sha256": "87601ee1af17806c671683418c1477e31a6fd37a251bf969f46041a2e80fa22a",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2114,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-014_Manutencao-Autonoma_R00.xlsx",
+          "sha256": "f7646e51582e69d120bdb6912216318d8762f375146e1f985aebb79fa1080421",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2869,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-015_Auditoria-5S-e-Melhorias_R00.xlsx",
+          "sha256": "64428779ad8acfeccfd3ea75605363686f63fa6a64e1d319c1164e43bedb3648",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2297,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-016_POP-e-Licao-de-Um-Ponto_R00.xlsx",
+          "sha256": "a7da662ef728b0602aa74dc99b21510fa5dca480ab5c26070ee17914c4b24845",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2168,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-017_Procedimento-MTBF-MTTR-Disponibilidade_R00.docx",
+          "sha256": "202c4b0c6ccae50901dc8dec9b70e9216a03c8fd0a82ba716f27f4bc4e041e8c",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 1762,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-017_Procedimento_R00.docx",
+          "sha256": "1a5a0b95feb4f7250fc5ea0eb9bc0693919c5479c0a183788808b115fd14ae00",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 1857,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-018_Manual-de-Gestao-de-Ativos_R00.docx",
+          "sha256": "2ba506951ead76f53999b9ec59d6ffeb681c505ec69de9aa960bf55ef4e889b2",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2082,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-019_Manual-de-Estrategia-de-Manutencao_R00.docx",
+          "sha256": "84905d8c9797e1a9af608800766297c73af0755395c66aa5470e9702f4b35e62",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 1959,
+          "codigo_na_previa": true
+        }
+      ]
+    },
+    {
+      "conjunto": "19 cópias fictícias geradas pelos roteiros",
+      "versao": "LibreOfficeDev 26.8.0.0.alpha0 2c87e51eeaa2b413ff4ae097b2705eea1995d8e5",
+      "arquivos": [
+        {
+          "arquivo": "PCM-MAN-001_Controle-Documental_R00-Preenchido.xlsx",
+          "sha256": "d3ef1381308cc11cff5a198a93d9cd97fe372461f2fdf865746975847b17a3b8",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2620,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-002_Criticidade-MFMEA-e-Plano_R00-Preenchido.xlsx",
+          "sha256": "4be19202a2d614b07c95deba4d191788eba9d1aea83fa7f8b8bb5e31576cdadb",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 3763,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-003_Planner-de-Manutencao_R00-Preenchido.xlsx",
+          "sha256": "413771df7a07cba175598c124cf484e1f02bb72bd39581006cbee25f15807372",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2787,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-004_Ordens-de-Servico_R00-Preenchido.xlsx",
+          "sha256": "797c40270b18b0be9cd22c755c04610e799ef81a33446199039dd05320e41b98",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2582,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-005_Checklist-de-Preventiva_R00-Preenchido.xlsx",
+          "sha256": "cfc21f61d4b244f65d7913ae1c5326125da2365365f7245d61c4bc5321a90cc9",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2563,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-006_Passagem-de-Turno_R00-Preenchido.xlsx",
+          "sha256": "fb08ef6cbbe10a502d89c4944aece11d22c6a5c6f5be456ef6495b575fc60d8b",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2373,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-007_Seguranca-no-Trabalho_R00-Preenchido.xlsx",
+          "sha256": "51b4f9337110dd1ccbbb5147964f0cc7cff9ddd6863ecdf8fc25d8afeb990885",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2348,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-008_Falhas-e-Pareto_R00-Preenchido.xlsx",
+          "sha256": "fc74e03caa414663080da76b5be3a13bc079f2706aaa653690ea3f9d6086388c",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2503,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-009_Acao-Corretiva_R00-Preenchido.xlsx",
+          "sha256": "a449e2498378335f19677102017b355e23d4fb75eaa84df9091e7cdbcc3cfbd0",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2350,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-010_Estoque-e-Pecas-Criticas_R00-Preenchido.xlsx",
+          "sha256": "3d93e2cd2095119b6d2e81f313c36d61c2fe5b373b9bc5f075bdd79205beed7b",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2352,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-011_Indicadores-Mensais_R00-Preenchido.xlsx",
+          "sha256": "954da1d3ae340b9a488bdd3cbc6a02d6ab42cd2dfa034459255ef7c19cfd0ff0",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2788,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-012_Orcamento-e-Custos_R00-Preenchido.xlsx",
+          "sha256": "2daecdc91c3751757d0aed94e62234ea4de4bfdd2da53d1683255075ba387f9f",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2667,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-013_Auditorias-da-Manutencao_R00-Preenchido.xlsx",
+          "sha256": "5ce914c5e34d3447668f9f0d82cd4ec9f1f1daf36e044a9a169ee5d723fcc761",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2123,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-014_Manutencao-Autonoma_R00-Preenchido.xlsx",
+          "sha256": "15be4eee3a47b7472dfb92c75c46ec1bb59b715b07aeffa49e6fcc209542e06d",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2878,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-015_Auditoria-5S-e-Melhorias_R00-Preenchido.xlsx",
+          "sha256": "eb48906e27c482bcbce3756777ed2a4ba37aae9537e831616ab152cc083e9f27",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2306,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-016_POP-e-Licao-de-Um-Ponto_R00-Preenchido.xlsx",
+          "sha256": "88f2a67d15a0e2fb1c1bc7d8b57f363e169873bca5464de5a84c4f8c4d7b2b52",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2177,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-017_Procedimento_R00-Preenchido.docx",
+          "sha256": "07aa436846065e2ebb1bd50b57e5d2983f188d8f3e9f8b801b47ea79a52c8561",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 1866,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-018_Manual-de-Gestao-de-Ativos_R00-Preenchido.docx",
+          "sha256": "74dc941e70952319873f8e3b748e167f907a94f708a8c69bc115edec4564f4ce",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 2091,
+          "codigo_na_previa": true
+        },
+        {
+          "arquivo": "PCM-MAN-019_Manual-de-Estrategia-de-Manutencao_R00-Preenchido.docx",
+          "sha256": "ff624dd439b8acfeaef91f795210314ac1f45494334e214bc259b7cd7ad08feb",
+          "original_preservado": true,
+          "abertura_e_exportacao_pdf": true,
+          "paginas_previa": 1,
+          "caracteres_extraidos": 1968,
+          "codigo_na_previa": true
+        }
+      ]
+    }
+  ]
+}

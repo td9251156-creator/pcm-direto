@@ -27,9 +27,15 @@ describe('catálogo público independente do app', () => {
 
 import { todasPaginas } from '../scripts/portal-modelos.mjs';
 import { GUIAS_PORTAL } from '../src/dados/guias-portal.js';
-it('publica somente o primeiro guia, preserva rascunhos e mantém callback fora da indexação', () => {
+it('publica os quatro guias, preserva rascunhos e mantém callback fora da indexação', () => {
   const paginas=todasPaginas();
-  expect(paginas.has('guias/organizar-ordens-de-servico/index.html')).toBe(true);
+  expect(GUIAS_PORTAL.filter(g=>g.publicado)).toHaveLength(4);
+  for(const g of GUIAS_PORTAL.filter(g=>g.publicado)){
+    const html=paginas.get(`guias/${g.slug}/index.html`);
+    expect(html).toContain(`data-comunidade-modelo="${g.codigo}"`);
+    expect(html).toContain(`app.html?modelo=${g.codigo}#inicio`);
+    expect(html).toContain(`modelos/${g.codigo.toLowerCase()}/`);
+  }
   for(const g of GUIAS_PORTAL.filter(g=>!g.publicado))expect(paginas.has(`guias/${g.slug}/index.html`)).toBe(false);
   expect(paginas.get('guias/index.html')).toContain('href="../guias/" aria-current="page"');
   expect(paginas.get('comunidade/index.html')).toContain('href="../comunidade/" aria-current="page"');
@@ -49,4 +55,11 @@ it('oferece link público limpo nos modelos e guias publicados, sem compartilhar
    expect(html.match(/id="link-compartilhar"/g)).toHaveLength(1);
   }
  }
+});
+
+it('não gera uma página para um futuro guia ainda não liberado',()=>{
+ const rascunho={...GUIAS_PORTAL[0],slug:'rascunho-ficticio-nao-publicar',publicado:false};
+ GUIAS_PORTAL.push(rascunho);
+ try{expect(todasPaginas().has('guias/rascunho-ficticio-nao-publicar/index.html')).toBe(false);}
+ finally{GUIAS_PORTAL.pop();}
 });

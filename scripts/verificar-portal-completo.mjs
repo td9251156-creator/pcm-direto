@@ -8,7 +8,7 @@ const A='10000000-0000-4000-8000-000000000001',B='20000000-0000-4000-8000-000000
 const expJWT=Math.floor(Date.now()/1000)+3600;
 const jwt=id=>Buffer.from(JSON.stringify({alg:'HS256',typ:'JWT'})).toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:id,role:'authenticated',exp:expJWT})).toString('base64url')+'.ficticio';
 const sessao=id=>({access_token:jwt(id),refresh_token:['refresh','ficticio'].join('-'),token_type:'bearer',expires_in:3600,expires_at:expJWT,user:{id,email:'colaborador@example.invalid',aud:'authenticated',app_metadata:{},user_metadata:{}}});
-const sitemap=await readFile('dist/sitemap.xml','utf8');assert.ok(!sitemap.includes('app.html'));assert.ok(!sitemap.includes('/acesso/'));assert.ok(!sitemap.includes('registrar-falhas-pareto'));
+const sitemap=await readFile('dist/sitemap.xml','utf8');assert.ok(!sitemap.includes('app.html'));assert.ok(!sitemap.includes('/acesso/'));for(const slug of ['organizar-ordens-de-servico','organizar-semana-manutencao','registrar-falhas-pareto','comecar-plano-preventivo'])assert.ok(sitemap.includes('/guias/'+slug+'/'));
 assert.match(await readFile('dist/comunidade/acesso/index.html','utf8'),/noindex,nofollow/);
 await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd(),porta:4224}),criarNavegador:()=>chromium.launch({args:process.env.PCM_SEM_SANDBOX==='1'?['--no-sandbox']:[]}),limiteTotal:240000,executar:async({navegador})=>{
  const c=await navegador.newContext({serviceWorkers:'block',acceptDownloads:true});c.setDefaultTimeout(10000);
@@ -50,8 +50,8 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
   return responder({code:'PGRST202'},404);
  });
  const p=await c.newPage();const erros=[];p.on('pageerror',e=>erros.push(e.message));
- await p.goto(origem+'/guias/');assert.equal(await p.locator('.lista-modelos-publicos li').count(),1);
- await p.getByRole('link',{name:'Ler o guia →'}).click();await p.locator('h1').filter({hasText:'Como organizar ordens'}).waitFor();
+ await p.goto(origem+'/guias/');assert.equal(await p.locator('.lista-modelos-publicos li').count(),4);
+ await p.locator('a.link-acao[href="./organizar-ordens-de-servico/"]').click();await p.locator('h1').filter({hasText:'Como organizar ordens'}).waitFor();
  assert.equal(await p.locator('[data-comunidade-modelo]').getAttribute('data-comunidade-modelo'),'PCM-MAN-004');
  assert.equal((await c.request.get(origem+'/guias/nao-existe')).status(),404);const naoExiste=await p.goto(origem+'/guias/nao-existe/');assert.equal(naoExiste.status(),404);assert.ok((await p.locator('h1').innerText()).includes('não foi encontrada'));
  await p.goto(origem+'/modelos/pcm-man-004/');assert.equal(emails,0);await p.locator('[data-carregar-conversas]').click();await p.locator('[data-entrar]').waitFor();

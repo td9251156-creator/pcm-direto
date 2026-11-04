@@ -6,7 +6,7 @@ Software livre e gratuito para técnicos e pequenas operações de manutenção 
 
 [Portal e modelos](https://pcmdireto.me/) · [Abrir o app](https://pcmdireto.me/app.html#inicio) · [Conhecer o projeto](https://pcmdireto.me/conheca.html) · [Contribuir](CONTRIBUTING.md) · [English](README.en.md)
 
-**Versão de teste.** [Modelos recebidos e limites da integração](docs/ATUALIZACAO-BIBLIOTECA-20261102.md). Modelos R00 em desenvolvimento; validação humana e documental ainda pendente. [Evidências e limites](docs/VALIDACAO-REFORMULACAO.md).
+**Versão de teste: 0.1.0-preview.1.** [Notas e versões](https://github.com/td9251156-creator/pcm-direto/releases). [Modelos recebidos e limites da integração](docs/ATUALIZACAO-BIBLIOTECA-20261102.md). Modelos R00 em desenvolvimento; validação humana e documental ainda pendente. [Evidências e limites](docs/VALIDACAO-REFORMULACAO.md).
 
 ## O que você encontra
 
@@ -20,7 +20,7 @@ Software livre e gratuito para técnicos e pequenas operações de manutenção 
 
 ## Começar pequeno
 
-1. Abra Comunidade para baixar um modelo ou Meu PCM → Explorar o exemplo. O exemplo fica isolado da base de trabalho.
+1. Abra o catálogo público para baixar um modelo ou Meu PCM → Explorar o exemplo. O exemplo fica isolado da base de trabalho.
 2. Para usar o app, cadastre poucos equipamentos, confira tarefas, criticidade e capacidade e ative uma revisão.
 3. Registre uma execução, consulte a semana e gere o documento necessário. Confira o arquivo no editor antes de usar.
 4. Baixe o backup em Meus dados. Limpar o navegador, mudar de origem ou trocar de aparelho exige restaurar uma cópia.
@@ -39,13 +39,13 @@ Você pode testar, melhorar explicações, propor conteúdo com fonte ou contrib
 
 ## Situação e próximos passos
 
-Entrada por necessidade, contribuição e questionário local já integram o projeto. O portal público reúne os 19 modelos, orientação de uso e o primeiro guia aprofundado de OS; o link do material continua no app sem alterar dados automaticamente.
+Entrada por necessidade, contribuição e questionário local já integram o projeto. O portal público reúne os 19 modelos, orientação de uso e quatro guias editoriais de OS, semana, falhas e plano preventivo; o link do material continua no app sem alterar dados automaticamente.
 
 As conversas por material estão ativas com revisão prévia. O mantenedor confirmou login, envio, aprovação e retirada; a leitura e a retirada pública foram conferidas sem login. A autorização entre duas contas reais continua em conferência.
 
 Faltam medidas confirmadas de uso e retorno; estrelas e forks não substituem essas medidas.
 
-[Índice dos documentos](docs/README.md) · [Roadmap](ROADMAP.md) · [Governança](docs/GOVERNANCA.md) · [Preparação open source](docs/PREPARACAO-OPEN-SOURCE.md) · [Créditos e licenças de terceiros](CREDITOS.md).
+[Consolidação e limites](docs/CONSOLIDACAO-PORTAL.md) · [Índice dos documentos](docs/README.md) · [Roadmap](ROADMAP.md) · [Governança](docs/GOVERNANCA.md) · [Preparação open source](docs/PREPARACAO-OPEN-SOURCE.md) · [Créditos e licenças de terceiros](CREDITOS.md).
 
 Código e biblioteca técnica sob [MIT](LICENSE). O software e a biblioteca pública continuam gratuitos; eventual patrocínio, implantação ou produto comercial separado não condiciona o acesso nem retira materiais abertos. Nenhum pagamento, patrocínio ou resultado financeiro é prometido.
 

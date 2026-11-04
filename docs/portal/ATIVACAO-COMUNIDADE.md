@@ -68,7 +68,7 @@ O retorno da Comunidade exige a troca bem-sucedida do código daquele link pelo 
 
 Para testar uma conta participante, use outro e-mail seu em uma janela anônima. Se já houver uma conta conectada nessa janela, use **Sair desta conta** antes de pedir o novo link. Copie o link recebido e abra **nessa mesma janela anônima**, sem enviá-lo ao mantenedor/agente. As janelas normais compartilham a sessão do mesmo perfil; abrir o link na janela normal não testa a conta anônima.
 
-O mantenedor relatou ver a fila ao testar outra conta. As consultas administrativas agregadas mostraram um único moderador e nenhuma permissão de escrita direta na lista para contas comuns. Isso não identifica qual sessão estava sendo usada no navegador nem conclui a causa específica do relato. O defeito reproduzido foi o callback aceitar uma sessão já aberta quando a confirmação do novo link falhava. O teste real da segunda conta continua pendente após a correção.
+O mantenedor relatou ver a fila ao testar outra conta. As consultas administrativas agregadas mostraram um único moderador e nenhuma permissão de escrita direta na lista para contas comuns. Isso não identifica qual sessão estava sendo usada no navegador nem conclui a causa específica do relato. O defeito reproduzido foi o callback aceitar uma sessão já aberta quando a confirmação do novo link falhava. Após o PR #76, o mantenedor confirmou que a conta participante entrou sem Fila de moderação. O ciclo completo de isolamento de mensagens entre contas reais continua pendente.
 
 A verificação do perfil no portal também exige o booleano `true` do servidor, usa o token da conta conferida e ignora resultados de uma consulta que deixou de pertencer à tela/conta atual. As permissões do servidor não foram ampliadas nem substituídas por controles da interface.
 
@@ -77,3 +77,7 @@ A verificação do perfil no portal também exige o booleano `true` do servidor,
 Autorização entre duas contas reais distintas; comportamento BFCache, aparelhos reais e leitor de tela. Entrega do e-mail/retorno e envio/aprovação/retirada foram confirmados pelo mantenedor, sem declarar auditoria completa da configuração do provedor. A validação de uso com pessoas segue adiada.
 
 Fontes oficiais consultadas: https://supabase.com/changelog.md , https://supabase.com/docs/guides/database/postgres/row-level-security e https://supabase.com/docs/guides/auth/redirect-urls .
+
+## Conferência adicional de 04/11
+
+Metadados e dez funções reais comparados ao repositório, sem leitura de mensagens privadas ou alterações de permissões. Relatório e avisos preservados em [Segurança conferida](SEGURANCA-CONFERIDA.md). A publicação dos quatro guias não muda autenticação, quotas ou moderação.

@@ -9,6 +9,8 @@ await executarComRecursos({criarServidor:()=>iniciarServidor({raiz:process.cwd()
  await p.goto(base+'/conheca.html');
  const links=await p.locator('a').evaluateAll(es=>es.filter(a=>a.textContent.includes('Abrir o app')||a.textContent.includes('Começar meu PCM')).map(a=>a.href));
  assert.equal(links.length,3);assert.ok(links.every(h=>h===base+'/app.html#inicio'),'Os três CTAs abrem diretamente o endereço do app');
+ await p.getByRole('link',{name:'Explorar o catálogo de modelos',exact:true}).click();await p.waitForURL('**/modelos/');await p.locator('[data-filtros]:visible').waitFor();
+ await p.goto(base+'/conheca.html');
  const rotas=[];p.on('framenavigated',f=>{if(f===p.mainFrame())rotas.push(f.url());});
  await p.getByRole('link',{name:'Abrir o app',exact:true}).click();await p.waitForURL('**/app.html#inicio');await p.locator('#conteudo h2').first().waitFor();
  assert.ok(!rotas.some(u=>new URL(u).pathname==='/'),'Clique no CTA não navega pela raiz');await c.close();

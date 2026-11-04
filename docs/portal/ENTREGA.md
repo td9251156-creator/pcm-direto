@@ -6,7 +6,7 @@ Direção: encontrar um modelo, entender como usar, aplicar na rotina e trocar e
 |---|---|---|
 | Portal e catálogo | Quatro necessidades, busca completa e páginas dos 19 modelos, com originais intactos | Leitura sem JS, teclado, quatro larguras, zero abertura de base e offline com cache pronto |
 | Orientação | Primeiro preenchimento e exemplo fictício em cada material | Conteúdo editorial; revisão técnica humana permanece separada |
-| Aprender | Índice público e guia aprofundado de OS | Outros três guias completos como rascunhos `publicado:false`, sem páginas/links públicos até revisão técnica |
+| Aprender | Índice público e quatro guias editoriais: OS, semana, falhas e plano | Conferidos com modelos e capacidades; avaliação técnica humana permanece separada. |
 | Aplicar | Capacidades específicas para 002/004/008/011; outros arquivos distinguem cadastros/texto da equipe | Parâmetro `modelo` validado pelo catálogo, intenção em memória e retorno ao material, sem gerar/alterar por abrir link |
 | Comunidade — servidor | Assuntos por código, moderação prévia, contas confirmadas, respostas em um nível, retirada, denúncias e limites | Migração aplicada em produção, 19 assuntos e acesso direto revogado conferidos; **participação ativa com revisão prévia** |
 | Comunidade — interface | Leitura pública sob demanda, login contextual, participação, “minhas”, moderação e denúncias privadas | SDK com API simulada; login/envio/aprovação/retirada confirmados pelo mantenedor e leitura/retirada pública conferidas sem login; autorização entre contas reais pendente |
@@ -22,9 +22,9 @@ Biblioteca de máquinas, dados, revisões, arquivos Office e backend do catálog
 
 O cache obrigatório mantém o núcleo do app e os pequenos assets versionados. O crescimento de páginas editoriais fica no cache público visitado, limitado a 20 navegações. Callback e respostas de autenticação não entram nesse cache. Atualização continua esperando liberar as abas antigas.
 
-## Verificado nesta entrega
+## Evidência histórica da entrega original
 
-Lint, 505 testes/65 arquivos e build aprovados. Os 25 roteiros de navegador/banco passaram, incluindo a simulação das APIs de comunidade e dos eventos de retorno de página. Revisão independente de código concluída sem bloqueadores após as correções. Nenhuma dessas evidências é apresentada como teste de Auth ou de permissões novas em produção.
+Evidência histórica do PR #68: lint, 505 testes/65 arquivos e build aprovados. Os 25 roteiros de navegador/banco passaram, incluindo a simulação das APIs de comunidade e dos eventos de retorno de página. Revisão independente de código concluída sem bloqueadores após as correções. Nenhuma dessas evidências é apresentada como teste de Auth ou de permissões novas em produção.
 
 ## Como conferir
 
@@ -38,6 +38,10 @@ O teste de lifecycle usa eventos BFCache simulados, sem afirmar conferência em 
 
 ## Próximas decisões após revisão
 
-Conferir autorização entre contas reais; revisar os três guias em rascunho para publicação gradual. Em seguida, o mantenedor poderá publicar o conteúdo orgânico preparado e iniciar uma comparação de 28 dias. Sem métricas confirmadas ou validação de uso, não há alegação de aumento de público ou retorno ao app.
+Conferir autorização entre contas reais e registrar ajustes humanos nos guias editoriais publicados com a prévia. Em seguida, o mantenedor poderá publicar o conteúdo orgânico preparado e iniciar uma comparação de 28 dias. Sem métricas confirmadas ou validação de uso, não há alegação de aumento de público ou retorno ao app.
 
 A correção de entrada direta publicada no PR #70 foi incorporada nesta entrega: os botões de apresentação abrem o app diretamente, e os links antigos continuam compatíveis sem exibir o portal antes do app.
+
+## Consolidação de 04/11
+
+Guias editoriais ampliados para quatro; busca entre portal/app alinhada; índice/compartilhamento e correção de atualização/offline integrados. Evidências atuais, abertura em LibreOffice, kit de 16 slides e limites de acesso em [Consolidação](../CONSOLIDACAO-PORTAL.md). A release e seu PR registram o commit final e os testes correspondentes.

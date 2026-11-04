@@ -1,0 +1,67 @@
+# Textos alternativos dos slides
+
+Copie o texto correspondente ao publicar cada imagem.
+
+## tema-1-slide-1.png
+
+Controlar OS — PCM-MAN-004. Sua OS conta o que aconteceu? PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-1-slide-2.png
+
+Controlar OS — PCM-MAN-004. Identifique o ativo e descreva o pedido. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-1-slide-3.png
+
+Controlar OS — PCM-MAN-004. No encerramento, registre o realizado e o que continua pendente. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-1-slide-4.png
+
+Controlar OS — PCM-MAN-004. Baixe o PCM-MAN-004 gratuito e leia a orientação em pcmdireto.me. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-2-slide-1.png
+
+Organizar a semana — PCM-MAN-003. Organize uma semana de cada vez. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-2-slide-2.png
+
+Organizar a semana — PCM-MAN-003. Reúna atividades definidas e pendências. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-2-slide-3.png
+
+Organizar a semana — PCM-MAN-003. Combine responsáveis e confira disponibilidade. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-2-slide-4.png
+
+Organizar a semana — PCM-MAN-003. Compare o combinado com o realizado. Modelo gratuito no PCM Direto. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-3-slide-1.png
+
+Entender falhas — PCM-MAN-008. Um Pareto começa no registro. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-3-slide-2.png
+
+Entender falhas — PCM-MAN-008. Identifique o ativo e descreva a ocorrência. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-3-slide-3.png
+
+Entender falhas — PCM-MAN-008. Padronize as categorias com a equipe. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-3-slide-4.png
+
+Entender falhas — PCM-MAN-008. Confira os dados antes da análise. PCM-MAN-008 gratuito no perfil. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-4-slide-1.png
+
+Começar um plano preventivo — PCM-MAN-002. Comece seu plano com poucos ativos. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-4-slide-2.png
+
+Começar um plano preventivo — PCM-MAN-002. Confira o cadastro e a identificação. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-4-slide-3.png
+
+Começar um plano preventivo — PCM-MAN-002. Discuta a criticidade e revise o planejamento. PCM Direto: modelos gratuitos. Exemplo fictício.
+
+## tema-4-slide-4.png
+
+Começar um plano preventivo — PCM-MAN-002. Aprenda antes de ampliar. PCM-MAN-002 gratuito no perfil. PCM Direto: modelos gratuitos. Exemplo fictício.
