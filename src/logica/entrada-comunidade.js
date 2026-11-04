@@ -1,4 +1,4 @@
-import { correspondeBusca } from './texto.js';
+import { modeloCorrespondeBusca } from './busca-modelos.js';
 
 export const CAMINHOS_COMUNIDADE = [
   { id: 'semana', titulo: 'Organizar a semana', modelos: ['003', '002', '004'] },
@@ -9,7 +9,7 @@ export const CAMINHOS_COMUNIDADE = [
 
 export function modelosDoCaminho(modelos, { caminho = 'os', todos = false, busca = '' } = {}) {
   const selecionado = CAMINHOS_COMUNIDADE.find(c => c.id === caminho) ?? CAMINHOS_COMUNIDADE[1];
-  if (todos || busca.trim()) return modelos.filter(m => correspondeBusca([m.codigo, m.titulo, m.quando, m.grupo, ...m.abas].join(' '), busca));
+  if (todos || busca.trim()) return modelos.filter(m => modeloCorrespondeBusca(m, busca));
   return selecionado.modelos.map(codigo => modelos.find(m => m.codigo === `PCM-MAN-${codigo}`)).filter(Boolean);
 }
 

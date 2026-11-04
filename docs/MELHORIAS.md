@@ -315,3 +315,13 @@ As páginas longas exigiam percorrer o conteúdo para chegar à conversa ou ao c
 Os links preservam os endereços antigos, não abrem o login, não consultam o servidor e não compartilham conteúdo automaticamente. Não há JavaScript novo, mudança no cache obrigatório ou alteração de dados, downloads e textos técnicos. O roteiro de navegador verifica destinos e foco por Enter no modelo e no guia, com JavaScript, sem JavaScript e offline, junto das regressões de compartilhamento. Leitor de tela e aparelhos reais permanecem como conferências separadas.
 
 Verificações: lint, 534 testes em 66 arquivos e build aprovados (`VITEST_MAX_WORKERS=1 npm run verificar`); 27 roteiros de navegador aprovados, incluindo destinos/foco com e sem JavaScript e offline, quatro larguras e downloads preservados. Captura do índice em 390 px conferida. Revisão independente somente leitura sem bloqueadores.
+
+## Busca de documentos consistente entre portal e app
+
+A busca pública por OS estava corrigida, mas as listas internas ainda usavam comparação por trecho: a mesma consulta voltava a encontrar documentos por palavras como “custos”. Excel e Word também não faziam parte do índice. Dois testes de regressão falharam antes da correção.
+
+O índice editorial comum passa a alimentar a geração HTML do portal, as sugestões/busca de Documentos PCM na Comunidade do app e Modelos para sua rotina. O formato faz parte do texto pesquisável; OS continua sendo alias explícito só do 004, sem confundir o artigo “os”. Busca global, quatro caminhos, grupos de finalidade, limpeza/foco e preferências em memória são preservados. A busca de máquinas e tarefas não adota essa regra de documentos.
+
+Sem mudança de dados operacionais, modelos originais, Auth, backend ou regras técnicas. Testes de navegador incluem as três listas, siglas, códigos, formatos, combinações e filtro de finalidade. Validação de uso com pessoas e leitores de tela permanecem separadas.
+
+Verificação: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 536 testes em 66 arquivos e build); os 27 roteiros de `npm run test:navegador` passaram. Revisão independente somente leitura sem bloqueadores.

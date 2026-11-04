@@ -1,6 +1,6 @@
 import {MODELOS_V2,GRUPOS_V2,VERSAO_BIBLIOTECA_V2,PROCEDIMENTOS_PRONTOS} from '../dados/modelos-v2.js';
 import {esc} from '../ui.js';
-import {correspondeBusca} from '../logica/texto.js';
+import {modeloCorrespondeBusca} from '../logica/busca-modelos.js';
 import {ligarOrientacaoModelos} from './orientacao-modelo.js';
 
 const filtros={busca:'',grupo:''};
@@ -21,7 +21,7 @@ export function telaModelos(main){
   ligarOrientacaoModelos(lista);
   function render(){
     filtros.busca=input.value;filtros.grupo=grupo.value;
-    const modelos=MODELOS_V2.filter(m=>(!grupo.value||m.grupo===grupo.value)&&correspondeBusca([m.codigo,m.titulo,m.quando,m.grupo,...m.abas].join(' '),input.value));
+    const modelos=MODELOS_V2.filter(m=>(!grupo.value||m.grupo===grupo.value)&&modeloCorrespondeBusca(m,input.value));
     main.querySelector('#resultado-documentos').textContent=`${modelos.length} ${modelos.length===1?'modelo encontrado':'modelos encontrados'}.`;
     lista.innerHTML=GRUPOS_V2.filter(g=>modelos.some(m=>m.grupo===g)).map((g,i)=>`<section class="grupo-documentos" aria-labelledby="finalidade-${i}"><h3 id="finalidade-${i}">${esc(g)}</h3><div class="grade duas">${modelos.filter(m=>m.grupo===g).map(m=>cartaoModeloV2(m)).join('')}</div></section>`).join('')||'<section class="cartao estado-vazio"><h3>Nenhum modelo encontrado</h3><p>Tente outra palavra ou remova o filtro de finalidade.</p><button class="secundario" id="limpar-documentos">Limpar filtros</button></section>';
     lista.querySelector('#limpar-documentos')?.addEventListener('click',()=>{input.value='';grupo.value='';render();input.focus();});
