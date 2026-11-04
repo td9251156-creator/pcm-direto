@@ -101,3 +101,5 @@ O roteiro `scripts/verificar-cadastros-gravacao.mjs` mantém uma transação fic
 
 
 O roteiro `scripts/verificar-compartilhar.mjs` simula Web Share e área de transferência em contexto isolado: verifica URL canonical sem parâmetros/fragmento, nenhum envio automático, cancelamento/falha, cópia com seleção manual, envio único, teclado e 320/390/820/1280 px. Confere campo utilizável sem JavaScript, independência do backend, offline após cache pronto, base operacional preservada e download original idêntico. Não envia links para pessoas nem modifica a área de transferência do navegador pessoal. Web Share em aparelho real e leitor de tela exigem conferência separada.
+
+O roteiro `scripts/verificar-compartilhar.mjs` também percorre “Nesta página” no modelo e no guia: Enter deve atualizar o fragmento e levar o foco ao destino único. Repete sem JavaScript e no modelo offline. Os destinos com `tabindex="-1"` não alteram a ordem normal de Tab. Conferência com leitor de tela real continua separada.

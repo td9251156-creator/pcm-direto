@@ -65,3 +65,12 @@ section.mais-modelos { display: block; }
 .compartilhar-material label { display: block; font-weight: 600; margin: 20px 0 8px; }
 .compartilhar-material input { width: 100%; max-width: 100%; min-width: 0; min-height: 44px; font: inherit; font-size: 14px; padding: 10px; color: var(--azul); background: white; border: 1px solid #7c8a9d; border-radius: 4px; }
 .compartilhar-material [role="status"] { min-height: 1.5em; }
+
+.indice-material { max-width: 800px; padding: 20px 24px; margin-bottom: 36px; border: 1px solid var(--borda); border-left: 3px solid var(--sinal); border-radius: 4px; background: white; }
+.indice-material p { margin: 0 0 8px; font-weight: 700; color: var(--azul); }
+.indice-material ul { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px 24px; list-style: none; padding: 0; margin: 0; }
+.indice-material li { min-width: 0; margin: 0; }
+.indice-material a { display: block; min-height: 44px; padding-block: 10px; font-size: 14px; overflow-wrap: anywhere; }
+.catalogo-publico section[tabindex="-1"] { scroll-margin-block-start: 24px; }
+.catalogo-publico section[tabindex="-1"]:focus-visible { outline: 3px solid var(--laranja); outline-offset: 6px; }
+@media(max-width:620px) { .indice-material ul { grid-template-columns: minmax(0,1fr); } }

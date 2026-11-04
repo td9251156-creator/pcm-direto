@@ -307,3 +307,11 @@ Reprodução com o índice real: “OS” retornava 11 modelos por casar trechos
 A mudança se limita ao catálogo público, não altera busca operacional, armazenamento, autenticação, modelos originais ou conteúdo técnico. A revisão independente identificou a colisão com o artigo e a pontuação entre parênteses; ambas foram corrigidas antes da entrega. Não há medição de uso ou promessa de crescimento associada a esta correção.
 
 Verificação: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 534 testes em 66 arquivos e build); os 27 roteiros de `npm run test:navegador` passaram. Revisão independente somente leitura sem bloqueadores após as correções. Não houve teste com leitor de tela nem validação de uso com pessoas.
+
+## Materiais: acesso direto à leitura e às ações
+
+As páginas longas exigiam percorrer o conteúdo para chegar à conversa ou ao compartilhamento. Um índice “Nesta página” passa a aparecer após a abertura dos modelos e do guia, com links para seções da própria página. Cada destino tem identificador único e foco programático por navegação HTML; `tabindex="-1"` não acrescenta paradas na sequência de Tab. O foco por teclado tem contorno visível. Em telas pequenas, o índice usa uma coluna, sem esconder conteúdo.
+
+Os links preservam os endereços antigos, não abrem o login, não consultam o servidor e não compartilham conteúdo automaticamente. Não há JavaScript novo, mudança no cache obrigatório ou alteração de dados, downloads e textos técnicos. O roteiro de navegador verifica destinos e foco por Enter no modelo e no guia, com JavaScript, sem JavaScript e offline, junto das regressões de compartilhamento. Leitor de tela e aparelhos reais permanecem como conferências separadas.
+
+Verificações: lint, 534 testes em 66 arquivos e build aprovados (`VITEST_MAX_WORKERS=1 npm run verificar`); 27 roteiros de navegador aprovados, incluindo destinos/foco com e sem JavaScript e offline, quatro larguras e downloads preservados. Captura do índice em 390 px conferida. Revisão independente somente leitura sem bloqueadores.

@@ -37,6 +37,10 @@ Conferência anterior de acesso: o mantenedor informou que, após a correção d
 
 Correção delimitada: OS/O.S. passam a identificar o modelo 004 por um alias editorial separado da descrição. Antes, a busca por trecho encontrava 11 modelos, inclusive por “custos”; palavra inteira sozinha também confundia o artigo “os”. Palavras maiores continuam aceitando trechos, acentos não impedem resultados e códigos com hífens ou espaços continuam disponíveis. Busca global, quatro caminhos, limpeza com retorno de foco e leitura dos 19 modelos sem JavaScript são preservados. Sem alteração de arquivos Office ou regras técnicas.
 
+## Continuidade — atalhos dentro dos materiais
+
+Índice “Nesta página” após a abertura dos 19 modelos e do guia publicado. Modelos oferecem acesso direto ao preenchimento, conteúdo, cuidados, aplicação, conversa e compartilhamento; o guia também permite ir às suas seções de leitura. Links HTML levam a destinos únicos e focáveis, sem adicionar etapas ao download nem carregar conversas automaticamente. O índice funciona sem JavaScript e em páginas já disponíveis offline; a ordem natural de Tab é preservada. Sem nova orientação técnica ou alteração de arquivos originais.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
