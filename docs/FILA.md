@@ -45,6 +45,10 @@ Correção delimitada: OS/O.S. passam a identificar o modelo 004 por um alias ed
 
 A correção de OS passa a valer também em Documentos PCM da Comunidade do app e em Modelos para sua rotina. As três listas usam um índice editorial comum, que inclui o formato: Excel encontra os 16 arquivos e Word os três. É possível combinar formato e assunto, mantendo o filtro de finalidade no app e a busca global sobre as sugestões. A busca de máquinas/tarefas permanece separada. Nenhuma preferência entra na base ou no backup.
 
+## Consolidação — portal offline durante atualização
+
+Reproduzida a abertura de HTML editorial de uma publicação nova sob o worker anterior, com CSS/JS ausentes ao voltar offline. Correção mantém até 80 recursos públicos versionados em cache separado, sem queries, callbacks ou respostas privadas; o núcleo do app permanece da versão ativa. A ativação continua aguardando liberação das abas, sem apagar rascunhos nem forçar atualização. Página não guardada recebe aviso HTML com link funcional para o app offline; falta de espaço no cache não esconde resposta online válida. Roteiro de duas publicações passa a cobrir o ramo real com PORTAL definido.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.

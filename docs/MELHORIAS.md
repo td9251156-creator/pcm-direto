@@ -325,3 +325,13 @@ O índice editorial comum passa a alimentar a geração HTML do portal, as suges
 Sem mudança de dados operacionais, modelos originais, Auth, backend ou regras técnicas. Testes de navegador incluem as três listas, siglas, códigos, formatos, combinações e filtro de finalidade. Validação de uso com pessoas e leitores de tela permanecem separadas.
 
 Verificação: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 536 testes em 66 arquivos e build); os 27 roteiros de `npm run test:navegador` passaram. Revisão independente somente leitura sem bloqueadores.
+
+## Consolidação: atualização e leitura pública offline
+
+O novo roteiro `verificar-atualizacao-portal.mjs` reproduziu a falha: V1 permanece ativa, V2 aguarda, um modelo recebe HTML V2 da rede, mas perde seus assets V2 ao reabrir offline. O worker agora guarda somente CSS/JS públicos de nomes versionados no diretório assets, sem query, em cache separado limitado a 80 entradas. O cache do núcleo da versão ativa não é alterado por esses recursos. Todos os caches do mesmo escopo são limpos na ativação normal, preservando os três da versão atual; não há skipWaiting ou recarga forçada.
+
+O aviso de página não guardada passa de texto sem ação para HTML acessível com link ao aplicativo. Falta de espaço ao guardar HTML ou recurso não substitui resposta online válida por uma página antiga/erro. O teste cobre recursos novos offline com V2 aguardando, query não guardada, limite, falta de espaço simulada, saída offline, edição pendente preservada e ativação após fechar as abas. Usa dados fictícios e servidor isolado; não comprova aparelhos reais ou leitor de tela.
+
+A revisão independente identificou que abrir/consultar o cache também pode falhar. O tratamento foi ampliado para leitura online, e requisições com Authorization não entram no handler. A raiz usa o HTML embutido quando sua entrada pública foi removida. Três testes unitários cobrem esses casos; os mocks passaram a fornecer Headers, como um Request real, sem retirar verificações. **Implantação:** a proteção vale após ativação normal do worker corrigido; não altera retroativamente um worker antigo que ainda controla abas abertas. Terminar o trabalho, fechar as abas/janela instalada e abrir novamente, sem apagar dados.
+
+Verificação final desta correção: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 539 testes em 66 arquivos e build); 28 roteiros de navegador aprovados. Revisão independente somente leitura sem bloqueadores após os ajustes. A suíte anterior revelou mocks sem Headers; o contrato do teste foi corrigido, sem remover asserções ou relaxar produção.

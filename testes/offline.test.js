@@ -13,7 +13,7 @@ function worker(pagina = null, portal = null) {
     keys: vi.fn(async () => [prefixo + 'antigo', 'outro-app', 'pcm-direto-outro-endereco-antigo']),
     delete: vi.fn(async () => true),
   };
-  const self = { registration: { scope }, clients: { claim: vi.fn() }, skipWaiting: vi.fn(), addEventListener: (n, f) => { eventos[n] = f; } };
+  const self = { registration: { scope }, clients: { claim: vi.fn() }, skipWaiting: vi.fn(), addEventListener: (n, f) => { eventos[n] = n === 'fetch' ? evento => { evento.request.headers ??= new Headers(); return f(evento); } : f; } };
   const fetch = vi.fn(async () => ({ ok: true, clone: () => 'página nova' }));
   const codigo = readFileSync('src/sw.js', 'utf8').replace('[/*ARQUIVOS*/]', JSON.stringify(['./index.html', './assets/app.js'])).replace('/*PAGINA*/null',JSON.stringify(pagina)).replace('/*PORTAL*/null',JSON.stringify(portal));
   runInNewContext(codigo, { self, caches, fetch, URL, Request, Response, encodeURIComponent });
@@ -132,4 +132,23 @@ describe('portal e app no mesmo worker',()=>{
  let r;w.eventos.fetch({request:{method:'GET',mode:'navigate',url:w.scope+'guias/exemplo/'},respondWith:p=>{r=p;}});await r;
  expect(w.cache.delete.mock.calls).toHaveLength(3);expect(w.cache.delete.mock.calls.every(([r])=>r.url!==w.scope)).toBe(true);
  });
+});
+
+it('não intercepta requisição autenticada mesmo para asset público versionado',()=>{
+ const w=worker('app','portal');const respondWith=vi.fn();
+ w.eventos.fetch({request:{method:'GET',url:w.scope+'assets/publico-12345678.js',headers:new Headers({Authorization:'Bearer ficticio'})},respondWith});
+ expect(respondWith).not.toHaveBeenCalled();expect(w.caches.open).not.toHaveBeenCalled();
+});
+it('continua lendo HTML e assets online se não puder abrir o cache',async()=>{
+ for(const [caminho,mode,tipo] of [['modelos/pcm-man-004/','navigate','text/html'],['assets/leitura-12345678.js','cors','text/javascript']]){
+  const w=worker('app','portal');w.caches.open.mockRejectedValue(new Error('Cache indisponível'));
+  w.fetch.mockResolvedValue(new Response('Conteúdo online válido',{headers:{'Content-Type':tipo}}));let r;
+  w.eventos.fetch({request:{method:'GET',url:w.scope+caminho,mode},respondWith:p=>{r=p;}});
+  expect(await(await r).text()).toBe('Conteúdo online válido');expect(w.fetch).toHaveBeenCalledOnce();
+ }
+});
+it('mantém a raiz do portal disponível se sua entrada foi removida do cache',async()=>{
+ const w=worker('app','portal');w.cache.match.mockResolvedValue(undefined);let r;
+ w.eventos.fetch({request:{method:'GET',mode:'navigate',url:w.scope},respondWith:p=>{r=p;}});
+ expect(await(await r).text()).toBe('portal');expect(w.fetch).not.toHaveBeenCalled();
 });
