@@ -33,6 +33,10 @@ Item 10 do roteiro de contribuição: páginas dos 19 modelos e do guia publicad
 
 Conferência anterior de acesso: o mantenedor informou que, após a correção do PR #76, a conta participante conectou sem Fila de moderação. Isso confirma o comportamento observado dos dois perfis, sem declarar auditoria completa de isolamento de mensagens privadas entre contas reais. A validação de uso com pessoas continua adiada.
 
+## Continuidade — busca por sigla no catálogo público
+
+Correção delimitada: OS/O.S. passam a identificar o modelo 004 por um alias editorial separado da descrição. Antes, a busca por trecho encontrava 11 modelos, inclusive por “custos”; palavra inteira sozinha também confundia o artigo “os”. Palavras maiores continuam aceitando trechos, acentos não impedem resultados e códigos com hífens ou espaços continuam disponíveis. Busca global, quatro caminhos, limpeza com retorno de foco e leitura dos 19 modelos sem JavaScript são preservados. Sem alteração de arquivos Office ou regras técnicas.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
