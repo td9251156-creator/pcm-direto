@@ -27,6 +27,12 @@ A interface foi corrigida para permitir login, consulta/retirada das próprias m
 
 Em conferência da segunda conta, o mantenedor relatou visualizar Fila de moderação. O banco tem um único moderador e não concede escrita direta na lista a contas comuns; a sessão usada nesse relato ainda não foi confirmada. Foi reproduzido e corrigido um defeito no retorno: um novo link inválido podia redirecionar ao material usando a sessão antiga. Agora o callback exige sucesso da troca do próprio código, preserva o identificador do fluxo PKCE e retira os parâmetros sensíveis da URL. O perfil de moderação do portal é conferido com token vinculado à conta, exige booleano verdadeiro e descarta respostas antigas. Não altera moderadores, RLS ou configuração do serviço. A causa específica do relato e o teste real com conta participante permanecem em conferência; roteiro em [Ativação da comunidade](portal/ATIVACAO-COMUNIDADE.md#retorno-do-link-e-conferência-da-segunda-conta).
 
+## Continuidade — compartilhar modelos e guias
+
+Item 10 do roteiro de contribuição: páginas dos 19 modelos e do guia publicado passam a oferecer compartilhamento pelo aparelho quando compatível, cópia do link e seleção manual. O endereço compartilhado é o canonical público, sem parâmetros, fragmentos ou conteúdo da operação. O campo permanece disponível sem JavaScript; cancelar não dispara outra ação. O módulo de compartilhamento é independente da Comunidade e funciona offline para páginas já visitadas, após o cache do app estar pronto. Testes de navegador simulam as APIs do aparelho; confirmação em aparelho real/leitor de tela permanece separada.
+
+Conferência anterior de acesso: o mantenedor informou que, após a correção do PR #76, a conta participante conectou sem Fila de moderação. Isso confirma o comportamento observado dos dois perfis, sem declarar auditoria completa de isolamento de mensagens privadas entre contas reais. A validação de uso com pessoas continua adiada.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.

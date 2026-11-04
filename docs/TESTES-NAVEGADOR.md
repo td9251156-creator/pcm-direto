@@ -98,3 +98,6 @@ O roteiro verificar-identidade.mjs também confere localização das subtelas, b
 
 
 O roteiro `scripts/verificar-cadastros-gravacao.mjs` mantém uma transação fictícia aberta para verificar envio único em Cadastros, rascunhos/foco, navegação de ida e volta, reload e falta de espaço. Confere que novas tentativas não duplicam pessoas/referências no backup em memória e que Inativar continua idempotente após falha; a cópia persistida permanece intacta. Não usa dados ou contas reais.
+
+
+O roteiro `scripts/verificar-compartilhar.mjs` simula Web Share e área de transferência em contexto isolado: verifica URL canonical sem parâmetros/fragmento, nenhum envio automático, cancelamento/falha, cópia com seleção manual, envio único, teclado e 320/390/820/1280 px. Confere campo utilizável sem JavaScript, independência do backend, offline após cache pronto, base operacional preservada e download original idêntico. Não envia links para pessoas nem modifica a área de transferência do navegador pessoal. Web Share em aparelho real e leitor de tela exigem conferência separada.

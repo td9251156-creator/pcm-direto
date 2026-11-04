@@ -57,3 +57,11 @@ section.mais-modelos { display: block; }
 .controles-conversa [aria-pressed="true"] { background: var(--azul); color: white; }
 .dialogo-comunidade { width: min(550px,90vw); border: 1px solid var(--borda); border-radius: 6px; color: var(--texto); padding: 24px; }
 .dialogo-comunidade::backdrop { background: #071c3d99; }
+
+.compartilhar-material { border-top: 1px solid var(--borda); margin-top: 36px; padding-top: 28px; max-width: 800px; }
+.compartilhar-material h2 { font-size: 26px; }
+.compartilhar-material button { font: inherit; min-height: 44px; padding: 10px 16px; background: white; color: var(--azul); border: 1px solid var(--azul); border-radius: 4px; cursor: pointer; }
+.compartilhar-material button:disabled { opacity: .55; cursor: wait; }
+.compartilhar-material label { display: block; font-weight: 600; margin: 20px 0 8px; }
+.compartilhar-material input { width: 100%; max-width: 100%; min-width: 0; min-height: 44px; font: inherit; font-size: 14px; padding: 10px; color: var(--azul); background: white; border: 1px solid #7c8a9d; border-radius: 4px; }
+.compartilhar-material [role="status"] { min-height: 1.5em; }

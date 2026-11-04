@@ -288,3 +288,14 @@ A conferência do perfil passa a exigir booleano verdadeiro e, no portal, token 
 Separadamente, o mantenedor confirmou retirada do teste anterior; uma consulta com papel anônimo retornou zero mensagens públicas no material. Essa retirada é uma evidência humana + conferência de leitura pública, não prova de autorização entre contas autenticadas distintas.
 
 Preparação da correção: lint, 528 testes/65 arquivos e build aprovados; revisão independente somente leitura sem bloqueadores. O teste anterior à correção demonstrou o redirecionamento indevido para `/modelos/pcm-man-004/` em vez de permanecer no retorno em falha. Os novos cenários usam o SDK real com provedor simulado e não enviam e-mails ou usam contas reais.
+
+
+## Compartilhar materiais públicos
+
+Páginas dos 19 modelos e do guia publicado oferecem Compartilhar no aparelho (quando compatível) e Copiar link. O campo com o endereço permanente permite seleção manual mesmo sem JavaScript. O módulo usa apenas título público e canonical validado: nunca inclui query, fragmento, sessão, comentários ou dados operacionais. Não há chamada de compartilhar/copiar ao abrir a página. Cancelar a ação nativa não aciona cópia; ações pendentes impedem cliques repetidos. Falha da cópia seleciona o endereço e explica a alternativa manual, sem anunciar sucesso falso.
+
+A entrada JavaScript do compartilhamento é separada da Comunidade e recebe nome versionado no build/cache. As páginas editoriais continuam fora do precache obrigatório; páginas visitadas ficam no cache público limitado já existente. Conteúdo, arquivos originais, Auth/Supabase e base operacional não são alterados. O teste dedicado cobre APIs simuladas, cancelamento/falha, clipboard ausente, envio único, teclado, quatro larguras, leitura sem JavaScript, backend indisponível e abertura offline com base preservada e download idêntico ao original.
+
+Revisão independente somente leitura sem bloqueadores. O compartilhamento nativo em aparelho real, leitor de tela e recebimento por outro aplicativo não foram conferidos; sucesso do teste simulado não foi tratado como essa evidência. Não há afirmação de crescimento de público ou divulgação automática nas redes.
+
+Verificação desta entrega: `npm run verificar` aprovado (lint, 529 testes em 65 arquivos e build), com `VITEST_MAX_WORKERS=1` no ambiente local; os 27 roteiros de `npm run test:navegador` foram aprovados. APIs de compartilhamento e clipboard simuladas, sem envio real.

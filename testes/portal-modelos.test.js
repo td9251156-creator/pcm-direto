@@ -35,3 +35,18 @@ it('publica somente o primeiro guia, preserva rascunhos e mantém callback fora 
   expect(paginas.get('comunidade/index.html')).toContain('href="../comunidade/" aria-current="page"');
   expect(paginas.get('comunidade/acesso/index.html')).toContain('noindex,nofollow');
 });
+
+
+it('oferece link público limpo nos modelos e guias publicados, sem compartilhar o retorno de login',()=>{
+ const paginas=todasPaginas();
+ for(const [caminho,html] of paginas){
+  const material=/^(modelos\/pcm-man-[0-9]{3}|guias\/[a-z0-9-]+)\/index\.html$/.test(caminho);
+  expect(html.includes('data-compartilhar aria-labelledby'),caminho).toBe(material);
+  if(material){
+   const url='https://pcmdireto.me/'+caminho.replace(/index\.html$/,'');
+   expect(html).toContain('readonly value="'+url+'"');
+   expect(html).toContain('src="../../src/portal-compartilhar.js"');
+   expect(html.match(/id="link-compartilhar"/g)).toHaveLength(1);
+  }
+ }
+});
