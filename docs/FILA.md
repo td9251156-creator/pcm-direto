@@ -55,6 +55,12 @@ Pedido do mantenedor: concluir os seis pontos de consolidação. Correção offl
 
 Redes, Search Console, teste com contas/aparelhos reais e validação de uso têm estados separados. Sem acesso conectado às redes/Console, não houve postagem, alteração de perfil ou configuração de propriedade. Relatório completo em [Consolidação](CONSOLIDACAO-PORTAL.md), materiais em [Divulgação](../divulgacao/portal/README.md). A release usa o commit integrado e o CI correspondente; nenhum dado medido foi inventado.
 
+## Continuidade — Plano Mestre por ativo
+
+PR #56 atualizado sobre a main atual: tarefas recolhidas por ativo, filtros combinados de setor, especialidade, busca e ausência de responsável. Busca aceita acentos e termos em qualquer ordem; limpar restaura a lista. Gravação de responsável impede envios simultâneos nessa tela e preserva o foco da busca, inclusive após sair e voltar. Filtros não escrevem na base. Sem alteração de armazenamento, modelos, frequências ou regras técnicas.
+
+Revisão independente estática concluída sem novos bloqueadores. Roteiro específico aprovado com nove e 100 ativos fictícios, quatro larguras, gravação pendente e falta de espaço; verificação completa e publicação registradas no PR. Leitor de tela e aparelhos reais permanecem pendentes.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.
@@ -83,7 +89,6 @@ técnica; **Adiado** = fora desta rodada, com justificativa.
 | P14 | Ciclo completo, 3 técnicos, celular/leitor de tela, Excel/Word/LibreOffice | Alta | **Validação humana** | Pessoas e aparelhos | LibreOffice não está instalado nesta máquina. |
 | P15 | Revisões nos modelos para integrar melhor (lista abaixo) | Média | **Aguardando arquivos do mantenedor** | M1–M11 | Cada arquivo novo: hash no manifesto, testes e conferência no Excel. |
 | P16 | Publicações de 01/11/2026 | — | **Publicado** | — | PRs #45 a #51: só Biblioteca v2, modelos revisados, D1, IAs, D4 e D5. |
-| C-01 | Item 1 do coordenador: Plano Mestre recolhido por ativo, com filtros combinados | Alta | **Implementado e revisado localmente; entrega pendente** | PR exige acesso ao GitHub; suíte completa parou por falta do Chromium do Playwright; leitor de tela real pendente | Nove ativos: 2.575 px em 390 px e 1.739 px em 1280 px; filtros combinados, teclado, foco, rótulos e segurança aprovados em `scripts/verificar-plano.mjs` com Chromium do sistema. Lint, 413 testes e build aprovados. Sem publicação. |
 
 ### Decisões do mantenedor (01/11/2026)
 
