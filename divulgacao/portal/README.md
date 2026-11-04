@@ -18,3 +18,9 @@ A sessão não tem acesso conectado ao Search Console, LinkedIn ou Instagram par
 A prévia reúne as páginas dos 19 modelos e os quatro guias editoriais. As conversas estão ativas com moderação prévia; participação ainda não foi medida.
 
 Antes de postar: conferir o link de destino, usar somente telas ou exemplos fictícios e retirar qualquer dado operacional. Não apresentar perguntas editoriais como participação espontânea. Produtos comerciais separados não condicionam acesso ao projeto.
+
+## Baixar o pacote pronto
+
+[Kit de divulgação em ZIP](https://raw.githubusercontent.com/td9251156-creator/pcm-direto/main/divulgacao/portal/kit-divulgacao.zip): 16 PNGs, quatro PDFs LinkedIn, legendas, textos alternativos, perfis, medição e licenças. A versão congelada é vinculada nas notas da pré-release.
+
+O host de uploads da release recusou a autenticação desta sessão. O pacote é distribuído como arquivo versionado do repositório, sem novas permissões ou dependência de serviço. Para atualizar: gerar com `node scripts/empacotar-divulgacao.mjs`, conferir o manifesto e copiar o ZIP de artifacts para este diretório. O arquivo não entra no build nem no cache do app.
