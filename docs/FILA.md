@@ -41,6 +41,10 @@ Correção delimitada: OS/O.S. passam a identificar o modelo 004 por um alias ed
 
 Índice “Nesta página” após a abertura dos 19 modelos e do guia publicado. Modelos oferecem acesso direto ao preenchimento, conteúdo, cuidados, aplicação, conversa e compartilhamento; o guia também permite ir às suas seções de leitura. Links HTML levam a destinos únicos e focáveis, sem adicionar etapas ao download nem carregar conversas automaticamente. O índice funciona sem JavaScript e em páginas já disponíveis offline; a ordem natural de Tab é preservada. Sem nova orientação técnica ou alteração de arquivos originais.
 
+## Continuidade — mesma busca de documentos no portal e app
+
+A correção de OS passa a valer também em Documentos PCM da Comunidade do app e em Modelos para sua rotina. As três listas usam um índice editorial comum, que inclui o formato: Excel encontra os 16 arquivos e Word os três. É possível combinar formato e assunto, mantendo o filtro de finalidade no app e a busca global sobre as sugestões. A busca de máquinas/tarefas permanece separada. Nenhuma preferência entra na base ou no backup.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.

@@ -36,6 +36,9 @@ await executarComRecursos({
     for (const termo of ['OS', 'o.s.', '(O.S.)', 'OS serviço', 'PCM MAN 004']) {
       await p.locator('input').fill(termo); assert.deepEqual(await codigos(), ['PCM-MAN-004'], termo);
     }
+    for (const [termo, quantidade] of [['Excel',16],['Word',3],['Excel OS',1],['Word OS',0]]) {
+      await p.locator('input').fill(termo); assert.equal(await lista.count(),quantidade,termo);
+    }
     await p.locator('input').fill('estoque'); assert.deepEqual(await codigos(), ['PCM-MAN-010']);
     await p.locator('input').fill(''); assert.equal(await lista.count(), 19);
     await p.locator('[data-caminho="os"]').click();

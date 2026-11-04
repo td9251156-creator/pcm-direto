@@ -22,6 +22,21 @@ await executarComRecursos({
     }
     await ir('apoio');await ir('comunidade');assert.equal(await p.locator('[data-caminho=plano]').getAttribute('aria-pressed'),'true');
     await p.reload();await lista.first().waitFor();assert.equal(await p.locator('[data-caminho=os]').getAttribute('aria-pressed'),'true');
+    for(const termo of ['OS','o.s.','(O.S.)','PCM MAN 004']){
+      await p.locator('#buscar-modelos').fill(termo);assert.deepEqual(await ids(),['modelo-PCM-MAN-004'],termo);
+    }
+    for(const [termo,quantidade] of [['Excel',16],['Word',3],['Excel OS',1],['Word OS',0]]){
+      await p.locator('#buscar-modelos').fill(termo);assert.equal(await lista.count(),quantidade,termo);
+    }
+    await ir('modelos');
+    for(const [termo,quantidade] of [['OS',1],['o.s.',1],['Excel',16],['Word',3],['Word OS',0]]){
+      await p.locator('#buscar-documentos').fill(termo);assert.equal(await p.locator('#lista-documentos article').count(),quantidade,termo);
+    }
+    await p.locator('#buscar-documentos').fill('OS');await p.locator('#grupo-documentos').selectOption('Documentação');
+    assert.equal(await p.locator('#lista-documentos article').count(),0);
+    await p.locator('#limpar-documentos').click();assert.equal(await p.locator('#lista-documentos article').count(),19);
+    assert.equal(await p.locator('#buscar-documentos').evaluate(e=>e===document.activeElement),true);
+    await ir('comunidade');
     await p.locator('#buscar-modelos').fill('estoque peças');assert.deepEqual(await ids(),['modelo-PCM-MAN-010']);
     await p.locator('#buscar-modelos').fill('');assert.equal(await lista.count(),3);
     await p.locator('#ver-todos-modelos').click();assert.equal(await lista.count(),19);

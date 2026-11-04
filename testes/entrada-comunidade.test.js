@@ -19,6 +19,17 @@ describe('entrada por necessidade', () => {
     expect(modelosDoCaminho(MODELOS_V2,{caminho:'falhas',busca:' '})).toHaveLength(3);
     expect(MODELOS_V2).toEqual(antes);
   });
+  it('encontra a sigla OS sem confundir custos ou o artigo os', () => {
+    for (const busca of ['OS', 'o.s.', '(O.S.)', 'OS serviço', 'PCM MAN 004']) {
+      expect(modelosDoCaminho(MODELOS_V2, { busca }).map(m => m.codigo), busca).toEqual(['PCM-MAN-004']);
+    }
+  });
+  it('encontra modelos por formato e combina formato com finalidade', () => {
+    expect(modelosDoCaminho(MODELOS_V2, { busca: 'Excel' })).toHaveLength(16);
+    expect(modelosDoCaminho(MODELOS_V2, { busca: 'Word' })).toHaveLength(3);
+    expect(modelosDoCaminho(MODELOS_V2, { busca: 'Excel OS' }).map(m => m.codigo)).toEqual(['PCM-MAN-004']);
+    expect(modelosDoCaminho(MODELOS_V2, { busca: 'Word OS' })).toEqual([]);
+  });
   it('decide o acesso pela demonstração, revisão salva e configuração iniciada, nessa ordem', () => {
     const e={programacao:{revisoes:[]},equipamentos:[],gestao:{organizacao:{nome:''}},metadados:{passo:1}};
     expect(acessoAoPcm(e)).toMatchObject({novo:true,rota:'assistente'});

@@ -24,3 +24,5 @@ Revisão independente de código e cenários concluída sem bloqueadores. Confer
 Guia aprofundado de ordens de serviço e continuidade contextual entre o material e o app. Ainda não implementados nesta etapa: parâmetro `modelo`, conversas por documento, mudanças no Supabase, indexação/distribuição completa e os outros três guias aprofundados. Os 24 guias atuais continuam no apoio do app.
 
 A busca pública reconhece OS, O.S. e (O.S.) como sigla explícita do modelo de ordens de serviço. Siglas curtas não casam trechos de palavras; OS usa alias separado para não confundir o artigo “os” com o documento. Códigos aceitam hífens ou espaços, e palavras maiores continuam aceitando trechos. Consultas só de pontuação não encontram modelos.
+
+Portal e listas de documentos do app compartilham o mesmo índice editorial de busca. O formato também é pesquisável: Excel encontra 16 modelos; Word, três. É possível combinar, por exemplo, “Excel OS”. As regras não são aplicadas à busca de máquinas e tarefas.
