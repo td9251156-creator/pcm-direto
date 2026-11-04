@@ -30,7 +30,13 @@ export function conferir(arquivos, diffPacote, diffTexto, ramo = 'coord/') {
   const protegidos = arquivos.filter((a) => PROTEGIDOS.some((r) => r.test(a)));
   const foraDoPerfil = perfil?.permitidos ? arquivos.filter((a) => !perfil.permitidos.some((r) => r.test(a))) : [];
   const env = arquivos.filter((a) => /(^|\/)\.env/.test(a) || /backup.*\.json$/i.test(a));
-  const dependencias = /^\+\s*"[^"]+":\s*"[^"]+"/m.test(diffPacote);
+  const linhasPacote = diffPacote.split('\n').filter(l => /^[+-](?![+-])/.test(l));
+  // A versão raiz não instala pacotes. Exceção estrita só para o coordenador;
+  // qualquer outra linha ou dependência continua sujeita ao bloqueio existente.
+  const somenteVersao = linhasPacote.length === 2 && linhasPacote[0].startsWith('-') && linhasPacote[1].startsWith('+') &&
+    linhasPacote.every(l => /^[+-] {2}"version":\s*"[^"]+",?$/.test(l));
+  const versaoDoCoordenador = perfil?.prefixo === 'coord/' && somenteVersao;
+  const dependencias = !versaoDoCoordenador && /^\+\s*"[^"]+":\s*"[^"]+"/m.test(diffPacote);
   const segredos = diffTexto.split('\n').filter((l) => l.startsWith('+') && SEGREDO.test(l)).length;
   const protegidosBloqueiam = perfil ? perfil.protegidosBloqueiam !== false : true;
   const ok = !!perfil && !foraDoPerfil.length && !(protegidosBloqueiam && protegidos.length) && !env.length && !dependencias && !segredos;

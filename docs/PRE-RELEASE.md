@@ -20,7 +20,7 @@ O levantamento antigo sobre #58/#59 na base `81100416509f684e8078a988882e830fdd9
 
 ## Verificações
 
-A correção #81 passou em lint, 539 testes/66 arquivos e 28 roteiros de navegador, com revisão independente. A preparação final passou em lint, 540 testes/66 arquivos e 28 roteiros, com os quatro guias; as execuções e o commit ficam registrados no PR; a publicação só ocorre depois do CI do commit candidato. Comandos reproduzíveis em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
+A correção #81 passou em lint, 539 testes/66 arquivos e 28 roteiros de navegador, com revisão independente. A preparação final passou em lint, 541 testes/66 arquivos e 28 roteiros, com os quatro guias; as execuções e o commit ficam registrados no PR; a publicação só ocorre depois do CI do commit candidato. Comandos reproduzíveis em [TESTES-NAVEGADOR](TESTES-NAVEGADOR.md).
 
 Conferência adicional: 20 arquivos originais e19 cópias fictícias abriram/exportaram a primeira página no LibreOfficeDev 26.8.0.0.alpha0, preservando os hashes. Isso não comprova todas as páginas/fórmulas, Excel/Word ou validação humana. [Evidências por arquivo](portal/EVIDENCIAS-OFFICE.json).
 

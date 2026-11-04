@@ -42,3 +42,11 @@ it('perfis por ramo: cada agente só altera a própria área; o coordenador rece
   expect(r('feature/qualquer', ['src/a.js']).ok).toBe(false); // ramo fora do padrão
   expect(perfilDoRamo('ia/maquinas/x').nome).toBe('banco de máquinas');
 });
+
+it('permite só metadado de versão ao coordenador sem liberar dependências ou outros agentes',()=>{
+ const versao='-  "version": "0.1.0",\n+  "version": "0.1.0-preview.1",';
+ expect(conferir(['package.json'],versao,'','coord/release').ok).toBe(true);
+ expect(conferir(['package.json'],versao,'','ia/codex/release').ok).toBe(false);
+ expect(conferir(['package.json'],versao+'\n+    "nova-lib": "1.0.0",','','coord/release').dependencias).toBe(true);
+ expect(conferir(['package.json'],'+    "version": "1.0.0",','','coord/release').dependencias).toBe(true);
+});
