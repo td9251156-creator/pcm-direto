@@ -299,3 +299,11 @@ A entrada JavaScript do compartilhamento é separada da Comunidade e recebe nome
 Revisão independente somente leitura sem bloqueadores. O compartilhamento nativo em aparelho real, leitor de tela e recebimento por outro aplicativo não foram conferidos; sucesso do teste simulado não foi tratado como essa evidência. Não há afirmação de crescimento de público ou divulgação automática nas redes.
 
 Verificação desta entrega: `npm run verificar` aprovado (lint, 529 testes em 65 arquivos e build), com `VITEST_MAX_WORKERS=1` no ambiente local; os 27 roteiros de `npm run test:navegador` foram aprovados. APIs de compartilhamento e clipboard simuladas, sem envio real.
+
+## Busca pública: sigla OS sem resultados enganosos
+
+Reprodução com o índice real: “OS” retornava 11 modelos por casar trechos em “documentos”, “custos” e outras palavras. Regressão registrada antes da correção. A correspondência de termos curtos passa a usar palavras inteiras; OS tem alias editorial próprio, ligado apenas ao 004, para não confundir a sigla com o artigo “os” nas descrições. “O.S.” e “(O.S.)” são aceitos. Trechos de palavras maiores, acentos, termos combinados e códigos permanecem pesquisáveis; uma consulta só de pontuação não apresenta todos os modelos.
+
+A mudança se limita ao catálogo público, não altera busca operacional, armazenamento, autenticação, modelos originais ou conteúdo técnico. A revisão independente identificou a colisão com o artigo e a pontuação entre parênteses; ambas foram corrigidas antes da entrega. Não há medição de uso ou promessa de crescimento associada a esta correção.
+
+Verificação: `VITEST_MAX_WORKERS=1 npm run verificar` aprovado (lint, 534 testes em 66 arquivos e build); os 27 roteiros de `npm run test:navegador` passaram. Revisão independente somente leitura sem bloqueadores após as correções. Não houve teste com leitor de tela nem validação de uso com pessoas.

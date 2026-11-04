@@ -33,6 +33,9 @@ await executarComRecursos({
       assert.deepEqual(await codigos(), ordem.map(n => 'PCM-MAN-' + n));
     }
     await p.locator('#todos-modelos').click(); assert.equal(await lista.count(), 19);
+    for (const termo of ['OS', 'o.s.', '(O.S.)', 'OS serviço', 'PCM MAN 004']) {
+      await p.locator('input').fill(termo); assert.deepEqual(await codigos(), ['PCM-MAN-004'], termo);
+    }
     await p.locator('input').fill('estoque'); assert.deepEqual(await codigos(), ['PCM-MAN-010']);
     await p.locator('input').fill(''); assert.equal(await lista.count(), 19);
     await p.locator('[data-caminho="os"]').click();
