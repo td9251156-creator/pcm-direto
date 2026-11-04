@@ -32,3 +32,5 @@ await import("./verificar-entrada-direta.mjs");
 await import('./verificar-cadastros-gravacao.mjs');
 
 await import('./verificar-compartilhar.mjs');
+
+await import('./verificar-atualizacao-portal.mjs');
