@@ -43,10 +43,17 @@ it('perfis por ramo: cada agente só altera a própria área; o coordenador rece
   expect(perfilDoRamo('ia/maquinas/x').nome).toBe('banco de máquinas');
 });
 
-it('permite só metadado de versão ao coordenador sem liberar dependências ou outros agentes',()=>{
- const versao='-  "version": "0.1.0",\n+  "version": "0.1.0-preview.1",';
- expect(conferir(['package.json'],versao,'','coord/release').ok).toBe(true);
- expect(conferir(['package.json'],versao,'','ia/codex/release').ok).toBe(false);
- expect(conferir(['package.json'],versao+'\n+    "nova-lib": "1.0.0",','','coord/release').dependencias).toBe(true);
- expect(conferir(['package.json'],'+    "version": "1.0.0",','','coord/release').dependencias).toBe(true);
+it('permite só versão raiz ao coordenador comparando JSON completo, sem liberar dependências',()=>{
+ const diff='-  "version": "0.1.0",\n+  "version": "0.1.0-preview.1",';
+ const antes={name:'pcm-direto',version:'0.1.0',dependencies:{biblioteca:'1.0.0'}};
+ const depois={...antes,version:'0.1.0-preview.1'};
+ const pacotes={antes,depois};
+ const conferirPacote=(ramo,p=pacotes,d=diff)=>conferir(['package.json'],d,'',ramo,p);
+ expect(conferirPacote('coord/release').ok).toBe(true);
+ expect(conferirPacote('ia/codex/release').ok).toBe(false);
+ expect(conferirPacote('coord/release',null).ok).toBe(false);
+ expect(conferirPacote('coord/release',{antes,depois:{...depois,dependencies:{...antes.dependencies,nova:'1.0.0'}}}).ok).toBe(false);
+ // Mesmo que o diff imite a indentação da raiz, a dependência chamada version não passa.
+ expect(conferirPacote('coord/release',{antes:{...antes,dependencies:{version:'1.0.0'}},depois:{...depois,dependencies:{version:'2.0.0'}}},'-  "version": "1.0.0",\n+  "version": "2.0.0",').ok).toBe(false);
+ expect(conferirPacote('coord/release',{antes,depois:{...depois,scripts:{postinstall:'comando-ficticio'}}}).ok).toBe(false);
 });
