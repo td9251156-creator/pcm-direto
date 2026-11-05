@@ -34,3 +34,4 @@ await import('./verificar-cadastros-gravacao.mjs');
 await import('./verificar-compartilhar.mjs');
 
 await import('./verificar-atualizacao-portal.mjs');
+await import('./verificar-criador-piloto.mjs');
