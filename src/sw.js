@@ -92,6 +92,20 @@ self.addEventListener('fetch', (evento) => {
     return;
   }
 
+  // Os modelos do criador são guardados somente depois do primeiro uso. Assim, o portal
+  // continua leve e uma criação já iniciada pode ser gerada novamente sem conexão.
+  if (PORTAL !== null && !url.search && /^criar\/modelos\/[^/]+\.xlsx$/.test(relativo)) {
+    evento.respondWith((async () => {
+      const cache = await caches.open(CACHE_RECURSOS_PUBLICOS);
+      const guardado = await cache.match(req, { ignoreVary: true });
+      if (guardado) return guardado;
+      const resposta = await fetch(req);
+      if (resposta.ok) try { await cache.put(req, resposta.clone()); } catch { /* Sem espaço: geração online continua. */ }
+      return resposta;
+    })());
+    return;
+  }
+
   // Demais arquivos (nomes mudam a cada versão): primeiro o guardado; se não tiver, busca na internet
   // Arquivos estáticos do próprio app não variam conforme o cabeçalho Origin do navegador.
   evento.respondWith(caches.open(CACHE).then((c) => c.match(req, { ignoreSearch: true, ignoreVary: true })).catch(() => null).then((guardado) => guardado || fetch(req)));
