@@ -4,6 +4,14 @@ Diagnóstico de 20/10/2026, a partir da revisão `18e06e1`. Ordem de trabalho: e
 qualidade, funções novas e melhorias de uso. Um assunto por pull request (PR); o mantenedor
 revisa antes de publicar. Itens ainda não implementados não são promessas de entrega.
 
+## Plano Mestre agrupado por ativo — 04/11/2026
+
+Atualização do PR #56: uma lista recolhida por ativo, com setor, especialidade, busca e “sem responsável” combinados. O botão de limpeza restaura a lista e o foco. A busca reutiliza a normalização existente para acentos e termos separados. As tarefas de segurança continuam presentes e as regras técnicas não mudam.
+
+Antes da correção, a busca `UTL eletrica` não encontrava termos separados e a conclusão de uma gravação lenta roubava o foco da busca. Ambos foram reproduzidos com a implementação anterior. Agora, somente os responsáveis ficam bloqueados durante a gravação; a montagem atual é conferida antes de redesenhar, sem foco global de uma tela antiga. Falha de quota mantém a orientação existente de baixar backup e não altera a base persistida.
+
+Roteiro isolado aprovado em 320/390/820/1280 px: teclado, rótulos, árvore de acessibilidade, grupos, filtros, segurança, ausência de rolagem horizontal e dados persistidos inalterados ao filtrar. Inclui 100 ativos fictícios, gravação atrasada, saída/retorno e quota. Nove ativos recolhidos: 2.730/2.568/1.827/1.690 px, respectivamente. Revisão independente somente leitura sem novos bloqueadores. Resultados da suíte completa e entrega ficam no PR; leitor de tela e aparelhos reais não executados. Sem migração, dependência, modelo original ou mudança de frequência.
+
 ## T6 — indicadores por ativo e mês fechado — 27/10/2026
 
 Complemento integrado no [PR #40](https://github.com/td9251156-creator/pcm-direto/pull/40):

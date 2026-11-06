@@ -1,3 +1,4 @@
+import { correspondeBusca } from '../logica/texto.js';
 import { estado, dadosAtuais } from '../estado.js';
 import { ocorrenciasPlanejadas, resumoMensal } from '../logica/gestao.js';
 import { resumoMensalRevisoes } from '../logica/programacao.js';
@@ -15,22 +16,73 @@ export function telaPlano(main) {
   const dados = dadosAtuais(); const hoje = textoData(new Date());
   const previstas = ocorrenciasPlanejadas(dados);
   const concluidas = new Set(estado.gestao.historico.filter(h => !h.cancelada && h.dataPrevista).map(h => `${h.equipamentoId}|${h.tarefaId}|${h.dataPrevista}`));
-  main.innerHTML = `<section class="cartao"><h2>Plano Mestre</h2><p>Uma linha por tarefa ativa, derivada da biblioteca e dos ajustes já revisados. A próxima data abaixo é uma ocorrência planejada, não uma nova regra de vencimento.</p><p><a href="#revisao">Editar frequências e capacidade na Revisão</a> · <a href="#mensal">Ver planejamento mensal</a> · <a href="#execucao">Registrar execução</a></p><label for="busca-plano">Buscar TAG, atividade ou especialidade</label><input id="busca-plano" type="search" placeholder="Ex.: UTL ou lubrificação"></section><section class="cartao"><div id="lista-plano"></div></section>`;
+  const ativas = dados.plano.filter(l => l.ativa);
+  const ativos = new Map(dados.equipamentos.map(e => [e.id, e]));
+  const opcoes = valores => [...new Set(valores)].sort((a, b) => a.localeCompare(b, 'pt-BR')).map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  main.innerHTML = `<section class="cartao"><h2>Plano Mestre</h2><p>Abra um ativo para consultar suas tarefas e responsáveis. A próxima data abaixo é uma ocorrência planejada, não uma nova regra de vencimento.</p><p><a href="#revisao">Editar frequências e capacidade na Revisão</a> · <a href="#mensal">Ver planejamento mensal</a> · <a href="#execucao">Registrar execução</a></p><div class="grade duas filtros-plano"><div><label for="busca-plano">Buscar TAG, ativo, atividade ou especialidade</label><input id="busca-plano" aria-controls="lista-plano" type="search" placeholder="Ex.: UTL ou lubrificação"></div><div><label for="setor-plano">Setor</label><select id="setor-plano" aria-controls="lista-plano"><option value="">Todos os setores</option>${opcoes(ativas.map(l => ativos.get(l.equipamentoId)?.setor).filter(Boolean))}</select></div><div><label for="especialidade-plano">Especialidade</label><select id="especialidade-plano" aria-controls="lista-plano"><option value="">Todas as especialidades</option>${opcoes(ativas.map(l => l.especialidade))}</select></div></div><label class="caixa" for="sem-responsavel-plano"><input id="sem-responsavel-plano" type="checkbox" aria-controls="lista-plano"> Só tarefas sem responsável</label><button type="button" id="limpar-plano" class="secundario" aria-controls="lista-plano">Limpar filtros</button><p id="gravacao-plano" role="status" aria-live="polite"></p><p id="resumo-plano" role="status" aria-live="polite" aria-atomic="true"></p></section><section class="cartao" aria-label="Tarefas por ativo"><div id="lista-plano"></div></section>`;
   const lista = main.querySelector('#lista-plano');
+  const raiz = main.firstElementChild;
+  const vigente = () => main.firstElementChild === raiz;
+  let gravando = false;
+  function sinalizarGravacao() {
+    lista.setAttribute('aria-busy', String(gravando));
+    lista.querySelectorAll('select').forEach(c => { c.disabled = gravando; });
+    main.querySelector('#gravacao-plano').textContent = gravando ? 'Guardando responsável…' : '';
+  }
   function mostrar() {
-    const busca = main.querySelector('#busca-plano').value.toLocaleLowerCase('pt-BR');
-    lista.innerHTML = tabela(['Ativo / atividade', 'Frequência / horas', 'Especialidade', 'Responsável', 'Próxima ocorrência'], dados.plano.filter(l => l.ativa && `${l.tag} ${l.descricao} ${l.especialidade}`.toLocaleLowerCase('pt-BR').includes(busca)).map(l => {
+    const abertas = new Set([...lista.querySelectorAll('details[open]')].map(d => d.dataset.ativo));
+    const foco = lista.contains(document.activeElement) ? document.activeElement.id : '';
+    const busca = main.querySelector('#busca-plano').value;
+    const setor = main.querySelector('#setor-plano').value;
+    const especialidade = main.querySelector('#especialidade-plano').value;
+    const semResponsavel = main.querySelector('#sem-responsavel-plano').checked;
+    const filtradas = ativas.filter(l => correspondeBusca(`${l.tag} ${l.equipamento} ${l.tarefaId} ${l.descricao} ${l.especialidade}`, busca)
+      && (!setor || ativos.get(l.equipamentoId)?.setor === setor)
+      && (!especialidade || l.especialidade === especialidade)
+      && (!semResponsavel || !estado.gestao.responsaveis[chaveAjuste(l.equipamentoId, l.tarefaId)]));
+    const grupos = new Map();
+    for (const l of filtradas) {
+      if (!grupos.has(l.equipamentoId)) grupos.set(l.equipamentoId, []);
+      grupos.get(l.equipamentoId).push(l);
+    }
+    main.querySelector('#resumo-plano').textContent = `${filtradas.length} de ${ativas.length} tarefas ativas em ${grupos.size} ativos. Os filtros também se aplicam às tarefas de segurança; elas continuam no plano.`;
+    function linha(l) {
       const chave = chaveAjuste(l.equipamentoId, l.tarefaId);
       const proxima = previstas.find(o => o.equipamentoId === l.equipamentoId && o.tarefaId === l.tarefaId && o.dataPrevista >= hoje && !concluidas.has(o.chave));
-      return `<tr><td><strong>${esc(l.tag)}</strong> · ${esc(l.tarefaId)}<br>${esc(l.descricao)}${l.seguranca ? ' <span class="selo-seguranca">SEGURANÇA</span>' : ''}<div class="origem">${esc(l.origem)} · versão ${esc(l.versao)}</div></td><td>${esc(l.periodicidade)}<br>${num(l.duracaoHoras, 2)} h por execução</td><td>${esc(l.especialidade)}</td><td><label class="oculto" for="resp-${l.equipamentoId}-${l.tarefaId}">Responsável por ${esc(l.tag)} ${esc(l.tarefaId)}</label><select id="resp-${l.equipamentoId}-${l.tarefaId}" data-chave="${esc(chave)}">${pessoasOpcoes(estado.gestao.responsaveis[chave])}</select></td><td>${proxima ? dataExibida(proxima.dataPrevista) : 'Sem ocorrência futura neste ciclo'}</td></tr>`;
-    }), 'Nenhuma tarefa ativa com esses filtros.');
+      return `<tr><td><strong>${esc(l.tag)}</strong> · ${esc(l.tarefaId)}<br>${esc(l.descricao)}${l.seguranca ? ' <span class="selo-seguranca">SEGURANÇA</span>' : ''}<div class="origem">${esc(l.origem)} · versão ${esc(l.versao)}</div></td><td>${esc(l.periodicidade)}<br>${num(l.duracaoHoras, 2)} h por execução</td><td>${esc(l.especialidade)}</td><td><label class="oculto" for="resp-${esc(l.equipamentoId)}-${esc(l.tarefaId)}">Responsável por ${esc(l.tag)} ${esc(l.tarefaId)}</label><select id="resp-${esc(l.equipamentoId)}-${esc(l.tarefaId)}" data-chave="${esc(chave)}">${pessoasOpcoes(estado.gestao.responsaveis[chave])}</select></td><td>${proxima ? dataExibida(proxima.dataPrevista) : 'Sem ocorrência futura neste ciclo'}</td></tr>`;
+    }
+    lista.innerHTML = [...grupos].map(([id, linhas]) => {
+      const l = linhas[0]; const seguranca = linhas.filter(t => t.seguranca).length;
+      return `<details class="plano-ativo" data-ativo="${esc(id)}"${abertas.has(id) ? ' open' : ''}><summary id="plano-ativo-${esc(id)}"><strong>${esc(l.tag)}</strong> · ${esc(l.equipamento)}<span class="plano-contagem">${linhas.length} tarefas com os filtros atuais${seguranca ? ` · ${seguranca} de segurança` : ''}</span></summary>${tabela(['Ativo / atividade', 'Frequência / horas', 'Especialidade', 'Responsável', 'Próxima ocorrência'], linhas.map(linha))}</details>`;
+    }).join('') || '<p>Nenhuma tarefa ativa com esses filtros. Altere a busca ou os filtros para ver outras tarefas.</p>';
+    sinalizarGravacao();
+    if (foco) (document.getElementById(foco) || main.querySelector('#sem-responsavel-plano')).focus();
   }
   mostrar();
   main.querySelector('#busca-plano').addEventListener('input', mostrar);
+  for (const id of ['setor-plano', 'especialidade-plano', 'sem-responsavel-plano']) main.querySelector(`#${id}`).addEventListener('change', mostrar);
+  main.querySelector('#limpar-plano').addEventListener('click', () => {
+    for (const id of ['busca-plano', 'setor-plano', 'especialidade-plano']) main.querySelector('#' + id).value = '';
+    main.querySelector('#sem-responsavel-plano').checked = false;
+    mostrar(); main.querySelector('#busca-plano').focus();
+  });
   lista.addEventListener('change', async e => {
-    if (!e.target.dataset.chave) return;
-    const nova = copiaGestao(); nova.responsaveis[e.target.dataset.chave] = e.target.value;
-    const foco = e.target.id; (await guardar(nova, mostrar, foco));
+    const alvo = e.target;
+    if (!alvo.dataset.chave || gravando || !vigente()) return;
+    const nova = copiaGestao(); nova.responsaveis[alvo.dataset.chave] = alvo.value;
+    gravando = true; sinalizarGravacao();
+    try {
+      await guardar(nova, () => {
+        if (!vigente()) return;
+        const devolverFoco = document.activeElement === alvo || document.activeElement === document.body;
+        gravando = false;
+        mostrar();
+        if (devolverFoco) (document.getElementById(alvo.id) || main.querySelector('#sem-responsavel-plano')).focus();
+      });
+    } finally {
+      gravando = false;
+      if (vigente()) sinalizarGravacao();
+    }
   });
 }
 
