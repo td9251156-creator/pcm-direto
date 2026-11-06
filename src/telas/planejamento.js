@@ -10,6 +10,7 @@ import { indicadoresMensais, ativosDosIndicadores, mesFechado } from '../logica/
 import { avisar, baixar } from '../ui.js';
 import { MODELOS_V2 } from '../dados/modelos-v2.js';
 import { dadosPcmMan011 } from '../logica/biblioteca-v2-dados.js';
+import { montarResponsavelLote } from './responsavel-lote.js';
 
 export function telaPlano(main) {
   const dados = dadosAtuais(); const hoje = textoData(new Date());
@@ -26,6 +27,7 @@ export function telaPlano(main) {
     }), 'Nenhuma tarefa ativa com esses filtros.');
   }
   mostrar();
+  montarResponsavelLote(main, dados.plano, mostrar);
   main.querySelector('#busca-plano').addEventListener('input', mostrar);
   lista.addEventListener('change', async e => {
     if (!e.target.dataset.chave) return;
