@@ -55,6 +55,12 @@ Pedido do mantenedor: concluir os seis pontos de consolidação. Correção offl
 
 Redes, Search Console, teste com contas/aparelhos reais e validação de uso têm estados separados. Sem acesso conectado às redes/Console, não houve postagem, alteração de perfil ou configuração de propriedade. Relatório completo em [Consolidação](CONSOLIDACAO-PORTAL.md), materiais em [Divulgação](../divulgacao/portal/README.md). A release usa o commit integrado e o CI correspondente; nenhum dado medido foi inventado.
 
+## Continuidade — Plano Mestre por ativo
+
+PR #56 atualizado sobre a main atual: tarefas recolhidas por ativo, filtros combinados de setor, especialidade, busca e ausência de responsável. Busca aceita acentos e termos em qualquer ordem; limpar restaura a lista. Gravação de responsável impede envios simultâneos nessa tela e preserva o foco da busca, inclusive após sair e voltar. Filtros não escrevem na base. Sem alteração de armazenamento, modelos, frequências ou regras técnicas.
+
+Revisão independente estática concluída sem novos bloqueadores. Roteiro específico aprovado com nove e 100 ativos fictícios, quatro larguras, gravação pendente e falta de espaço; verificação completa e publicação registradas no PR. Leitor de tela e aparelhos reais permanecem pendentes.
+
 ## Histórico da fila — 01/11/2026
 
 A lista abaixo registra o estado daquela rodada e não substitui a atualização acima.

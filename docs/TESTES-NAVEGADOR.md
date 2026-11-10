@@ -68,6 +68,16 @@ e-mails, não acessa contas reais e não comprova a entrega do link de autentica
 Leitor de tela, aparelhos reais, conteúdo e impressão no Excel/LibreOffice continuam exigindo
 conferência manual. O cenário especializado de atualização não testa migrações de esquema.
 
+`verificar-plano.mjs` abre `/app.html#plano` após restaurar backup antigo fictício.
+Confere nove ativos recolhidos em 320/390/820/1280 px, altura abaixo de 6.000 px,
+ausência de rolagem horizontal e filtros combinados com busca por termos sem acentos.
+Confere Enter/Espaço, Tab, foco, rótulos e árvore de acessibilidade, troca individual de
+responsável e saída do último resultado. Comparação da base persistida comprova que
+filtrar não grava dados. Exercita gravação atrasada, busca durante gravação, saída e
+retorno, erro de quota, limpeza e preservação de tarefas de segurança. Um segundo
+contexto restaura 100 ativos fictícios e verifica grupos e busca em 320 px.
+Isso não substitui leitor de tela ou aparelho real.
+
 O roteiro também executa `verificar-pdfs-banco.mjs`, com PostgreSQL em memória (PGlite) e
 substitutos de auth/storage sem rede, e `verificar-pdfs-comunidade.mjs`, com API simulada
 no servidor local 4178. Este último usa tela de 390 px, SDK real e eventos fictícios de sessão:
