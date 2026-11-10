@@ -1,0 +1,73 @@
+import assert from 'node:assert/strict';
+import { createServer } from 'vite';
+import { executarComRecursos } from './navegador.mjs';
+import { readFile } from 'node:fs/promises';
+import { EXEMPLO } from '../src/dados/exemplo.js';
+import { atribuirTags } from '../src/logica/tag.js';
+const biblioteca = JSON.parse(await readFile(new URL('../src/dados/biblioteca.json', import.meta.url), 'utf8'));
+const equipamentos = atribuirTags(EXEMPLO.map((e, i) => ({ ...e, id: `eq${i}` })), Object.fromEntries(biblioteca.tipos.map(t => [t.id, t.sigla])));
+const backup = { aplicativo: 'PCM Direto', versao: 1, biblioteca, rascunho: { equipamentos, ajustes: {}, execucoes: {}, exemplo: false, inicio: '2026-11-01', capacidade: {} } };
+const { chromium } = await import(process.env.PCM_PLAYWRIGHT || new URL('../ferramentas/navegador/node_modules/playwright/index.mjs', import.meta.url).href);
+await executarComRecursos({
+  criarServidor: async () => { const s = await createServer({ server: { host: '127.0.0.1', port: 4207, strictPort: true } }); await s.listen(); return s; },
+  criarNavegador: () => chromium.launch({ executablePath: process.env.PCM_CHROMIUM || undefined, args: process.env.PCM_SEM_SANDBOX === '1' ? ['--no-sandbox'] : [] }),
+  executar: async ({ navegador }) => {
+    const c = await navegador.newContext({ serviceWorkers: 'block', viewport: { width: 390, height: 844 } });
+    await c.route('**/*', r => new URL(r.request().url()).hostname === '127.0.0.1' ? r.continue() : r.abort());
+    const p = await c.newPage(); const erros = []; p.on('pageerror', e => erros.push(e.message));
+    const ir = async rota => { await p.goto(`http://127.0.0.1:4207/#${rota}`); await p.locator('#conteudo h2').waitFor(); };
+    await ir('dados');
+    await p.locator('#restaurar-backup').setInputFiles({ name: 'ficticio.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup)) });
+    await p.locator('#confirmar-backup').click(); await p.waitForURL('**/#semana');
+    await ir('cadastros');
+    await p.locator('#g-pessoa-nome').fill('Pessoa fictícia'); await p.locator('#g-funcao').fill('Manutenção');
+    await p.locator('#g-especialidade').fill('Elétrica'); await p.locator('#salvar-pessoa').click();
+    await p.getByRole('button', { name: 'Editar Pessoa fictícia', exact: true }).waitFor();
+    await ir('plano');
+    const ler = () => p.evaluate(async () => { const { estado, dadosAtuais } = await import('/src/estado.js'); return { gestao: structuredClone(estado.gestao), plano: dadosAtuais().plano }; });
+    const antes = await ler(); const ativo = antes.plano[0].equipamentoId;
+    const pessoa = antes.gestao.pessoas.find(p => p.nome === 'Pessoa fictícia').id;
+    const linhas = antes.plano.filter(l => l.ativa && l.equipamentoId === ativo);
+    await p.locator('#lote-grupo').selectOption(ativo); await p.locator('#lote-pessoa').selectOption(pessoa);
+    await p.getByRole('button', { name: 'Conferir alterações' }).click();
+    assert.match(await p.locator('#lote-previa').innerText(), new RegExp(`${linhas.length} tarefas mudarão`));
+    assert.deepEqual((await ler()).gestao, antes.gestao, 'Prévia não grava');
+    await p.getByRole('button', { name: 'Voltar sem alterar' }).click();
+    assert.deepEqual((await ler()).gestao, antes.gestao, 'Cancelar não altera os dados');
+    await p.getByRole('button', { name: 'Conferir alterações' }).click();
+    await p.locator('#lote-modo').selectOption('especialidade');
+    assert.equal(await p.locator('#lote-confirmar').count(), 0, 'Mudar seleção invalida prévia');
+    await p.locator('#lote-modo').selectOption('equipamentoId'); await p.locator('#lote-grupo').selectOption(ativo);
+    await p.getByRole('button', { name: 'Conferir alterações' }).click();
+    await p.getByRole('button', { name: 'Confirmar atribuição' }).click();
+    await p.waitForFunction(() => !document.querySelector('#lote-confirmar'));
+    let depois = await ler();
+    assert.equal(await p.getByRole('button', { name: 'Conferir alterações' }).evaluate(e => document.activeElement === e), true, 'Foco retorna ao botão após gravar');
+    const esperado = { ...antes.gestao.responsaveis };
+    for (const l of linhas) esperado[`${l.equipamentoId}|${l.tarefaId}`] = pessoa;
+    assert.deepEqual(depois.gestao.responsaveis, esperado, 'Somente tarefas do ativo recebem responsável');
+    assert.deepEqual({ ...depois.gestao, responsaveis: {} }, { ...antes.gestao, responsaveis: {} }, 'Outros dados preservados');
+    assert.deepEqual(depois.plano, antes.plano, 'Inclui segurança: conteúdo, frequência e atividade intactos');
+    await p.getByRole('button', { name: 'Conferir alterações' }).click();
+    assert.match(await p.locator('#lote-previa').innerText(), /0 tarefas mudarão/);
+    assert.equal(await p.locator('#lote-confirmar').count(), 0);
+    await p.locator('#lote-modo').selectOption('especialidade');
+    const especialidade = linhas.find(l => l.seguranca).especialidade;
+    await p.locator('#lote-grupo').selectOption(especialidade);
+    await p.getByRole('button', { name: 'Conferir alterações' }).click();
+    const mudam = antes.plano.filter(l => l.ativa && l.especialidade === especialidade && !esperado[`${l.equipamentoId}|${l.tarefaId}`]);
+    assert.match(await p.locator('#lote-previa').innerText(), new RegExp(`${mudam.length} tarefas mudarão`));
+    await p.getByRole('button', { name: 'Confirmar atribuição' }).click();
+    await p.waitForFunction(() => !document.querySelector('#lote-confirmar'));
+    for (const l of mudam) esperado[`${l.equipamentoId}|${l.tarefaId}`] = pessoa;
+    depois = await ler(); assert.deepEqual(depois.gestao.responsaveis, esperado);
+    assert.deepEqual(depois.plano, antes.plano);
+    await ir('mensal'); await ir('plano');
+    assert.deepEqual((await ler()).gestao.responsaveis, esperado, 'Atribuições continuam ao trocar de tela');
+    await p.reload(); await p.locator('#form-responsavel-lote').waitFor();
+    assert.deepEqual((await ler()).gestao.responsaveis, esperado, 'Atribuições persistem após recarregar');
+    for (const width of [390, 1280]) { await p.setViewportSize({ width, height: 844 }); assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth)); }
+    assert.deepEqual(erros, []); await c.close();
+    console.log('Lote: prévia, cancelamento, invalidação, ativo, especialidade, nenhuma mudança e segurança aprovados em 390/1280 px (dados fictícios).');
+  },
+});
