@@ -26,7 +26,7 @@ jobs:
       executar: ${{ steps.configuracao.outputs.executar }}
       base: ${{ steps.base.outputs.sha }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Fixar a base desta rodada
@@ -83,7 +83,7 @@ jobs:
     env:
       PCM_BASE_SHA: ${{ needs.preparar.outputs.base }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.preparar.outputs.base }}
           persist-credentials: false
@@ -130,7 +130,7 @@ jobs:
     env:
       PCM_BASE_SHA: ${{ needs.preparar.outputs.base }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.preparar.outputs.base }}
           persist-credentials: false
@@ -176,7 +176,7 @@ jobs:
     env:
       PCM_BASE_SHA: ${{ needs.preparar.outputs.base }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.preparar.outputs.base }}
           persist-credentials: false
@@ -208,7 +208,7 @@ jobs:
     env:
       PCM_BASE_SHA: ${{ needs.preparar.outputs.base }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.preparar.outputs.base }}
           persist-credentials: false
