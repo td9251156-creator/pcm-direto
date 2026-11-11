@@ -40,7 +40,7 @@ jobs:
         run: npm run test:navegador
       - name: Guardar a versão final para publicar
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
