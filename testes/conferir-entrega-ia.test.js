@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { conferir, PROTEGIDOS, perfilDoRamo } from '../scripts/conferir-entrega-ia.mjs';
 
 it('aponta arquivos protegidos, ambiente/backup, dependência nova e possível senha', () => {
@@ -22,11 +22,16 @@ it('a lista de protegidos do conferidor é a mesma do AGENTS.md', () => {
   expect(PROTEGIDOS).toHaveLength(9);
 });
 
-it('OpenCode não compartilha sessões e não envia, integra nem instala sozinho', () => {
-  const c = JSON.parse(readFileSync('opencode.json', 'utf8'));
-  expect(c.share).toBe('disabled');
-  for (const cmd of ['git push*', 'git merge*', 'gh pr merge*', 'npm install*']) expect(c.permission.bash[cmd], cmd).toBe('deny');
-  expect(c.permission.bash['*']).toBe('ask');
+it('configurações legadas ausentes e ramos de ferramentas descontinuadas bloqueados', () => {
+  for (const arquivo of ['opencode.json', 'CLAUDE.md']) expect(existsSync(arquivo), arquivo).toBe(false);
+  for (const ramo of ['ia/opencode/teste', 'ia/claude/teste', 'ia/outro/teste']) {
+    expect(perfilDoRamo(ramo)).toBeNull();
+    expect(conferir(['src/a.js'], '', '', ramo).ok).toBe(false);
+  }
+  expect(conferir(['src/a.js'], '', '', 'ia/copilot/teste').ok).toBe(true);
+  const fluxo = readFileSync('.github/workflows/agentes-ia.yml', 'utf8');
+  expect(fluxo).not.toMatch(/secrets\.|schedule:|codex-action|OPENAI_API_KEY/);
+  expect(fluxo).toContain('permissions: {}');
 });
 
 it('perfis por ramo: cada agente só altera a própria área; o coordenador recebe aviso em protegidos', () => {
