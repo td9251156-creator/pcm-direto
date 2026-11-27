@@ -97,46 +97,64 @@ As chamadas de IA pela API do Actions estão pausadas. Não reative a API nem su
 O fluxo de API preservado no repositório gera PRs em rascunho e não integra ou publica sozinho.
 O Actions continua executando testes e publicação.
 
-## Ferramentas de IA usadas pelo mantenedor (papéis)
+## Ferramentas de IA autorizadas pelo mantenedor (papéis)
 
-| Ferramenta | Papel | Ramo |
+Direção vigente: o desenvolvimento usa Codex, com apoio do ChatGPT e, quando solicitado,
+do GitHub Copilot. OpenCode, DeepSeek via OpenCode e Claude Code não fazem parte do fluxo
+autorizado. Não inicie, instale, configure ou delegue tarefas a essas ferramentas. Configurações,
+ramos e instruções históricas não constituem autorização para uso. Em caso de divergência com
+documentos antigos sobre ferramentas, prevalece esta seção. A retirada dessas ferramentas do fluxo
+não implica apagar ramos, arquivos ou histórico sem autorização.
+
+| Ferramenta / responsável | Papel | Ramo |
 |---|---|---|
-| Claude Code | Coordena e integra: geradores OOXML, armazenamento e backup, importação, banco, revisão final, verificação completa e preparo da publicação | `coord/...` |
-| GitHub Copilot | No editor: ajustes pequenos e testes simples. Agente **banco-maquinas**: propostas de máquinas/tarefas só em `propostas-maquinas/`. No GitHub: revisão automática dos PRs | `ia/copilot/...` |
-| Codex | Itens prontos da fila, um por vez, pelo prompt `.github/prompts/coordenar.prompt.md` (entrega PR; não integra) | `ia/codex/...` |
-| OpenCode + DeepSeek | Tarefas mecânicas e delimitadas: textos, documentação, testes extras, scripts de conferência e capturas | `ia/opencode/...`, em `git worktree` separado |
-| ChatGPT | Apenas consulta: procedimentos, opções e revisão de texto. Não edita o repositório nem os modelos | — |
+| Mantenedor | Define prioridades, aprova mudanças sensíveis, integração e publicação | — |
+| Codex — coordenação técnica | Delimita tarefas, implementa correções, coordena testes, revisa entregas e prepara integração; pode atuar como coordenador quando designado pelo mantenedor | `coord/<assunto>` |
+| Codex — implementação | Executa um item da fila por vez, pelo prompt `.github/prompts/coordenar.prompt.md`, entrega PR sem integrar automaticamente | `ia/codex/<item>` |
+| ChatGPT | Planejamento, diagnóstico, consulta ao GitHub, preparação de tarefas, revisão de PRs e documentação; pode editar arquivos de documentação quando solicitado, em ramo próprio, com PR e registro de limitações | `coord/<assunto>` para documentação autorizada |
+| GitHub Copilot (opcional) | Quando solicitado, ajustes pequenos, testes, revisão independente e propostas delimitadas de máquinas ou divulgação | `ia/copilot/...`, `ia/maquinas/...`, `ia/divulgacao/...` |
 
-**Agentes e prompts prontos** (detalhes em docs/CONTRIBUIR-COM-IA.md):
+A coordenação técnica não substitui a aprovação do mantenedor. Quem implementa não pode
+declarar revisão independente do próprio trabalho. O ChatGPT não deve alegar que executou testes
+locais ou que publicou o produto se não teve acesso ao ambiente ou se não confirmou o resultado.
+
+**Agentes e prompts prontos** (detalhes em docs/CONTRIBUIR-COM-IA.md; instruções antigas sobre
+ferramentas descontinuadas não devem ser seguidas):
 - `.github/prompts/coordenar.prompt.md`: coordenação em ciclos de um item por vez (fila com critérios de aceite).
 - `.github/agents/banco-maquinas.agent.md`: máquinas reais com o mantenedor, só em `propostas-maquinas/`, campos alinhados
   aos modelos; conferido por `scripts/validar-proposta-maquinas.mjs`.
 - `.github/agents/redes-sociais.agent.md`: conteúdos de divulgação com o mantenedor, só em `divulgacao/`; nunca publica.
 
-- **Arquivos protegidos** (só o coordenador altera, com pedido explícito): `src/logica/gestao.js`, `src/estado.js`,
+- **Arquivos protegidos** (só o coordenador técnico designado pelo mantenedor altera, com pedido explícito): `src/logica/gestao.js`, `src/estado.js`,
   `src/repositorio.js`, `src/logica/operacao.js`, `src/integracao/`, `src/saida/biblioteca-v2-*.js`,
   `src/dados/biblioteca-pcm-v2.json`, `public/modelos/**` e `supabase/**`.
 - Nenhum dado da fábrica, backup real, chave ou `.env` vai para qualquer ferramenta de IA ou serviço externo.
 - Toda entrega informa o ramo, os arquivos alterados, a saída real de `npm run verificar` e de
-  `node scripts/conferir-entrega-ia.mjs` e o que ficou pendente. Passo a passo para o mantenedor: docs/CONTRIBUIR-COM-IA.md.
+  `node scripts/conferir-entrega-ia.mjs` e o que ficou pendente. Quando não for possível executar
+  um comando, registre o motivo e aguarde a verificação no ambiente apropriado.
 
 ### Pastas e ramos dos agentes
-A pasta `app` é só do desenvolvimento original e da integração (coordenador). Nenhum agente trabalha nela.
+
+A pasta `app` é reservada ao desenvolvimento original e à integração pelo coordenador técnico.
+Não compartilhe o mesmo checkout entre implementações simultâneas.
 
 | Quem | Pasta de trabalho | Ramo | Pode alterar |
 |---|---|---|---|
-| Coordenador (Claude Code) | `PCM Direto\app` | `coord/<assunto>` | Tudo; arquivos protegidos só com pedido explícito |
-| Agente banco-maquinas (Copilot) | `PCM Direto\agentes\maquinas-<tarefa>` | `ia/maquinas/<tarefa>` | Só `propostas-maquinas/*.json` |
-| Agente redes-sociais (Copilot) | `PCM Direto\agentes\divulgacao-<tarefa>` | `ia/divulgacao/<tarefa>` | Só `divulgacao/` |
-| OpenCode, Copilot (código), Claude em paralelo | `PCM Direto\agentes\<tipo>-<tarefa>` | `ia/<tipo>/<tarefa>` | Código, exceto arquivos protegidos |
-| Codex (nuvem) | Contêiner próprio | `ia/codex/<item>` | Código, exceto arquivos protegidos |
+| Codex — coordenador designado | Checkout autorizado pelo mantenedor (local ou contêiner) | `coord/<assunto>` | Escopo da tarefa; arquivos protegidos só com pedido explícito |
+| Codex — implementação | Checkout da tarefa ou contêiner próprio | `ia/codex/<item>` | Código, exceto arquivos protegidos |
+| ChatGPT — documentação solicitada | Ramo dedicado no repositório conectado | `coord/<assunto>` | Somente a documentação autorizada |
+| Agente banco-maquinas (Copilot, opcional) | `PCM Direto\\agentes\\maquinas-<tarefa>` | `ia/maquinas/<tarefa>` | Só `propostas-maquinas/*.json` |
+| Agente redes-sociais (Copilot, opcional) | `PCM Direto\\agentes\\divulgacao-<tarefa>` | `ia/divulgacao/<tarefa>` | Só `divulgacao/` |
+| Copilot — código (opcional) | `PCM Direto\\agentes\\copilot-<tarefa>` | `ia/copilot/<tarefa>` | Código, exceto arquivos protegidos |
 
-- Criar a pasta: `powershell -File scripts/nova-tarefa-ia.ps1 -Tipo <tipo> -Tarefa <nome>`.
-- Integrar: `powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa <tipo>-<nome> [-AbrirPR]`. O script grava o pendente,
+- Criar a pasta de tarefa opcional do Copilot: `powershell -File scripts/nova-tarefa-ia.ps1 -Tipo <tipo> -Tarefa <nome>`;
+  use apenas os tipos `maquinas`, `divulgacao` ou `copilot`. O Codex usa o checkout da tarefa.
+- Integrar: `powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa <tipo>-<tarefa> [-AbrirPR]`. O script grava o pendente,
   aplica o perfil do ramo (conferidor), valida e mostra o próximo passo. Nunca faz merge.
 - Limpar as integradas: `powershell -File scripts/limpar-tarefas-ia.ps1` (simula) e depois com `-Confirmar`.
 - O conferidor (`scripts/conferir-entrega-ia.mjs`) bloqueia arquivo fora da área do perfil, arquivo protegido em ramo
-  de agente, `.env`/backup, dependência nova e senha no código.
+  de agente, `.env`/backup, dependência nova e senha no código. A existência de um perfil legado no script
+  não autoriza sua utilização.
 
 ## Direção atual: Gestão, comunidade e Biblioteca PCM v2
 
