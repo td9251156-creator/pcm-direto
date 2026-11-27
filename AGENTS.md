@@ -94,7 +94,7 @@ do encerramento da sessão sem um executor persistente efetivamente configurado 
 
 O fluxo separado de implementação no Actions está documentado em `docs/AGENTES-GITHUB-ACTIONS.md`.
 As chamadas de IA pela API do Actions estão pausadas. Não reative a API nem sua agenda sem novo pedido.
-O fluxo de API preservado no repositório gera PRs em rascunho e não integra ou publica sozinho.
+O fluxo de API permanece pausado e não executa chamadas, nem cria PRs automaticamente. O histórico Git preserva a implementação anterior.
 O Actions continua executando testes e publicação.
 
 ## Ferramentas de IA autorizadas pelo mantenedor (papéis)

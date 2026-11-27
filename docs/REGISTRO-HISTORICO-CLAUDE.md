@@ -1,3 +1,7 @@
+# Registro histórico — não executar
+
+As regras vigentes estão em AGENTS.md. Este arquivo não autoriza uso de agentes antigos.
+
 # Orientações para Claude
 
 Siga o AGENTS.md deste repositório e as instruções da tarefa antes de trabalhar. No papel de coordenador

@@ -4,7 +4,7 @@
 // Uso: node scripts/conferir-entrega-ia.mjs [base]   (base padrão: origin/main; rode na pasta do agente)
 import { execFileSync } from 'node:child_process';
 
-// Mesma lista do AGENTS.md (seção "Ferramentas de IA usadas pelo mantenedor").
+// Mesma lista do AGENTS.md (seção "Ferramentas de IA autorizadas pelo mantenedor").
 export const PROTEGIDOS = [/^src\/logica\/gestao\.js$/, /^src\/estado\.js$/, /^src\/repositorio\.js$/, /^src\/logica\/operacao\.js$/,
   /^src\/integracao\//, /^src\/saida\/biblioteca-v2-.*\.js$/, /^src\/dados\/biblioteca-pcm-v2\.json$/, /^public\/modelos\//, /^supabase\//];
 const SEGREDO = /(api[_-]?key|secret|senha|password|token|service_role)\s*[:=]\s*['"][^'"]{8,}/i;
@@ -13,13 +13,14 @@ const SEGREDO = /(api[_-]?key|secret|senha|password|token|service_role)\s*[:=]\s
  * Perfis por prefixo de ramo (docs/CONTRIBUIR-COM-IA.md, "Pastas e ramos dos agentes"):
  * - ia/maquinas/*    agente banco-maquinas: só propostas-maquinas/
  * - ia/divulgacao/*  agente redes-sociais: só divulgacao/
- * - ia/<ferramenta>/* código (codex, opencode, copilot, claude): tudo, exceto arquivos protegidos
+ * - ia/<ferramenta>/* código (codex, copilot): tudo, exceto arquivos protegidos
  * - coord/*          coordenador: tudo; protegidos só com pedido explícito (aviso, não bloqueio)
  */
 export const PERFIS = [
   { prefixo: 'ia/maquinas/', nome: 'banco de máquinas', permitidos: [/^propostas-maquinas\/[^/]+\.json$/] },
   { prefixo: 'ia/divulgacao/', nome: 'redes sociais', permitidos: [/^divulgacao\//] },
-  { prefixo: 'ia/', nome: 'código (agente)', permitidos: null, protegidosBloqueiam: true },
+  { prefixo: 'ia/codex/', nome: 'código (agente)', permitidos: null, protegidosBloqueiam: true },
+  { prefixo: 'ia/copilot/', nome: 'código (agente)', permitidos: null, protegidosBloqueiam: true },
   { prefixo: 'coord/', nome: 'coordenador', permitidos: null, protegidosBloqueiam: false },
 ];
 
@@ -62,7 +63,7 @@ if (process.argv[1]?.replace(/\\/g, '/').endsWith('scripts/conferir-entrega-ia.m
   const r = conferir(arquivos, git('diff', `${base}...HEAD`, '--', 'package.json'), git('diff', `${base}...HEAD`), ramo, pacotes);
   console.log(`Ramo ${ramo} · perfil: ${r.perfil?.nome ?? 'nenhum'} · ${arquivos.length} arquivo(s) alterado(s) em relação a ${base}.`);
   for (const a of arquivos) console.log(`  ${r.foraDoPerfil.includes(a) ? '!! FORA DO PERFIL ' : r.protegidos.includes(a) ? '!! PROTEGIDO ' : '   '}${a}`);
-  if (!r.perfil) console.log('Bloqueio: o ramo deve começar com ia/maquinas/, ia/divulgacao/, ia/<ferramenta>/ ou coord/.');
+  if (!r.perfil) console.log('Bloqueio: o ramo deve começar com ia/maquinas/, ia/divulgacao/, ia/codex/, ia/copilot/ ou coord/.');
   if (r.foraDoPerfil.length) console.log(`Bloqueio: ${r.foraDoPerfil.length} arquivo(s) fora da área deste agente.`);
   if (r.protegidos.length) console.log(r.protegidosBloqueiam ? `Bloqueio: ${r.protegidos.length} arquivo(s) protegido(s); só o coordenador altera, com pedido explícito.`
     : `Atenção: ${r.protegidos.length} arquivo(s) protegido(s); confirme que a tarefa pediu e explique no PR.`);

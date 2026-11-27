@@ -1,16 +1,17 @@
 # Como usar outras IAs para contribuir com o PCM Direto
 
 Guia curto para o mantenedor. As regras que todas as ferramentas leem sozinhas estão no `AGENTS.md`
-(Copilot também lê `.github/copilot-instructions.md`; Claude lê `CLAUDE.md`). Não é preciso colar regras em cada conversa.
+(Copilot, quando solicitado, também lê `.github/copilot-instructions.md`). Não é preciso colar regras em cada conversa.
+
+Ferramentas antigas não são autorizadas. Não execute IA por API nem compartilhe dados reais, segredos ou backups.
 
 ## Quem faz o quê
 
 | Ferramenta | Use para | Não use para |
 |---|---|---|
-| **Claude Code** | Coordenar, integrar, mexer em dados/backup/importação/modelos/banco, revisão final e publicação | Tarefas repetitivas simples |
-| **OpenCode + DeepSeek** | Tarefas mecânicas: testes extras, textos e documentação, capturas de tela, scripts de conferência | Arquivos protegidos (lista no AGENTS.md) |
+| **Codex** | Coordenação técnica, implementação e testes em tarefa autorizada | Merge sem aprovação |
 | **GitHub Copilot** | Ajustes pequenos no VS Code e revisão automática dos PRs no GitHub | Mudanças grandes |
-| **ChatGPT** | Só consulta: procedimentos, opções, revisão de texto | Editar o projeto ou os modelos |
+| **ChatGPT** | Planejamento, diagnóstico, revisão e documentação autorizada | Alterações não solicitadas |
 
 Regra de ouro: **uma tarefa, uma ferramenta, um ramo**. Nada vai para a `main` sem `npm run verificar`, conferência e a sua aprovação.
 Nunca cole dados reais da fábrica, backups, senhas ou o arquivo `.env` em nenhuma IA.
@@ -23,7 +24,7 @@ PCM Direto\
 ├─ agentes\                  uma pasta por tarefa de agente (criada pelo script)
 │  ├─ maquinas-<tarefa>\     agente banco-maquinas · ramo ia/maquinas/<tarefa> · só propostas-maquinas/
 │  ├─ divulgacao-<tarefa>\   agente redes-sociais  · ramo ia/divulgacao/<tarefa> · só divulgacao/
-│  └─ opencode-<tarefa>\     código (também copilot-…, claude-…) · ramo ia/<tipo>/<tarefa> · sem arquivos protegidos
+│  └─ copilot-<tarefa>\    código · ramo ia/copilot/<tarefa> · sem arquivos protegidos
 └─ backups\                  cópias de segurança completas do repositório (.bundle)
 ```
 
@@ -35,9 +36,8 @@ O Codex trabalha no próprio contêiner, no ramo `ia/codex/<item>`, com as mesma
    ```powershell
    powershell -File scripts/nova-tarefa-ia.ps1 -Tipo maquinas -Tarefa redutor-sew-r
    ```
-   Tipos: `maquinas`, `divulgacao`, `opencode`, `copilot`, `claude`.
-2. **Trabalhar na pasta criada:** abra no VS Code e use o agente (banco-maquinas ou redes-sociais), ou rode o OpenCode
-   dentro dela com o modelo de pedido abaixo.
+   Tipos: `maquinas`, `divulgacao`, `copilot`.
+2. **Trabalhar na pasta criada:** abra no VS Code e use o agente (banco-maquinas ou redes-sociais) quando solicitado.
 3. **Conferir e preparar a integração** (grava o que ficou sem commit, aplica o perfil do ramo, valida):
    ```powershell
    powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa maquinas-redutor-sew-r
@@ -50,7 +50,7 @@ O Codex trabalha no próprio contêiner, no ramo `ia/codex/<item>`, com as mesma
    powershell -File scripts/limpar-tarefas-ia.ps1 -Confirmar  # remove só as tarefas já integradas e sem pendências
    ```
 
-O coordenador (Claude Code) revisa cada PR, roda os roteiros de navegador quando preciso e você aprova o merge.
+O coordenador (Codex) revisa cada PR, roda os roteiros de navegador quando preciso e você aprova o merge.
 
 ## Modelo de pedido (cole na ferramenta)
 
@@ -64,13 +64,6 @@ Não faça push, merge nem PR. Ao terminar, mostre os arquivos alterados e a sa�
 
 ## Configuração de cada ferramenta (uma vez)
 
-### OpenCode + DeepSeek
-1. Instale o OpenCode (site oficial: opencode.ai) e entre com a sua chave da DeepSeek: `opencode auth login` → DeepSeek.
-2. Na pasta da tarefa, rode `opencode`. Escolha o modelo da DeepSeek com `/models`.
-3. O projeto já traz `opencode.json`: sessões **não** são compartilhadas; testes, lint, `git status/diff/add/commit` liberados;
-   `git push`, `merge`, `rebase`, `reset --hard`, `gh pr merge` e `npm install` **bloqueados**; outros comandos pedem sua confirmação.
-4. O OpenCode lê o `AGENTS.md` sozinho.
-
 ### GitHub Copilot (VS Code)
 1. Instale a extensão GitHub Copilot e entre com a conta do GitHub (Copilot Pro de estudante).
 2. O projeto já traz `.vscode/settings.json` ligando as instruções (`.github/copilot-instructions.md`) e os prompts de
@@ -79,18 +72,13 @@ Não faça push, merge nem PR. Ao terminar, mostre os arquivos alterados e a sa�
    alvo `main` → marque **Automatically request Copilot code review**. Ou, em cada PR, **Reviewers → Copilot**.
 
 ### ChatGPT
-Só consulta. Para levar o resultado ao projeto, cole a resposta numa issue ou mande ao Claude Code.
-
-## Tarefas para o OpenCode
-As tarefas iniciais (captura da Criticidade, docs retirados, testes da criticidade) já foram feitas e integradas em
-01/11/2026. Para novas tarefas, use os itens "Pronto" da fila do coordenador (`.github/prompts/coordenar.prompt.md`)
-que não mexem em arquivos protegidos.
+Planejamento, revisão e documentação solicitada em ramo separado. Sem execução de IA pela API nem integração automática.
 
 ## Agentes e prompts prontos
 
 | Para quê | Onde usar | Arquivo | Saída |
 |---|---|---|---|
-| Desenvolver um item da fila por vez | Codex (nuvem), Claude Code ou Copilot (modo agente) | `.github/prompts/coordenar.prompt.md` | PR para você aprovar |
+| Desenvolver um item da fila por vez | Codex (nuvem) ou Copilot quando solicitado | `.github/prompts/coordenar.prompt.md` | PR para você aprovar |
 | Cadastrar máquinas reais, com você | Copilot → agente **banco-maquinas**, ou `/alimentar-banco-maquinas` | `.github/agents/banco-maquinas.agent.md` | Proposta em `propostas-maquinas/` |
 | Criar conteúdos de redes sociais, com você | Copilot → agente **redes-sociais**, ou `/redes-sociais`; ou cole o arquivo no ChatGPT | `.github/agents/redes-sociais.agent.md` | Rascunhos em `divulgacao/` |
 
@@ -102,7 +90,7 @@ Os mesmos atalhos existem como prompts (`.github/prompts/*.prompt.md`) e como sk
    Você confirma cada uma.
 3. Ele grava a proposta em `propostas-maquinas/` e roda o validador. Os campos já correspondem às colunas dos modelos
    002 (Plano e MFMEA), 005 (Checklist) e 010 (Peças críticas).
-4. Peça ao Claude Code: "integre a proposta propostas-maquinas/<arquivo>.json".
+4. Peça ao Codex: "integre a proposta propostas-maquinas/<arquivo>.json".
 5. Quando o item 14 da fila estiver pronto, o usuário escolhe a máquina e baixa o modelo preenchido em Excel, Word ou PDF.
 
 ### Redes sociais: um conteúdo por vez

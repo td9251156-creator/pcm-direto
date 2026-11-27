@@ -3,10 +3,10 @@
 # Tipos e áreas permitidas (o conferidor bloqueia o resto):
 #   maquinas   -> ramo ia/maquinas/<tarefa>   · só propostas-maquinas/   (agente banco-maquinas do Copilot)
 #   divulgacao -> ramo ia/divulgacao/<tarefa> · só divulgacao/           (agente redes-sociais do Copilot)
-#   opencode | copilot | claude -> ramo ia/<tipo>/<tarefa> · código, exceto arquivos protegidos
+#   copilot -> ramo ia/<tipo>/<tarefa> · código, exceto arquivos protegidos
 # Uso: powershell -File scripts/nova-tarefa-ia.ps1 -Tipo maquinas -Tarefa redutor-sew-r [-Base origin/main]
 param(
-  [Parameter(Mandatory = $true)][ValidateSet('maquinas', 'divulgacao', 'opencode', 'copilot', 'claude')][Alias('Ferramenta')][string]$Tipo,
+  [Parameter(Mandatory = $true)][ValidateSet('maquinas', 'divulgacao', 'copilot')][Alias('Ferramenta')][string]$Tipo,
   [Parameter(Mandatory = $true)][ValidatePattern('^[a-z0-9-]{3,40}$')][string]$Tarefa,
   # Ponto de partida: a main publicada (padrão) ou um ramo local ainda não publicado.
   [string]$Base = 'origin/main'
@@ -31,5 +31,5 @@ Write-Host ""
 Write-Host "Pronto. Pasta: $pasta"
 Write-Host "Ramo: $ramo"
 if ($agente) { Write-Host "Abra essa pasta no VS Code e use o agente $agente no chat do Copilot." }
-else { Write-Host "Abra essa pasta na ferramenta (ex.: cd `"$pasta`"; opencode) e cole o pedido da tarefa." }
+else { Write-Host "Abra essa pasta no VS Code e use o Copilot somente quando solicitado." }
 Write-Host "Ao terminar, na pasta app: powershell -File scripts/integrar-tarefa-ia.ps1 -Tarefa $Tipo-$Tarefa"
