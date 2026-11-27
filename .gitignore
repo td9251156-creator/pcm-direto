@@ -20,3 +20,7 @@ supabase/.temp/
 .env.local
 !public/modelos/biblioteca-v2/*.xlsx
 !public/modelos/biblioteca-v2/*.docx
+
+# Modelos originais do criador de materiais
+!/public/criar/modelos/PCM-MAN-005_Checklist-de-Preventiva_R01-proposta.xlsx
+!/public/criar/modelos/PCM-MAN-016_POP-e-Licao-de-Um-Ponto_R01-proposta.xlsx
